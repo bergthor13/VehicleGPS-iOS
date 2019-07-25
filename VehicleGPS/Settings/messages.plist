@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UBX-NAV-AOPSTATUS</key>
+	<dict>
+		<key>ID</key>
+		<string>UBX-NAV-AOPSTATUS</string>
+		<key>Description</key>
+		<string>AssistNow Autonomous Status</string>
+	</dict>
+	<key>UBX-NAV-ATT</key>
+	<dict>
+		<key>ID</key>
+		<string>UBX-NAV-ATT</string>
+		<key>Description</key>
+		<string>Attitude Solution</string>
+	</dict>
+</dict>
+</plist>

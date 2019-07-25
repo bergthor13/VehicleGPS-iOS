@@ -1,0 +1,558 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		09DD9ED3104045D6742E2711 /* Pods_VehicleGPS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */; };
+		F23BE8BF22A5E4B9008FD50C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */; };
+		F23BE8C722A5E4B9008FD50C /* VehicleGPS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8C522A5E4B9008FD50C /* VehicleGPS.xcdatamodeld */; };
+		F23BE8C922A5E4BA008FD50C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F23BE8C822A5E4BA008FD50C /* Assets.xcassets */; };
+		F23BE8CC22A5E4BA008FD50C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F23BE8CA22A5E4BA008FD50C /* LaunchScreen.storyboard */; };
+		F23BE8D422A5E566008FD50C /* VGTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8D322A5E566008FD50C /* VGTabBarController.swift */; };
+		F23BE8DD22A5E596008FD50C /* NewNetworkTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8D822A5E596008FD50C /* NewNetworkTableViewController.swift */; };
+		F23BE8DE22A5E596008FD50C /* VGSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8D922A5E596008FD50C /* VGSettingsTableViewController.swift */; };
+		F23BE8DF22A5E596008FD50C /* VGSettingsNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8DA22A5E596008FD50C /* VGSettingsNavigationController.swift */; };
+		F23BE8E022A5E596008FD50C /* VGWiFiTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8DB22A5E596008FD50C /* VGWiFiTableViewController.swift */; };
+		F23BE8E122A5E596008FD50C /* messages.plist in Resources */ = {isa = PBXBuildFile; fileRef = F23BE8DC22A5E596008FD50C /* messages.plist */; };
+		F23BE8E422A5E5A7008FD50C /* VGDashboardNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8E222A5E5A7008FD50C /* VGDashboardNavigationController.swift */; };
+		F23BE8E522A5E5A7008FD50C /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8E322A5E5A7008FD50C /* DashboardViewController.swift */; };
+		F23BE8F122A5E5BB008FD50C /* VGTrackStatisticsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F23BE8E622A5E5BB008FD50C /* VGTrackStatisticsTableViewCell.xib */; };
+		F23BE8F222A5E5BB008FD50C /* VGLogDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8E722A5E5BB008FD50C /* VGLogDetailsViewController.swift */; };
+		F23BE8F322A5E5BB008FD50C /* VGLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */; };
+		F23BE8F422A5E5BB008FD50C /* VGTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8E922A5E5BB008FD50C /* VGTrack.swift */; };
+		F23BE8F522A5E5BB008FD50C /* VGTrackStatisticsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8EA22A5E5BB008FD50C /* VGTrackStatisticsTableViewCell.swift */; };
+		F23BE8F622A5E5BB008FD50C /* VGDataPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */; };
+		F23BE8F722A5E5BB008FD50C /* LogsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F23BE8EC22A5E5BB008FD50C /* LogsTableViewCell.xib */; };
+		F23BE8F822A5E5BB008FD50C /* LogsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8ED22A5E5BB008FD50C /* LogsTableViewCell.swift */; };
+		F23BE8F922A5E5BB008FD50C /* VGSFTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8EE22A5E5BB008FD50C /* VGSFTPManager.swift */; };
+		F23BE8FA22A5E5BB008FD50C /* VGLogsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8EF22A5E5BB008FD50C /* VGLogsNavigationViewController.swift */; };
+		F23BE8FB22A5E5BB008FD50C /* VGLogsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8F022A5E5BB008FD50C /* VGLogsTableViewController.swift */; };
+		F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C96EB122A853A500180055 /* VGFileManager.swift */; };
+		F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */; };
+		F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		18EB1CD0499873B64661B1E0 /* Pods-VehicleGPS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.release.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.release.xcconfig"; sourceTree = "<group>"; };
+		91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VehicleGPS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9CB23282698EF0E65FC3BED1 /* Pods-VehicleGPS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.debug.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.debug.xcconfig"; sourceTree = "<group>"; };
+		F23BE8BB22A5E4B9008FD50C /* VehicleGPS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VehicleGPS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F23BE8C622A5E4B9008FD50C /* VehicleGPS.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = VehicleGPS.xcdatamodel; sourceTree = "<group>"; };
+		F23BE8C822A5E4BA008FD50C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F23BE8CB22A5E4BA008FD50C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F23BE8CD22A5E4BA008FD50C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F23BE8D322A5E566008FD50C /* VGTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGTabBarController.swift; sourceTree = "<group>"; };
+		F23BE8D822A5E596008FD50C /* NewNetworkTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewNetworkTableViewController.swift; sourceTree = "<group>"; };
+		F23BE8D922A5E596008FD50C /* VGSettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGSettingsTableViewController.swift; sourceTree = "<group>"; };
+		F23BE8DA22A5E596008FD50C /* VGSettingsNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGSettingsNavigationController.swift; sourceTree = "<group>"; };
+		F23BE8DB22A5E596008FD50C /* VGWiFiTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGWiFiTableViewController.swift; sourceTree = "<group>"; };
+		F23BE8DC22A5E596008FD50C /* messages.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = messages.plist; sourceTree = "<group>"; };
+		F23BE8E222A5E5A7008FD50C /* VGDashboardNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGDashboardNavigationController.swift; sourceTree = "<group>"; };
+		F23BE8E322A5E5A7008FD50C /* DashboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
+		F23BE8E622A5E5BB008FD50C /* VGTrackStatisticsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VGTrackStatisticsTableViewCell.xib; sourceTree = "<group>"; };
+		F23BE8E722A5E5BB008FD50C /* VGLogDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGLogDetailsViewController.swift; sourceTree = "<group>"; };
+		F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGLogParser.swift; sourceTree = "<group>"; };
+		F23BE8E922A5E5BB008FD50C /* VGTrack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGTrack.swift; sourceTree = "<group>"; };
+		F23BE8EA22A5E5BB008FD50C /* VGTrackStatisticsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGTrackStatisticsTableViewCell.swift; sourceTree = "<group>"; };
+		F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGDataPoint.swift; sourceTree = "<group>"; };
+		F23BE8EC22A5E5BB008FD50C /* LogsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LogsTableViewCell.xib; sourceTree = "<group>"; };
+		F23BE8ED22A5E5BB008FD50C /* LogsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogsTableViewCell.swift; sourceTree = "<group>"; };
+		F23BE8EE22A5E5BB008FD50C /* VGSFTPManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGSFTPManager.swift; sourceTree = "<group>"; };
+		F23BE8EF22A5E5BB008FD50C /* VGLogsNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGLogsNavigationViewController.swift; sourceTree = "<group>"; };
+		F23BE8F022A5E5BB008FD50C /* VGLogsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGLogsTableViewController.swift; sourceTree = "<group>"; };
+		F2C96EB122A853A500180055 /* VGFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFileManager.swift; sourceTree = "<group>"; };
+		F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDataStore.swift; sourceTree = "<group>"; };
+		F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGPXGenerator.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F23BE8B822A5E4B9008FD50C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				09DD9ED3104045D6742E2711 /* Pods_VehicleGPS.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B569BCF86EAE66A64691E47D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9CB23282698EF0E65FC3BED1 /* Pods-VehicleGPS.debug.xcconfig */,
+				18EB1CD0499873B64661B1E0 /* Pods-VehicleGPS.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		DBFBC654E6716F74B4F5BEFF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F23BE8B222A5E4B9008FD50C = {
+			isa = PBXGroup;
+			children = (
+				F23BE8BD22A5E4B9008FD50C /* VehicleGPS */,
+				F23BE8BC22A5E4B9008FD50C /* Products */,
+				B569BCF86EAE66A64691E47D /* Pods */,
+				DBFBC654E6716F74B4F5BEFF /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		F23BE8BC22A5E4B9008FD50C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F23BE8BB22A5E4B9008FD50C /* VehicleGPS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F23BE8BD22A5E4B9008FD50C /* VehicleGPS */ = {
+			isa = PBXGroup;
+			children = (
+				F23BE8D722A5E585008FD50C /* Settings */,
+				F23BE8D622A5E576008FD50C /* Logs */,
+				F23BE8D522A5E56F008FD50C /* Dashboard */,
+				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
+				F23BE8D322A5E566008FD50C /* VGTabBarController.swift */,
+				F23BE8C822A5E4BA008FD50C /* Assets.xcassets */,
+				F23BE8CA22A5E4BA008FD50C /* LaunchScreen.storyboard */,
+				F23BE8CD22A5E4BA008FD50C /* Info.plist */,
+				F23BE8C522A5E4B9008FD50C /* VehicleGPS.xcdatamodeld */,
+			);
+			path = VehicleGPS;
+			sourceTree = "<group>";
+		};
+		F23BE8D522A5E56F008FD50C /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				F23BE8E322A5E5A7008FD50C /* DashboardViewController.swift */,
+				F23BE8E222A5E5A7008FD50C /* VGDashboardNavigationController.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		F23BE8D622A5E576008FD50C /* Logs */ = {
+			isa = PBXGroup;
+			children = (
+				F23BE8FF22A6FB1A008FD50C /* ViewControllers */,
+				F23BE8FE22A6FB08008FD50C /* Cells */,
+				F23BE8FD22A6FAE1008FD50C /* NIB */,
+				F23BE8FC22A6FAD4008FD50C /* Entities */,
+			);
+			path = Logs;
+			sourceTree = "<group>";
+		};
+		F23BE8D722A5E585008FD50C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				F23BE8DC22A5E596008FD50C /* messages.plist */,
+				F23BE8D822A5E596008FD50C /* NewNetworkTableViewController.swift */,
+				F23BE8DA22A5E596008FD50C /* VGSettingsNavigationController.swift */,
+				F23BE8D922A5E596008FD50C /* VGSettingsTableViewController.swift */,
+				F23BE8DB22A5E596008FD50C /* VGWiFiTableViewController.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		F23BE8FC22A6FAD4008FD50C /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */,
+				F23BE8EE22A5E5BB008FD50C /* VGSFTPManager.swift */,
+				F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */,
+				F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */,
+				F23BE8E922A5E5BB008FD50C /* VGTrack.swift */,
+				F2C96EB122A853A500180055 /* VGFileManager.swift */,
+				F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		F23BE8FD22A6FAE1008FD50C /* NIB */ = {
+			isa = PBXGroup;
+			children = (
+				F23BE8EC22A5E5BB008FD50C /* LogsTableViewCell.xib */,
+				F23BE8E622A5E5BB008FD50C /* VGTrackStatisticsTableViewCell.xib */,
+			);
+			path = NIB;
+			sourceTree = "<group>";
+		};
+		F23BE8FE22A6FB08008FD50C /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				F23BE8ED22A5E5BB008FD50C /* LogsTableViewCell.swift */,
+				F23BE8EA22A5E5BB008FD50C /* VGTrackStatisticsTableViewCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		F23BE8FF22A6FB1A008FD50C /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				F23BE8EF22A5E5BB008FD50C /* VGLogsNavigationViewController.swift */,
+				F23BE8F022A5E5BB008FD50C /* VGLogsTableViewController.swift */,
+				F23BE8E722A5E5BB008FD50C /* VGLogDetailsViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F23BE8BA22A5E4B9008FD50C /* VehicleGPS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F23BE8D022A5E4BA008FD50C /* Build configuration list for PBXNativeTarget "VehicleGPS" */;
+			buildPhases = (
+				668EE25938AB33E5D91A01DD /* [CP] Check Pods Manifest.lock */,
+				F23BE8B722A5E4B9008FD50C /* Sources */,
+				F23BE8B822A5E4B9008FD50C /* Frameworks */,
+				F23BE8B922A5E4B9008FD50C /* Resources */,
+				73324A3AF290B093A55A79C2 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VehicleGPS;
+			productName = VehicleGPS;
+			productReference = F23BE8BB22A5E4B9008FD50C /* VehicleGPS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F23BE8B322A5E4B9008FD50C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1020;
+				LastUpgradeCheck = 1020;
+				ORGANIZATIONNAME = "Bergþór Þrastarson";
+				TargetAttributes = {
+					F23BE8BA22A5E4B9008FD50C = {
+						CreatedOnToolsVersion = 10.2.1;
+					};
+				};
+			};
+			buildConfigurationList = F23BE8B622A5E4B9008FD50C /* Build configuration list for PBXProject "VehicleGPS" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F23BE8B222A5E4B9008FD50C;
+			productRefGroup = F23BE8BC22A5E4B9008FD50C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F23BE8BA22A5E4B9008FD50C /* VehicleGPS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F23BE8B922A5E4B9008FD50C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F23BE8F722A5E5BB008FD50C /* LogsTableViewCell.xib in Resources */,
+				F23BE8E122A5E596008FD50C /* messages.plist in Resources */,
+				F23BE8CC22A5E4BA008FD50C /* LaunchScreen.storyboard in Resources */,
+				F23BE8F122A5E5BB008FD50C /* VGTrackStatisticsTableViewCell.xib in Resources */,
+				F23BE8C922A5E4BA008FD50C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		668EE25938AB33E5D91A01DD /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-VehicleGPS-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		73324A3AF290B093A55A79C2 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F23BE8B722A5E4B9008FD50C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F23BE8F422A5E5BB008FD50C /* VGTrack.swift in Sources */,
+				F23BE8F322A5E5BB008FD50C /* VGLogParser.swift in Sources */,
+				F23BE8DD22A5E596008FD50C /* NewNetworkTableViewController.swift in Sources */,
+				F23BE8D422A5E566008FD50C /* VGTabBarController.swift in Sources */,
+				F23BE8F222A5E5BB008FD50C /* VGLogDetailsViewController.swift in Sources */,
+				F23BE8C722A5E4B9008FD50C /* VehicleGPS.xcdatamodeld in Sources */,
+				F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */,
+				F23BE8DF22A5E596008FD50C /* VGSettingsNavigationController.swift in Sources */,
+				F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */,
+				F23BE8E022A5E596008FD50C /* VGWiFiTableViewController.swift in Sources */,
+				F23BE8F922A5E5BB008FD50C /* VGSFTPManager.swift in Sources */,
+				F23BE8E422A5E5A7008FD50C /* VGDashboardNavigationController.swift in Sources */,
+				F23BE8F822A5E5BB008FD50C /* LogsTableViewCell.swift in Sources */,
+				F23BE8F622A5E5BB008FD50C /* VGDataPoint.swift in Sources */,
+				F23BE8E522A5E5A7008FD50C /* DashboardViewController.swift in Sources */,
+				F23BE8FA22A5E5BB008FD50C /* VGLogsNavigationViewController.swift in Sources */,
+				F23BE8F522A5E5BB008FD50C /* VGTrackStatisticsTableViewCell.swift in Sources */,
+				F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */,
+				F23BE8BF22A5E4B9008FD50C /* AppDelegate.swift in Sources */,
+				F23BE8FB22A5E5BB008FD50C /* VGLogsTableViewController.swift in Sources */,
+				F23BE8DE22A5E596008FD50C /* VGSettingsTableViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		F23BE8CA22A5E4BA008FD50C /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F23BE8CB22A5E4BA008FD50C /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F23BE8CE22A5E4BA008FD50C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F23BE8CF22A5E4BA008FD50C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F23BE8D122A5E4BA008FD50C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9CB23282698EF0E65FC3BED1 /* Pods-VehicleGPS.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = NJU97Y2JX6;
+				INFOPLIST_FILE = VehicleGPS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bergtor05.VehicleGPS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F23BE8D222A5E4BA008FD50C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 18EB1CD0499873B64661B1E0 /* Pods-VehicleGPS.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = NJU97Y2JX6;
+				INFOPLIST_FILE = VehicleGPS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.bergtor05.VehicleGPS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F23BE8B622A5E4B9008FD50C /* Build configuration list for PBXProject "VehicleGPS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F23BE8CE22A5E4BA008FD50C /* Debug */,
+				F23BE8CF22A5E4BA008FD50C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F23BE8D022A5E4BA008FD50C /* Build configuration list for PBXNativeTarget "VehicleGPS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F23BE8D122A5E4BA008FD50C /* Debug */,
+				F23BE8D222A5E4BA008FD50C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		F23BE8C522A5E4B9008FD50C /* VehicleGPS.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				F23BE8C622A5E4B9008FD50C /* VehicleGPS.xcdatamodel */,
+			);
+			currentVersion = F23BE8C622A5E4B9008FD50C /* VehicleGPS.xcdatamodel */;
+			path = VehicleGPS.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = F23BE8B322A5E4B9008FD50C /* Project object */;
+}

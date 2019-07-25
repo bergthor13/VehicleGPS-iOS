@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_5" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="TrackStatsCell" rowHeight="195" id="vr1-PA-48z" customClass="VGTrackStatisticsTableViewCell" customModule="VehicleGPS" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="195"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vr1-PA-48z" id="6bs-C5-1Ik">
+                <rect key="frame" x="0.0" y="0.0" width="414" height="194.66666666666666"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="speed_graph" translatesAutoresizingMaskIntoConstraints="NO" id="fVP-I5-ilS">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="194.66666666666666"/>
+                    </imageView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="fVP-I5-ilS" firstAttribute="top" secondItem="6bs-C5-1Ik" secondAttribute="top" id="5HL-P2-qi5"/>
+                    <constraint firstItem="fVP-I5-ilS" firstAttribute="leading" secondItem="6bs-C5-1Ik" secondAttribute="leading" id="C7H-j5-SbY"/>
+                    <constraint firstAttribute="bottom" secondItem="fVP-I5-ilS" secondAttribute="bottom" id="Or1-aP-Gkx"/>
+                    <constraint firstAttribute="trailing" secondItem="fVP-I5-ilS" secondAttribute="trailing" id="zao-iZ-3VC"/>
+                </constraints>
+            </tableViewCellContentView>
+            <point key="canvasLocation" x="13.043478260869566" y="-84.375"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="speed_graph" width="1200" height="550"/>
+    </resources>
+</document>
