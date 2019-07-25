@@ -224,7 +224,7 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     func reconnectToVehicleGPS(session:NMSSHSession) {
-        if !session.isConnected || !session.isAuthorized || sftpSession!.isConnected {
+        if !session.isConnected || !session.isAuthorized || !sftpSession!.isConnected {
             connectToVehicleGPS(session: session)
         }
     }
