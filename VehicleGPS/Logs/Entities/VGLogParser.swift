@@ -17,7 +17,7 @@ class VGLogParser {
     let PNG_PADDING:CGFloat = 0.9
     var vgFileManager = VGFileManager()
     
-    func fileToTrack(fileUrl:URL, progress:@escaping (UInt, UInt)->Void, callback:@escaping (VGTrack)->Void){
+    func fileToTrack(fileUrl:URL, progress:@escaping (UInt, UInt)->Void, callback:@escaping (VGTrack)->Void, imageCallback:((VGTrack) -> Void)? = nil){
         DispatchQueue.global(qos: .background).async {
             var lastProgressUpdate = Date()
             var fileString = String()
@@ -79,9 +79,16 @@ class VGLogParser {
             if track.timeStart != nil {
                 track.duration = Double(track.trackPoints.last!.timestamp!.timeIntervalSince(track.timeStart!))
             }
+            
             if !self.vgFileManager.pngForTrackExists(track: track) {
-                self.drawTrack(vgTrack: track)
+                self.drawTrack(vgTrack: track, imageCallback: {
+                    if imageCallback != nil {
+                        imageCallback!(track)
+                    }
+                })
             }
+            
+
             
             track.processed = true
             
@@ -104,8 +111,9 @@ class VGLogParser {
         return CGPoint(x:imageLonLoc+(size.width*(1-PNG_PADDING))/2, y: imageLatLoc+(size.height*(1-PNG_PADDING))/2)
     }
     
-    func drawTrack(vgTrack:VGTrack) {
+    func drawTrack(vgTrack:VGTrack, imageCallback:@escaping ()->Void) {
         let mapSnapshotOptions = MKMapSnapshotter.Options()
+        // If there are no points, create an image showing Iceland.
         if vgTrack.getCoordinateList().count == 0 {
             
             // Set the region of the map that is rendered.
@@ -129,11 +137,10 @@ class VGLogParser {
             mapSnapshotOptions.showsPointsOfInterest = true
             
             let snapShotter = MKMapSnapshotter(options: mapSnapshotOptions)
-            
-            snapShotter.start { (snapshot:MKMapSnapshotter.Snapshot?, error:Error?) in
-                self.vgFileManager.savePNG(image: snapshot!.image, for: vgTrack)
-            }
-            
+                snapShotter.start { (snapshot:MKMapSnapshotter.Snapshot?, error:Error?) in
+                    self.vgFileManager.savePNG(image: snapshot!.image, for: vgTrack)
+                }
+            imageCallback()
             return
         }
         
@@ -175,43 +182,47 @@ class VGLogParser {
         let snapShotter = MKMapSnapshotter(options: mapSnapshotOptions)
     
         snapShotter.start { (snapshot:MKMapSnapshotter.Snapshot?, error:Error?) in
-            guard let snapshot = snapshot else {
-                self.vgFileManager.savePNG(image: self.drawTrack2(vgTrack: vgTrack), for: vgTrack)
-                return
-            }
-            
-            let finalImage = UIGraphicsImageRenderer(size: snapshot.image.size).image { _ in
-                
-                // draw the map image
-                
-                snapshot.image.draw(at: .zero)
-                
-                // only bother with the following if we have a path with two or more coordinates
-                let coordinates = vgTrack.getCoordinateList()
-                
-                // convert the `[CLLocationCoordinate2D]` into a `[CGPoint]`
-                
-                let points = coordinates.map { coordinate in
-                    snapshot.point(for: coordinate)
+            DispatchQueue.global(qos: .userInitiated).async {
+                guard let snapshot = snapshot else {
+                    //self.vgFileManager.savePNG(image: self.drawTrack2(vgTrack: vgTrack), for: vgTrack)
+                    imageCallback()
+                    return
                 }
                 
-                // build a bezier path using that `[CGPoint]`
-                
-                let path = UIBezierPath()
-                path.move(to: points[0])
-                
-                for point in points.dropFirst() {
-                    path.addLine(to: point)
+                let finalImage = UIGraphicsImageRenderer(size: snapshot.image.size).image { _ in
+                    
+                    // draw the map image
+                    
+                    snapshot.image.draw(at: .zero)
+                    
+                    // only bother with the following if we have a path with two or more coordinates
+                    let coordinates = vgTrack.getCoordinateList()
+                    
+                    // convert the `[CLLocationCoordinate2D]` into a `[CGPoint]`
+                    
+                    let points = coordinates.map { coordinate in
+                        snapshot.point(for: coordinate)
+                    }
+                    
+                    // build a bezier path using that `[CGPoint]`
+                    
+                    let path = UIBezierPath()
+                    path.move(to: points[0])
+                    
+                    for point in points.dropFirst() {
+                        path.addLine(to: point)
+                    }
+                    
+                    // stroke it
+                    
+                    path.lineWidth = 3
+                    UIColor.red.setStroke()
+                    path.stroke()
                 }
                 
-                // stroke it
-                
-                path.lineWidth = 3
-                UIColor.red.setStroke()
-                path.stroke()
+                self.vgFileManager.savePNG(image: finalImage, for: vgTrack)
+                imageCallback()
             }
-            
-            self.vgFileManager.savePNG(image: finalImage, for: vgTrack)
         }
 
     }

@@ -20,17 +20,20 @@ class VGLogsTableViewController: UITableViewController {
     var downloadManager: VGSFTPManager?
     var vgFileManager: VGFileManager?
     var vgLogParser: VGLogParser?
-    let host = "vehicle-gps-dev.local"
+    let host = "cargps.local"
     let username = "pi"
     let password = "easyprintsequence"
     var dataStore:VGDataStore!
     var isDownloadingFile = false
     var isInDownloadingState = false
     var shouldStopDownloading = false
+    var downloadCount = 0
+    var parseCount = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(UINib(nibName: "LogsTableViewCell", bundle: nil), forCellReuseIdentifier: "LogsCell")
+        self.tableView.register(UINib(nibName: "LogHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: "LogsHeader")
         self.title = "Logs"
         // Add Refresh Control to Table View
         let refreshControl = UIRefreshControl()
@@ -39,8 +42,7 @@ class VGLogsTableViewController: UITableViewController {
         dataStore = VGDataStore()
         DispatchQueue.global(qos: .background).async {
             self.session = NMSSHSession.init(host: self.host, andUsername: self.username)
-            if let session = self.session {
-                self.connectToVehicleGPS(session: session)
+            if self.session != nil {
                 self.fetchLogList()
             }
         }
@@ -69,6 +71,18 @@ class VGLogsTableViewController: UITableViewController {
         self.isInDownloadingState = true
         self.navigationItem.rightBarButtonItem?.title = "Stop"
         self.navigationItem.rightBarButtonItem?.style = .done
+        
+        for key in self.sectionKeys {
+            guard let trackList = self.tracksDict[key] else {
+                continue
+            }
+            for track in trackList {
+                if self.vgFileManager?.getAbsoluteFilePathFor(track: track) == nil {
+                    self.downloadCount += 1
+                }
+            }
+        }
+        self.navigationItem.prompt = "Downloading. \(downloadCount) tracks left."
         DispatchQueue.global(qos: .background).async {
             for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
                 guard let trackList = self.tracksDict[sectionKey] else {
@@ -86,15 +100,21 @@ class VGLogsTableViewController: UITableViewController {
                                 }
                                 cell.progressView.backgroundColor = UIColor(rgb: 0x007F00).withAlphaComponent(0.2)
                                 cell.update(progress: Double(received)/(Double(total)))
+                                if self.shouldStopDownloading {
+                                    cell.update(progress: 0.0)
+                                }
                             }
                             return !self.shouldStopDownloading
                         }) { (data) in
                             self.isDownloadingFile = false
+                            self.downloadCount -= 1
                             guard let data = data else {
                                 return
                             }
                             _ = self.vgFileManager!.dataToFile(data: data, filename: track.fileName)
+                            self.dataStore.update(vgTrack: track)
                             DispatchQueue.main.async {
+                                self.navigationItem.prompt = "Downloading. \(self.downloadCount) tracks left."
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
                                     return
                                 }
@@ -106,49 +126,84 @@ class VGLogsTableViewController: UITableViewController {
                     }
                 }
             }
+            DispatchQueue.main.async {
+                if self.downloadCount == 0 {
+                    self.navigationItem.prompt = nil
+                }
+                self.navigationItem.rightBarButtonItem?.title = "Download"
+                self.navigationItem.rightBarButtonItem?.style = .plain
+                self.isInDownloadingState = false
+            }
         }
     }
     
     @objc func processFiles() {
-        DispatchQueue.global(qos: .background).async {
-            for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
-                guard let trackList = self.tracksDict[sectionKey] else {
-                    continue
+        for key in self.sectionKeys {
+            guard let trackList = self.tracksDict[key] else {
+                continue
+            }
+            for track in trackList {
+                if !track.processed {
+                    self.parseCount += 1
                 }
-                for (rowIndex, track) in trackList.enumerated() {
+            }
+        }
+        self.navigationItem.prompt = "Parsing. \(parseCount) tracks left."
+        
+        for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
+            guard let trackList = self.tracksDict[sectionKey] else {
+                continue
+            }
+            for (rowIndex, track) in trackList.enumerated() {
+                DispatchQueue.global(qos: .background).async {
                     if !track.processed && self.vgFileManager?.getAbsoluteFilePathFor(track: track) != nil {
+                        track.beingProcessed = true
                         DispatchQueue.main.async {
                             guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
                                 return
                             }
                             cell.activityView.startAnimating()
-                            track.beingProcessed = true
                         }
                         self.vgLogParser?.fileToTrack(fileUrl: (self.vgFileManager?.getAbsoluteFilePathFor(track: track))!, progress: { (current, total) in
                             DispatchQueue.main.async {
-                                track.beingProcessed = false
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
                                     return
                                 }
-                                cell.activityView.stopAnimating()
                                 cell.update(progress: Double(current)/Double(total))
                             }
                         }, callback: { (track) in
                             self.dataStore.update(vgTrack: track)
+                            self.tracksDict[sectionKey]![rowIndex] = track
                             DispatchQueue.main.async {
+                                self.parseCount -= 1
+                                self.navigationItem.prompt = "Parsing. \(self.parseCount) tracks left."
+                                track.beingProcessed = true
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
                                     return
                                 }
                                 cell.show(track: track)
                                 cell.update(progress:0)
+                                self.tableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
+                            }
+                        }, imageCallback: { (track) in
+                            track.beingProcessed = false
+                            DispatchQueue.main.async {
+                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
+                                    return
+                                }
+                                cell.show(track: track)
+                                cell.activityView.stopAnimating()
                             }
                         })
                     }
                 }
             }
         }
+        
+        self.navigationItem.prompt = nil
+        
     }
-
+    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -156,8 +211,7 @@ class VGLogsTableViewController: UITableViewController {
     
     @objc func fetchLogList() {
         var trackList = [VGTrack]()
-
-
+        
         DispatchQueue.global(qos: .background).async {
             if self.downloadManager == nil {
                 self.reconnectToVehicleGPS(session: self.session!)
@@ -168,7 +222,6 @@ class VGLogsTableViewController: UITableViewController {
                     return
                 }
             }
-            self.reconnectToVehicleGPS(session: self.session!)
             DispatchQueue.main.async {
                 self.tableView.refreshControl?.beginRefreshing()
             }
@@ -230,8 +283,7 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     func tryToConnectSSH(session:NMSSHSession) -> Bool {
-        session.connect()
-        if !session.isConnected {
+        if !session.connect() {
             DispatchQueue.main.async {
                 self.displayErrorAlert(title: "SSH Connection Error", message: self.session?.lastError?.localizedDescription)
             }
@@ -241,9 +293,7 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     func tryToAuthenticate(session:NMSSHSession) -> Bool {
-        session.authenticate(byPassword: self.password)
-        
-        if !session.isAuthorized {
+        if !session.authenticate(byPassword: self.password) {
             DispatchQueue.main.async {
                 self.displayErrorAlert(title: "Authorization Error", message: self.session?.lastError?.localizedDescription)
             }
@@ -328,9 +378,9 @@ class VGLogsTableViewController: UITableViewController {
         return tracksDict[sectionKeys[section]]!.count
     }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let day = sectionKeys[section]
-
+        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
@@ -338,6 +388,7 @@ class VGLogsTableViewController: UITableViewController {
         
         dateFormatter.dateStyle = .full
         dateFormatter.locale = Locale(identifier: "is_IS")
+        dateFormatter.doesRelativeDateFormatting = true
         var dateString = dateFormatter.string(from: date)
         var totalDuration = 0.0
         var totalDistance = 0.0
@@ -363,11 +414,15 @@ class VGLogsTableViewController: UITableViewController {
         
         let formattedDuration = form.string(from: totalDuration)
         durationString = String(formattedDuration!)
-
-
         
-        dateString += " - " + distanceString + " - " + durationString
-        return dateString
+        
+        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as! LogHeaderView
+        view.contentView.backgroundColor = UIColor(red: 0xF7/255.0, green: 0xF7/255.0, blue: 0xF7/255.0, alpha: 1.0)
+        view.dateLabel.text = dateString
+        view.detailsLabel.text = distanceString + " - " + durationString
+        return view
+        
+        
     }
 
     
@@ -383,6 +438,17 @@ class VGLogsTableViewController: UITableViewController {
         let track = getTrackAt(indexPath: indexPath)
         cell.show(track:track)
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: "LogsCell",
+            for: indexPath
+            ) as? LogsTableViewCell else {
+                return
+        }        
+        let track = getTrackAt(indexPath: indexPath)
+        cell.show(track:track)
     }
     
     
@@ -403,10 +469,12 @@ class VGLogsTableViewController: UITableViewController {
                 }
                 
                 _ = self.vgFileManager!.dataToFile(data: data, filename: track.fileName)
+                self.dataStore.update(vgTrack: track)
 
                 let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
                 logDetailsView.dataStore = self.dataStore
                 logDetailsView.track = track
+                
                 
                 DispatchQueue.main.async {
                     cell.update(progress: 0.0)
@@ -431,6 +499,10 @@ class VGLogsTableViewController: UITableViewController {
         }, callback: { (data) in
             callback(data)
         })
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 76
     }
     
 

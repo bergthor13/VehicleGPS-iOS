@@ -88,12 +88,21 @@ class VGFileManager {
         return folder
     }
     
-    func getLogs() -> [String]? {
-        var result = [String]()
+    func getTrackLogs() -> [VGTrack]? {
+        var fileList = [String]()
+        var result = [VGTrack]()
         let docUrl = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
         let logPath = docUrl?.appendingPathComponent(LOG_DIRECTORY).path
         do {
-            result = try fileManager.contentsOfDirectory(atPath: (logPath)!)
+            fileList = try fileManager.contentsOfDirectory(atPath: (logPath)!)
+            for item in fileList {
+                let track = VGTrack()
+                track.fileName = item
+                let path = docUrl?.appendingPathComponent(LOG_DIRECTORY).appendingPathComponent(item).path
+                var attr = try fileManager.attributesOfItem(atPath: path!) as Dictionary
+                track.fileSize = Int(attr[FileAttributeKey.size] as! UInt64)
+                result.append(track)
+            }
             return result
         } catch let error {
             print(error)

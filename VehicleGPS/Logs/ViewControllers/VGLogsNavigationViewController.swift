@@ -12,7 +12,7 @@ class VGLogsNavigationViewController: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let logsController = VGLogsTableViewController.init(style: .grouped)
+        let logsController = VGLogsTableViewController.init(style: .plain)
         self.pushViewController(logsController, animated: false)
         
         // Do any additional setup after loading the view.

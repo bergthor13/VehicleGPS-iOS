@@ -67,11 +67,16 @@ class VGSFTPManager {
                     return
                 }
                 
-                let isCopySuccess = self.session.writeContents(data, toFileAtPath: self.deleteFolder + filename)
+                var isCopySuccess = self.session.writeContents(data, toFileAtPath: self.deleteFolder + filename)
+                if data.count == 0 {
+                    isCopySuccess = true
+                }
+                
                 if isCopySuccess {
                     let isRemoveSuccess = self.session.removeFile(atPath: self.remoteFolder + filename)
                     callback(isRemoveSuccess)
                 } else {
+
                     callback(isCopySuccess)
                 }
             })

@@ -8,8 +8,9 @@
 
 import UIKit
 
-class VGTrackStatisticsTableViewCell: UITableViewCell {
+class VGGraphTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var graphView: TrackGraphView!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

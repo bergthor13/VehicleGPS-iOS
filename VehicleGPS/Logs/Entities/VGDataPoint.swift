@@ -71,16 +71,16 @@ class VGDataPoint {
             rpm = Double(data[11])
         }
         if data[12] != "None" {
-            engineLoad = Double(data[11])
+            engineLoad = Double(data[12])
         }
         if data[13] != "None" {
-            coolantTemperature = Double(data[11])
+            coolantTemperature = Double(data[13])
         }
         if data[14] != "None" {
-            ambientTemperature = Double(data[11])
+            ambientTemperature = Double(data[14])
         }
         if data[15] != "None" {
-            throttlePosition = Double(data[11])
+            throttlePosition = Double(data[15])
         }
     }
     
@@ -177,8 +177,21 @@ class VGDataPoint {
     
 }
 
-//extension VGDataPoint: CustomStringConvertible {
-//    var description: String {
-//        return "timestamp: \(timestamp) latitude: \(latitude) longitude: \(longitude) elevation: \(elevation) satellites: \(satellites) horizontalAccuracy: \(horizontalAccuracy) verticalAccuracy: \(verticalAccuracy) pdop: \(pdop) fixType: \(fixType) gnssFixOk: \(gnssFixOk) fullyResolved: \(fullyResolved) rpm: \(rpm) engineLoad: \(engineLoad) coolantTemperature: \(coolantTemperature) ambientTemperature: \(ambientTemperature) throttlePosition: \(throttlePosition)"
-//    }
-//}
+extension VGDataPoint: Equatable {
+    static func == (lhs: VGDataPoint, rhs: VGDataPoint) -> Bool {
+        return lhs.timestamp == rhs.timestamp
+    }
+}
+
+
+extension VGDataPoint: Comparable {
+    static func < (lhs: VGDataPoint, rhs: VGDataPoint) -> Bool {
+        return lhs.timestamp! < rhs.timestamp!
+    }
+}
+
+extension VGDataPoint: CustomStringConvertible {
+    var description: String {
+        return "timestamp: \(timestamp) latitude: \(latitude) longitude: \(longitude) elevation: \(elevation) satellites: \(satellites) horizontalAccuracy: \(horizontalAccuracy) verticalAccuracy: \(verticalAccuracy) pdop: \(pdop) fixType: \(fixType) gnssFixOk: \(gnssFixOk) fullyResolved: \(fullyResolved) rpm: \(rpm) engineLoad: \(engineLoad) coolantTemperature: \(coolantTemperature) ambientTemperature: \(ambientTemperature) throttlePosition: \(throttlePosition)"
+    }
+}

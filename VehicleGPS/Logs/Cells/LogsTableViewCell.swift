@@ -21,6 +21,9 @@ class LogsTableViewCell: UITableViewCell {
     @IBOutlet weak var fileOnGPSIndicator: UIImageView!
     @IBOutlet weak var fileOnDeviceIndicator: UIImageView!
     var vgFileManager: VGFileManager!
+    
+    
+    
     func update(progress:Double) {
         let viewWidth = self.frame.width
         progressViewWidthConstraint.constant = viewWidth*CGFloat(progress)
@@ -79,6 +82,8 @@ class LogsTableViewCell: UITableViewCell {
         }
 
     }
+    
+    
     
     func fileNameToDate(dateString:String) -> Date {
         let dateFormatter = DateFormatter()

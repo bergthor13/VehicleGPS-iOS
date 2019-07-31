@@ -26,9 +26,8 @@ class VGLogDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         initializeMapView()
-        initializeTrackDataView()
-        initializeCarDataView()
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(displayShareSelection))
         let detailSegment = UISegmentedControl(items: ["Map", "Track Data", "Car Data"])
         detailSegment.addTarget(self, action: Selector(("segmentedControlValueChanged:")), for:.valueChanged)
@@ -40,7 +39,47 @@ class VGLogDetailsViewController: UIViewController {
         self.view.backgroundColor = .white
         self.mapView.delegate = self
         self.mapView.mapType = .hybrid
-        process(track: track)
+        let list = dataStore.getPointsForTrack(vgTrack: track).sorted()
+        var points = [CLLocationCoordinate2D]()
+        for point in dataStore.getPointsForTrack(vgTrack: track).sorted() {
+            points.append(CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude))
+        }
+        if list.count > 0 {
+            display(track: track, list: points, on: self.mapView)
+        } else {
+            process(track: track)
+        }
+    }
+    
+    func display(track:VGTrack, list:[CLLocationCoordinate2D], on mapView:MKMapView) {
+        // pad our map by 10% around the farthest annotations
+        let MAP_PADDING = 1.1
+        
+        // we'll make sure that our minimum vertical span is about a kilometer
+        // there are ~111km to a degree of latitude. regionThatFits will take care of
+        // longitude, which is more complicated, anyway.
+        let MINIMUM_VISIBLE_LATITUDE = 0.01
+        let centerLat = (track.minLat + track.maxLat) / 2;
+        let centerLon = (track.minLon + track.maxLon) / 2;
+        
+        let centerCoord = CLLocationCoordinate2D(latitude: centerLat, longitude: centerLon)
+        
+        var latitudeDelta = abs(track.maxLat - track.minLat) * MAP_PADDING;
+        
+        latitudeDelta = (latitudeDelta < MINIMUM_VISIBLE_LATITUDE)
+            ? MINIMUM_VISIBLE_LATITUDE
+            : latitudeDelta;
+        
+        let longitudeDelta = abs((track.maxLon - track.minLon) * MAP_PADDING)
+        let region = MKCoordinateRegion(center: centerCoord, span: MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta))
+        
+        DispatchQueue.main.async {
+            if list.count > 0 {
+                self.mapView.setRegion(region, animated: true)
+            }
+            let polyline = MKPolyline(coordinates: list, count: list.count)
+            mapView.addOverlay(polyline)
+        }
     }
     
     func process(track:VGTrack) {
@@ -54,43 +93,16 @@ class VGLogDetailsViewController: UIViewController {
                 hud.label.text = "Parsing lines"
             }
             
-        }) { (track) in
+        }, callback: { (track) in
             self.track = track
             DispatchQueue.main.async {
                 hud.hide(animated: true)
             }
             self.dataStore.update(vgTrack: track)
             
-            var points = track.getCoordinateList()
-            // pad our map by 10% around the farthest annotations
-            let MAP_PADDING = 1.1
-            
-            // we'll make sure that our minimum vertical span is about a kilometer
-            // there are ~111km to a degree of latitude. regionThatFits will take care of
-            // longitude, which is more complicated, anyway.
-            let MINIMUM_VISIBLE_LATITUDE = 0.01
-            let centerLat = (track.minLat + track.maxLat) / 2;
-            let centerLon = (track.minLon + track.maxLon) / 2;
-            
-            let centerCoord = CLLocationCoordinate2D(latitude: centerLat, longitude: centerLon)
-            
-            var latitudeDelta = abs(track.maxLat - track.minLat) * MAP_PADDING;
-            
-            latitudeDelta = (latitudeDelta < MINIMUM_VISIBLE_LATITUDE)
-                ? MINIMUM_VISIBLE_LATITUDE
-                : latitudeDelta;
-            
-            let longitudeDelta = abs((track.maxLon - track.minLon) * MAP_PADDING)
-            let region = MKCoordinateRegion(center: centerCoord, span: MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta))
-            
-            DispatchQueue.main.async {
-                if points.count > 0 {
-                    self.mapView.setRegion(region, animated: true)
-                }
-                let polyline = MKPolyline(coordinates: &points, count: points.count)
-                self.mapView.addOverlay(polyline)
-            }
-        }
+            let points = track.getCoordinateList()
+            self.display(track: track, list: points, on: self.mapView)
+        })
 
     }
     
@@ -130,8 +142,10 @@ class VGLogDetailsViewController: UIViewController {
         case 0:
             view.addSubview(mapSegmentView)
         case 1:
+            initializeTrackDataView()
             view.addSubview(trackSegmentView)
         case 2:
+            initializeCarDataView()
             view.addSubview(carSegmentView)
         default:
             break;
@@ -173,11 +187,11 @@ class VGLogDetailsViewController: UIViewController {
 
     func initializeTrackDataView() {
         trackSegmentView = UIView(frame: view.frame)
-//        let trackDataViewController = VGLogDetailsTrackTableViewController(style: .grouped)
-//        trackDataViewController.fileLocation = self.fileLocation
-//        addChild(trackDataViewController)
-//        trackSegmentView.addSubview(trackDataViewController.view)
-//        trackDataViewController.didMove(toParent: self)
+        let trackDataViewController = VGLogDetailsTrackTableViewController(style: .grouped)
+        trackDataViewController.track = self.track
+        addChild(trackDataViewController)
+        trackSegmentView.addSubview(trackDataViewController.view)
+        trackDataViewController.didMove(toParent: self)
 
     }
     
