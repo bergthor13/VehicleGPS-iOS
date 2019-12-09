@@ -34,7 +34,7 @@ class VGLogsTableViewController: UITableViewController {
         super.viewDidLoad()
         self.tableView.register(UINib(nibName: "LogsTableViewCell", bundle: nil), forCellReuseIdentifier: "LogsCell")
         self.tableView.register(UINib(nibName: "LogHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: "LogsHeader")
-        self.title = "Logs"
+        self.title = "Ferlar"
         // Add Refresh Control to Table View
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(fetchLogList), for: UIControl.Event.valueChanged)
@@ -47,8 +47,8 @@ class VGLogsTableViewController: UITableViewController {
             }
         }
         
-        let button = UIBarButtonItem(title: "Download", style: .plain, target: self, action: #selector(self.downloadFiles))
-        let button1 = UIBarButtonItem(title: "Parse", style: .plain, target: self, action: #selector(self.processFiles))
+        let button = UIBarButtonItem(title: "Hlaða niður", style: .plain, target: self, action: #selector(self.downloadFiles))
+        let button1 = UIBarButtonItem(title: "Þátta", style: .plain, target: self, action: #selector(self.processFiles))
 
         
         self.navigationItem.rightBarButtonItem = button
@@ -62,14 +62,14 @@ class VGLogsTableViewController: UITableViewController {
     @objc func downloadFiles() {
         if self.isInDownloadingState {
             shouldStopDownloading = true
-            self.navigationItem.rightBarButtonItem?.title = "Download"
+            self.navigationItem.rightBarButtonItem?.title = "Hlaða niður"
             self.navigationItem.rightBarButtonItem?.style = .plain
             self.isInDownloadingState = false
 
             return
         }
         self.isInDownloadingState = true
-        self.navigationItem.rightBarButtonItem?.title = "Stop"
+        self.navigationItem.rightBarButtonItem?.title = "Stöðva"
         self.navigationItem.rightBarButtonItem?.style = .done
         
         for key in self.sectionKeys {
@@ -82,7 +82,7 @@ class VGLogsTableViewController: UITableViewController {
                 }
             }
         }
-        self.navigationItem.prompt = "Downloading. \(downloadCount) tracks left."
+        self.navigationItem.prompt = "Hleður niður. \(downloadCount) ferlar eftir."
         DispatchQueue.global(qos: .background).async {
             for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
                 guard let trackList = self.tracksDict[sectionKey] else {
@@ -114,7 +114,7 @@ class VGLogsTableViewController: UITableViewController {
                             _ = self.vgFileManager!.dataToFile(data: data, filename: track.fileName)
                             self.dataStore.update(vgTrack: track)
                             DispatchQueue.main.async {
-                                self.navigationItem.prompt = "Downloading. \(self.downloadCount) tracks left."
+                                self.navigationItem.prompt = "Hleður niður. \(self.downloadCount) ferlar eftir."
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
                                     return
                                 }
@@ -130,7 +130,7 @@ class VGLogsTableViewController: UITableViewController {
                 if self.downloadCount == 0 {
                     self.navigationItem.prompt = nil
                 }
-                self.navigationItem.rightBarButtonItem?.title = "Download"
+                self.navigationItem.rightBarButtonItem?.title = "Hlaða niður"
                 self.navigationItem.rightBarButtonItem?.style = .plain
                 self.isInDownloadingState = false
             }
@@ -148,7 +148,7 @@ class VGLogsTableViewController: UITableViewController {
                 }
             }
         }
-        self.navigationItem.prompt = "Parsing. \(parseCount) tracks left."
+        self.navigationItem.prompt = "Þátta. \(parseCount) ferlar eftir."
         
         for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
             guard let trackList = self.tracksDict[sectionKey] else {
@@ -176,7 +176,7 @@ class VGLogsTableViewController: UITableViewController {
                             self.tracksDict[sectionKey]![rowIndex] = track
                             DispatchQueue.main.async {
                                 self.parseCount -= 1
-                                self.navigationItem.prompt = "Parsing. \(self.parseCount) tracks left."
+                                self.navigationItem.prompt = "Þátta. \(self.parseCount) ferlar eftir."
                                 track.beingProcessed = true
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
                                     return
@@ -285,7 +285,7 @@ class VGLogsTableViewController: UITableViewController {
     func tryToConnectSSH(session:NMSSHSession) -> Bool {
         if !session.connect() {
             DispatchQueue.main.async {
-                self.displayErrorAlert(title: "SSH Connection Error", message: self.session?.lastError?.localizedDescription)
+                //self.displayErrorAlert(title: "SSH Connection Error", message: self.session?.lastError?.localizedDescription)
             }
             return false
         }
@@ -389,7 +389,7 @@ class VGLogsTableViewController: UITableViewController {
         dateFormatter.dateStyle = .full
         dateFormatter.locale = Locale(identifier: "is_IS")
         dateFormatter.doesRelativeDateFormatting = true
-        var dateString = dateFormatter.string(from: date)
+        let dateString = dateFormatter.string(from: date)
         var totalDuration = 0.0
         var totalDistance = 0.0
         var distanceString = ""
@@ -417,7 +417,6 @@ class VGLogsTableViewController: UITableViewController {
         
         
         let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as! LogHeaderView
-        view.contentView.backgroundColor = UIColor(red: 0xF7/255.0, green: 0xF7/255.0, blue: 0xF7/255.0, alpha: 1.0)
         view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
         return view

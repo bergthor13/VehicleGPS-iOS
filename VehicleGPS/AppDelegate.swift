@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import NetworkExtension
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,22 +22,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let tabController = VGTabBarController()
         
         let dashboardController = VGDashboardNavigationController()
-        dashboardController.tabBarItem = UITabBarItem(title: "Dashboard", image: nil, tag: 0)
+        dashboardController.tabBarItem = UITabBarItem(title: "Mælaborð", image: nil, tag: 0)
         tabController.addChild(dashboardController)
         
         let logsController = VGLogsNavigationViewController()
-        logsController.tabBarItem = UITabBarItem(title: "Logs", image:UIImage(imageLiteralResourceName: "LogIcon"), tag: 0)
+        logsController.tabBarItem = UITabBarItem(title: "Ferlar", image:UIImage(imageLiteralResourceName: "LogIcon"), tag: 0)
         tabController.addChild(logsController)
         
         
         let settingsController = VGSettingsNavigationController()
-        settingsController.tabBarItem = UITabBarItem(title: "Settings", image: nil, tag: 0)
+        settingsController.tabBarItem = UITabBarItem(title: "Stillingar", image: nil, tag: 0)
         tabController.addChild(settingsController)
         tabController.selectedIndex = 1
         
         self.window?.rootViewController = tabController
         self.window?.makeKeyAndVisible()
         
+        let configuration = NEHotspotConfiguration(ssid: "VehicleGPS", passphrase: "easyprintsequence", isWEP: false)
+        configuration.joinOnce = true
+        NEHotspotConfigurationManager.shared.apply(configuration) { (error) in
+            print(error)
+        }
         return true
     }
 

@@ -46,34 +46,45 @@ class VGLogParser {
                     continue
                 }
                 let dataPoint = VGDataPoint(csvLine: String(line))
+                if dataPoint.hasOBDData && track.hasOBDData == false {
+                    track.hasOBDData = true
+                }
                 
                 if dataPoint.fixType > 1 {
                     if track.timeStart == nil && dataPoint.timestamp! > Date(timeIntervalSince1970: 1388534400) {
                         track.timeStart = dataPoint.timestamp
                     }
                     
-                    if track.minLat < dataPoint.latitude {
-                        track.minLat = dataPoint.latitude
+                    guard let latitude = dataPoint.latitude, let longitude = dataPoint.longitude else {
+                        continue
                     }
-                    if track.maxLat > dataPoint.latitude {
-                        track.maxLat = dataPoint.latitude
+                    
+                    if track.minLat < latitude {
+                        track.minLat = latitude
                     }
-                    if track.minLon < dataPoint.longitude {
-                        track.minLon = dataPoint.longitude
+                    if track.maxLat > latitude {
+                        track.maxLat = latitude
                     }
-                    if track.maxLon > dataPoint.longitude {
-                        track.maxLon = dataPoint.longitude
+                    if track.minLon < longitude {
+                        track.minLon = longitude
+                    }
+                    if track.maxLon > longitude {
+                        track.maxLon = longitude
                     }
 
                     if lastDataPoint != nil && lastDataPoint!.fixType > 1 {
-                        let coord = CLLocation(latitude: dataPoint.latitude, longitude: dataPoint.longitude)
-                        let lastCoord = CLLocation(latitude: lastDataPoint!.latitude, longitude: lastDataPoint!.longitude)
+                        guard let lastLatitude = lastDataPoint!.latitude, let lastLongitude = lastDataPoint!.longitude else {
+                            continue
+                        }
+                        let coord = CLLocation(latitude: latitude, longitude: longitude)
+                        let lastCoord = CLLocation(latitude: lastLatitude, longitude: lastLongitude)
 
                         track.distance += coord.distance(from: lastCoord)/1000
                     }
                     
-                    track.trackPoints.append(dataPoint)
                 }
+                track.trackPoints.append(dataPoint)
+
                 lastDataPoint = dataPoint
             }
             if track.timeStart != nil {
@@ -96,23 +107,28 @@ class VGLogParser {
         }
     }
     
-    func getImageCoordinate(vgTrack:VGTrack, point:VGDataPoint, size:CGSize) -> CGPoint{
-        let minMaxLonDelta = (vgTrack.maxLon - vgTrack.minLon)
-        let minMaxLatDelta = (vgTrack.maxLat - vgTrack.minLat)
-        let aspect = minMaxLatDelta/minMaxLonDelta
-        let lonDelta = point.longitude-vgTrack.minLon
-        let latDelta = point.latitude-vgTrack.minLat
-        
-        let lonPerc = (1-(lonDelta/minMaxLonDelta))
-        let latPerc = (latDelta/minMaxLatDelta)
-        
-        let imageLonLoc = (CGFloat(lonPerc)*size.width*PNG_PADDING)
-        let imageLatLoc = (CGFloat(latPerc)*size.height*PNG_PADDING*CGFloat(aspect))
-        return CGPoint(x:imageLonLoc+(size.width*(1-PNG_PADDING))/2, y: imageLatLoc+(size.height*(1-PNG_PADDING))/2)
-    }
-    
+//    func getImageCoordinate(vgTrack:VGTrack, point:VGDataPoint, size:CGSize) -> CGPoint{
+//        guard let latitude = point.latitude, let longitude = point.longitude else {
+//            return
+//        }
+//
+//        let minMaxLonDelta = (vgTrack.maxLon - vgTrack.minLon)
+//        let minMaxLatDelta = (vgTrack.maxLat - vgTrack.minLat)
+//        let aspect = minMaxLatDelta/minMaxLonDelta
+//        let lonDelta = longitude-vgTrack.minLon
+//        let latDelta = latitude-vgTrack.minLat
+//
+//        let lonPerc = (1-(lonDelta/minMaxLonDelta))
+//        let latPerc = (latDelta/minMaxLatDelta)
+//
+//        let imageLonLoc = (CGFloat(lonPerc)*size.width*PNG_PADDING)
+//        let imageLatLoc = (CGFloat(latPerc)*size.height*PNG_PADDING*CGFloat(aspect))
+//        return CGPoint(x:imageLonLoc+(size.width*(1-PNG_PADDING))/2, y: imageLatLoc+(size.height*(1-PNG_PADDING))/2)
+//    }
+//
     func drawTrack(vgTrack:VGTrack, imageCallback:@escaping ()->Void) {
         let mapSnapshotOptions = MKMapSnapshotter.Options()
+        
         // If there are no points, create an image showing Iceland.
         if vgTrack.getCoordinateList().count == 0 {
             
@@ -139,8 +155,9 @@ class VGLogParser {
             let snapShotter = MKMapSnapshotter(options: mapSnapshotOptions)
                 snapShotter.start { (snapshot:MKMapSnapshotter.Snapshot?, error:Error?) in
                     self.vgFileManager.savePNG(image: snapshot!.image, for: vgTrack)
+                    imageCallback()
                 }
-            imageCallback()
+            
             return
         }
         
@@ -227,21 +244,21 @@ class VGLogParser {
 
     }
     
-    func drawTrack2(vgTrack:VGTrack) -> UIImage {
-        let size = CGSize(width: 110, height: 110)
-        let renderer = UIGraphicsImageRenderer(size: size)
-        let image = renderer.image { ctx in
-            ctx.cgContext.setStrokeColor(UIColor.red.cgColor)
-            ctx.cgContext.setLineWidth(2)
-            for (point1, point2) in zip(vgTrack.trackPoints, vgTrack.trackPoints.dropFirst()) {
-                let pt1 = getImageCoordinate(vgTrack: vgTrack, point: point1, size: size)
-                let pt2 = getImageCoordinate(vgTrack: vgTrack, point: point2, size: size)
-                
-                ctx.cgContext.move(to: pt1)
-                ctx.cgContext.addLine(to: pt2)
-                ctx.cgContext.strokePath()
-            }
-        }
-        return image
-    }
+//    func drawTrack2(vgTrack:VGTrack) -> UIImage {
+//        let size = CGSize(width: 110, height: 110)
+//        let renderer = UIGraphicsImageRenderer(size: size)
+//        let image = renderer.image { ctx in
+//            ctx.cgContext.setStrokeColor(UIColor.red.cgColor)
+//            ctx.cgContext.setLineWidth(2)
+//            for (point1, point2) in zip(vgTrack.trackPoints, vgTrack.trackPoints.dropFirst()) {
+//                let pt1 = getImageCoordinate(vgTrack: vgTrack, point: point1, size: size)
+//                let pt2 = getImageCoordinate(vgTrack: vgTrack, point: point2, size: size)
+//                
+//                ctx.cgContext.move(to: pt1)
+//                ctx.cgContext.addLine(to: pt2)
+//                ctx.cgContext.strokePath()
+//            }
+//        }
+//        return image
+//    }
 }

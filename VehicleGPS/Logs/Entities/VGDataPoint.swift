@@ -13,10 +13,10 @@ class VGDataPoint {
     
     // 2019-04-24T17:46:17.599829,63.995643,-22.634326,41.482,7,0.994,1.484,3.48,3,True,False,1103.5,34.509803921568626,14,5,14.509803921568627
     var timestamp:Date?
-    var latitude:Double
-    var longitude:Double
-    var elevation:Double
-    var satellites:Int
+    var latitude:Double?
+    var longitude:Double?
+    var elevation:Double?
+    var satellites:Int?
     var horizontalAccuracy:Double
     var verticalAccuracy:Double
     var pdop:Double
@@ -28,6 +28,8 @@ class VGDataPoint {
     var coolantTemperature:Double?
     var ambientTemperature:Double?
     var throttlePosition:Double?
+    
+    var hasOBDData = false
     
     var relatedTrack: VGTrack?
     
@@ -69,18 +71,23 @@ class VGDataPoint {
         
         if data[11] != "None" {
             rpm = Double(data[11])
+            hasOBDData = true
         }
         if data[12] != "None" {
             engineLoad = Double(data[12])
+            hasOBDData = true
         }
         if data[13] != "None" {
             coolantTemperature = Double(data[13])
+            hasOBDData = true
         }
         if data[14] != "None" {
             ambientTemperature = Double(data[14])
+            hasOBDData = true
         }
         if data[15] != "None" {
             throttlePosition = Double(data[15])
+            hasOBDData = true
         }
     }
     
@@ -90,21 +97,19 @@ class VGDataPoint {
         } else {
             self.timestamp = Date(timeIntervalSince1970: 0.0)
         }
+        
         if let latitude = managedPoint.value(forKey: "latitude") as? Double {
             self.latitude = latitude
-        } else {
-            self.latitude = 0.0
         }
+        
         if let longitude = managedPoint.value(forKey: "longitude") as? Double {
             self.longitude = longitude
-        } else {
-            self.longitude = 0.0
         }
+        
         if let elevation = managedPoint.value(forKey: "elevation") as? Double {
             self.elevation = elevation
-        } else {
-            self.elevation = 0.0
         }
+        
         if let satellites = managedPoint.value(forKey: "satellites") as? Int {
             self.satellites = satellites
         } else {
@@ -113,17 +118,17 @@ class VGDataPoint {
         if let horizontalAccuracy = managedPoint.value(forKey: "horizontalAccuracy") as? Double {
             self.horizontalAccuracy = horizontalAccuracy
         } else {
-            self.horizontalAccuracy = 0.0
+            self.horizontalAccuracy = Double.infinity
         }
         if let verticalAccuracy = managedPoint.value(forKey: "verticalAccuracy") as? Double {
             self.verticalAccuracy = verticalAccuracy
         } else {
-            self.verticalAccuracy = 0.0
+            self.verticalAccuracy = Double.infinity
         }
         if let pdop = managedPoint.value(forKey: "pdop") as? Double {
             self.pdop = pdop
         } else {
-            self.pdop = 0.0
+            self.pdop = Double.infinity
         }
         if let fixType = managedPoint.value(forKey: "fixType") as? Int {
             self.fixType = fixType
@@ -192,6 +197,6 @@ extension VGDataPoint: Comparable {
 
 extension VGDataPoint: CustomStringConvertible {
     var description: String {
-        return "timestamp: \(timestamp) latitude: \(latitude) longitude: \(longitude) elevation: \(elevation) satellites: \(satellites) horizontalAccuracy: \(horizontalAccuracy) verticalAccuracy: \(verticalAccuracy) pdop: \(pdop) fixType: \(fixType) gnssFixOk: \(gnssFixOk) fullyResolved: \(fullyResolved) rpm: \(rpm) engineLoad: \(engineLoad) coolantTemperature: \(coolantTemperature) ambientTemperature: \(ambientTemperature) throttlePosition: \(throttlePosition)"
+        return "timestamp: \(String(describing: timestamp)) latitude: \(String(describing: latitude)) longitude: \(String(describing: longitude)) elevation: \(String(describing: elevation)) satellites: \(String(describing: satellites)) horizontalAccuracy: \(horizontalAccuracy) verticalAccuracy: \(verticalAccuracy) pdop: \(pdop) fixType: \(fixType) gnssFixOk: \(gnssFixOk) fullyResolved: \(fullyResolved) rpm: \(String(describing: rpm)) engineLoad: \(String(describing: engineLoad)) coolantTemperature: \(String(describing: coolantTemperature)) ambientTemperature: \(String(describing: ambientTemperature)) throttlePosition: \(String(describing: throttlePosition))"
     }
 }

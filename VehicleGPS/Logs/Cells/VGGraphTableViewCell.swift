@@ -10,16 +10,39 @@ import UIKit
 
 class VGGraphTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var graphView: TrackGraphView!
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    var graphView: TrackGraphView!
+    var tableView: UITableView? {
+        didSet {
+            self.graphView.tableView = tableView
+        }
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        initializeView()
     }
-
+    
+    init(style: UITableViewCell.CellStyle, reuseIdentifier: String?, tableView:UITableView) {
+        self.tableView = tableView
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        initializeView()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        initializeView()
+    }
+    
+    func initializeView() {
+        if tableView != nil {
+            self.graphView = TrackGraphView(frame: self.contentView.frame, tableView: self.tableView!)
+        } else {
+            self.graphView = TrackGraphView(frame: self.contentView.frame)
+        }
+        
+        self.contentView.addSubview(graphView)
+    }
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.graphView.frame = self.contentView.frame
+    }
 }

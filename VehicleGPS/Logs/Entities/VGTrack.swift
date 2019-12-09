@@ -23,6 +23,7 @@ class VGTrack {
     var processed:Bool
     var isRemote:Bool
     var beingProcessed = false
+    var hasOBDData = false
     var averageSpeed:Double {
         get {
             return distance/duration/60/60
@@ -40,15 +41,39 @@ class VGTrack {
         maxLon = 200.0
         processed = false
         isRemote = false
-        beingProcessed = false
         
         trackPoints = [VGDataPoint]()
     }
     
     func getCoordinateList() -> [CLLocationCoordinate2D] {
+        guard let firstPoint = trackPoints.first else {
+            return []
+        }
         var list = [CLLocationCoordinate2D]()
-        for point in trackPoints {
-            list.append(CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude))
+
+        if let firstLatitude = firstPoint.latitude, let firstLongitude = firstPoint.longitude {
+            if firstPoint.fixType > 1 {
+                list.append(CLLocationCoordinate2D(latitude: firstLatitude, longitude: firstLongitude))
+            }
+        }
+        for (point1, point2) in zip(trackPoints, trackPoints.dropFirst()) {
+            guard let latitude1 = point1.latitude, let longitude1 = point1.longitude else {
+                continue
+            }
+            guard let latitude2 = point2.latitude, let longitude2 = point2.longitude else {
+                continue
+            }
+            let duration = point2.timestamp?.timeIntervalSince(point1.timestamp!)
+            let lastCoord = CLLocation(latitude: latitude1, longitude: longitude1)
+            let coord = CLLocation(latitude: latitude2, longitude: longitude2)
+            
+            let distance = coord.distance(from: lastCoord)
+            
+            let speed = (distance/duration!)*3.6
+            if speed > 0.5 && point1.fixType > 1 && point2.fixType > 1 {
+                list.append(CLLocationCoordinate2D(latitude: latitude2, longitude: longitude2))
+            }
+            
         }
         return list
     }

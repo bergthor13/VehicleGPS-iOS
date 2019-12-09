@@ -13,7 +13,7 @@ class VGDashboardNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let dashController = DashboardViewController.init()
-        dashController.view.backgroundColor = .white
+        dashController.view.backgroundColor = .systemBackground
         self.pushViewController(dashController, animated: false)
 
         // Do any additional setup after loading the view.

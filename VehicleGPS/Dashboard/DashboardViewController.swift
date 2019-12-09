@@ -12,7 +12,7 @@ class DashboardViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Dashboard"
+        self.title = "Mælaborð"
         // Do any additional setup after loading the view.
     }
     

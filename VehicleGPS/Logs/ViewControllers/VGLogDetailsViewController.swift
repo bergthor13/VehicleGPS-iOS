@@ -29,7 +29,7 @@ class VGLogDetailsViewController: UIViewController {
         
         initializeMapView()
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(displayShareSelection))
-        let detailSegment = UISegmentedControl(items: ["Map", "Track Data", "Car Data"])
+        let detailSegment = UISegmentedControl(items: ["Kort", "Tölfræði"])
         detailSegment.addTarget(self, action: Selector(("segmentedControlValueChanged:")), for:.valueChanged)
         detailSegment.selectedSegmentIndex = 0
         self.navigationItem.titleView = detailSegment
@@ -42,7 +42,10 @@ class VGLogDetailsViewController: UIViewController {
         let list = dataStore.getPointsForTrack(vgTrack: track).sorted()
         var points = [CLLocationCoordinate2D]()
         for point in dataStore.getPointsForTrack(vgTrack: track).sorted() {
-            points.append(CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude))
+            guard let latitude = point.latitude, let longitude = point.longitude else {
+                continue
+            }
+            points.append(CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
         }
         if list.count > 0 {
             display(track: track, list: points, on: self.mapView)
@@ -85,12 +88,12 @@ class VGLogDetailsViewController: UIViewController {
     func process(track:VGTrack) {
         let logParser = VGLogParser()
         let hud = MBProgressHUD.showAdded(to: self.parent!.view, animated: true)
-        hud.label.text = "Reading file..."
+        hud.label.text = "Les skrá..."
         logParser.fileToTrack(fileUrl: self.vgFileManager.getAbsoluteFilePathFor(track: track)! , progress: { (index, count) in
             DispatchQueue.main.async {
                 hud.mode = .annularDeterminate
                 hud.progress = Float(index)/Float(count)
-                hud.label.text = "Parsing lines"
+                hud.label.text = "Þáttar línur"
             }
             
         }, callback: { (track) in
@@ -108,25 +111,23 @@ class VGLogDetailsViewController: UIViewController {
     
     @objc func displayShareSelection() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.popoverPresentationController?.barButtonItem = self.navigationItem.rightBarButtonItem
+        
+        alert.addAction(UIAlertAction(title: "Hætta við", style: .cancel, handler: nil))
 
         if vgFileManager.fileForTrackExists(track: track) {
-            alert.addAction(UIAlertAction(title: "Download CSV File", style: .default, handler: { (alertAction) in
+            alert.addAction(UIAlertAction(title: "Hlaða niður CSV skrá", style: .default, handler: { (alertAction) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: "Download GPX File", style: .default, handler: { (alertAction) in
+            alert.addAction(UIAlertAction(title: "Hlaða niður GPX skrá", style: .default, handler: { (alertAction) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: "Reprocess File", style: .default, handler: { (alertAction) in
+            alert.addAction(UIAlertAction(title: "Vinna úr skránni aftur", style: .default, handler: { (alertAction) in
                 self.process(track: self.track)
-            }))
-            
-            alert.addAction(UIAlertAction(title: "Redownload File", style: .default, handler: { (alertAction) in
-                
             }))
         }
         
