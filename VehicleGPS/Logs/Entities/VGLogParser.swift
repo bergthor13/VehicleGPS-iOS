@@ -45,6 +45,7 @@ class VGLogParser {
                 if !VGDataPoint.isValid(line: String(line)) {
                     continue
                 }
+
                 let dataPoint = VGDataPoint(csvLine: String(line))
                 if dataPoint.hasOBDData && track.hasOBDData == false {
                     track.hasOBDData = true

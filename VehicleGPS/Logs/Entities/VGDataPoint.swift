@@ -9,6 +9,63 @@
 import Foundation
 import CoreData
 
+class ISO8601DateParser {
+  private static var components = DateComponents()
+    
+  static func parse(_ dateString: String) -> Date? {
+    guard let year = getItem(string: dateString, startIndex: 0, count: 4) else {
+        return nil
+    }
+    
+    guard let month = getItem(string: dateString, startIndex: 5, count: 2) else {
+        return nil
+    }
+    
+    guard let day = getItem(string: dateString, startIndex: 8, count: 2) else {
+        return nil
+    }
+    
+    guard let hour = getItem(string: dateString, startIndex: 11, count: 2) else {
+        return nil
+    }
+    
+    guard let minute = getItem(string: dateString, startIndex: 14, count: 2) else {
+        return nil
+    }
+    
+    guard let second = getItem(string: dateString, startIndex: 17, count: 2) else {
+        return nil
+    }
+    
+    if let nanosecond = getItem(string: dateString, startIndex: 20, count: 6) {
+        components.nanosecond = nanosecond*1000
+    } else {
+        components.nanosecond = 0
+    }
+    
+    components.year   = year
+    components.month  = month
+    components.day    = day
+    components.hour   = hour
+    components.minute = minute
+    components.second = second
+    
+    let calendar = Calendar(identifier: .gregorian)
+    return calendar.date(from: components)
+  }
+
+    static private func getItem(string:String, startIndex:Int, count:Int) -> Int? {
+        if string.count < startIndex+count {
+            return nil
+        }
+        let start = string.index(string.startIndex, offsetBy: startIndex)
+        let end = string.index(string.startIndex, offsetBy: startIndex+count)
+        let range = start..<end
+        return Int(String(string[range]))
+    }
+
+}
+
 class VGDataPoint {
     
     // 2019-04-24T17:46:17.599829,63.995643,-22.634326,41.482,7,0.994,1.484,3.48,3,True,False,1103.5,34.509803921568626,14,5,14.509803921568627
@@ -34,26 +91,13 @@ class VGDataPoint {
     var relatedTrack: VGTrack?
     
     init(csvLine:String) {
-        let data = csvLine.components(separatedBy: ",")
+        let data = csvLine.split(separator: ",")
         
-        var date:Date?
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
-        date = dateFormatter.date(from:data[0])
-        if date != nil {
-            timestamp = date
-        }
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        date = dateFormatter.date(from:data[0])
-        if date != nil {
-            timestamp = date
-        }
-
-        latitude = Double(data[1])!
-        longitude = Double(data[2])!
-        elevation = Double(data[3])!
-        satellites = Int(data[4])!
+        timestamp = ISO8601DateParser.parse(String(data[0]))
+        latitude = Double(data[1])
+        longitude = Double(data[2])
+        elevation = Double(data[3])
+        satellites = Int(data[4])
         horizontalAccuracy = Double(data[5])!
         verticalAccuracy = Double(data[6])!
         pdop = Double(data[7])!
@@ -172,7 +216,7 @@ class VGDataPoint {
         }
     }
     static func isValid(line:String) -> Bool {
-        let data = line.components(separatedBy: ",")
+        let data = line.split(separator: ",")
         if data.count < 16 {
             return false
         }
