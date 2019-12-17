@@ -32,6 +32,12 @@ class VGGraphTableViewCell: UITableViewCell {
         initializeView()
     }
     
+    override func prepareForReuse() {
+        self.graphView.displayHorizontalLine(at: [])
+        self.graphView.showMinMaxValue = false
+        self.graphView.numbersList = []
+    }
+    
     func initializeView() {
         if tableView != nil {
             self.graphView = TrackGraphView(frame: self.contentView.frame, tableView: self.tableView!)

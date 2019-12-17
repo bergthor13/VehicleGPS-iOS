@@ -12,7 +12,7 @@ class VGSettingsTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Settings"
+        self.title = "Stillingar"
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -28,9 +28,9 @@ class VGSettingsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 { return "General" }
-        if section == 1 { return "GPS Chip" }
-        if section == 2 { return "Backup and Sync" }
+        if section == 0 { return "Almennt" }
+        if section == 1 { return "GPS kubbur" }
+        if section == 2 { return "Öryggisafrit og samstilling" }
         return ""
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -47,24 +47,24 @@ class VGSettingsTableViewController: UITableViewController {
             if indexPath.row == 0 {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: "unitsCell")
                 cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = "Units"
+                cell.textLabel?.text = "Einingar"
             }
             if indexPath.row == 1 {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: "gaugesCell")
                 cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = "Gauges"
+                cell.textLabel?.text = "Mælar"
             }
         }
         if indexPath.section == 1 {
             if indexPath.row == 0 {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: "messagesCell")
                 cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = "Messages"
+                cell.textLabel?.text = "Skilaboð"
             }
             if indexPath.row == 1 {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: "ForceColdStartCell")
                 cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = "Force Cold Start"
+                cell.textLabel?.text = "Neyða endurræsingu"
             }
         }
         

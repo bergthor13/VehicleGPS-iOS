@@ -10,9 +10,10 @@ import Foundation
 import CoreData
 
 class ISO8601DateParser {
-  private static var components = DateComponents()
+  
     
   static func parse(_ dateString: String) -> Date? {
+    var components = DateComponents()
     guard let year = getItem(string: dateString, startIndex: 0, count: 4) else {
         return nil
     }
@@ -102,11 +103,13 @@ class VGDataPoint {
         verticalAccuracy = Double(data[6])!
         pdop = Double(data[7])!
         fixType = Int(data[8])!
+        
         if data[9] == "True" {
             gnssFixOk = true
         } else {
             gnssFixOk = false
         }
+        
         if data[10] == "True" {
             fullyResolved = true
         } else {
@@ -117,18 +120,22 @@ class VGDataPoint {
             rpm = Double(data[11])
             hasOBDData = true
         }
+        
         if data[12] != "None" {
             engineLoad = Double(data[12])
             hasOBDData = true
         }
+        
         if data[13] != "None" {
             coolantTemperature = Double(data[13])
             hasOBDData = true
         }
+        
         if data[14] != "None" {
             ambientTemperature = Double(data[14])
             hasOBDData = true
         }
+        
         if data[15] != "None" {
             throttlePosition = Double(data[15])
             hasOBDData = true

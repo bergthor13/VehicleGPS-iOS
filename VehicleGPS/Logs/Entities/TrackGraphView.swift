@@ -53,9 +53,10 @@ class TrackGraphView: UIView {
 			var totalAltitude: CGFloat = 0.0
             var lastPixel = numbersList.first!.0
             var pointCount = 0
-			for item in numbersList {
+            for item in numbersList {
                 pointCount += 1
 				totalAltitude += CGFloat(item.1)
+
                 if item.0.timeIntervalSince(lastPixel) > secondsPerPixel {
                     
                     if CGFloat(item.1) < minValue {
@@ -71,6 +72,7 @@ class TrackGraphView: UIView {
                     lastPixel = item.0
 				}
 			}
+            
             if showMinMaxValue {
                 guard let newMax = self.graphMaxValue else {
                     setNeedsLayout()
@@ -81,6 +83,7 @@ class TrackGraphView: UIView {
                     setNeedsLayout()
                     return
                 }
+
                 self.maxValue = CGFloat(newMax)
                 self.minValue = CGFloat(newMin)
             }
@@ -116,7 +119,12 @@ class TrackGraphView: UIView {
             
             let line = UIView(frame: CGRect(origin: CGPoint(x: 0, y: getColumnYPoint(graphPoint: value)), size: CGSize(width: self.graphFrame.width, height: 0.5)))
             line.tag = 300
-            line.backgroundColor = .lightGray
+            if traitCollection.userInterfaceStyle == .light {
+                line.backgroundColor = .lightGray
+
+            } else {
+                line.backgroundColor = .darkGray
+            }
             self.addSubview(line)
         }
         
@@ -165,8 +173,13 @@ class TrackGraphView: UIView {
         self.graphFrame = CGRect(x: self.bounds.origin.x, y: self.bounds.origin.y, width: self.bounds.width-60, height: self.bounds.height)
 		drawGraph()
         self.graphSeparator?.frame = CGRect(origin: CGPoint(x: self.graphFrame.width, y: 0), size: CGSize(width: 0.25, height: self.graphFrame.height))
-        self.graphSeparator?.backgroundColor = .lightGray
-        self.displayHorizontalLine(at: [30, 40, 50, 60, 70, 80, 90])
+        if traitCollection.userInterfaceStyle == .light {
+            self.graphSeparator?.backgroundColor = .lightGray
+
+        } else {
+            self.graphSeparator?.backgroundColor = .darkGray
+        }
+        
         self.maxLabel!.text = String(format: "%.2f", self.maxValue)
         self.minLabel?.text = String(format: "%.2f", self.minValue)
         self.maxLabel?.frame = CGRect(x: self.bounds.width-205, y: 5, width: 200, height: 15)

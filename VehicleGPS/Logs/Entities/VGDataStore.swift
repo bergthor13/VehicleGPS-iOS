@@ -98,6 +98,10 @@ class VGDataStore {
                     vgTrack.processed = processed
                 }
                 
+                if let timeStart = track.value(forKey: "timeStart") as? Date {
+                    vgTrack.timeStart = timeStart
+                }
+                
                 result.append(vgTrack)
             }
             
@@ -224,6 +228,7 @@ class VGDataStore {
         track.setValue(vgTrack.minLon, forKey: "minLon")
         track.setValue(vgTrack.maxLon, forKey: "maxLon")
         track.setValue(vgTrack.processed, forKey: "processed")
+        track.setValue(vgTrack.timeStart, forKey: "timeStart")
 
         for point in vgTrack.trackPoints {
             add(vgDataPoint: point, to: track, in: context)
@@ -276,6 +281,8 @@ class VGDataStore {
                         trackUpdate.setValue(vgTrack.minLon, forKey: "minLon")
                         trackUpdate.setValue(vgTrack.maxLon, forKey: "maxLon")
                         trackUpdate.setValue(vgTrack.processed, forKey: "processed")
+                        print(vgTrack.timeStart)
+                        trackUpdate.setValue(vgTrack.timeStart, forKey: "timeStart")
                         
 //                        for point in vgTrack.trackPoints {
 //                            self.add(vgDataPoint: point, to: trackUpdate, in: context)

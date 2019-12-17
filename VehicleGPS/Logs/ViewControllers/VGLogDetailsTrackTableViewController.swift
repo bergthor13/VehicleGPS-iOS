@@ -86,6 +86,8 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             cell?.graphView.showMinMaxValue = false
             cell!.graphView.color = UIColor(red: 0, green: 0.5, blue: 1, alpha: 0.3)
             cell!.graphView.numbersList = list
+            cell!.graphView.displayHorizontalLine(at: [30, 40, 50, 60, 70, 80, 90])
+
             
         } else if indexPath.section == 1 {
             var list = [(Date, Double)]()
@@ -99,7 +101,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
                 }
                 list.append((point.timestamp!, point.elevation!))
             }
-            cell?.graphView.showMinMaxValue = false
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
 
@@ -114,7 +115,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
                 }
                 list.append((point.timestamp!, point.pdop))
             }
-            cell?.graphView.showMinMaxValue = false
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
             
@@ -129,7 +129,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
                 }
                 list.append((point.timestamp!, point.horizontalAccuracy))
             }
-            cell?.graphView.showMinMaxValue = false
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
             
@@ -142,7 +141,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
                     list.append((point.timestamp!, 0.0))
                 }
             }
-            cell?.graphView.showMinMaxValue = false
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
             
@@ -153,7 +151,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
                     list.append((point.timestamp!, engineLoad))
                 }
             }
-            cell?.graphView.showMinMaxValue = false
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
             
@@ -164,7 +161,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
                     list.append((point.timestamp!, throttlePosition))
                 }
             }
-            cell?.graphView.showMinMaxValue = false
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
             
@@ -180,6 +176,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             cell?.graphView.showMinMaxValue = true
             cell!.graphView.color = UIColor(red: 165/255.0, green: 50/255.0, blue: 45/255.0, alpha: 0.3)
             cell!.graphView.numbersList = list
+            cell!.graphView.displayHorizontalLine(at: [90])
             
         } else if indexPath.section == 8 {
             var list = [(Date, Double)]()
@@ -189,11 +186,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
                 }
             }
             cell!.graphView.color = UIColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 0.3)
-            cell?.graphView.showMinMaxValue = true
-            cell?.graphView.graphMinValue = 0
-            cell?.graphView.graphMaxValue = 25
             cell!.graphView.numbersList = list
-            
         }
         return cell!
     }

@@ -36,7 +36,7 @@ class VGLogDetailsViewController: UIViewController {
     
         view.addSubview(mapSegmentView)
     
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .systemBackground
         self.mapView.delegate = self
         self.mapView.mapType = .hybrid
         let list = dataStore.getPointsForTrack(vgTrack: track).sorted()
@@ -154,8 +154,8 @@ class VGLogDetailsViewController: UIViewController {
     }
     
     func initializeMapView() {
-        mapSegmentView = UIView(frame: view.frame)
-        mapView = MKMapView(frame: self.view.frame)
+        mapSegmentView = UIView(frame: view.bounds)
+        mapView = MKMapView(frame: view.bounds)
         mapSegmentView.addSubview(mapView)
     }
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -180,6 +180,7 @@ class VGLogDetailsViewController: UIViewController {
             
         }, completion: { (UIViewControllerTransitionCoordinatorContext) -> Void in
             self.mapView.frame = self.view.frame
+            self.mapView.bounds = self.view.bounds
             
         })
         super.viewWillTransition(to: size, with: coordinator)
@@ -188,16 +189,17 @@ class VGLogDetailsViewController: UIViewController {
 
     func initializeTrackDataView() {
         trackSegmentView = UIView(frame: view.frame)
-        let trackDataViewController = VGLogDetailsTrackTableViewController(style: .grouped)
-        trackDataViewController.track = self.track
-        addChild(trackDataViewController)
-        trackSegmentView.addSubview(trackDataViewController.view)
-        trackDataViewController.didMove(toParent: self)
+        let trackDataTableViewController = VGLogDetailsTrackTableViewController(style: .grouped)
+        trackDataTableViewController.tableView.frame = view.frame
+        trackDataTableViewController.track = self.track
+        addChild(trackDataTableViewController)
+        trackSegmentView.addSubview(trackDataTableViewController.view)
+        trackDataTableViewController.didMove(toParent: self)
 
     }
     
     func initializeCarDataView() {
-        carSegmentView = UIView(frame: view.frame)
+        carSegmentView = UIView(frame: view.bounds)
 //        let carDataViewController = VGLogDetailsCarTableViewController(style: .grouped)
 //        addChild(carDataViewController)
 //        carSegmentView.addSubview(carDataViewController.view)

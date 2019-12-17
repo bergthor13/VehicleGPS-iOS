@@ -87,7 +87,7 @@ extension VGTrack: Equatable {
 
 extension VGTrack: CustomStringConvertible {
     var description: String {
-        return "duration: \(duration) distance: \(distance) fileName: \(fileName) fileSize: \(fileSize) timeStart: \(String(describing: timeStart)) trackPoints: \(trackPoints.count)"
+        return "timeStart: \(String(describing: timeStart))"
     }
 }
 

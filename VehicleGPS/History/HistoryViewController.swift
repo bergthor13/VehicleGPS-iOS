@@ -1,5 +1,5 @@
 //
-//  VGLogsNavigationViewController.swift
+//  DashboardViewController.swift
 //  VehicleGPS
 //
 //  Created by Bergþór Þrastarson on 05/10/2018.
@@ -8,12 +8,11 @@
 
 import UIKit
 
-class VGLogsNavigationViewController: UINavigationController {
-
+class HistoryViewController: UIViewController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        let logsController = VGLogsTableViewController.init(style: .plain)
-        self.pushViewController(logsController, animated: false)
+        self.title = "Saga"
     }
     
 

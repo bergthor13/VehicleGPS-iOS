@@ -143,7 +143,7 @@ class VGLogsTableViewController: UITableViewController {
                 continue
             }
             for track in trackList {
-                if !track.processed {
+                if track.timeStart == nil {
                     self.parseCount += 1
                 }
             }
@@ -156,7 +156,7 @@ class VGLogsTableViewController: UITableViewController {
             }
             for (rowIndex, track) in trackList.enumerated() {
                 DispatchQueue.global(qos: .background).async {
-                    if !track.processed && self.vgFileManager?.getAbsoluteFilePathFor(track: track) != nil {
+                    if track.timeStart == nil && self.vgFileManager?.getAbsoluteFilePathFor(track: track) != nil {
                         track.beingProcessed = true
                         DispatchQueue.main.async {
                             guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
@@ -339,7 +339,12 @@ class VGLogsTableViewController: UITableViewController {
     func tracksToDictionary(trackList:[VGTrack]) -> Dictionary<String, [VGTrack]>{
         var result = Dictionary<String, [VGTrack]>()
         for track in trackList {
-            let day = String(track.fileName.prefix(10))
+            var day = ""
+            if let timeStart = track.timeStart {
+                day = String(String(describing: timeStart).prefix(10))
+            } else {
+                day = String(track.fileName.prefix(10))
+            }
             
             if result[day] == nil {
                 result[day] = [VGTrack]()
@@ -361,12 +366,12 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     func getTrackAt(indexPath:IndexPath) -> VGTrack {
-        var dayFileList = tracksDict[sectionKeys[indexPath.section]]
+        let dayFileList = tracksDict[sectionKeys[indexPath.section]]
         let file = dayFileList![indexPath.row]
         return file
     }
 
-    // MARK: - Table view data source
+    // MARK: - Table View Data Source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
