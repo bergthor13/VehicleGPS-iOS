@@ -45,6 +45,22 @@ class VGTrack {
         trackPoints = [VGDataPoint]()
     }
     
+    var isoStartTime : String {
+        guard let startTime = timeStart else {
+            return fileName
+        }
+        return String(describing: startTime)
+    }
+    
+    func getISOStartTime() -> Date? {
+        if timeStart != nil {
+            return timeStart
+        }
+        
+        
+        return nil
+    }
+    
     func getCoordinateList() -> [CLLocationCoordinate2D] {
         guard let firstPoint = trackPoints.first else {
             return []

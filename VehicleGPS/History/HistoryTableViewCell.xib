@@ -27,37 +27,20 @@
                         <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ferðir" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JnP-Sk-QO3">
-                        <rect key="frame" x="359" y="43" width="35" height="16"/>
-                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="13"/>
-                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="km" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YKr-ey-dCP">
-                        <rect key="frame" x="93.333333333333329" y="23" width="25" height="21"/>
-                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
-                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-                        <nil key="highlightedColor"/>
-                    </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="20" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0pE-Fx-DOU">
-                        <rect key="frame" x="328" y="39" width="26" height="24"/>
+                        <rect key="frame" x="368" y="35" width="26" height="24"/>
                         <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="YKr-ey-dCP" firstAttribute="leading" secondItem="EnF-6D-YlM" secondAttribute="trailing" constant="4" id="0hM-8k-Xru"/>
+                    <constraint firstAttribute="bottom" secondItem="0pE-Fx-DOU" secondAttribute="bottom" constant="8" id="1JE-RN-he1"/>
                     <constraint firstItem="cuF-CM-EgC" firstAttribute="top" secondItem="wXU-sJ-mKg" secondAttribute="top" constant="8" id="1KH-Co-2EP"/>
                     <constraint firstAttribute="trailing" secondItem="cuF-CM-EgC" secondAttribute="trailing" constant="16" id="2ra-WF-tN2"/>
-                    <constraint firstItem="JnP-Sk-QO3" firstAttribute="centerY" secondItem="0pE-Fx-DOU" secondAttribute="centerY" id="CSf-bo-uPI"/>
-                    <constraint firstItem="JnP-Sk-QO3" firstAttribute="leading" secondItem="0pE-Fx-DOU" secondAttribute="trailing" constant="5" id="KAN-VT-HQq"/>
-                    <constraint firstAttribute="bottom" secondItem="JnP-Sk-QO3" secondAttribute="bottom" constant="8" id="KHa-Fh-xlo"/>
-                    <constraint firstItem="YKr-ey-dCP" firstAttribute="centerY" secondItem="EnF-6D-YlM" secondAttribute="centerY" id="f1X-Jl-wMl"/>
-                    <constraint firstItem="JnP-Sk-QO3" firstAttribute="centerY" secondItem="0pE-Fx-DOU" secondAttribute="centerY" id="gtv-Kj-F9u"/>
                     <constraint firstItem="0pE-Fx-DOU" firstAttribute="top" secondItem="cuF-CM-EgC" secondAttribute="bottom" priority="250" constant="8" id="mPh-gk-dbW"/>
                     <constraint firstItem="EnF-6D-YlM" firstAttribute="leading" secondItem="wXU-sJ-mKg" secondAttribute="leading" constant="16" id="qjd-FV-qtQ"/>
-                    <constraint firstAttribute="trailing" secondItem="JnP-Sk-QO3" secondAttribute="trailing" constant="20" symbolic="YES" id="wiU-Ac-IQH"/>
+                    <constraint firstAttribute="trailing" secondItem="0pE-Fx-DOU" secondAttribute="trailing" constant="20" symbolic="YES" id="wU4-qR-Hlb"/>
                     <constraint firstItem="EnF-6D-YlM" firstAttribute="centerY" secondItem="wXU-sJ-mKg" secondAttribute="centerY" id="xEp-y1-Mvx"/>
                 </constraints>
             </tableViewCellContentView>

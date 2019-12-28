@@ -193,7 +193,7 @@ class TrackGraphView: UIView {
     
     func initializeView() {
         self.graphFrame = self.bounds
-        self.isMultipleTouchEnabled = false
+        self.isMultipleTouchEnabled = true
         self.maxLabel = UILabel(frame: CGRect(x: self.bounds.width-205, y: 5, width: 200, height: 15))
         self.maxLabel?.font = UIFont.systemFont(ofSize: 12)
         self.maxLabel?.textAlignment = .right

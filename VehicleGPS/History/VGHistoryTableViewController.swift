@@ -10,53 +10,194 @@ import UIKit
 
 class VGHistoryTableViewController: UITableViewController {
     var tracks = [VGTrack]()
-    var months = Dictionary<String, TracksSummary>()
-    var sectionKeys = [String]()
+    var historySections = [HistorySection]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(UINib(nibName: "HistoryTableViewCell", bundle: nil), forCellReuseIdentifier: "HistoryCell")
+        self.tableView.register(UINib(nibName: "HistoryHeader", bundle: nil), forHeaderFooterViewReuseIdentifier: "HistoryHeader")
         self.title = "Saga"
         let dataStore = VGDataStore()
-        
-        months = getMonthDictionary(tracks: dataStore.getAllTracks())
-        
-        sectionKeys.sort()
-        sectionKeys.reverse()
+        tracks = dataStore.getAllTracks()
+        historySections = getMonthDictionary(tracks: tracks)
+        sortHistory()
     }
     
-    func getMonthDictionary(tracks:[VGTrack]) -> Dictionary<String, TracksSummary> {
+    func sortHistory() {
+        for section in historySections {
+            section.summaries.sort { (summ1, summ2) -> Bool in
+                return summ1.summaryID > summ2.summaryID
+            }
+        }
+        historySections.sort { (sect1, sect2) -> Bool in
+            return sect1.sectionID > sect2.sectionID
+        }
+    }
+    
+    func getMonthDictionary(tracks:[VGTrack]) -> [HistorySection] {
+        var result = [HistorySection]()
         for track in tracks {
-            var monthKey = String(track.fileName.prefix(7))
-            if months[monthKey] == nil {
-                sectionKeys.append(monthKey)
-                months[monthKey] = TracksSummary()
+            let sectionKey = String(track.isoStartTime.prefix(4))
+            let summaryKey = String(track.isoStartTime.prefix(7))
+            
+            var section: HistorySection?
+            section = result.filter { (sect) -> Bool in
+                return sect.sectionID == sectionKey
+            }.first
+            
+            if section == nil {
+                section = HistorySection(title:sectionKey)
+                let df = DateFormatter()
+                df.locale = Locale(identifier: "is_IS")
+                df.dateFormat = "yyyy"
+                let date = df.date(from: String(track.isoStartTime.prefix(4)))
+                df.dateFormat = "YYYY"
+                section!.dateDescription = df.string(from: date!)
+
+                result.append(section!)
+            }
+            
+            var summary = section?.summaries.filter({ (summ) -> Bool in
+                return summ.summaryID == summaryKey
+                }).first
+            
+            if summary == nil {
+                summary = TracksSummary(title:summaryKey)
                 let df = DateFormatter()
                 df.locale = Locale(identifier: "is_IS")
                 df.dateFormat = "yyyy-MM"
-                let date = df.date(from: String(track.fileName.prefix(7)))
+                let date = df.date(from: String(track.isoStartTime.prefix(7)))
                 df.dateFormat = "MMMM YYYY"
-                months[monthKey]!.dateDescription = df.string(from: date!)
+                summary!.dateDescription = df.string(from: date!)
+                section?.summaries.append(summary!)
             }
             
-            months[monthKey]!.distance += track.distance
-            months[monthKey]!.trackCount += 1
+            summary!.distance   += track.distance
+            summary!.trackCount += 1
         }
-        return months
+        return result
+    }
+    
+    func getYearDictionary(tracks:[VGTrack]) -> [HistorySection] {
+        var result = [HistorySection]()
+        for track in tracks {
+            let sectionKey = String(track.isoStartTime.prefix(4))
+            let summaryKey = String(track.isoStartTime.prefix(4))
+            
+            var section: HistorySection?
+            section = result.filter { (sect) -> Bool in
+                return sect.sectionID == sectionKey
+            }.first
+            
+            if section == nil {
+                section = HistorySection(title:sectionKey)
+                let df = DateFormatter()
+                df.locale = Locale(identifier: "is_IS")
+                df.dateFormat = "yyyy"
+                let date = df.date(from: String(track.isoStartTime.prefix(4)))
+                df.dateFormat = "YYYY"
+                section!.dateDescription = df.string(from: date!)
+
+                result.append(section!)
+            }
+            
+            var summary = section?.summaries.filter({ (summ) -> Bool in
+                return summ.summaryID == summaryKey
+                }).first
+            
+            if summary == nil {
+                summary = TracksSummary(title:summaryKey)
+                let df = DateFormatter()
+                df.locale = Locale(identifier: "is_IS")
+                df.dateFormat = "yyyy"
+                let date = df.date(from: String(track.isoStartTime.prefix(4)))
+                df.dateFormat = "YYYY"
+                summary!.dateDescription = df.string(from: date!)
+                section?.summaries.append(summary!)
+            }
+            
+            summary!.distance   += track.distance
+            summary!.trackCount += 1
+        }
+        return result
+    }
+    
+    func getDayDictionary(tracks:[VGTrack]) -> [HistorySection] {
+        var result = [HistorySection]()
+        for track in tracks {
+            let sectionKey = String(track.isoStartTime.prefix(7))
+            let summaryKey = String(track.isoStartTime.prefix(10))
+            
+            var section: HistorySection?
+            section = result.filter { (sect) -> Bool in
+                return sect.sectionID == sectionKey
+            }.first
+            
+            if section == nil {
+                section = HistorySection(title:sectionKey)
+                let df = DateFormatter()
+                df.locale = Locale(identifier: "is_IS")
+                df.dateFormat = "yyyy-MM"
+                let date = df.date(from: String(track.isoStartTime.prefix(7)))
+                df.dateFormat = "MMMM YYYY"
+                section!.dateDescription = df.string(from: date!)
+
+                result.append(section!)
+            }
+            
+            var summary = section?.summaries.filter({ (summ) -> Bool in
+                return summ.summaryID == summaryKey
+                }).first
+            
+            if summary == nil {
+                summary = TracksSummary(title:summaryKey)
+                let df = DateFormatter()
+                df.locale = Locale(identifier: "is_IS")
+                df.dateFormat = "yyyy-MM-dd"
+                let date = df.date(from: String(track.isoStartTime.prefix(10)))
+                df.dateStyle = .long
+                summary!.dateDescription = df.string(from: date!)
+                section?.summaries.append(summary!)
+            }
+            
+            summary!.distance   += track.distance
+            summary!.trackCount += 1
+        }
+        return result
+    }
+
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 0 {
+            let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HistoryHeader") as! HistoryHeader
+            view.historyTableViewController = self
+            return view
+        }
+        return nil
+    }
+    
+    func segmentChanged(id:Int) {
+        if id == 0 { // Day
+            historySections = getDayDictionary(tracks: tracks)
+        } else if id == 1 { // Month
+            historySections = getMonthDictionary(tracks: tracks)
+        } else if id == 2 { // Year
+            historySections = getYearDictionary(tracks: tracks)
+        }
+        sortHistory()
+        tableView.reloadData()
     }
 
     // MARK: - Table view data source
-
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return historySections[section].dateDescription
+    }
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
+        return historySections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return months.count
+        return historySections[section].summaries.count
     }
-
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HistoryCell", for: indexPath) as! HistoryTableViewCell
@@ -66,58 +207,27 @@ class VGHistoryTableViewController: UITableViewController {
         nf.minimumFractionDigits = 0
         nf.usesGroupingSeparator = true
         nf.numberStyle = .decimal
-        let summary = months[sectionKeys[indexPath.row]]!
-        cell.lblDistance.text = String(nf.string(from: NSNumber(value: summary.distance))!)
-        cell.lblTripCount.text = String(summary.trackCount)
+        let section = historySections[indexPath.section]
+        let summary = section.summaries[indexPath.row]
+        
+        var unformattedDistance = String(nf.string(from: NSNumber(value: summary.distance))!) + " km"
+        var distanceText = NSMutableAttributedString.init(string:unformattedDistance)
+        
+        distanceText.setAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 17, weight: .semibold),
+                                  NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel],
+                                   range: NSMakeRange(unformattedDistance.count-3, 3))
+        cell.lblDistance.attributedText = distanceText
+        
+        
+        unformattedDistance = String(summary.trackCount) + " ferðir"
+        distanceText = NSMutableAttributedString.init(string:unformattedDistance)
+        
+        distanceText.setAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .semibold),
+                                  NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel],
+                                   range: NSMakeRange(unformattedDistance.count-7, 7))
+        cell.lblTripCount.attributedText = distanceText
         cell.lblDate.text = summary.dateDescription
         
         return cell
     }
-    
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
