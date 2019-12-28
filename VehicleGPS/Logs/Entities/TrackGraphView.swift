@@ -163,6 +163,7 @@ class TrackGraphView: UIView {
         graphSelectLayer.path = nil
     }
     
+    // TODO: FIX ME
     func getPointTouched(point:CGPoint) -> Int {
         let id = Int(round((point.x/self.graphFrame.width)*CGFloat(elePoints.count)))
         return id
@@ -180,7 +181,7 @@ class TrackGraphView: UIView {
             self.graphSeparator?.backgroundColor = .darkGray
         }
         
-        self.maxLabel!.text = String(format: "%.2f", self.maxValue)
+        //self.maxLabel!.text = String(format: "%.2f", self.maxValue)
         self.minLabel?.text = String(format: "%.2f", self.minValue)
         self.maxLabel?.frame = CGRect(x: self.bounds.width-205, y: 5, width: 200, height: 15)
         self.minLabel?.frame = CGRect(x: self.bounds.width-205, y: self.graphFrame.height-20, width: 200, height: 15)

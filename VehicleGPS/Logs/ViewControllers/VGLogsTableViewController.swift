@@ -425,8 +425,6 @@ class VGLogsTableViewController: UITableViewController {
         view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
         return view
-        
-        
     }
 
     
