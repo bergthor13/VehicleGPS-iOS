@@ -281,7 +281,6 @@ class VGDataStore {
                         trackUpdate.setValue(vgTrack.minLon, forKey: "minLon")
                         trackUpdate.setValue(vgTrack.maxLon, forKey: "maxLon")
                         trackUpdate.setValue(vgTrack.processed, forKey: "processed")
-                        print(vgTrack.timeStart)
                         trackUpdate.setValue(vgTrack.timeStart, forKey: "timeStart")
                         
 //                        for point in vgTrack.trackPoints {

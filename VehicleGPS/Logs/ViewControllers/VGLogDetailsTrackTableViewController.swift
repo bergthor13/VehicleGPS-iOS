@@ -9,7 +9,18 @@
 import UIKit
 import CoreLocation
 
-class VGLogDetailsTrackTableViewController: UITableViewController {
+class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLineProtocol {
+    var dlpPoint: CGPoint?
+    
+    func didTouchGraph(at point: CGPoint) {
+        for graph in self.tableView.visibleCells {
+            if let graph1 = graph as? VGGraphTableViewCell {
+                graph1.graphView.displayVerticalLine(at: point)
+                dlpPoint = point
+            }
+        }
+    }
+    
 
     var track: VGTrack?
     
@@ -62,6 +73,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             }
             
             cell?.tableView = self.tableView
+            cell!.graphView.dlp = self
             cell!.graphView.startTime = track?.timeStart
             cell!.graphView.endTime = track?.timeStart?.addingTimeInterval(track!.duration)
 
@@ -80,7 +92,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
                     continue
                 }
                 
-                if point1.fixType <= 1 || point2.fixType <= 1 {
+                if !point1.hasGoodFix() || !point2.hasGoodFix() {
                     continue
                 }
                 
@@ -96,6 +108,9 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             cell!.graphView.color = UIColor(red: 0, green: 0.5, blue: 1, alpha: 0.3)
             cell!.graphView.numbersList = list
             cell!.graphView.displayHorizontalLine(at: [30, 40, 50, 60, 70, 80, 90])
+            if let selectedPoint = dlpPoint {
+                cell?.graphView.displayVerticalLine(at: selectedPoint)
+            }
 
             
         } else if indexPath.section == 2 {
@@ -105,13 +120,16 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
                 guard let _ = point.latitude, let _ = point.longitude else {
                     continue
                 }
-                if point.fixType <= 1 {
+                if !point.hasGoodFix() {
                     continue
                 }
                 list.append((point.timestamp!, point.elevation!))
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
+            if let selectedPoint = dlpPoint {
+                cell?.graphView.displayVerticalLine(at: selectedPoint)
+            }
 
         } else if indexPath.section == 3 {
             var list = [(Date, Double)]()
@@ -119,13 +137,16 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
                 guard let _ = point.latitude, let _ = point.longitude else {
                     continue
                 }
-                if point.fixType <= 1 {
+                if !point.hasGoodFix() {
                     continue
                 }
                 list.append((point.timestamp!, point.pdop))
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
+            if let selectedPoint = dlpPoint {
+                cell?.graphView.displayVerticalLine(at: selectedPoint)
+            }
             
         } else if indexPath.section == 4 {
             var list = [(Date, Double)]()
@@ -133,13 +154,16 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
                 guard let _ = point.latitude, let _ = point.longitude else {
                     continue
                 }
-                if point.fixType <= 1 {
+                if !point.hasGoodFix() {
                     continue
                 }
                 list.append((point.timestamp!, point.horizontalAccuracy))
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
+            if let selectedPoint = dlpPoint {
+                cell?.graphView.displayVerticalLine(at: selectedPoint)
+            }
             
         } else if indexPath.section == 5 {
             var list = [(Date, Double)]()
@@ -152,6 +176,9 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
+            if let selectedPoint = dlpPoint {
+                cell?.graphView.displayVerticalLine(at: selectedPoint)
+            }
             
         } else if indexPath.section == 6 {
             var list = [(Date, Double)]()
@@ -162,6 +189,9 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
+            if let selectedPoint = dlpPoint {
+                cell?.graphView.displayVerticalLine(at: selectedPoint)
+            }
             
         } else if indexPath.section == 7 {
             var list = [(Date, Double)]()
@@ -172,6 +202,9 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
+            if let selectedPoint = dlpPoint {
+                cell?.graphView.displayVerticalLine(at: selectedPoint)
+            }
             
         } else if indexPath.section == 8 {
             var list = [(Date, Double)]()
@@ -186,6 +219,9 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             cell!.graphView.color = UIColor(red: 165/255.0, green: 50/255.0, blue: 45/255.0, alpha: 0.3)
             cell!.graphView.numbersList = list
             cell!.graphView.displayHorizontalLine(at: [90])
+            if let selectedPoint = dlpPoint {
+                cell?.graphView.displayVerticalLine(at: selectedPoint)
+            }
             
         } else if indexPath.section == 9 {
             var list = [(Date, Double)]()
@@ -197,7 +233,9 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             cell!.graphView.color = UIColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 0.3)
             cell!.graphView.numbersList = list
         }
-        //cell?.contentView.addSubview(cell!.graphView)
+        if let selectedPoint = dlpPoint {
+            cell?.graphView.displayVerticalLine(at: selectedPoint)
+        }
         return cell!
     }
     

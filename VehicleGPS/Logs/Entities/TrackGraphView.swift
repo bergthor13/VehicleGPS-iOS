@@ -34,6 +34,9 @@ class TrackGraphView: UIView {
     var startTime:Date?
     var endTime:Date?
     var showMinMaxValue:Bool = true
+    
+    var selectedPoint: Set<UITouch>?
+    var dlp: DisplayLineProtocol?
 
 	private var elePoints = [(Date, CGFloat)]()
 
@@ -56,17 +59,16 @@ class TrackGraphView: UIView {
             for item in numbersList {
                 pointCount += 1
 				totalAltitude += CGFloat(item.1)
-
                 if item.0.timeIntervalSince(lastPixel) > secondsPerPixel {
-                    
-                    if CGFloat(item.1) < minValue {
-                        minValue = CGFloat(item.1)
+                    let currValue = totalAltitude/CGFloat(pointCount)
+                    if currValue < minValue {
+                        minValue = currValue
                     }
                     
-                    if CGFloat(item.1) > maxValue {
-                        maxValue = CGFloat(item.1)
+                    if currValue > maxValue {
+                        maxValue = currValue
                     }
-                    elePoints.append((item.0, totalAltitude/CGFloat(pointCount)))
+                    elePoints.append((item.0, currValue))
 					pointCount = 0
                     totalAltitude = 0.0
                     lastPixel = item.0
@@ -92,13 +94,20 @@ class TrackGraphView: UIView {
 	}
     
     func displayVerticalLine(at point:CGPoint) {
+        var thisPoint = point
+        if point.x > self.graphFrame.width {
+            thisPoint = CGPoint(x: self.graphFrame.width, y: point.y)
+            displayVerticalLine(at: CGPoint(x: self.graphFrame.width, y: 0))
+
+        }
+
         graphSelectLayer.sublayers?.removeAll()
         graphSelectLayer.path = nil
         graphSelectLayer.strokeColor = UIColor.gray.cgColor
         graphSelectLayer.lineWidth = 1
         layer.addSublayer(graphSelectLayer)
-        let topPoint = CGPoint(x: point.x, y: 0.0)
-        let bottomPoint = CGPoint(x: point.x, y: self.graphFrame.height)
+        let topPoint = CGPoint(x: thisPoint.x, y: 0.0)
+        let bottomPoint = CGPoint(x: thisPoint.x, y: self.graphFrame.height)
         graphSelectPath = UIBezierPath(rect: CGRect(x: topPoint.x, y: 0, width: 0.5, height: self.graphFrame.height))
         graphSelectPath.move(to: topPoint)
         graphSelectPath.addLine(to: bottomPoint)
@@ -126,20 +135,27 @@ class TrackGraphView: UIView {
                 line.backgroundColor = .darkGray
             }
             self.addSubview(line)
+            
         }
+        setNeedsLayout()
         
     }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if tableView != nil {
             tableView?.isScrollEnabled = false
         }
-        if touches.first!.location(in: self).x < self.graphFrame.width {
-            displayVerticalLine(at: touches.first!.location(in: self))
+        selectedPoint = touches
+        displayVerticalLine(at: touches.first!.location(in: self))
+        if let dlp = dlp {
+            dlp.didTouchGraph(at: touches.first!.location(in: self))
         }
         
     }
+    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         let i = getPointTouched(point: touches.first!.location(in: self))
+        selectedPoint = touches
         if i < elePoints.count || i < 0 {
             self.maxLabel?.text = String(format: "%.2f", elePoints[i].1)
         }
@@ -148,19 +164,20 @@ class TrackGraphView: UIView {
         } else {
             displayVerticalLine(at: CGPoint(x: self.graphFrame.width, y: 0))
         }
+        if let dlp = dlp {
+            dlp.didTouchGraph(at: touches.first!.location(in: self))
+        }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        graphSelectLayer.sublayers?.removeAll()
-        graphSelectLayer.path = nil
+        //selectedPoint = nil
         if tableView != nil {
             tableView?.isScrollEnabled = true
         }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        graphSelectLayer.sublayers?.removeAll()
-        graphSelectLayer.path = nil
+        //selectedPoint = nil
     }
     
     // TODO: FIX ME
@@ -181,7 +198,7 @@ class TrackGraphView: UIView {
             self.graphSeparator?.backgroundColor = .darkGray
         }
         
-        //self.maxLabel!.text = String(format: "%.2f", self.maxValue)
+        self.maxLabel!.text = String(format: "%.2f", self.maxValue)
         self.minLabel?.text = String(format: "%.2f", self.minValue)
         self.maxLabel?.frame = CGRect(x: self.bounds.width-205, y: 5, width: 200, height: 15)
         self.minLabel?.frame = CGRect(x: self.bounds.width-205, y: self.graphFrame.height-20, width: 200, height: 15)
@@ -209,6 +226,20 @@ class TrackGraphView: UIView {
         self.addSubview(self.maxLabel!)
         self.addSubview(self.minLabel!)
         self.addSubview(self.graphSeparator!)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(doubleTapped))
+        tapGesture.numberOfTapsRequired = 2
+        self.addGestureRecognizer(tapGesture)
+        if selectedPoint != nil {
+            displayVerticalLine(at: (selectedPoint?.first!.location(in: self))!)
+        } else {
+            graphSelectLayer.sublayers?.removeAll()
+            graphSelectLayer.path = nil
+        }
+        
+    }
+    
+    @objc func doubleTapped() {
+        print("DoubleTapped: \(String(describing: selectedPoint))")
     }
     
     override init(frame: CGRect) {

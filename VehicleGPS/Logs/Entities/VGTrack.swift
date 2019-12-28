@@ -68,7 +68,7 @@ class VGTrack {
         var list = [CLLocationCoordinate2D]()
 
         if let firstLatitude = firstPoint.latitude, let firstLongitude = firstPoint.longitude {
-            if firstPoint.fixType > 1 {
+            if firstPoint.hasGoodFix() {
                 list.append(CLLocationCoordinate2D(latitude: firstLatitude, longitude: firstLongitude))
             }
         }
@@ -86,7 +86,7 @@ class VGTrack {
             let distance = coord.distance(from: lastCoord)
             
             let speed = (distance/duration!)*3.6
-            if speed > 0.5 && point1.fixType > 1 && point2.fixType > 1 {
+            if speed > 0.5 && point1.hasGoodFix() && point2.hasGoodFix() {
                 list.append(CLLocationCoordinate2D(latitude: latitude2, longitude: longitude2))
             }
             
@@ -103,7 +103,7 @@ extension VGTrack: Equatable {
 
 extension VGTrack: CustomStringConvertible {
     var description: String {
-        return "timeStart: \(String(describing: timeStart))"
+        return "timeStart: \(String(describing: timeStart!)), fileName: \(self.fileName)"
     }
 }
 

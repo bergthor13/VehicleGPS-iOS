@@ -359,7 +359,12 @@ class VGLogsTableViewController: UITableViewController {
         self.sectionKeys = self.sectionKeys.sorted().reversed()
         
         for (day, list) in result {
-            result[day] = list.sorted(by: { $0.fileName > $1.fileName })
+            result[day] = list.sorted { (first, second) -> Bool in
+                if first.timeStart != nil && second.timeStart != nil {
+                    return first.timeStart! > second.timeStart!
+                }
+                return first.fileName > second.fileName
+            }
         }
         
         return result

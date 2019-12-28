@@ -31,6 +31,7 @@
 		F23BE8FA22A5E5BB008FD50C /* VGLogsNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8EF22A5E5BB008FD50C /* VGLogsNavigationViewController.swift */; };
 		F23BE8FB22A5E5BB008FD50C /* VGLogsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8F022A5E5BB008FD50C /* VGLogsTableViewController.swift */; };
 		F23D786F23B1551300DBC64F /* HistorySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23D786E23B1551300DBC64F /* HistorySection.swift */; };
+		F23D787323B7C16700DBC64F /* DisplayLineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23D787223B7C16700DBC64F /* DisplayLineProtocol.swift */; };
 		F24A6FCE22F8521F00C8D372 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F24A6FCD22F8521F00C8D372 /* NetworkExtension.framework */; };
 		F257077A22F09AAA00F201B3 /* TrackGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F257077922F09AAA00F201B3 /* TrackGraphView.swift */; };
 		F257077E22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F257077D22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift */; };
@@ -78,6 +79,7 @@
 		F23BE8EF22A5E5BB008FD50C /* VGLogsNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGLogsNavigationViewController.swift; sourceTree = "<group>"; };
 		F23BE8F022A5E5BB008FD50C /* VGLogsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGLogsTableViewController.swift; sourceTree = "<group>"; };
 		F23D786E23B1551300DBC64F /* HistorySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistorySection.swift; sourceTree = "<group>"; };
+		F23D787223B7C16700DBC64F /* DisplayLineProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayLineProtocol.swift; sourceTree = "<group>"; };
 		F24A6FCC22F8521E00C8D372 /* VehicleGPS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VehicleGPS.entitlements; sourceTree = "<group>"; };
 		F24A6FCD22F8521F00C8D372 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		F257077922F09AAA00F201B3 /* TrackGraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackGraphView.swift; sourceTree = "<group>"; };
@@ -208,6 +210,7 @@
 				F2C96EB122A853A500180055 /* VGFileManager.swift */,
 				F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */,
 				F257078122F0C20000F201B3 /* LogHeaderView.swift */,
+				F23D787223B7C16700DBC64F /* DisplayLineProtocol.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -404,6 +407,7 @@
 				F23BE8F922A5E5BB008FD50C /* VGSFTPManager.swift in Sources */,
 				F23BE8E422A5E5A7008FD50C /* VGDashboardNavigationController.swift in Sources */,
 				F25839D123A6606F00E76B54 /* VGHistoryNavigationController.swift in Sources */,
+				F23D787323B7C16700DBC64F /* DisplayLineProtocol.swift in Sources */,
 				F23BE8F822A5E5BB008FD50C /* LogsTableViewCell.swift in Sources */,
 				F23BE8F622A5E5BB008FD50C /* VGDataPoint.swift in Sources */,
 				F23BE8E522A5E5A7008FD50C /* DashboardViewController.swift in Sources */,

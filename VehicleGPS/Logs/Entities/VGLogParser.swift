@@ -51,11 +51,11 @@ class VGLogParser {
                     track.hasOBDData = true
                 }
                 
-                if dataPoint.fixType > 1 {
-                    if track.timeStart == nil && dataPoint.timestamp! > Date(timeIntervalSince1970: 1388534400) {
-                        track.timeStart = dataPoint.timestamp
-                    }
-                    
+                if dataPoint.fixType > 1 && track.timeStart == nil && dataPoint.timestamp! > Date(timeIntervalSince1970: 1388534400) {
+                    track.timeStart = dataPoint.timestamp
+                }
+                
+                if dataPoint.hasGoodFix() {
                     guard let latitude = dataPoint.latitude, let longitude = dataPoint.longitude else {
                         continue
                     }
@@ -73,7 +73,7 @@ class VGLogParser {
                         track.maxLon = longitude
                     }
 
-                    if lastDataPoint != nil && lastDataPoint!.fixType > 1 {
+                    if lastDataPoint != nil && lastDataPoint!.hasGoodFix() {
                         guard let lastLatitude = lastDataPoint!.latitude, let lastLongitude = lastDataPoint!.longitude else {
                             continue
                         }

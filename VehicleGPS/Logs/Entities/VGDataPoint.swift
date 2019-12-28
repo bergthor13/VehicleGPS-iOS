@@ -231,6 +231,10 @@ class VGDataPoint {
     }
     
     
+    
+    func hasGoodFix() -> Bool {
+        return !(self.fixType <= 1 || self.horizontalAccuracy > 2)
+    }
 }
 
 extension VGDataPoint: Equatable {

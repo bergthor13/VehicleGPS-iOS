@@ -42,7 +42,7 @@ class VGGPXGenerator {
                 continue
             }
             
-            if point.fixType <= 1 {
+            if !point.hasGoodFix() {
                 continue
             }
             
