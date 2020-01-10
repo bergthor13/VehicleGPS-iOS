@@ -21,6 +21,7 @@ class LogsTableViewCell: UITableViewCell {
     @IBOutlet weak var fileOnGPSIndicator: UIImageView!
     @IBOutlet weak var fileOnDeviceIndicator: UIImageView!
     var vgFileManager: VGFileManager!
+    var currentTrack:VGTrack?
     
     
     
@@ -31,11 +32,12 @@ class LogsTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        vgFileManager = VGFileManager()
+        vgFileManager = (UIApplication.shared.delegate as! AppDelegate).fileManager!
         
     }
     
     func show(track:VGTrack) {
+        currentTrack = track
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm:ss"
         if track.timeStart == nil {
@@ -80,7 +82,7 @@ class LogsTableViewCell: UITableViewCell {
         } else {
             self.fileOnGPSIndicator.isHidden = true
         }
-        trackView.image = vgFileManager.openImageFor(track: track)
+        trackView.image = vgFileManager.openImageFor(track: track, style: self.traitCollection.userInterfaceStyle)
         trackView.layer.borderWidth = 0.5
         trackView.layer.borderColor = UIColor.black.cgColor
         if track.beingProcessed {
@@ -89,6 +91,10 @@ class LogsTableViewCell: UITableViewCell {
             activityView.stopAnimating()
         }
 
+    }
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        guard let track = currentTrack else {return}
+        trackView.image = vgFileManager.openImageFor(track: track, style: self.traitCollection.userInterfaceStyle)
     }
     
     func styleString(unstyledString:String, substrings:[String]) -> NSAttributedString {

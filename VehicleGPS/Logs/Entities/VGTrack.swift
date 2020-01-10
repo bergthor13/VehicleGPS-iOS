@@ -23,7 +23,6 @@ class VGTrack {
     var processed:Bool
     var isRemote:Bool
     var beingProcessed = false
-    var hasOBDData = false
     var averageSpeed:Double {
         get {
             return distance/duration/60/60
@@ -43,6 +42,18 @@ class VGTrack {
         isRemote = false
         
         trackPoints = [VGDataPoint]()
+    }
+    
+    var hasOBDData: Bool {
+        if self.trackPoints.count == 0 {
+            return false
+        }
+        for point in self.trackPoints {
+            if point.hasOBDData {
+                return true
+            }
+        }
+        return false
     }
     
     var isoStartTime : String {

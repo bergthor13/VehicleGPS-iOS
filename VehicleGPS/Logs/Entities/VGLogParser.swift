@@ -15,7 +15,7 @@ import MapKit
 class VGLogParser {
     let progress_update_delay = TimeInterval(0.1)
     let PNG_PADDING:CGFloat = 0.9
-    var vgFileManager = VGFileManager()
+    var vgFileManager = (UIApplication.shared.delegate as! AppDelegate).fileManager!
     
     func fileToTrack(fileUrl:URL, progress:@escaping (UInt, UInt)->Void, callback:@escaping (VGTrack)->Void, imageCallback:((VGTrack) -> Void)? = nil){
         DispatchQueue.global(qos: .background).async {
@@ -47,9 +47,6 @@ class VGLogParser {
                 }
 
                 let dataPoint = VGDataPoint(csvLine: String(line))
-                if dataPoint.hasOBDData && track.hasOBDData == false {
-                    track.hasOBDData = true
-                }
                 
                 if dataPoint.fixType > 1 && track.timeStart == nil && dataPoint.timestamp! > Date(timeIntervalSince1970: 1388534400) {
                     track.timeStart = dataPoint.timestamp
@@ -92,13 +89,14 @@ class VGLogParser {
                 track.duration = Double(track.trackPoints.last!.timestamp!.timeIntervalSince(track.timeStart!))
             }
             
-            if !self.vgFileManager.pngForTrackExists(track: track) {
-                self.drawTrack(vgTrack: track, imageCallback: {
-                    if imageCallback != nil {
-                        imageCallback!(track)
-                    }
-                })
-            }
+            self.drawTrack(vgTrack: track, imageCallback: {
+                if imageCallback != nil {
+                    imageCallback!(track)
+                }
+            })
+
+//            if !self.vgFileManager.pngForTrackExists(track: track) {
+//            }
             
 
             
@@ -127,38 +125,47 @@ class VGLogParser {
 //        return CGPoint(x:imageLonLoc+(size.width*(1-PNG_PADDING))/2, y: imageLatLoc+(size.height*(1-PNG_PADDING))/2)
 //    }
 //
+    
+    func makeSnapshot(options:MKMapSnapshotter.Options, centerLocation: CLLocationCoordinate2D?, points:[CLLocationCoordinate2D]?, style:UIUserInterfaceStyle, imageCallback:@escaping (MKMapSnapshotter.Snapshot?)->Void) {
+            
+        options.showsBuildings = true
+        let poiFilter = MKPointOfInterestFilter(excluding: [])
+        options.pointOfInterestFilter = poiFilter
+        
+        let tc = UITraitCollection(userInterfaceStyle: style)
+        options.traitCollection = tc
+
+            
+        let snapShotter = MKMapSnapshotter(options: options)
+        snapShotter.start { (snapshot:MKMapSnapshotter.Snapshot?, error:Error?) in
+            imageCallback(snapshot)
+        }
+    }
+    
     func drawTrack(vgTrack:VGTrack, imageCallback:@escaping ()->Void) {
+        
         let mapSnapshotOptions = MKMapSnapshotter.Options()
         
         // If there are no points, create an image showing Iceland.
         if vgTrack.getCoordinateList().count == 0 {
-            
-            // Set the region of the map that is rendered.
             let location = CLLocationCoordinate2DMake(64.9, -18.9)
-            
             let latitudeDelta = 4.0
             let longitudeDelta = 12.0
-        
-            
+
             let region = MKCoordinateRegion(center: location, span: MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta))
+            
             mapSnapshotOptions.region = region
+            mapSnapshotOptions.scale  = UIScreen.main.scale
+            mapSnapshotOptions.size   = CGSize(width: 110, height: 110)
             
-            // Set the scale of the image. We'll just use the scale of the current device, which is 2x scale on Retina screens.
-            mapSnapshotOptions.scale = UIScreen.main.scale
+            makeSnapshot(options: mapSnapshotOptions, centerLocation: location, points: nil, style: .light) { (snapshot) in
+                self.vgFileManager.savePNG(image: snapshot!.image, for: vgTrack, style: (snapshot?.traitCollection.userInterfaceStyle)!)
+                
+            }
             
-            // Set the size of the image output.
-            mapSnapshotOptions.size = CGSize(width: 110, height: 110)
-            
-            // Show buildings and Points of Interest on the snapshot
-            mapSnapshotOptions.showsBuildings = true
-            mapSnapshotOptions.showsPointsOfInterest = true
-            
-            let snapShotter = MKMapSnapshotter(options: mapSnapshotOptions)
-                snapShotter.start { (snapshot:MKMapSnapshotter.Snapshot?, error:Error?) in
-                    self.vgFileManager.savePNG(image: snapshot!.image, for: vgTrack)
-                    imageCallback()
-                }
-            
+            makeSnapshot(options: mapSnapshotOptions, centerLocation: location, points: nil, style: .dark) { (snapshot) in
+                self.vgFileManager.savePNG(image: snapshot!.image, for: vgTrack, style: (snapshot?.traitCollection.userInterfaceStyle)!)
+            }
             return
         }
         
@@ -193,16 +200,19 @@ class VGLogParser {
         // Set the size of the image output.
         mapSnapshotOptions.size = CGSize(width: 110, height: 110)
         
+        
         // Show buildings and Points of Interest on the snapshot
         mapSnapshotOptions.showsBuildings = true
-        mapSnapshotOptions.showsPointsOfInterest = true
-        
-        let snapShotter = MKMapSnapshotter(options: mapSnapshotOptions)
+        let poiFilter = MKPointOfInterestFilter(excluding: [])
+        mapSnapshotOptions.pointOfInterestFilter = poiFilter
+        let tcLight = UITraitCollection(userInterfaceStyle: .light)
+        mapSnapshotOptions.traitCollection = tcLight
+
+        var snapShotter = MKMapSnapshotter(options: mapSnapshotOptions)
     
         snapShotter.start { (snapshot:MKMapSnapshotter.Snapshot?, error:Error?) in
             DispatchQueue.global(qos: .userInitiated).async {
                 guard let snapshot = snapshot else {
-                    //self.vgFileManager.savePNG(image: self.drawTrack2(vgTrack: vgTrack), for: vgTrack)
                     imageCallback()
                     return
                 }
@@ -238,7 +248,54 @@ class VGLogParser {
                     path.stroke()
                 }
                 
-                self.vgFileManager.savePNG(image: finalImage, for: vgTrack)
+                self.vgFileManager.savePNG(image: finalImage, for: vgTrack, style: .light)
+                imageCallback()
+            }
+        }
+        let tcDark = UITraitCollection(userInterfaceStyle: .dark)
+        mapSnapshotOptions.traitCollection = tcDark
+
+        snapShotter = MKMapSnapshotter(options: mapSnapshotOptions)
+    
+        snapShotter.start { (snapshot:MKMapSnapshotter.Snapshot?, error:Error?) in
+            DispatchQueue.global(qos: .userInitiated).async {
+                guard let snapshot = snapshot else {
+                    imageCallback()
+                    return
+                }
+                
+                let finalImage = UIGraphicsImageRenderer(size: snapshot.image.size).image { _ in
+                    
+                    // draw the map image
+                    
+                    snapshot.image.draw(at: .zero)
+                    
+                    // only bother with the following if we have a path with two or more coordinates
+                    let coordinates = vgTrack.getCoordinateList()
+                    
+                    // convert the `[CLLocationCoordinate2D]` into a `[CGPoint]`
+                    
+                    let points = coordinates.map { coordinate in
+                        snapshot.point(for: coordinate)
+                    }
+                    
+                    // build a bezier path using that `[CGPoint]`
+                    
+                    let path = UIBezierPath()
+                    path.move(to: points[0])
+                    
+                    for point in points.dropFirst() {
+                        path.addLine(to: point)
+                    }
+                    
+                    // stroke it
+                    
+                    path.lineWidth = 3
+                    UIColor.red.setStroke()
+                    path.stroke()
+                }
+                
+                self.vgFileManager.savePNG(image: finalImage, for: vgTrack, style: .dark)
                 imageCallback()
             }
         }

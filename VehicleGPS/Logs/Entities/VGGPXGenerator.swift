@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 
 class VGGPXGenerator {
@@ -16,7 +17,7 @@ class VGGPXGenerator {
         dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
-        vgFileManager = VGFileManager()
+        vgFileManager = (UIApplication.shared.delegate as! AppDelegate).fileManager!
     }
     
     func getGPXBegin() -> String {

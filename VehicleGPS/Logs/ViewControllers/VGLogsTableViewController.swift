@@ -30,6 +30,10 @@ class VGLogsTableViewController: UITableViewController {
     var downloadCount = 0
     var parseCount = 0
     
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(UINib(nibName: "LogsTableViewCell", bundle: nil), forCellReuseIdentifier: "LogsCell")
@@ -39,7 +43,8 @@ class VGLogsTableViewController: UITableViewController {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(fetchLogList), for: UIControl.Event.valueChanged)
         tableView.refreshControl = refreshControl
-        dataStore = VGDataStore()
+        dataStore = (UIApplication.shared.delegate as! AppDelegate).dataStore!
+        print("DATA POINT COUNT: \(dataStore.countAllData("DataPoint"))")
         DispatchQueue.global(qos: .background).async {
             self.session = NMSSHSession.init(host: self.host, andUsername: self.username)
             if self.session != nil {
@@ -54,7 +59,7 @@ class VGLogsTableViewController: UITableViewController {
         self.navigationItem.rightBarButtonItem = button
         self.navigationItem.leftBarButtonItem = button1
         vgLogParser = VGLogParser()
-        vgFileManager = VGFileManager()
+        vgFileManager = (UIApplication.shared.delegate as! AppDelegate).fileManager!
         tracksDict = tracksToDictionary(trackList: dataStore.getAllTracks())
         tableView.reloadData()
     }
@@ -143,7 +148,7 @@ class VGLogsTableViewController: UITableViewController {
                 continue
             }
             for track in trackList {
-                if track.timeStart == nil {
+                if !track.processed && self.vgFileManager?.getAbsoluteFilePathFor(track: track) != nil {
                     self.parseCount += 1
                 }
             }
@@ -156,7 +161,7 @@ class VGLogsTableViewController: UITableViewController {
             }
             for (rowIndex, track) in trackList.enumerated() {
                 DispatchQueue.global(qos: .background).async {
-                    if track.timeStart == nil && self.vgFileManager?.getAbsoluteFilePathFor(track: track) != nil {
+                    if !track.processed && self.vgFileManager?.getAbsoluteFilePathFor(track: track) != nil {
                         track.beingProcessed = true
                         DispatchQueue.main.async {
                             guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
@@ -493,7 +498,6 @@ class VGLogsTableViewController: UITableViewController {
             logDetailsView.dataStore = self.dataStore
             logDetailsView.track = track
             self.navigationController?.pushViewController(logDetailsView, animated: true)
-            
         }
         
         
@@ -524,6 +528,25 @@ class VGLogsTableViewController: UITableViewController {
         return true
     }
  
+//    // Override to support editing the table view.
+//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+//        if editingStyle == .delete {
+//            // Delete the row from the data source
+//            let track = self.getTrackAt(indexPath: indexPath)
+//            self.dataStore.delete(vgTrack: track)
+//            self.vgFileManager?.deleteFileFor(track: track)
+//
+//            DispatchQueue.main.async {
+//                self.tracksDict[self.sectionKeys[indexPath.section]]?.remove(at: indexPath.row)
+//                tableView.deleteRows(at: [indexPath], with: .fade)
+//
+//                if self.tracksDict[self.sectionKeys[indexPath.section]]?.count == 0 {
+//                    self.sectionKeys.remove(at: indexPath.section)
+//                    tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
+//                }
+//            }
+//        }
+//    }
 
     
     // Override to support editing the table view.
@@ -531,7 +554,6 @@ class VGLogsTableViewController: UITableViewController {
         if editingStyle == .delete {
             // Delete the row from the data source
             let track = self.getTrackAt(indexPath: indexPath)
-            
             self.downloadManager?.deleteFile(filename: track.fileName, callback: { (success) in
                 if success {
                     DispatchQueue.main.async {
@@ -542,7 +564,7 @@ class VGLogsTableViewController: UITableViewController {
                             self.sectionKeys.remove(at: indexPath.section)
                             tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
                         }
-                        
+
                         self.vgFileManager?.deleteFileFor(track: track)
                         self.dataStore.delete(vgTrack: track)
                     }

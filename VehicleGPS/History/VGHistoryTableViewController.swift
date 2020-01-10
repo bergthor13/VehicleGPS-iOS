@@ -17,7 +17,7 @@ class VGHistoryTableViewController: UITableViewController {
         self.tableView.register(UINib(nibName: "HistoryTableViewCell", bundle: nil), forCellReuseIdentifier: "HistoryCell")
         self.tableView.register(UINib(nibName: "HistoryHeader", bundle: nil), forHeaderFooterViewReuseIdentifier: "HistoryHeader")
         self.title = "Saga"
-        let dataStore = VGDataStore()
+        let dataStore = (UIApplication.shared.delegate as! AppDelegate).dataStore!
         tracks = dataStore.getAllTracks()
         historySections = getMonthDictionary(tracks: tracks)
         sortHistory()

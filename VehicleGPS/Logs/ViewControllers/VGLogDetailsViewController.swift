@@ -15,19 +15,24 @@ class VGLogDetailsViewController: UIViewController {
     var trackSegmentView: UIView!
     var carSegmentView: UIView!
     
+    var trackDataTableViewController: VGLogDetailsTrackTableViewController?
+    
     var mapView: MKMapView!
     
     var track: VGTrack!
     var dataStore: VGDataStore!
-    var vgFileManager =  VGFileManager()
+    var vgFileManager =  (UIApplication.shared.delegate as! AppDelegate).fileManager!
     var vgLogParser = VGLogParser()
     var vgGPXGenerator = VGGPXGenerator()
 
-    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.prefersLargeTitles = false
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
         initializeMapView()
+
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(displayShareSelection))
         let detailSegment = UISegmentedControl(items: ["Kort", "Tölfræði"])
         detailSegment.addTarget(self, action: Selector(("segmentedControlValueChanged:")), for:.valueChanged)
@@ -39,18 +44,25 @@ class VGLogDetailsViewController: UIViewController {
         self.view.backgroundColor = .systemBackground
         self.mapView.delegate = self
         self.mapView.mapType = .hybrid
-        let list = dataStore.getPointsForTrack(vgTrack: track).sorted()
-        var points = [CLLocationCoordinate2D]()
-        for point in dataStore.getPointsForTrack(vgTrack: track).sorted() {
-            guard let latitude = point.latitude, let longitude = point.longitude else {
-                continue
+        DispatchQueue.global(qos: .userInitiated).async {
+            let list = self.dataStore.getPointsForTrack(vgTrack: self.track).sorted()
+            var points = [CLLocationCoordinate2D]()
+            self.track.trackPoints = list
+            if list.count > 0 {
+                for point in list {
+                    guard let latitude = point.latitude, let longitude = point.longitude else {
+                        continue
+                    }
+                    points.append(CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
+                }
+                DispatchQueue.main.async {
+                    self.display(track: self.track, list: points, on: self.mapView)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.process(track: self.track)
+                }
             }
-            points.append(CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
-        }
-        if list.count > 0 {
-            display(track: track, list: points, on: self.mapView)
-        } else {
-            process(track: track)
         }
     }
     
@@ -78,7 +90,7 @@ class VGLogDetailsViewController: UIViewController {
         
         DispatchQueue.main.async {
             if list.count > 0 {
-                self.mapView.setRegion(region, animated: true)
+                self.mapView.setRegion(region, animated: false)
             }
             let polyline = MKPolyline(coordinates: list, count: list.count)
             mapView.addOverlay(polyline)
@@ -106,7 +118,6 @@ class VGLogDetailsViewController: UIViewController {
             let points = track.getCoordinateList()
             self.display(track: track, list: points, on: self.mapView)
         })
-
     }
     
     @objc func displayShareSelection() {
@@ -128,6 +139,13 @@ class VGLogDetailsViewController: UIViewController {
             
             alert.addAction(UIAlertAction(title: "Vinna úr skránni aftur", style: .default, handler: { (alertAction) in
                 self.process(track: self.track)
+            }))
+            
+            alert.addAction(UIAlertAction(title: "Skipta ferli í tvennt", style: .default, handler: { (alertAction) in
+                guard let selectedTime = self.trackDataTableViewController?.dlpTime else {
+                    return
+                }
+                self.vgFileManager.split(track: self.track, at: selectedTime)
             }))
         }
         
@@ -161,22 +179,6 @@ class VGLogDetailsViewController: UIViewController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         
         coordinator.animate(alongsideTransition: { (UIViewControllerTransitionCoordinatorContext) -> Void in
-            let orient = UIApplication.shared.statusBarOrientation
-            
-            switch orient {
-                
-            case .portrait:
-                
-                print("Portrait")
-                
-            case .landscapeLeft,.landscapeRight :
-                
-                print("Landscape")
-                
-            default:
-                
-                print("Anything But Portrait")
-            }
             
         }, completion: { (UIViewControllerTransitionCoordinatorContext) -> Void in
             self.mapView.frame = self.view.frame
@@ -189,12 +191,12 @@ class VGLogDetailsViewController: UIViewController {
 
     func initializeTrackDataView() {
         trackSegmentView = UIView(frame: view.frame)
-        let trackDataTableViewController = VGLogDetailsTrackTableViewController(style: .grouped)
-        trackDataTableViewController.tableView.frame = view.frame
-        trackDataTableViewController.track = self.track
-        addChild(trackDataTableViewController)
-        trackSegmentView.addSubview(trackDataTableViewController.view)
-        trackDataTableViewController.didMove(toParent: self)
+        trackDataTableViewController = VGLogDetailsTrackTableViewController(style: .grouped)
+        trackDataTableViewController!.tableView.frame = view.frame
+        trackDataTableViewController!.track = self.track
+        addChild(trackDataTableViewController!)
+        trackSegmentView.addSubview(trackDataTableViewController!.view)
+        trackDataTableViewController!.didMove(toParent: self)
 
     }
     

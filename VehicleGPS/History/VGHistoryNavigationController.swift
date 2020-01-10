@@ -13,7 +13,6 @@ class VGHistoryNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let historyController = VGHistoryTableViewController.init(style: .insetGrouped)
-        historyController.view.backgroundColor = .systemBackground
         self.navigationBar.prefersLargeTitles = true
         self.pushViewController(historyController, animated: false)
         // Do any additional setup after loading the view.

@@ -15,9 +15,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    var dataStore: VGDataStore?
+    var fileManager: VGFileManager?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         self.window = UIWindow(frame: UIScreen.main.bounds)
+        
+        self.dataStore = VGDataStore()
+        self.fileManager = VGFileManager()
         
         let tabController = VGTabBarController()
         
@@ -42,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible()
         
         let configuration = NEHotspotConfiguration(ssid: "VehicleGPS", passphrase: "easyprintsequence", isWEP: false)
-        configuration.joinOnce = false
+        configuration.joinOnce = true
         configuration.hidden = true
 //        NEHotspotConfigurationManager.shared.apply(configuration) { (error) in
 //            print(error)

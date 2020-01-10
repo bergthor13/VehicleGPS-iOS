@@ -35,8 +35,8 @@ class TrackGraphView: UIView {
     var endTime:Date?
     var showMinMaxValue:Bool = true
     
-    var selectedPoint: Set<UITouch>?
-    var dlp: DisplayLineProtocol?
+    var selectedPoint: CGPoint?
+    var dlpList = [DisplayLineProtocol]()
 
 	private var elePoints = [(Date, CGFloat)]()
 
@@ -94,6 +94,9 @@ class TrackGraphView: UIView {
 	}
     
     func displayVerticalLine(at point:CGPoint) {
+        if elePoints.count == 0 {
+            return
+        }
         var thisPoint = point
         if point.x > self.graphFrame.width {
             thisPoint = CGPoint(x: self.graphFrame.width, y: point.y)
@@ -116,6 +119,9 @@ class TrackGraphView: UIView {
     }
     
     func displayHorizontalLine(at list:[CGFloat]) {
+        if elePoints.count == 0 {
+            return
+        }
         for view in self.subviews {
             if view.tag == 300 {
                 view.removeFromSuperview()
@@ -141,53 +147,27 @@ class TrackGraphView: UIView {
         
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if tableView != nil {
-            tableView?.isScrollEnabled = false
-        }
-        selectedPoint = touches
-        displayVerticalLine(at: touches.first!.location(in: self))
-        if let dlp = dlp {
-            dlp.didTouchGraph(at: touches.first!.location(in: self))
-        }
-        
-    }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let i = getPointTouched(point: touches.first!.location(in: self))
-        selectedPoint = touches
-        if i < elePoints.count || i < 0 {
-            self.maxLabel?.text = String(format: "%.2f", elePoints[i].1)
-        }
-        if touches.first!.location(in: self).x < self.graphFrame.width {
-            displayVerticalLine(at: touches.first!.location(in: self))
-        } else {
-            displayVerticalLine(at: CGPoint(x: self.graphFrame.width, y: 0))
-        }
-        if let dlp = dlp {
-            dlp.didTouchGraph(at: touches.first!.location(in: self))
-        }
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //selectedPoint = nil
-        if tableView != nil {
-            tableView?.isScrollEnabled = true
-        }
-    }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //selectedPoint = nil
-    }
-    
     // TODO: FIX ME
     func getPointTouched(point:CGPoint) -> Int {
         let id = Int(round((point.x/self.graphFrame.width)*CGFloat(elePoints.count)))
         return id
     }
+    
+    func getTimeOfTouched(point:CGPoint) -> Date? {
+        let totalSeconds = self.endTime!.timeIntervalSince(self.startTime!)
+        let positionPercentage = point.x / self.graphFrame.width
+        if positionPercentage > 1 {
+            return nil
+        }
+        let calculatedDate = self.startTime!.addingTimeInterval(totalSeconds*Double(positionPercentage))
+        return calculatedDate
+    }
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
+        if elePoints.count == 0 {
+            return
+        }
         self.graphFrame = CGRect(x: self.bounds.origin.x, y: self.bounds.origin.y, width: self.bounds.width-60, height: self.bounds.height)
 		drawGraph()
         self.graphSeparator?.frame = CGRect(origin: CGPoint(x: self.graphFrame.width, y: 0), size: CGSize(width: 0.25, height: self.graphFrame.height))
@@ -226,20 +206,59 @@ class TrackGraphView: UIView {
         self.addSubview(self.maxLabel!)
         self.addSubview(self.minLabel!)
         self.addSubview(self.graphSeparator!)
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(doubleTapped))
-        tapGesture.numberOfTapsRequired = 2
-        self.addGestureRecognizer(tapGesture)
-        if selectedPoint != nil {
-            displayVerticalLine(at: (selectedPoint?.first!.location(in: self))!)
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressed))
+        longPressGesture.minimumPressDuration = TimeInterval(0.5)
+        self.addGestureRecognizer(longPressGesture)
+        
+        if let selectedPoint = selectedPoint {
+            displayVerticalLine(at: (selectedPoint))
         } else {
             graphSelectLayer.sublayers?.removeAll()
             graphSelectLayer.path = nil
         }
-        
     }
-    
-    @objc func doubleTapped() {
-        print("DoubleTapped: \(String(describing: selectedPoint))")
+
+    @objc func longPressed(sender: UILongPressGestureRecognizer) {
+        
+        let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
+        
+        selectedPoint = sender.location(in: self)
+        guard var selectedPoint = selectedPoint else {
+            return
+        }
+        
+        if selectedPoint.x > graphFrame.width {
+            selectedPoint = CGPoint(x: graphFrame.width, y: selectedPoint.y)
+        }
+        switch sender.state {
+        case .began:
+            selectionFeedbackGenerator.selectionChanged()
+
+            displayVerticalLine(at: selectedPoint)
+            for dlp in dlpList {
+                dlp.didTouchGraph(at: selectedPoint)
+            }
+            break
+        case .changed:
+            let i = getPointTouched(point: selectedPoint)
+            if i < elePoints.count || i < 0 {
+                self.maxLabel?.text = String(format: "%.2f", elePoints[i].1)
+            }
+            if selectedPoint.x < self.graphFrame.width {
+                displayVerticalLine(at: selectedPoint)
+            } else {
+                displayVerticalLine(at: CGPoint(x: self.graphFrame.width, y: 0))
+            }
+            for dlp in dlpList {
+                dlp.didTouchGraph(at: selectedPoint)
+            }
+            break
+        case .ended, .failed, .cancelled:
+
+            break
+        default:
+            break
+        }
     }
     
     override init(frame: CGRect) {

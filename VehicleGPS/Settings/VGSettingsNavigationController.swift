@@ -12,7 +12,7 @@ class VGSettingsNavigationController: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let tvController = VGSettingsTableViewController.init(style: .grouped)
+        let tvController = VGSettingsTableViewController.init(style: .insetGrouped)
         self.pushViewController(tvController, animated: false)
         // Do any additional setup after loading the view.
     }

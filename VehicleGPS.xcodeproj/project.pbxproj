@@ -48,6 +48,7 @@
 		F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C96EB122A853A500180055 /* VGFileManager.swift */; };
 		F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */; };
 		F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */; };
+		F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FDA85D23C646B3000B8B76 /* VGDatabaseTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -97,6 +98,7 @@
 		F2C96EB122A853A500180055 /* VGFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFileManager.swift; sourceTree = "<group>"; };
 		F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDataStore.swift; sourceTree = "<group>"; };
 		F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGPXGenerator.swift; sourceTree = "<group>"; };
+		F2FDA85D23C646B3000B8B76 /* VGDatabaseTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDatabaseTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +196,7 @@
 				F23BE8DA22A5E596008FD50C /* VGSettingsNavigationController.swift */,
 				F23BE8D922A5E596008FD50C /* VGSettingsTableViewController.swift */,
 				F23BE8DB22A5E596008FD50C /* VGWiFiTableViewController.swift */,
+				F2FDA85D23C646B3000B8B76 /* VGDatabaseTableViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -403,6 +406,7 @@
 				F23BE8DF22A5E596008FD50C /* VGSettingsNavigationController.swift in Sources */,
 				F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */,
 				F257077E22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift in Sources */,
+				F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */,
 				F23BE8E022A5E596008FD50C /* VGWiFiTableViewController.swift in Sources */,
 				F23BE8F922A5E5BB008FD50C /* VGSFTPManager.swift in Sources */,
 				F23BE8E422A5E5A7008FD50C /* VGDashboardNavigationController.swift in Sources */,

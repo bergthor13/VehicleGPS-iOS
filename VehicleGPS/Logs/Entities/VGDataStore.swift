@@ -163,47 +163,62 @@ class VGDataStore {
         }
     }
     
+    func countAllData(_ entity:String) -> Int {
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
+        fetchRequest.returnsObjectsAsFaults = false
+        do {
+            let results = try context.fetch(fetchRequest)
+            return results.count
+        } catch let error {
+            print("Delete all data in \(entity) error :", error)
+            return 0
+        }
+    }
+    
     func add(vgDataPoint:VGDataPoint, to vgTrack: NSManagedObject, in context:NSManagedObjectContext) {
         // 2
         let entity = NSEntityDescription.entity(forEntityName: "DataPoint", in: context)!
-        context.perform {
-            let dataPoint = NSManagedObject(entity: entity, insertInto: context)
-            if vgDataPoint.timestamp != nil {
-                dataPoint.setValue(vgDataPoint.timestamp, forKey: "timeStamp")
-            }
-            
-            dataPoint.setValue(vgDataPoint.latitude, forKey: "latitude")
-            dataPoint.setValue(vgDataPoint.longitude, forKey: "longitude")
-            dataPoint.setValue(vgDataPoint.elevation, forKey: "elevation")
-            dataPoint.setValue(vgDataPoint.satellites, forKey: "satellites")
-            dataPoint.setValue(vgDataPoint.horizontalAccuracy, forKey: "horizontalAccuracy")
-            dataPoint.setValue(vgDataPoint.verticalAccuracy, forKey: "verticalAccuracy")
-            dataPoint.setValue(vgDataPoint.pdop, forKey: "pdop")
-            dataPoint.setValue(vgDataPoint.fixType, forKey: "fixType")
-            dataPoint.setValue(vgDataPoint.gnssFixOk, forKey: "gnssFixOK")
-            dataPoint.setValue(vgDataPoint.fullyResolved, forKey: "fullyResolved")
-            if vgDataPoint.rpm != nil {
-                dataPoint.setValue(vgDataPoint.rpm, forKey: "rpm")
-            }
-            
-            if vgDataPoint.engineLoad != nil {
-                dataPoint.setValue(vgDataPoint.engineLoad, forKey: "engineLoad")
-            }
-            
-            if vgDataPoint.coolantTemperature != nil {
-                dataPoint.setValue(vgDataPoint.coolantTemperature, forKey: "coolantTemperature")
-            }
-            
-            if vgDataPoint.ambientTemperature != nil {
-                dataPoint.setValue(vgDataPoint.ambientTemperature, forKey: "ambientTemperature")
-            }
-            
-            if vgDataPoint.throttlePosition != nil {
-                dataPoint.setValue(vgDataPoint.throttlePosition, forKey: "throttlePosition")
-            }
-            
-            dataPoint.setValue(vgTrack, forKey: "track")
+        
+        let dataPoint = NSManagedObject(entity: entity, insertInto: context)
+        if vgDataPoint.timestamp != nil {
+            dataPoint.setValue(vgDataPoint.timestamp, forKey: "timeStamp")
         }
+        
+        dataPoint.setValue(vgDataPoint.latitude, forKey: "latitude")
+        dataPoint.setValue(vgDataPoint.longitude, forKey: "longitude")
+        dataPoint.setValue(vgDataPoint.elevation, forKey: "elevation")
+        dataPoint.setValue(vgDataPoint.satellites, forKey: "satellites")
+        dataPoint.setValue(vgDataPoint.horizontalAccuracy, forKey: "horizontalAccuracy")
+        dataPoint.setValue(vgDataPoint.verticalAccuracy, forKey: "verticalAccuracy")
+        dataPoint.setValue(vgDataPoint.pdop, forKey: "pdop")
+        dataPoint.setValue(vgDataPoint.fixType, forKey: "fixType")
+        dataPoint.setValue(vgDataPoint.gnssFixOk, forKey: "gnssFixOK")
+        dataPoint.setValue(vgDataPoint.fullyResolved, forKey: "fullyResolved")
+        if vgDataPoint.rpm != nil {
+            dataPoint.setValue(vgDataPoint.rpm, forKey: "rpm")
+        }
+        
+        if vgDataPoint.engineLoad != nil {
+            dataPoint.setValue(vgDataPoint.engineLoad, forKey: "engineLoad")
+        }
+        
+        if vgDataPoint.coolantTemperature != nil {
+            dataPoint.setValue(vgDataPoint.coolantTemperature, forKey: "coolantTemperature")
+        }
+        
+        if vgDataPoint.ambientTemperature != nil {
+            dataPoint.setValue(vgDataPoint.ambientTemperature, forKey: "ambientTemperature")
+        }
+        
+        if vgDataPoint.throttlePosition != nil {
+            dataPoint.setValue(vgDataPoint.throttlePosition, forKey: "throttlePosition")
+        }
+        
+        dataPoint.setValue(vgTrack, forKey: "track")
+        
     }
     
     fileprivate func add(vgTrack: VGTrack) {
@@ -231,7 +246,10 @@ class VGDataStore {
         track.setValue(vgTrack.timeStart, forKey: "timeStart")
 
         for point in vgTrack.trackPoints {
-            add(vgDataPoint: point, to: track, in: context)
+            if point.hasGoodFix() {
+                add(vgDataPoint: point, to: track, in: context)
+            }
+            
         }
         
         // 4
@@ -283,9 +301,11 @@ class VGDataStore {
                         trackUpdate.setValue(vgTrack.processed, forKey: "processed")
                         trackUpdate.setValue(vgTrack.timeStart, forKey: "timeStart")
                         
-//                        for point in vgTrack.trackPoints {
-//                            self.add(vgDataPoint: point, to: trackUpdate, in: context)
-//                        }
+                        for point in vgTrack.trackPoints {
+                            if point.hasGoodFix() {
+                                self.add(vgDataPoint: point, to: trackUpdate, in: context)
+                            }
+                        }
                         
                         try context.save()
                     }

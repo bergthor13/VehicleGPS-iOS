@@ -87,7 +87,9 @@ class VGDataPoint {
     var ambientTemperature:Double?
     var throttlePosition:Double?
     
-    var hasOBDData = false
+    var hasOBDData: Bool {
+        return (rpm != nil || engineLoad != nil || coolantTemperature != nil || ambientTemperature != nil || throttlePosition != nil)
+    }
     
     var relatedTrack: VGTrack?
     
@@ -118,27 +120,22 @@ class VGDataPoint {
         
         if data[11] != "None" {
             rpm = Double(data[11])
-            hasOBDData = true
         }
         
         if data[12] != "None" {
             engineLoad = Double(data[12])
-            hasOBDData = true
         }
         
         if data[13] != "None" {
             coolantTemperature = Double(data[13])
-            hasOBDData = true
         }
         
         if data[14] != "None" {
             ambientTemperature = Double(data[14])
-            hasOBDData = true
         }
         
         if data[15] != "None" {
             throttlePosition = Double(data[15])
-            hasOBDData = true
         }
     }
     
@@ -233,7 +230,7 @@ class VGDataPoint {
     
     
     func hasGoodFix() -> Bool {
-        return !(self.fixType <= 1 || self.horizontalAccuracy > 2)
+        return (!(self.fixType <= 1 || self.horizontalAccuracy > 2)) && timestamp != nil
     }
 }
 

@@ -12,6 +12,7 @@ class VGSettingsTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.prefersLargeTitles = true
         self.title = "Stillingar"
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -34,7 +35,7 @@ class VGSettingsTableViewController: UITableViewController {
         return ""
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 { return 2 }
+        if section == 0 { return 3 }
         if section == 1 { return 2 }
         if section == 2 { return 3 }
         return 0
@@ -53,6 +54,11 @@ class VGSettingsTableViewController: UITableViewController {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: "gaugesCell")
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "Mælar"
+            }
+            if indexPath.row == 2 {
+                cell = UITableViewCell.init(style: .default, reuseIdentifier: "databaseCell")
+                cell.accessoryType = .disclosureIndicator
+                cell.textLabel?.text = "Gagnagrunnur"
             }
         }
         if indexPath.section == 1 {
@@ -94,6 +100,10 @@ class VGSettingsTableViewController: UITableViewController {
             if indexPath.row == 0 {
             }
             if indexPath.row == 1 {
+            }
+            if indexPath.row == 2 {
+                let databaseController = VGDatabaseTableViewController.init(style: .grouped)
+                navigationController?.pushViewController(databaseController, animated: true)
             }
         }
         if indexPath.section == 1 {

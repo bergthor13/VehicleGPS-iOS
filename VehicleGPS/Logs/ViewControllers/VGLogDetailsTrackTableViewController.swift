@@ -11,12 +11,14 @@ import CoreLocation
 
 class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLineProtocol {
     var dlpPoint: CGPoint?
+    var dlpTime: Date?
     
     func didTouchGraph(at point: CGPoint) {
         for graph in self.tableView.visibleCells {
             if let graph1 = graph as? VGGraphTableViewCell {
                 graph1.graphView.displayVerticalLine(at: point)
                 dlpPoint = point
+                dlpTime = graph1.graphView.getTimeOfTouched(point: point)
             }
         }
     }
@@ -73,7 +75,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             }
             
             cell?.tableView = self.tableView
-            cell!.graphView.dlp = self
+            cell!.graphView.dlpList.append(self)
             cell!.graphView.startTime = track?.timeStart
             cell!.graphView.endTime = track?.timeStart?.addingTimeInterval(track!.duration)
 
