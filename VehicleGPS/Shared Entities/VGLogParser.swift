@@ -23,18 +23,17 @@ class VGLogParser {
         }
     }
     
-    func fileToTrack(fileUrl:URL, progress:@escaping (UInt, UInt)->Void, callback:@escaping (VGTrack)->Void, imageCallback:((VGTrack) -> Void)? = nil){
+    func fileToTrack(fileUrl:URL, progress:@escaping (UInt, UInt) -> Void, callback:@escaping (VGTrack) -> Void, imageCallback: ((VGTrack) -> Void)? = nil) {
         DispatchQueue.global(qos: .background).async {
             var lastProgressUpdate = Date()
             var fileString = String()
             do {
                 fileString = try String(contentsOf: fileUrl)
-            }
-            catch {/* error handling here */}
+            } catch {/* error handling here */}
             let track = VGTrack()
             track.fileName = fileUrl.lastPathComponent
             do {
-                let resources = try fileUrl.resourceValues(forKeys:[.fileSizeKey])
+                let resources = try fileUrl.resourceValues(forKeys: [.fileSizeKey])
                 let fileSize = resources.fileSize!
                 track.fileSize = fileSize
             } catch {
@@ -42,7 +41,7 @@ class VGLogParser {
             }
             let lines = fileString.split { $0.isNewline }
             let lineCount = lines.count
-            var lastDataPoint:VGDataPoint?
+            var lastDataPoint: VGDataPoint?
             for (index, line) in lines.enumerated() {
                 if abs(lastProgressUpdate.timeIntervalSinceNow) > self.progress_update_delay {
                     progress(UInt(index), UInt(lineCount))
