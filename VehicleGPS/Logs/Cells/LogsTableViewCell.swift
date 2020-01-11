@@ -22,7 +22,7 @@ class LogsTableViewCell: UITableViewCell {
     @IBOutlet weak var fileOnDeviceIndicator: UIImageView!
     var vgFileManager: VGFileManager!
     var currentTrack:VGTrack?
-    
+    let formatter = DateFormatter()
     
     
     func update(progress:Double) {
@@ -38,7 +38,6 @@ class LogsTableViewCell: UITableViewCell {
     
     func show(track:VGTrack) {
         currentTrack = track
-        let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm:ss"
         if track.timeStart == nil {
             self.lblTimeStart!.text = formatter.string(from: fileNameToDate(dateString: track.fileName))

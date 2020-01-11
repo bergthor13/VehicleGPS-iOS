@@ -30,7 +30,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         super.viewDidLoad()
         self.tableView.register(VGGraphTableViewCell.self, forCellReuseIdentifier: "GraphCell")
         self.tableView.allowsSelection = false
-        
     }
 
     // MARK: - Table view data source
@@ -81,8 +80,19 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
 
         }
         if indexPath.section == 0 {
+            guard let track = track else {
+                let cell1 = UITableViewCell(style: .value1, reuseIdentifier: "asdf")
+                cell1.textLabel?.text = "No Track"
+                return cell1
+
+            }
+            guard let timeStart = track.timeStart else {
+                let cell1 = UITableViewCell(style: .value1, reuseIdentifier: "asdf")
+                cell1.textLabel?.text = "No Start Time"
+                return cell1
+            }
             let cell1 = UITableViewCell(style: .value1, reuseIdentifier: "asdf")
-            cell1.textLabel?.text = "Start Time: \(track!.timeStart!)"
+            cell1.textLabel?.text = "Start Time: \(timeStart)"
             return cell1
         } else if indexPath.section == 1 {
             var list = [(Date, Double)]()

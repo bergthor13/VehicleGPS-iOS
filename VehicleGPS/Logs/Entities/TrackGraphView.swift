@@ -43,10 +43,12 @@ class TrackGraphView: UIView {
 	public var numbersList = [(Date, Double)]() {
 		didSet {
             elePoints = []
+            guard let endTime = self.endTime else {return}
+            guard let startTime = self.startTime else {return}
             self.maxValue = CGFloat(-Double.infinity)
             self.minValue = CGFloat(Double.infinity)
             let pixelWidth = self.graphFrame.width*UIScreen.main.scale
-            let totalSeconds = self.endTime!.timeIntervalSince(self.startTime!)
+            let totalSeconds = endTime.timeIntervalSince(startTime)
             let secondsPerPixel = totalSeconds/Double(pixelWidth)
             if numbersList.count == 0 {
                 setNeedsLayout()
@@ -154,12 +156,15 @@ class TrackGraphView: UIView {
     }
     
     func getTimeOfTouched(point:CGPoint) -> Date? {
-        let totalSeconds = self.endTime!.timeIntervalSince(self.startTime!)
+        guard let startTime = self.startTime else {return nil}
+        guard let endTime = self.endTime else {return nil}
+
+        let totalSeconds = endTime.timeIntervalSince(startTime)
         let positionPercentage = point.x / self.graphFrame.width
         if positionPercentage > 1 {
             return nil
         }
-        let calculatedDate = self.startTime!.addingTimeInterval(totalSeconds*Double(positionPercentage))
+        let calculatedDate = startTime.addingTimeInterval(totalSeconds*Double(positionPercentage))
         return calculatedDate
     }
 
@@ -280,6 +285,9 @@ class TrackGraphView: UIView {
     }
     
 	public func drawGraph() {
+        guard let endTime = self.endTime else {return}
+        guard let startTime = self.startTime else {return}
+        
 		//calculate the x point
 		UIGraphicsBeginImageContext(self.graphFrame.size)
 
@@ -322,8 +330,8 @@ class TrackGraphView: UIView {
 		graphLayer.lineWidth = 0.75
 		layer.addSublayer(graphLayer)
         let pixelWidth = self.graphFrame.width
-        let totalSeconds = self.endTime!.timeIntervalSince(self.startTime!)
-        let secondsFromStart = elePoints.first!.0.timeIntervalSince(self.startTime!)
+        let totalSeconds = endTime.timeIntervalSince(startTime)
+        let secondsFromStart = elePoints.first!.0.timeIntervalSince(startTime)
 
 		graphPath.move(to: CGPoint(x:CGFloat(secondsFromStart/totalSeconds)*pixelWidth,
                                    y:columnYPoint(Double(elePoints.first!.1))))
@@ -331,7 +339,7 @@ class TrackGraphView: UIView {
 		//add points for each item in the graphPoints array
 		//at the correct (x, y) for the point
 		for i in 0 ..< elePoints.count {
-            let secondsFromStart = elePoints[i].0.timeIntervalSince(self.startTime!)
+            let secondsFromStart = elePoints[i].0.timeIntervalSince(startTime)
 			let nextPoint = CGPoint(x:CGFloat(secondsFromStart/totalSeconds)*pixelWidth,
 			                        y:columnYPoint(Double(elePoints[i].1)))
 			graphPath.addLine(to: nextPoint)
@@ -351,7 +359,7 @@ class TrackGraphView: UIView {
 
 
 		//3 - add lines to the copied path to complete the clip area
-        let endFromStart = elePoints.last!.0.timeIntervalSince(self.startTime!)
+        let endFromStart = elePoints.last!.0.timeIntervalSince(startTime)
 
         clippingPath.addLine(to: CGPoint(
 			x: CGFloat(endFromStart/totalSeconds)*pixelWidth,

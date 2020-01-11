@@ -29,6 +29,13 @@ class VGLogsTableViewController: UITableViewController {
     var shouldStopDownloading = false
     var downloadCount = 0
     var parseCount = 0
+    var headerParseDateFormatter: DateFormatter?
+    var headerDateFormatter: DateFormatter?
+    let distanceFormatter = LengthFormatter()
+    let form = DateComponentsFormatter()
+
+
+
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -36,6 +43,23 @@ class VGLogsTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        headerParseDateFormatter = DateFormatter()
+        headerParseDateFormatter!.dateFormat = "yyyy-MM-dd"
+        headerParseDateFormatter!.locale = Locale(identifier: "en_US_POSIX")
+
+        headerDateFormatter = DateFormatter()
+        headerDateFormatter!.dateStyle = .full
+        headerDateFormatter!.locale = Locale(identifier: "is_IS")
+        headerDateFormatter!.doesRelativeDateFormatting = true
+        
+        distanceFormatter.numberFormatter.maximumFractionDigits = 2
+        distanceFormatter.numberFormatter.minimumFractionDigits = 2
+
+        form.unitsStyle = .positional
+        form.allowedUnits = [ .hour, .minute, .second ]
+        form.zeroFormattingBehavior = [ .default ]
+
+        
         self.tableView.register(UINib(nibName: "LogsTableViewCell", bundle: nil), forCellReuseIdentifier: "LogsCell")
         self.tableView.register(UINib(nibName: "LogHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: "LogsHeader")
         self.title = "Ferlar"
@@ -44,7 +68,6 @@ class VGLogsTableViewController: UITableViewController {
         refreshControl.addTarget(self, action: #selector(fetchLogList), for: UIControl.Event.valueChanged)
         tableView.refreshControl = refreshControl
         dataStore = (UIApplication.shared.delegate as! AppDelegate).dataStore!
-        print("DATA POINT COUNT: \(dataStore.countAllData("DataPoint"))")
         DispatchQueue.global(qos: .background).async {
             self.session = NMSSHSession.init(host: self.host, andUsername: self.username)
             if self.session != nil {
@@ -275,6 +298,7 @@ class VGLogsTableViewController: UITableViewController {
         }
         return result
     }
+    
     func displayErrorAlert(title:String?, message:String?) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
@@ -394,17 +418,11 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as! LogHeaderView
+
         let day = sectionKeys[section]
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
-        let date = dateFormatter.date(from:day)!
-        
-        dateFormatter.dateStyle = .full
-        dateFormatter.locale = Locale(identifier: "is_IS")
-        dateFormatter.doesRelativeDateFormatting = true
-        let dateString = dateFormatter.string(from: date)
+        let date = headerParseDateFormatter!.date(from:day)!
+        let dateString = headerDateFormatter!.string(from: date)
         var totalDuration = 0.0
         var totalDistance = 0.0
         var distanceString = ""
@@ -413,25 +431,17 @@ class VGLogsTableViewController: UITableViewController {
             totalDuration += track.duration
             totalDistance += track.distance
         }
-        let distanceFormatter = LengthFormatter()
-        distanceFormatter.numberFormatter.maximumFractionDigits = 2
-        distanceFormatter.numberFormatter.minimumFractionDigits = 2
         if totalDistance > 1 {
             distanceString = distanceFormatter.string(fromValue: totalDistance, unit: .kilometer)
         } else {
             distanceString = distanceFormatter.string(fromValue: totalDistance*1000, unit: .meter)
         }
         
-        let form = DateComponentsFormatter()
-        form.unitsStyle = .positional
-        form.allowedUnits = [ .hour, .minute, .second ]
-        form.zeroFormattingBehavior = [ .default ]
         
         let formattedDuration = form.string(from: totalDuration)
         durationString = String(formattedDuration!)
         
         
-        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as! LogHeaderView
         view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
         return view
@@ -451,18 +461,6 @@ class VGLogsTableViewController: UITableViewController {
         cell.show(track:track)
         return cell
     }
-    
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: "LogsCell",
-            for: indexPath
-            ) as? LogsTableViewCell else {
-                return
-        }        
-        let track = getTrackAt(indexPath: indexPath)
-        cell.show(track:track)
-    }
-    
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let track = getTrackAt(indexPath: indexPath)
