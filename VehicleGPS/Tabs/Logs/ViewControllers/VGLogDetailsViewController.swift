@@ -32,13 +32,14 @@ class VGLogDetailsViewController: UIViewController {
         super.viewDidLoad()
         
         initializeMapView()
+        initializeTrackDataView()
+
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(displayShareSelection))
         let detailSegment = UISegmentedControl(items: ["Kort", "Tölfræði"])
         detailSegment.addTarget(self, action: Selector(("segmentedControlValueChanged:")), for:.valueChanged)
         detailSegment.selectedSegmentIndex = 0
         self.navigationItem.titleView = detailSegment
-    
         view.addSubview(mapSegmentView)
     
         self.view.backgroundColor = .systemBackground
@@ -161,11 +162,7 @@ class VGLogDetailsViewController: UIViewController {
         case 0:
             view.addSubview(mapSegmentView)
         case 1:
-            initializeTrackDataView()
             view.addSubview(trackSegmentView)
-        case 2:
-            initializeCarDataView()
-            view.addSubview(carSegmentView)
         default:
             break;
         }
@@ -199,27 +196,6 @@ class VGLogDetailsViewController: UIViewController {
         trackDataTableViewController!.didMove(toParent: self)
 
     }
-    
-    func initializeCarDataView() {
-        carSegmentView = UIView(frame: view.bounds)
-//        let carDataViewController = VGLogDetailsCarTableViewController(style: .grouped)
-//        addChild(carDataViewController)
-//        carSegmentView.addSubview(carDataViewController.view)
-//        carDataViewController.didMove(toParent: self)
-
-    }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
 extension VGLogDetailsViewController : MKMapViewDelegate {

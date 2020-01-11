@@ -59,10 +59,14 @@ class TrackGraphView: UIView {
             var lastPixel = numbersList.first!.0
             var pointCount = 0
             for item in numbersList {
+                if item.1 == Double.infinity {
+                    continue
+                }
                 pointCount += 1
 				totalAltitude += CGFloat(item.1)
                 if item.0.timeIntervalSince(lastPixel) > secondsPerPixel {
                     let currValue = totalAltitude/CGFloat(pointCount)
+
                     if currValue < minValue {
                         minValue = currValue
                     }

@@ -191,14 +191,23 @@ class VGFileManager {
     
     func getTrackImageCount() -> Int {
         var fileList = [String]()
-        let logPath = getImageFolder(style: .dark)?.path
+        let logPathDark = getImageFolder(style: .dark)?.path
+        let logPathLight = getImageFolder(style: .light)?.path
+        var fileCount = 0
         do {
-            fileList = try fileManager.contentsOfDirectory(atPath: (logPath)!)
-            return fileList.count
+            fileList = try fileManager.contentsOfDirectory(atPath: (logPathDark)!)
+            fileCount += fileList.count
         } catch let error {
             print(error)
-            return 0
         }
+        
+        do {
+            fileList = try fileManager.contentsOfDirectory(atPath: (logPathLight)!)
+            fileCount += fileList.count
+        } catch let error {
+            print(error)
+        }
+        return fileCount
     }
     
     func fileForTrackExists(track:VGTrack) -> Bool {

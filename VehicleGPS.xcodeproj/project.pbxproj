@@ -141,11 +141,11 @@
 			children = (
 				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
 				F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */,
-				F23BE8EE22A5E5BB008FD50C /* VGSFTPManager.swift */,
-				F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */,
-				F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */,
-				F23BE8E922A5E5BB008FD50C /* VGTrack.swift */,
 				F2C96EB122A853A500180055 /* VGFileManager.swift */,
+				F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */,
+				F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */,
+				F23BE8E922A5E5BB008FD50C /* VGTrack.swift */,
+				F23BE8EE22A5E5BB008FD50C /* VGSFTPManager.swift */,
 				F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */,
 			);
 			path = "Shared Entities";

@@ -83,7 +83,7 @@ class LogsTableViewCell: UITableViewCell {
         }
         trackView.image = vgFileManager.openImageFor(track: track, style: self.traitCollection.userInterfaceStyle)
         trackView.layer.borderWidth = 0.5
-        trackView.layer.borderColor = UIColor.black.cgColor
+        trackView.layer.borderColor = UIColor.secondaryLabel.cgColor
         if track.beingProcessed {
             activityView.startAnimating()
         } else {
@@ -93,6 +93,7 @@ class LogsTableViewCell: UITableViewCell {
     }
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         guard let track = currentTrack else {return}
+        trackView.layer.borderColor = UIColor.secondaryLabel.cgColor
         trackView.image = vgFileManager.openImageFor(track: track, style: self.traitCollection.userInterfaceStyle)
     }
     
