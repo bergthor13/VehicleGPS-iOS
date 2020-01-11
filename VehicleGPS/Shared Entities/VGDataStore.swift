@@ -163,7 +163,7 @@ class VGDataStore {
         }
     }
     
-    func countAllData(_ entity:String) -> Int {
+    func countAllData(_ entity:String, callback:(Int)->()) {
         let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         
@@ -171,10 +171,10 @@ class VGDataStore {
         fetchRequest.returnsObjectsAsFaults = false
         do {
             let results = try context.fetch(fetchRequest)
-            return results.count
+            callback(results.count)
         } catch let error {
-            print("Delete all data in \(entity) error :", error)
-            return 0
+            print("Count all data in \(entity) error :", error)
+            callback(0)
         }
     }
     

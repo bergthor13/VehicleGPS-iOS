@@ -43,7 +43,14 @@ class VGDatabaseTableViewController: UITableViewController {
         if indexPath.section == 0 {
             cell = UITableViewCell.init(style: .value1, reuseIdentifier: "wifiCell")
             cell.textLabel?.text = dataTypes[indexPath.row]
-            cell.detailTextLabel?.text = String(dataStore.countAllData(dataTypes[indexPath.row]))
+            
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.dataStore.countAllData(self.dataTypes[indexPath.row]) { (count) in
+                    DispatchQueue.main.async {
+                        cell.detailTextLabel!.text = String(count)
+                    }
+                }
+            }
         }
         else if indexPath.section == 1 {
             cell = UITableViewCell.init(style: .value1, reuseIdentifier: "wifiCell")
