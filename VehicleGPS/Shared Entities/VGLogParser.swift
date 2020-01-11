@@ -169,7 +169,7 @@ class VGLogParser {
                     return
                 }
                 self.vgFileManager.savePNG(image: snapshot.image, for: vgTrack, style: snapshot.traitCollection.userInterfaceStyle)
-                
+                imageCallback()
             }
             
             makeSnapshot(options: mapSnapshotOptions, centerLocation: location, points: nil, style: .dark) { (snapshot) in
@@ -177,6 +177,7 @@ class VGLogParser {
                     return
                 }
                 self.vgFileManager.savePNG(image: snapshot.image, for: vgTrack, style: snapshot.traitCollection.userInterfaceStyle)
+                imageCallback()
             }
             return
         }
