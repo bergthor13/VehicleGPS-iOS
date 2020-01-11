@@ -132,6 +132,38 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F2169BEB23C9CE4500DE8547 /* Shared Entities */ = {
+			isa = PBXGroup;
+			children = (
+				F24A6FCC22F8521E00C8D372 /* VehicleGPS.entitlements */,
+				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
+				F23BE8C822A5E4BA008FD50C /* Assets.xcassets */,
+				F23BE8CA22A5E4BA008FD50C /* LaunchScreen.storyboard */,
+				F23BE8CD22A5E4BA008FD50C /* Info.plist */,
+				F23BE8C522A5E4B9008FD50C /* VehicleGPS.xcdatamodeld */,
+				F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */,
+				F23BE8EE22A5E5BB008FD50C /* VGSFTPManager.swift */,
+				F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */,
+				F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */,
+				F23BE8E922A5E5BB008FD50C /* VGTrack.swift */,
+				F2C96EB122A853A500180055 /* VGFileManager.swift */,
+				F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */,
+			);
+			path = "Shared Entities";
+			sourceTree = "<group>";
+		};
+		F2169BEC23C9CE5800DE8547 /* Tabs */ = {
+			isa = PBXGroup;
+			children = (
+				F23BE8D322A5E566008FD50C /* VGTabBarController.swift */,
+				F25839CD23A6602C00E76B54 /* History */,
+				F23BE8D722A5E585008FD50C /* Settings */,
+				F23BE8D622A5E576008FD50C /* Logs */,
+				F23BE8D522A5E56F008FD50C /* Dashboard */,
+			);
+			path = Tabs;
+			sourceTree = "<group>";
+		};
 		F23BE8B222A5E4B9008FD50C = {
 			isa = PBXGroup;
 			children = (
@@ -153,17 +185,8 @@
 		F23BE8BD22A5E4B9008FD50C /* VehicleGPS */ = {
 			isa = PBXGroup;
 			children = (
-				F25839CD23A6602C00E76B54 /* History */,
-				F24A6FCC22F8521E00C8D372 /* VehicleGPS.entitlements */,
-				F23BE8D722A5E585008FD50C /* Settings */,
-				F23BE8D622A5E576008FD50C /* Logs */,
-				F23BE8D522A5E56F008FD50C /* Dashboard */,
-				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
-				F23BE8D322A5E566008FD50C /* VGTabBarController.swift */,
-				F23BE8C822A5E4BA008FD50C /* Assets.xcassets */,
-				F23BE8CA22A5E4BA008FD50C /* LaunchScreen.storyboard */,
-				F23BE8CD22A5E4BA008FD50C /* Info.plist */,
-				F23BE8C522A5E4B9008FD50C /* VehicleGPS.xcdatamodeld */,
+				F2169BEB23C9CE4500DE8547 /* Shared Entities */,
+				F2169BEC23C9CE5800DE8547 /* Tabs */,
 			);
 			path = VehicleGPS;
 			sourceTree = "<group>";
@@ -205,13 +228,6 @@
 			isa = PBXGroup;
 			children = (
 				F257077922F09AAA00F201B3 /* TrackGraphView.swift */,
-				F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */,
-				F23BE8EE22A5E5BB008FD50C /* VGSFTPManager.swift */,
-				F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */,
-				F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */,
-				F23BE8E922A5E5BB008FD50C /* VGTrack.swift */,
-				F2C96EB122A853A500180055 /* VGFileManager.swift */,
-				F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */,
 				F257078122F0C20000F201B3 /* LogHeaderView.swift */,
 				F23D787223B7C16700DBC64F /* DisplayLineProtocol.swift */,
 			);
