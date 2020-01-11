@@ -255,10 +255,10 @@
 				F25839D023A6606F00E76B54 /* VGHistoryNavigationController.swift */,
 				F25839D823A680FC00E76B54 /* HistoryTableViewCell.swift */,
 				F25839DA23A6810F00E76B54 /* HistoryTableViewCell.xib */,
-				F25839DC23A6BE8600E76B54 /* TracksSummary.swift */,
 				F25839E023AAD03C00E76B54 /* HistoryHeader.xib */,
 				F25839E223AAD1E000E76B54 /* HistoryHeader.swift */,
 				F23D786E23B1551300DBC64F /* HistorySection.swift */,
+				F25839DC23A6BE8600E76B54 /* TracksSummary.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
