@@ -36,11 +36,13 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         if track!.hasOBDData {
-            return 10
+            return sections.count
         } else {
             return 4
         }
     }
+    
+    let sections = ["Samantekt", "Hraði", "Hæð yfir sjávarmáli", "PDOP", "Lárétt nákvæmni", "Snúningar á mínútu", "Álag vélar", "Eldsneytisgjöf", "Hiti á kælivökva", "Útihiti"]
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
@@ -49,18 +51,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         return 1
     }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 {return "Samantekt"}
-        if section == 1 {return "Hraði"}
-        if section == 2 {return "Hæð yfir sjávarmáli"}
-        if section == 3 {return "PDOP"}
-        if section == 4 {return "Lárétt nákvæmni"}
-        if section == 5 {return "Snúningar á mínútu"}
-        if section == 6 {return "Álag vélar"}
-        if section == 7 {return "Eldsneytisgjöf"}
-        if section == 8 {return "Hiti á kælivökva"}
-        if section == 9 {return "Útihiti"}
-        
-        return ""
+        return sections[section]
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -253,6 +244,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         if indexPath.section == 0 {
             return 30
         }
-        return 150
+        return 200
     }
 }
