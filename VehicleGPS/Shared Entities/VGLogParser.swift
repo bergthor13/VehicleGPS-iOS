@@ -165,12 +165,18 @@ class VGLogParser {
             mapSnapshotOptions.size   = CGSize(width: 110, height: 110)
             
             makeSnapshot(options: mapSnapshotOptions, centerLocation: location, points: nil, style: .light) { (snapshot) in
-                self.vgFileManager.savePNG(image: snapshot!.image, for: vgTrack, style: (snapshot?.traitCollection.userInterfaceStyle)!)
+                guard let snapshot = snapshot else {
+                    return
+                }
+                self.vgFileManager.savePNG(image: snapshot.image, for: vgTrack, style: snapshot.traitCollection.userInterfaceStyle)
                 
             }
             
             makeSnapshot(options: mapSnapshotOptions, centerLocation: location, points: nil, style: .dark) { (snapshot) in
-                self.vgFileManager.savePNG(image: snapshot!.image, for: vgTrack, style: (snapshot?.traitCollection.userInterfaceStyle)!)
+                guard let snapshot = snapshot else {
+                    return
+                }
+                self.vgFileManager.savePNG(image: snapshot.image, for: vgTrack, style: snapshot.traitCollection.userInterfaceStyle)
             }
             return
         }
