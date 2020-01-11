@@ -21,30 +21,30 @@ class VGGraphTableViewCell: UITableViewCell {
         initializeView()
     }
     
-    init(style: UITableViewCell.CellStyle, reuseIdentifier: String?, tableView:UITableView) {
+    init(style: UITableViewCell.CellStyle, reuseIdentifier: String?, tableView: UITableView) {
         self.tableView = tableView
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         initializeView()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         initializeView()
     }
-    
+
     override func prepareForReuse() {
         self.graphView.displayHorizontalLine(at: [])
         self.graphView.showMinMaxValue = false
         self.graphView.numbersList = []
     }
-    
+
     func initializeView() {
         if tableView != nil {
             self.graphView = TrackGraphView(frame: self.contentView.frame, tableView: self.tableView!)
         } else {
             self.graphView = TrackGraphView(frame: self.contentView.frame)
         }
-        
+
         self.contentView.addSubview(graphView)
     }
     override func layoutSubviews() {

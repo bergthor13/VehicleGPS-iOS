@@ -5,4 +5,5 @@ target 'VehicleGPS' do
   pod 'NMSSH'
   pod 'MBProgressHUD', '~> 1.1'
   pod 'Socket.IO-Client-Swift', '~> 15.2.0'
+  pod 'SwiftLint'
 end

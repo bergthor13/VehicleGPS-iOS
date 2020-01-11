@@ -15,7 +15,13 @@ import MapKit
 class VGLogParser {
     let progress_update_delay = TimeInterval(0.1)
     let PNG_PADDING:CGFloat = 0.9
-    var vgFileManager = (UIApplication.shared.delegate as! AppDelegate).fileManager!
+    var vgFileManager:VGFileManager!
+    
+    init() {
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            self.vgFileManager = appDelegate.fileManager
+        }
+    }
     
     func fileToTrack(fileUrl:URL, progress:@escaping (UInt, UInt)->Void, callback:@escaping (VGTrack)->Void, imageCallback:((VGTrack) -> Void)? = nil){
         DispatchQueue.global(qos: .background).async {

@@ -10,8 +10,9 @@ import UIKit
 
 class VGHistoryTableViewController: UITableViewController {
     var tracks = [VGTrack]()
-    let df = DateFormatter()
-    let nf = NumberFormatter()
+    let dateFormatter = DateFormatter()
+    let numberFormatter = NumberFormatter()
+    var dataStore: VGDataStore!
 
     var historySections = [HistorySection]() {
         didSet {
@@ -27,28 +28,34 @@ class VGHistoryTableViewController: UITableViewController {
     }
 
     fileprivate func registerCells() {
-        self.tableView.register(UINib(nibName: "HistoryTableViewCell", bundle: nil), forCellReuseIdentifier: "HistoryCell")
-        self.tableView.register(UINib(nibName: "HistoryHeader", bundle: nil), forHeaderFooterViewReuseIdentifier: "HistoryHeader")
+        let historyTableViewCellNib = UINib(nibName: "HistoryTableViewCell", bundle: nil)
+        let historyHeaderNib = UINib(nibName: "HistoryHeader", bundle: nil)
+        
+        self.tableView.register(historyTableViewCellNib, forCellReuseIdentifier: "HistoryCell")
+        self.tableView.register(historyHeaderNib, forHeaderFooterViewReuseIdentifier: "HistoryHeader")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Saga"
-        df.locale = Locale(identifier: "is_IS")
+        dateFormatter.locale = Locale(identifier: "is_IS")
         
-        nf.locale = Locale.current
-        nf.maximumFractionDigits = 0
-        nf.minimumFractionDigits = 0
-        nf.usesGroupingSeparator = true
-        nf.numberStyle = .decimal
+        numberFormatter.locale = Locale.current
+        numberFormatter.maximumFractionDigits = 0
+        numberFormatter.minimumFractionDigits = 0
+        numberFormatter.usesGroupingSeparator = true
+        numberFormatter.numberStyle = .decimal
 
         registerCells()
-        let dataStore = (UIApplication.shared.delegate as! AppDelegate).dataStore!
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            self.dataStore = appDelegate.dataStore
+        }
+        
         tracks = dataStore.getAllTracks()
         historySections = getMonthDictionary(tracks: tracks)
     }
     
-    func getYearDictionary(tracks:[VGTrack]) -> [HistorySection] {
+    func getYearDictionary(tracks: [VGTrack]) -> [HistorySection] {
         var result = [HistorySection]()
         for track in tracks {
             let sectionKey = "AllYears"
@@ -60,7 +67,7 @@ class VGHistoryTableViewController: UITableViewController {
             }.first
             
             if section == nil {
-                section = HistorySection(title:"")
+                section = HistorySection(title: "")
                 section?.sectionID = sectionKey
                 result.append(section!)
             }
@@ -71,10 +78,10 @@ class VGHistoryTableViewController: UITableViewController {
             
             if summary == nil {
                 summary = TracksSummary(title:summaryKey)
-                df.dateFormat = "yyyy"
-                let date = df.date(from: summaryKey)
-                df.dateFormat = "YYYY"
-                summary!.dateDescription = df.string(from: date!)
+                dateFormatter.dateFormat = "yyyy"
+                let date = dateFormatter.date(from: summaryKey)
+                dateFormatter.dateFormat = "YYYY"
+                summary!.dateDescription = dateFormatter.string(from: date!)
                 section?.summaries.append(summary!)
             }
             
@@ -84,7 +91,7 @@ class VGHistoryTableViewController: UITableViewController {
         return result
     }
     
-    func getMonthDictionary(tracks:[VGTrack]) -> [HistorySection] {
+    func getMonthDictionary(tracks: [VGTrack]) -> [HistorySection] {
         var result = [HistorySection]()
         for track in tracks {
             let sectionKey = String(track.isoStartTime.prefix(4))
@@ -97,10 +104,10 @@ class VGHistoryTableViewController: UITableViewController {
             
             if section == nil {
                 section = HistorySection(title:sectionKey)
-                df.dateFormat = "yyyy"
-                let date = df.date(from: sectionKey)
-                df.dateFormat = "YYYY"
-                section!.dateDescription = df.string(from: date!)
+                dateFormatter.dateFormat = "yyyy"
+                let date = dateFormatter.date(from: sectionKey)
+                dateFormatter.dateFormat = "YYYY"
+                section!.dateDescription = dateFormatter.string(from: date!)
 
                 result.append(section!)
             }
@@ -110,11 +117,11 @@ class VGHistoryTableViewController: UITableViewController {
                 }).first
             
             if summary == nil {
-                summary = TracksSummary(title:summaryKey)
-                df.dateFormat = "yyyy-MM"
-                let date = df.date(from: summaryKey)
-                df.dateFormat = "MMMM YYYY"
-                summary!.dateDescription = df.string(from: date!)
+                summary = TracksSummary(title: summaryKey)
+                dateFormatter.dateFormat = "yyyy-MM"
+                let date = dateFormatter.date(from: summaryKey)
+                dateFormatter.dateFormat = "MMMM YYYY"
+                summary!.dateDescription = dateFormatter.string(from: date!)
                 section?.summaries.append(summary!)
             }
             
@@ -124,7 +131,7 @@ class VGHistoryTableViewController: UITableViewController {
         return result
     }
     
-    func getDayDictionary(tracks:[VGTrack]) -> [HistorySection] {
+    func getDayDictionary(tracks: [VGTrack]) -> [HistorySection] {
         var result = [HistorySection]()
         for track in tracks {
             let sectionKey = String(track.isoStartTime.prefix(7))
@@ -136,11 +143,11 @@ class VGHistoryTableViewController: UITableViewController {
             }.first
             
             if section == nil {
-                section = HistorySection(title:sectionKey)
-                df.dateFormat = "yyyy-MM"
-                let date = df.date(from: sectionKey)
-                df.dateFormat = "MMMM YYYY"
-                section!.dateDescription = df.string(from: date!)
+                section = HistorySection(title: sectionKey)
+                dateFormatter.dateFormat = "yyyy-MM"
+                let date = dateFormatter.date(from: sectionKey)
+                dateFormatter.dateFormat = "MMMM YYYY"
+                section!.dateDescription = dateFormatter.string(from: date!)
 
                 result.append(section!)
             }
@@ -150,11 +157,11 @@ class VGHistoryTableViewController: UITableViewController {
                 }).first
             
             if summary == nil {
-                summary = TracksSummary(title:summaryKey)
-                df.dateFormat = "yyyy-MM-dd"
-                let date = df.date(from: summaryKey)
-                df.dateStyle = .long
-                summary!.dateDescription = df.string(from: date!)
+                summary = TracksSummary(title: summaryKey)
+                dateFormatter.dateFormat = "yyyy-MM-dd"
+                let date = dateFormatter.date(from: summaryKey)
+                dateFormatter.dateStyle = .long
+                summary!.dateDescription = dateFormatter.string(from: date!)
                 section?.summaries.append(summary!)
             }
             
@@ -166,14 +173,17 @@ class VGHistoryTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if section == 0 {
-            let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HistoryHeader") as! HistoryHeader
+            guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HistoryHeader") as? HistoryHeader else {
+                return UIView()
+            }
+            
             view.historyTableViewController = self
             return view
         }
         return nil
     }
     
-    func segmentChanged(id:Int) {
+    func segmentChanged(id: Int) {
         if id == 0 { // Day
             historySections = getDayDictionary(tracks: tracks)
         } else if id == 1 { // Month
@@ -197,21 +207,22 @@ class VGHistoryTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "HistoryCell", for: indexPath) as! HistoryTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "HistoryCell", for: indexPath) as? HistoryTableViewCell else {
+            return UITableViewCell()
+        }
         let section = historySections[indexPath.section]
         let summary = section.summaries[indexPath.row]
         
-        var unformattedDistance = String(nf.string(from: NSNumber(value: summary.distance))!) + " km"
-        var distanceText = NSMutableAttributedString.init(string:unformattedDistance)
+        var unformattedDistance = String(numberFormatter.string(from: NSNumber(value: summary.distance))!) + " km"
+        var distanceText = NSMutableAttributedString.init(string: unformattedDistance)
         
         distanceText.setAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 17, weight: .semibold),
                                   NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel],
                                    range: NSMakeRange(unformattedDistance.count-3, 3))
         cell.lblDistance.attributedText = distanceText
         
-        
         unformattedDistance = String(summary.trackCount) + " ferðir"
-        distanceText = NSMutableAttributedString.init(string:unformattedDistance)
+        distanceText = NSMutableAttributedString.init(string: unformattedDistance)
         
         distanceText.setAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .semibold),
                                   NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel],

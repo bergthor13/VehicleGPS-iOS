@@ -11,6 +11,6 @@ import UIKit
 
 protocol DisplayLineProtocol {
     var dlpPoint: CGPoint? { get set }
-    var dlpTime:  Date?    { get set }
-    func didTouchGraph(at point:CGPoint)
+    var dlpTime: Date? { get set }
+    func didTouchGraph(at point: CGPoint)
 }

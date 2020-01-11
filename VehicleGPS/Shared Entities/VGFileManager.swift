@@ -11,13 +11,15 @@ import UIKit
 
 class VGFileManager {
     var fileManager:FileManager
-    var dataStore:VGDataStore
+    var dataStore:VGDataStore!
     var LOG_DIRECTORY = "OriginalLogs"
     var IMAGE_DIRECTORY_LIGHT = "OverviewSnapsLight"
     var IMAGE_DIRECTORY_DARK = "OverviewSnapsDark"
     init() {
         fileManager = FileManager.default
-        dataStore = (UIApplication.shared.delegate as! AppDelegate).dataStore!
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            self.dataStore = appDelegate.dataStore
+        }
         createDirectory(directoryName: LOG_DIRECTORY)
         createDirectory(directoryName: IMAGE_DIRECTORY_LIGHT)
         createDirectory(directoryName: IMAGE_DIRECTORY_DARK)
@@ -27,7 +29,9 @@ class VGFileManager {
         let logFolder = getDocumentsFolder()?.appendingPathComponent(directoryName)
         if !fileManager.fileExists(atPath: logFolder!.path) {
             do {
-                try fileManager.createDirectory(atPath: logFolder!.path, withIntermediateDirectories: false, attributes: nil)
+                try fileManager.createDirectory(atPath: logFolder!.path,
+                                                withIntermediateDirectories: false,
+                                                attributes: nil)
             } catch let error {
                 print(error)
             }
@@ -35,9 +39,13 @@ class VGFileManager {
         }
     }
     
-    func dataToFile(data:Data, filename:String) -> URL? {
+    func dataToFile(data: Data, filename: String) -> URL? {
         do {
-            let destFileName = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent(LOG_DIRECTORY).appendingPathComponent(filename)
+            let folder = try fileManager.url(for: .documentDirectory,
+                                                   in: .userDomainMask,
+                                                   appropriateFor: nil,
+                                                   create: false)
+            let destFileName = folder.appendingPathComponent(LOG_DIRECTORY).appendingPathComponent(filename)
             try data.write(to: destFileName)
             return destFileName
         } catch let error {
@@ -47,7 +55,7 @@ class VGFileManager {
         }
     }
     
-    func deleteFileFor(track:VGTrack) {
+    func deleteFileFor(track: VGTrack) {
         let logPath = getLogsFolder()?.appendingPathComponent(track.fileName).path
 
         do {
@@ -82,8 +90,7 @@ class VGFileManager {
         var fileString = String()
         do {
             fileString = try String(contentsOf: getAbsoluteFilePathFor(track: track)!)
-        }
-        catch {/* error handling here */}
+        } catch {/* error handling here */}
         let lines = fileString.split { $0.isNewline }
         print(getAbsoluteFilePathFor(track: track)!)
         let leftSplit = lines[0 ... pointIndex]
@@ -96,8 +103,7 @@ class VGFileManager {
                 result.append(contentsOf: line+"\n")
             }
             try result.write(to: getAbsoluteFilePathFor(track: track)!, atomically: true, encoding: .utf8)
-        }
-        catch {/* error handling here */}
+        } catch {/* error handling here */}
         
         do {
             var result = ""
@@ -108,8 +114,7 @@ class VGFileManager {
             newTrack.fileName = String(describing: time).prefix(19).replacingOccurrences(of: ":", with: "") + ".csv"
             try result.write(to: logFilePathFor(track: newTrack)!, atomically: true, encoding: .utf8)
             newTrack.timeStart = time
-        }
-        catch {/* error handling here */}
+        } catch {/* error handling here */}
         
         dataStore.update(vgTrack: newTrack)
         
@@ -130,7 +135,7 @@ class VGFileManager {
         return nil
     }
     
-    func getImageFolder(style:UIUserInterfaceStyle) -> URL? {
+    func getImageFolder(style: UIUserInterfaceStyle) -> URL? {
         if var dir = getDocumentsFolder() {
             if style == .dark {
                 dir.appendPathComponent(IMAGE_DIRECTORY_DARK)
@@ -144,7 +149,7 @@ class VGFileManager {
         return nil
     }
     
-    func getAbsoluteFilePathFor(track:VGTrack) -> URL? {
+    func getAbsoluteFilePathFor(track: VGTrack) -> URL? {
         if !fileForTrackExists(track: track) {
             return nil
         }
@@ -166,7 +171,9 @@ class VGFileManager {
                 track.fileName = item
                 let path = docUrl?.appendingPathComponent(LOG_DIRECTORY).appendingPathComponent(item).path
                 let attr = try fileManager.attributesOfItem(atPath: path!) as Dictionary
-                track.fileSize = Int(attr[FileAttributeKey.size] as! UInt64)
+                if let fileSize = attr[FileAttributeKey.size] as? UInt64 {
+                    track.fileSize = Int(fileSize)
+                }
                 result.append(track)
             }
             return result
@@ -210,36 +217,36 @@ class VGFileManager {
         return fileCount
     }
     
-    func fileForTrackExists(track:VGTrack) -> Bool {
+    func fileForTrackExists(track: VGTrack) -> Bool {
         let logFolder = getLogsFolder()
         let filePath = logFolder!.appendingPathComponent(track.fileName).path
         return fileManager.fileExists(atPath: filePath)
     }
-    func logFilePathFor(track:VGTrack) -> URL? {
+    func logFilePathFor(track: VGTrack) -> URL? {
         let logsFolder = self.getLogsFolder()
         let fileNameWithoutExt = track.fileName.split(separator: ".")[0]
         return (logsFolder?.appendingPathComponent(String(fileNameWithoutExt)).appendingPathExtension("csv"))
 
     }
     
-    func getTemporaryGPXPathFor(track:VGTrack) -> URL? {
+    func getTemporaryGPXPathFor(track: VGTrack) -> URL? {
         let tempFolder = URL(fileURLWithPath: NSTemporaryDirectory())
         let fileNameWithoutExt = track.fileName.split(separator: ".")[0]
         return (tempFolder.appendingPathComponent(String(fileNameWithoutExt)).appendingPathExtension("gpx"))
         
     }
     
-    func getPNGPathFor(track:VGTrack, style:UIUserInterfaceStyle) -> URL {
+    func getPNGPathFor(track: VGTrack, style: UIUserInterfaceStyle) -> URL {
         let imageFolder = self.getImageFolder(style: style)
         let fileNameWithoutExt = track.fileName.split(separator: ".")[0]
         return (imageFolder?.appendingPathComponent(String(fileNameWithoutExt)).appendingPathExtension("png"))!
     }
     
-    func pngForTrackExists(track:VGTrack, style:UIUserInterfaceStyle) -> Bool {
+    func pngForTrackExists(track: VGTrack, style: UIUserInterfaceStyle) -> Bool {
         return self.fileManager.fileExists(atPath: getPNGPathFor(track: track, style: style).path)
     }
     
-    func savePNG(image:UIImage, for track:VGTrack, style:UIUserInterfaceStyle) {
+    func savePNG(image: UIImage, for track: VGTrack, style: UIUserInterfaceStyle) {
         let path = getPNGPathFor(track: track, style: style)
         print(path)
         do {
@@ -249,7 +256,7 @@ class VGFileManager {
         }
     }
     
-    func openImageFor(track:VGTrack, style:UIUserInterfaceStyle) -> UIImage? {
+    func openImageFor(track: VGTrack, style: UIUserInterfaceStyle) -> UIImage? {
         let path = getPNGPathFor(track: track, style: style)
         if fileManager.fileExists(atPath: path.path) {
             return UIImage(contentsOfFile: path.path)

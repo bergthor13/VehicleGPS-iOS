@@ -21,7 +21,7 @@ class VGLogDetailsViewController: UIViewController {
     
     var track: VGTrack!
     var dataStore: VGDataStore!
-    var vgFileManager =  (UIApplication.shared.delegate as! AppDelegate).fileManager!
+    var vgFileManager: VGFileManager!
     var vgLogParser = VGLogParser()
     var vgGPXGenerator = VGGPXGenerator()
 
@@ -30,14 +30,18 @@ class VGLogDetailsViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            self.vgFileManager = appDelegate.fileManager
+        }
         initializeMapView()
         initializeTrackDataView()
 
-
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(displayShareSelection))
+        let shareButton = UIBarButtonItem(barButtonSystemItem: .action,
+                                          target: self,
+                                          action: #selector(displayShareSelection))
+        self.navigationItem.rightBarButtonItem = shareButton
         let detailSegment = UISegmentedControl(items: ["Kort", "Tölfræði"])
-        detailSegment.addTarget(self, action: Selector(("segmentedControlValueChanged:")), for:.valueChanged)
+        detailSegment.addTarget(self, action: Selector(("segmentedControlValueChanged:")), for: .valueChanged)
         detailSegment.selectedSegmentIndex = 0
         self.navigationItem.titleView = detailSegment
         view.addSubview(mapSegmentView)
@@ -67,7 +71,7 @@ class VGLogDetailsViewController: UIViewController {
         }
     }
     
-    func display(track:VGTrack, list:[CLLocationCoordinate2D], on mapView:MKMapView) {
+    func display(track: VGTrack, list: [CLLocationCoordinate2D], on mapView: MKMapView) {
         // pad our map by 10% around the farthest annotations
         let MAP_PADDING = 1.1
         
@@ -75,19 +79,20 @@ class VGLogDetailsViewController: UIViewController {
         // there are ~111km to a degree of latitude. regionThatFits will take care of
         // longitude, which is more complicated, anyway.
         let MINIMUM_VISIBLE_LATITUDE = 0.01
-        let centerLat = (track.minLat + track.maxLat) / 2;
-        let centerLon = (track.minLon + track.maxLon) / 2;
+        let centerLat = (track.minLat + track.maxLat) / 2
+        let centerLon = (track.minLon + track.maxLon) / 2
         
         let centerCoord = CLLocationCoordinate2D(latitude: centerLat, longitude: centerLon)
         
-        var latitudeDelta = abs(track.maxLat - track.minLat) * MAP_PADDING;
+        var latitudeDelta = abs(track.maxLat - track.minLat) * MAP_PADDING
         
         latitudeDelta = (latitudeDelta < MINIMUM_VISIBLE_LATITUDE)
             ? MINIMUM_VISIBLE_LATITUDE
-            : latitudeDelta;
+            : latitudeDelta
         
         let longitudeDelta = abs((track.maxLon - track.minLon) * MAP_PADDING)
-        let region = MKCoordinateRegion(center: centerCoord, span: MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta))
+        let span = MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
+        let region = MKCoordinateRegion(center: centerCoord, span: span)
         
         DispatchQueue.main.async {
             if list.count > 0 {
@@ -98,17 +103,16 @@ class VGLogDetailsViewController: UIViewController {
         }
     }
     
-    func process(track:VGTrack) {
+    func process(track: VGTrack) {
         let logParser = VGLogParser()
         let hud = MBProgressHUD.showAdded(to: self.parent!.view, animated: true)
         hud.label.text = "Les skrá..."
-        logParser.fileToTrack(fileUrl: self.vgFileManager.getAbsoluteFilePathFor(track: track)! , progress: { (index, count) in
+        logParser.fileToTrack(fileUrl: self.vgFileManager.getAbsoluteFilePathFor(track: track)!, progress: { (index, count) in
             DispatchQueue.main.async {
                 hud.mode = .annularDeterminate
                 hud.progress = Float(index)/Float(count)
                 hud.label.text = "Þáttar línur"
             }
-            
         }, callback: { (track) in
             self.track = track
             DispatchQueue.main.async {
@@ -128,29 +132,27 @@ class VGLogDetailsViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Hætta við", style: .cancel, handler: nil))
 
         if vgFileManager.fileForTrackExists(track: track) {
-            alert.addAction(UIAlertAction(title: "Hlaða niður CSV skrá", style: .default, handler: { (alertAction) in
+            alert.addAction(UIAlertAction(title: "Hlaða niður CSV skrá", style: .default, handler: { (_) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: "Hlaða niður GPX skrá", style: .default, handler: { (alertAction) in
+            alert.addAction(UIAlertAction(title: "Hlaða niður GPX skrá", style: .default, handler: { (_) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: "Vinna úr skránni aftur", style: .default, handler: { (alertAction) in
+            alert.addAction(UIAlertAction(title: "Vinna úr skránni aftur", style: .default, handler: { (_) in
                 self.process(track: self.track)
             }))
             
-            alert.addAction(UIAlertAction(title: "Skipta ferli í tvennt", style: .default, handler: { (alertAction) in
+            alert.addAction(UIAlertAction(title: "Skipta ferli í tvennt", style: .default, handler: { (_) in
                 guard let selectedTime = self.trackDataTableViewController?.dlpTime else {
                     return
                 }
                 self.vgFileManager.split(track: self.track, at: selectedTime)
             }))
         }
-        
-
         self.present(alert, animated: true, completion: nil)
     }
     @objc func segmentedControlValueChanged(_ sender: UISegmentedControl?) {
@@ -164,7 +166,7 @@ class VGLogDetailsViewController: UIViewController {
         case 1:
             view.addSubview(trackSegmentView)
         default:
-            break;
+            break
         }
     }
     
@@ -198,10 +200,10 @@ class VGLogDetailsViewController: UIViewController {
     }
 }
 
-extension VGLogDetailsViewController : MKMapViewDelegate {
+extension VGLogDetailsViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         
-        if (overlay is MKPolyline) {
+        if overlay is MKPolyline {
             let polylineRender = MKPolylineRenderer(overlay: overlay)
             polylineRender.strokeColor = UIColor.red
             polylineRender.lineWidth = 2

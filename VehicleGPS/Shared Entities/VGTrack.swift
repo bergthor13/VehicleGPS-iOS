@@ -67,8 +67,6 @@ class VGTrack {
         if timeStart != nil {
             return timeStart
         }
-        
-        
         return nil
     }
     
@@ -83,6 +81,7 @@ class VGTrack {
                 list.append(CLLocationCoordinate2D(latitude: firstLatitude, longitude: firstLongitude))
             }
         }
+        
         for (point1, point2) in zip(trackPoints, trackPoints.dropFirst()) {
             guard let latitude1 = point1.latitude, let longitude1 = point1.longitude else {
                 continue

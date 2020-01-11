@@ -23,7 +23,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         }
     }
     
-
     var track: VGTrack?
     
     override func viewDidLoad() {
@@ -124,12 +123,11 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 cell?.graphView.displayVerticalLine(at: selectedPoint)
             }
 
-            
         } else if indexPath.section == 2 {
             var list = [(Date, Double)]()
 
             for point in track!.trackPoints {
-                guard let _ = point.latitude, let _ = point.longitude else {
+                if point.latitude == nil && point.longitude == nil {
                     continue
                 }
                 if !point.hasGoodFix() {
@@ -146,7 +144,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         } else if indexPath.section == 3 {
             var list = [(Date, Double)]()
             for point in track!.trackPoints {
-                guard let _ = point.latitude, let _ = point.longitude else {
+                if point.latitude == nil && point.longitude == nil {
                     continue
                 }
                 if !point.hasGoodFix() {
@@ -163,7 +161,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         } else if indexPath.section == 4 {
             var list = [(Date, Double)]()
             for point in track!.trackPoints {
-                guard let _ = point.latitude, let _ = point.longitude else {
+                if point.latitude == nil && point.longitude == nil {
                     continue
                 }
                 if !point.hasGoodFix() {

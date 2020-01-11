@@ -11,7 +11,6 @@ import CoreData
 
 class VGDataStore {
     
-    let appDelegate:AppDelegate
     let storeCoordinator: NSPersistentStoreCoordinator
     
     init() {
@@ -25,9 +24,6 @@ class VGDataStore {
         }
         
         self.storeCoordinator = NSPersistentStoreCoordinator(managedObjectModel: mom)
-        
-        self.appDelegate = (UIApplication.shared.delegate as? AppDelegate)!
-        
         initializeContainer()
     }
     

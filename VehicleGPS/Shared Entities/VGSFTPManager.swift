@@ -18,7 +18,7 @@ class VGSFTPManager {
         self.session.connect()
     }
     
-    func downloadFile(filename:String, progress:@escaping (UInt, UInt)->Bool, callback:@escaping (Data?)->Void) {
+    func downloadFile(filename: String, progress: @escaping (UInt, UInt) -> Bool, callback:@escaping (Data?) -> Void) {
         DispatchQueue.global(qos: .background).async {
             let data = self.session.contents(atPath: self.remoteFolder+filename, progress: { (got, totalBytes) -> Bool in
                 return progress(got, totalBytes)
@@ -53,9 +53,9 @@ class VGSFTPManager {
         return result
     }
     
-    func deleteFile(filename:String, callback:@escaping (Bool)->Void) {
+    func deleteFile(filename: String, callback: @escaping (Bool) -> Void) {
         DispatchQueue.global(qos: .background).async {
-            self.downloadFile(filename: filename, progress: { (asdf, fdsa) in
+            self.downloadFile(filename: filename, progress: { (_, _) in
                 return true
             }, callback: { (data) in
                 guard let data = data else {

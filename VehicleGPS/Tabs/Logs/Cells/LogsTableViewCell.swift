@@ -21,22 +21,23 @@ class LogsTableViewCell: UITableViewCell {
     @IBOutlet weak var fileOnGPSIndicator: UIImageView!
     @IBOutlet weak var fileOnDeviceIndicator: UIImageView!
     var vgFileManager: VGFileManager!
-    var currentTrack:VGTrack?
+    var currentTrack: VGTrack?
     let formatter = DateFormatter()
     
-    
-    func update(progress:Double) {
+    func update(progress: Double) {
         let viewWidth = self.frame.width
         progressViewWidthConstraint.constant = viewWidth*CGFloat(progress)
     }
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        vgFileManager = (UIApplication.shared.delegate as! AppDelegate).fileManager!
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            self.vgFileManager = appDelegate.fileManager
+        }
         
     }
     
-    func show(track:VGTrack) {
+    func show(track: VGTrack) {
         currentTrack = track
         formatter.dateFormat = "HH:mm:ss"
         if track.timeStart == nil {
@@ -45,14 +46,14 @@ class LogsTableViewCell: UITableViewCell {
             self.lblTimeStart!.text = formatter.string(from: track.timeStart!)
         }
         
-        let fileSizeWithUnit = ByteCountFormatter.string(fromByteCount: Int64(truncating: NSNumber(value: track.fileSize)), countStyle: .file)
-        
+        let fileSizeWithUnit = ByteCountFormatter.string(
+                                                  fromByteCount: Int64(truncating: NSNumber(value: track.fileSize)),
+                                                  countStyle: .file)
         
         self.lblFileSize!.text = fileSizeWithUnit
         let distanceFormatter = LengthFormatter()
         distanceFormatter.numberFormatter.maximumFractionDigits = 2
         distanceFormatter.numberFormatter.minimumFractionDigits = 2
-        
         
         if track.distance > 1 {
             self.lblDistance.text = distanceFormatter.string(fromValue: track.distance, unit: .kilometer)
@@ -69,7 +70,7 @@ class LogsTableViewCell: UITableViewCell {
         
         let formattedDuration = form.string(from: track.duration)
         
-        self.lblDuration.attributedText = styleString(unstyledString: formattedDuration!, substrings: ["h","m","s"])
+        self.lblDuration.attributedText = styleString(unstyledString: formattedDuration!, substrings: ["h", "m", "s"])
         if vgFileManager.fileForTrackExists(track: track) {
             self.fileOnDeviceIndicator.isHidden = false
         } else {
@@ -97,8 +98,8 @@ class LogsTableViewCell: UITableViewCell {
         trackView.image = vgFileManager.openImageFor(track: track, style: self.traitCollection.userInterfaceStyle)
     }
     
-    func styleString(unstyledString:String, substrings:[String]) -> NSAttributedString {
-        let styledText = NSMutableAttributedString.init(string:unstyledString)
+    func styleString(unstyledString: String, substrings: [String]) -> NSAttributedString {
+        let styledText = NSMutableAttributedString.init(string: unstyledString)
 
         for subs in substrings {
             let index = find(char: subs, in: unstyledString)
@@ -110,14 +111,14 @@ class LogsTableViewCell: UITableViewCell {
         return styledText
     }
     
-    func setStyle(text:NSMutableAttributedString, range:NSRange) {
+    func setStyle(text: NSMutableAttributedString, range: NSRange) {
         text.setAttributes([ .font: UIFont.systemFont(ofSize: 17, weight: .semibold),
                                   .foregroundColor: UIColor.secondaryLabel],
                                    range: range)
 
     }
     
-    func find(char:String, in string:String) -> Int? {
+    func find(char: String, in string: String) -> Int? {
         let range = string.range(of: char)
         guard let newRange = range else {
             return nil
@@ -126,12 +127,11 @@ class LogsTableViewCell: UITableViewCell {
         return index
     }
     
-    
-    func fileNameToDate(dateString:String) -> Date {
+    func fileNameToDate(dateString: String) -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HHmmss"
         dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
-        let date = dateFormatter.date(from:String(dateString.prefix(17)))
+        let date = dateFormatter.date(from: String(dateString.prefix(17)))
         return date!
     }
     

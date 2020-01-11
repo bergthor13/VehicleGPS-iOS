@@ -9,15 +9,16 @@
 import Foundation
 import UIKit
 
-
 class VGGPXGenerator {
     var dateFormatter:DateFormatter
-    var vgFileManager:VGFileManager
+    var vgFileManager:VGFileManager!
     init() {
         dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
-        vgFileManager = (UIApplication.shared.delegate as! AppDelegate).fileManager!
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            self.vgFileManager = appDelegate.fileManager
+        }
     }
     
     func getGPXBegin() -> String {
@@ -35,7 +36,7 @@ class VGGPXGenerator {
         return "<trkpt lat=\"\(String(describing: point.latitude!))\" lon=\"\(String(describing: point.longitude!))\"><ele>\(String(describing: point.elevation!))</ele><time>\(dateFormatter.string(from: timestamp))</time><pdop>\(point.pdop)</pdop></trkpt>"
     }
     
-    func generateGPXFor(track:VGTrack) -> URL? {
+    func generateGPXFor(track: VGTrack) -> URL? {
         var result = getGPXBegin()
         
         for point in track.trackPoints {

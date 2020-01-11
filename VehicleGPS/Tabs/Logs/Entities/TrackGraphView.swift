@@ -20,20 +20,20 @@ class TrackGraphView: UIView {
 
     var tableView: UITableView?
     
-    var color:UIColor?
-    var maxValue:CGFloat = CGFloat(-Double.infinity)
-    var minValue:CGFloat = CGFloat(Double.infinity)
-    var graphMaxValue:Double?
-    var graphMinValue:CGFloat?
+    var color: UIColor?
+    var maxValue: CGFloat = CGFloat(-Double.infinity)
+    var minValue: CGFloat = CGFloat(Double.infinity)
+    var graphMaxValue: Double?
+    var graphMinValue: CGFloat?
     var graphSeparator: UIView?
     
-    var graphFrame:CGRect!
+    var graphFrame: CGRect!
     
-    var maxLabel:UILabel?
-    var minLabel:UILabel?
-    var startTime:Date?
-    var endTime:Date?
-    var showMinMaxValue:Bool = true
+    var maxLabel: UILabel?
+    var minLabel: UILabel?
+    var startTime: Date?
+    var endTime: Date?
+    var showMinMaxValue: Bool = true
     
     var selectedPoint: CGPoint?
     var dlpList = [DisplayLineProtocol]()
@@ -87,7 +87,7 @@ class TrackGraphView: UIView {
                     return
                 }
                 
-                guard let newMin = self.graphMinValue else  {
+                guard let newMin = self.graphMinValue else {
                     setNeedsLayout()
                     return
                 }
@@ -99,7 +99,7 @@ class TrackGraphView: UIView {
 		}
 	}
     
-    func displayVerticalLine(at point:CGPoint) {
+    func displayVerticalLine(at point: CGPoint) {
         if elePoints.count == 0 {
             return
         }
@@ -124,7 +124,7 @@ class TrackGraphView: UIView {
 
     }
     
-    func displayHorizontalLine(at list:[CGFloat]) {
+    func displayHorizontalLine(at list: [CGFloat]) {
         if elePoints.count == 0 {
             return
         }
@@ -154,7 +154,7 @@ class TrackGraphView: UIView {
     }
     
     // TODO: FIX ME
-    func getPointTouched(point:CGPoint) -> Int {
+    func getPointTouched(point: CGPoint) -> Int {
         let id = Int(round((point.x/self.graphFrame.width)*CGFloat(elePoints.count)))
         return id
     }
@@ -275,13 +275,13 @@ class TrackGraphView: UIView {
         initializeView()
     }
     
-    init(frame: CGRect, tableView:UITableView) {
+    init(frame: CGRect, tableView: UITableView) {
         super.init(frame: frame)
         self.tableView = tableView
         initializeView()
     }
     
-    func getColumnYPoint(graphPoint:CGFloat) -> CGFloat {
+    func getColumnYPoint(graphPoint: CGFloat) -> CGFloat {
         var y: CGFloat = (CGFloat(graphPoint) - self.minValue) * CGFloat(self.graphFrame.height) / CGFloat(self.maxValue - self.minValue)
         y = self.graphFrame.height - y
         
@@ -314,7 +314,7 @@ class TrackGraphView: UIView {
 		// calculate the y point
 		let graphHeight = self.graphFrame.height
 
-		let columnYPoint = { (graphPoint:Double) -> CGFloat in
+		let columnYPoint = { (graphPoint: Double) -> CGFloat in
 
 			var y: CGFloat = (CGFloat(graphPoint) - self.minValue) * CGFloat(graphHeight) / CGFloat(self.maxValue - self.minValue)
 			y = graphHeight - y
@@ -337,20 +337,19 @@ class TrackGraphView: UIView {
         let totalSeconds = endTime.timeIntervalSince(startTime)
         let secondsFromStart = elePoints.first!.0.timeIntervalSince(startTime)
 
-		graphPath.move(to: CGPoint(x:CGFloat(secondsFromStart/totalSeconds)*pixelWidth,
-                                   y:columnYPoint(Double(elePoints.first!.1))))
+		graphPath.move(to: CGPoint(x: CGFloat(secondsFromStart/totalSeconds)*pixelWidth,
+                                   y: columnYPoint(Double(elePoints.first!.1))))
 
 		//add points for each item in the graphPoints array
 		//at the correct (x, y) for the point
 		for i in 0 ..< elePoints.count {
             let secondsFromStart = elePoints[i].0.timeIntervalSince(startTime)
-			let nextPoint = CGPoint(x:CGFloat(secondsFromStart/totalSeconds)*pixelWidth,
-			                        y:columnYPoint(Double(elePoints[i].1)))
+			let nextPoint = CGPoint(x: CGFloat(secondsFromStart/totalSeconds)*pixelWidth,
+			                        y: columnYPoint(Double(elePoints[i].1)))
 			graphPath.addLine(to: nextPoint)
 		}
 
 		graphLayer.path = graphPath.cgPath
-
 
 		//Create the clipping path for the graph gradient
 		graphClipLayer = CAShapeLayer()
@@ -359,18 +358,19 @@ class TrackGraphView: UIView {
 		//CGContextSaveGState(context)
 
 		//2 - make a copy of the path
-		let clippingPath = graphPath.copy() as! UIBezierPath
-
+        guard let clippingPath = graphPath.copy() as? UIBezierPath else {
+            return
+        }
 
 		//3 - add lines to the copied path to complete the clip area
         let endFromStart = elePoints.last!.0.timeIntervalSince(startTime)
 
         clippingPath.addLine(to: CGPoint(
 			x: CGFloat(endFromStart/totalSeconds)*pixelWidth,
-			y:self.graphFrame.height))
+			y: self.graphFrame.height))
 		clippingPath.addLine(to: CGPoint(
-			x:CGFloat(secondsFromStart/totalSeconds)*pixelWidth,
-			y:self.graphFrame.height))
+			x: CGFloat(secondsFromStart/totalSeconds)*pixelWidth,
+			y: self.graphFrame.height))
 		clippingPath.close()
 
 		//4 - add the clipping path to the context
@@ -379,8 +379,7 @@ class TrackGraphView: UIView {
 		//5 - check clipping path - temporary code
         if self.color == nil {
             graphClipLayer.fillColor = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3).cgColor
-        }
-        else {
+        } else {
             graphClipLayer.fillColor = self.color?.cgColor
         }
         
@@ -390,7 +389,6 @@ class TrackGraphView: UIView {
 
 		//end temporary code
 		layer.addSublayer(graphClipLayer)
-
 
 		//end temporary code
 		UIGraphicsEndImageContext()

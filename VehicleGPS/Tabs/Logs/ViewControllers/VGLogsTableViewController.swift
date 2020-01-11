@@ -12,7 +12,7 @@ import CoreData
 
 class VGLogsTableViewController: UITableViewController {
     
-    var tracksDict = Dictionary<String, [VGTrack]>()
+    var tracksDict = [String: [VGTrack]]()
     var sectionKeys = [String]()
     var cdTracks: [NSManagedObject] = []
     var session: NMSSHSession?
@@ -34,11 +34,16 @@ class VGLogsTableViewController: UITableViewController {
     let distanceFormatter = LengthFormatter()
     let form = DateComponentsFormatter()
 
-
-
-    
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    fileprivate func registerCells() {
+        let logsTableViewCellNib = UINib(nibName: "LogsTableViewCell", bundle: nil)
+        let logHeaderViewNib = UINib(nibName: "LogHeaderView", bundle: nil)
+        
+        self.tableView.register(logsTableViewCellNib, forCellReuseIdentifier: "LogsCell")
+        self.tableView.register(logHeaderViewNib, forHeaderFooterViewReuseIdentifier: "LogsHeader")
     }
     
     override func viewDidLoad() {
@@ -59,15 +64,16 @@ class VGLogsTableViewController: UITableViewController {
         form.allowedUnits = [ .hour, .minute, .second ]
         form.zeroFormattingBehavior = [ .default ]
 
-        
-        self.tableView.register(UINib(nibName: "LogsTableViewCell", bundle: nil), forCellReuseIdentifier: "LogsCell")
-        self.tableView.register(UINib(nibName: "LogHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: "LogsHeader")
+        registerCells()
         self.title = "Ferlar"
         // Add Refresh Control to Table View
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(fetchLogList), for: UIControl.Event.valueChanged)
         tableView.refreshControl = refreshControl
-        dataStore = (UIApplication.shared.delegate as! AppDelegate).dataStore!
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            self.dataStore = appDelegate.dataStore
+            self.vgFileManager = appDelegate.fileManager
+        }
         DispatchQueue.global(qos: .background).async {
             self.session = NMSSHSession.init(host: self.host, andUsername: self.username)
             if self.session != nil {
@@ -78,11 +84,9 @@ class VGLogsTableViewController: UITableViewController {
         let button = UIBarButtonItem(title: "Hlaða niður", style: .plain, target: self, action: #selector(self.downloadFiles))
         let button1 = UIBarButtonItem(title: "Þátta", style: .plain, target: self, action: #selector(self.processFiles))
 
-        
         self.navigationItem.rightBarButtonItem = button
         self.navigationItem.leftBarButtonItem = button1
         vgLogParser = VGLogParser()
-        vgFileManager = (UIApplication.shared.delegate as! AppDelegate).fileManager!
         tracksDict = tracksToDictionary(trackList: dataStore.getAllTracks())
         tableView.reloadData()
     }
@@ -147,7 +151,7 @@ class VGLogsTableViewController: UITableViewController {
                                     return
                                 }
                                 cell.fileOnDeviceIndicator.isHidden = false
-                                cell.update(progress:0)
+                                cell.update(progress: 0)
                             }
                             
                         }
@@ -210,7 +214,7 @@ class VGLogsTableViewController: UITableViewController {
                                     return
                                 }
                                 cell.show(track: track)
-                                cell.update(progress:0)
+                                cell.update(progress: 0)
                                 self.tableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
                             }
                         }, imageCallback: { (track) in
@@ -231,7 +235,6 @@ class VGLogsTableViewController: UITableViewController {
         self.navigationItem.prompt = nil
         
     }
-    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -265,7 +268,9 @@ class VGLogsTableViewController: UITableViewController {
             for file in fileList {
                 let track = VGTrack()
                 track.fileName = file.filename
-                track.fileSize = file.fileSize as! Int
+                if let fileSize = file.fileSize as? Int {
+                    track.fileSize = fileSize
+                }
                 track.isRemote = true
                 trackList.append(track)
             }
@@ -281,7 +286,7 @@ class VGLogsTableViewController: UITableViewController {
 
     }
     
-    func combineLists(localList:[VGTrack], remoteList:[VGTrack]) -> [VGTrack] {
+    func combineLists(localList: [VGTrack], remoteList: [VGTrack]) -> [VGTrack] {
         var result = localList
         
         for track in result {
@@ -299,19 +304,19 @@ class VGLogsTableViewController: UITableViewController {
         return result
     }
     
-    func displayErrorAlert(title:String?, message:String?) {
+    func displayErrorAlert(title: String?, message: String?) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true)
     }
     
-    func reconnectToVehicleGPS(session:NMSSHSession) {
+    func reconnectToVehicleGPS(session: NMSSHSession) {
         if !session.isConnected || !session.isAuthorized || !sftpSession!.isConnected {
             connectToVehicleGPS(session: session)
         }
     }
     
-    func tryToConnectSSH(session:NMSSHSession) -> Bool {
+    func tryToConnectSSH(session: NMSSHSession) -> Bool {
         if !session.connect() {
             DispatchQueue.main.async {
                 //self.displayErrorAlert(title: "SSH Connection Error", message: self.session?.lastError?.localizedDescription)
@@ -321,7 +326,7 @@ class VGLogsTableViewController: UITableViewController {
         return true
     }
     
-    func tryToAuthenticate(session:NMSSHSession) -> Bool {
+    func tryToAuthenticate(session: NMSSHSession) -> Bool {
         if !session.authenticate(byPassword: self.password) {
             DispatchQueue.main.async {
                 self.displayErrorAlert(title: "Authorization Error", message: self.session?.lastError?.localizedDescription)
@@ -331,7 +336,7 @@ class VGLogsTableViewController: UITableViewController {
         return true
     }
     
-    func tryToConnectSFTP(session:NMSSHSession) -> Bool {
+    func tryToConnectSFTP(session: NMSSHSession) -> Bool {
         sftpSession = NMSFTP(session: session)
         guard let sftpSession = sftpSession else {
             return false
@@ -418,7 +423,9 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as! LogHeaderView
+        guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as? LogHeaderView else {
+            return UIView()
+        }
 
         let day = sectionKeys[section]
         let date = headerParseDateFormatter!.date(from:day)!
@@ -463,8 +470,10 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = self.tableView.cellForRow(at: indexPath) as? LogsTableViewCell else {
+            return
+        }
         let track = getTrackAt(indexPath: indexPath)
-        let cell = self.tableView.cellForRow(at: indexPath) as! LogsTableViewCell
         
         if vgFileManager!.getAbsoluteFilePathFor(track:track) == nil {
             self.downloadFileFor(track: track, progress: { (received, total) in
