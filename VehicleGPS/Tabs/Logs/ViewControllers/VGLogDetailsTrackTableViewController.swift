@@ -36,7 +36,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         if track!.hasOBDData {
-            return 9
+            return 10
         } else {
             return 4
         }
@@ -56,7 +56,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         if section == 4 {return "Lárétt nákvæmni"}
         if section == 5 {return "Snúningar á mínútu"}
         if section == 6 {return "Álag vélar"}
-        if section == 7 {return "Throttle Position"}
+        if section == 7 {return "Eldsneytisgjöf"}
         if section == 8 {return "Hiti á kælivökva"}
         if section == 9 {return "Útihiti"}
         
