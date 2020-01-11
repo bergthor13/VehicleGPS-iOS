@@ -30,18 +30,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         dashboardController.tabBarItem = UITabBarItem(title: "Mælaborð", image: nil, tag: 0)
         tabController.addChild(dashboardController)
         
-        let historyController = VGHistoryNavigationController(nibName: "HistoryView", bundle: nil)
-        historyController.tabBarItem = UITabBarItem(title: "Saga", image:nil, tag: 0)
-        tabController.addChild(historyController)
-        
         let logsController = VGLogsNavigationViewController()
         logsController.tabBarItem = UITabBarItem(title: "Ferlar", image:UIImage(imageLiteralResourceName: "LogIcon"), tag: 0)
         tabController.addChild(logsController)
         
+
+        let historyController = VGHistoryNavigationController(nibName: "HistoryView", bundle: nil)
+        historyController.tabBarItem = UITabBarItem(title: "Saga", image:nil, tag: 0)
+        tabController.addChild(historyController)
+        
+        let journeysController = VGJourneyNavigationViewController()
+        journeysController.tabBarItem = UITabBarItem(title: "Ferðalög", image:nil, tag: 0)
+        tabController.addChild(journeysController)
+        
         let settingsController = VGSettingsNavigationController()
         settingsController.tabBarItem = UITabBarItem(title: "Stillingar", image: nil, tag: 0)
         tabController.addChild(settingsController)
-        tabController.selectedIndex = 2
+        tabController.selectedIndex = 1
         
         self.window?.rootViewController = tabController
         self.window?.makeKeyAndVisible()

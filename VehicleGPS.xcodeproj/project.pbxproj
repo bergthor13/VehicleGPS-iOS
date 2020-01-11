@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		09DD9ED3104045D6742E2711 /* Pods_VehicleGPS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */; };
+		F2169BEF23C9D0BE00DE8547 /* VGJourneyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2169BEE23C9D0BE00DE8547 /* VGJourneyTableViewController.swift */; };
+		F2169BF123C9D0E700DE8547 /* VGJourneyNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2169BF023C9D0E700DE8547 /* VGJourneyNavigationViewController.swift */; };
 		F23BE8BF22A5E4B9008FD50C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */; };
 		F23BE8C722A5E4B9008FD50C /* VehicleGPS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8C522A5E4B9008FD50C /* VehicleGPS.xcdatamodeld */; };
 		F23BE8C922A5E4BA008FD50C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F23BE8C822A5E4BA008FD50C /* Assets.xcassets */; };
@@ -55,6 +57,8 @@
 		18EB1CD0499873B64661B1E0 /* Pods-VehicleGPS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.release.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.release.xcconfig"; sourceTree = "<group>"; };
 		91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VehicleGPS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB23282698EF0E65FC3BED1 /* Pods-VehicleGPS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.debug.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.debug.xcconfig"; sourceTree = "<group>"; };
+		F2169BEE23C9D0BE00DE8547 /* VGJourneyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGJourneyTableViewController.swift; sourceTree = "<group>"; };
+		F2169BF023C9D0E700DE8547 /* VGJourneyNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGJourneyNavigationViewController.swift; sourceTree = "<group>"; };
 		F23BE8BB22A5E4B9008FD50C /* VehicleGPS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VehicleGPS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F23BE8C622A5E4B9008FD50C /* VehicleGPS.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = VehicleGPS.xcdatamodel; sourceTree = "<group>"; };
@@ -135,12 +139,7 @@
 		F2169BEB23C9CE4500DE8547 /* Shared Entities */ = {
 			isa = PBXGroup;
 			children = (
-				F24A6FCC22F8521E00C8D372 /* VehicleGPS.entitlements */,
 				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
-				F23BE8C822A5E4BA008FD50C /* Assets.xcassets */,
-				F23BE8CA22A5E4BA008FD50C /* LaunchScreen.storyboard */,
-				F23BE8CD22A5E4BA008FD50C /* Info.plist */,
-				F23BE8C522A5E4B9008FD50C /* VehicleGPS.xcdatamodeld */,
 				F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */,
 				F23BE8EE22A5E5BB008FD50C /* VGSFTPManager.swift */,
 				F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */,
@@ -155,13 +154,23 @@
 		F2169BEC23C9CE5800DE8547 /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
+				F2169BED23C9D06E00DE8547 /* Journeys */,
 				F23BE8D322A5E566008FD50C /* VGTabBarController.swift */,
+				F23BE8D522A5E56F008FD50C /* Dashboard */,
+				F23BE8D622A5E576008FD50C /* Logs */,
 				F25839CD23A6602C00E76B54 /* History */,
 				F23BE8D722A5E585008FD50C /* Settings */,
-				F23BE8D622A5E576008FD50C /* Logs */,
-				F23BE8D522A5E56F008FD50C /* Dashboard */,
 			);
 			path = Tabs;
+			sourceTree = "<group>";
+		};
+		F2169BED23C9D06E00DE8547 /* Journeys */ = {
+			isa = PBXGroup;
+			children = (
+				F2169BEE23C9D0BE00DE8547 /* VGJourneyTableViewController.swift */,
+				F2169BF023C9D0E700DE8547 /* VGJourneyNavigationViewController.swift */,
+			);
+			path = Journeys;
 			sourceTree = "<group>";
 		};
 		F23BE8B222A5E4B9008FD50C = {
@@ -185,6 +194,11 @@
 		F23BE8BD22A5E4B9008FD50C /* VehicleGPS */ = {
 			isa = PBXGroup;
 			children = (
+				F24A6FCC22F8521E00C8D372 /* VehicleGPS.entitlements */,
+				F23BE8CD22A5E4BA008FD50C /* Info.plist */,
+				F23BE8CA22A5E4BA008FD50C /* LaunchScreen.storyboard */,
+				F23BE8C822A5E4BA008FD50C /* Assets.xcassets */,
+				F23BE8C522A5E4B9008FD50C /* VehicleGPS.xcdatamodeld */,
 				F2169BEB23C9CE4500DE8547 /* Shared Entities */,
 				F2169BEC23C9CE5800DE8547 /* Tabs */,
 			);
@@ -420,6 +434,7 @@
 				F23BE8C722A5E4B9008FD50C /* VehicleGPS.xcdatamodeld in Sources */,
 				F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */,
 				F23BE8DF22A5E596008FD50C /* VGSettingsNavigationController.swift in Sources */,
+				F2169BF123C9D0E700DE8547 /* VGJourneyNavigationViewController.swift in Sources */,
 				F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */,
 				F257077E22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift in Sources */,
 				F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */,
@@ -431,6 +446,7 @@
 				F23BE8F822A5E5BB008FD50C /* LogsTableViewCell.swift in Sources */,
 				F23BE8F622A5E5BB008FD50C /* VGDataPoint.swift in Sources */,
 				F23BE8E522A5E5A7008FD50C /* DashboardViewController.swift in Sources */,
+				F2169BEF23C9D0BE00DE8547 /* VGJourneyTableViewController.swift in Sources */,
 				F23BE8FA22A5E5BB008FD50C /* VGLogsNavigationViewController.swift in Sources */,
 				F23BE8F522A5E5BB008FD50C /* VGGraphTableViewCell.swift in Sources */,
 				F25839DD23A6BE8600E76B54 /* TracksSummary.swift in Sources */,
