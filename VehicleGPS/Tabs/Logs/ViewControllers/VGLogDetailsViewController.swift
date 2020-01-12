@@ -115,6 +115,7 @@ class VGLogDetailsViewController: UIViewController {
             }
         }, callback: { (track) in
             self.track = track
+            self.trackDataTableViewController?.track = track
             DispatchQueue.main.async {
                 hud.hide(animated: true)
             }

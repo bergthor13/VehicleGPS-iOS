@@ -32,7 +32,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
     }
 
     // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         if track!.hasOBDData {
@@ -74,7 +73,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 let cell1 = UITableViewCell(style: .value1, reuseIdentifier: "asdf")
                 cell1.textLabel?.text = "No Track"
                 return cell1
-
             }
             guard let timeStart = track.timeStart else {
                 let cell1 = UITableViewCell(style: .value1, reuseIdentifier: "asdf")
@@ -82,6 +80,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 return cell1
             }
             let cell1 = UITableViewCell(style: .value2, reuseIdentifier: "asdf")
+            cell1.tintColor = UIApplication.shared.delegate?.window!!.tintColor
             let dateFormatter = DateFormatter()
             dateFormatter.locale = Locale.current
             dateFormatter.dateStyle = .long
@@ -133,16 +132,15 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 let lastCoord = CLLocation(latitude: latitude1, longitude: longitude1)
                 
                 let distance = coord.distance(from: lastCoord)
-                
-                list.append((point1.timestamp!, (distance/duration!)*3.6))
+                let speed = (distance/duration!)*3.6
+                if speed < 1200 {
+                    list.append((point1.timestamp!, (distance/duration!)*3.6))
+                }
             }
             cell?.graphView.showMinMaxValue = false
             cell!.graphView.color = UIColor(red: 0, green: 0.5, blue: 1, alpha: 0.3)
             cell!.graphView.numbersList = list
             cell!.graphView.horizontalLineMarkers = [30, 40, 50, 60, 70, 80, 90]
-            if let selectedPoint = dlpPoint {
-                cell?.graphView.displayVerticalLine(at: selectedPoint)
-            }
 
         } else if indexPath.section == 2 {
             var list = [(Date, Double)]()
@@ -159,10 +157,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
 
-            if let selectedPoint = dlpPoint {
-                cell?.graphView.displayVerticalLine(at: selectedPoint)
-            }
-
         } else if indexPath.section == 3 {
             var list = [(Date, Double)]()
             for point in track!.trackPoints {
@@ -176,9 +170,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
-            if let selectedPoint = dlpPoint {
-                cell?.graphView.displayVerticalLine(at: selectedPoint)
-            }
             
         } else if indexPath.section == 4 {
             var list = [(Date, Double)]()
@@ -193,9 +184,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
-            if let selectedPoint = dlpPoint {
-                cell?.graphView.displayVerticalLine(at: selectedPoint)
-            }
             
         } else if indexPath.section == 5 {
             var list = [(Date, Double)]()
@@ -208,9 +196,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
-            if let selectedPoint = dlpPoint {
-                cell?.graphView.displayVerticalLine(at: selectedPoint)
-            }
             
         } else if indexPath.section == 6 {
             var list = [(Date, Double)]()
@@ -222,9 +207,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
             cell!.graphView.horizontalLineMarkers = [30, 40, 50, 60, 70, 80, 90]
-            if let selectedPoint = dlpPoint {
-                cell?.graphView.displayVerticalLine(at: selectedPoint)
-            }
             
         } else if indexPath.section == 7 {
             var list = [(Date, Double)]()
@@ -235,10 +217,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
-            if let selectedPoint = dlpPoint {
-                cell?.graphView.displayVerticalLine(at: selectedPoint)
-            }
-            
         } else if indexPath.section == 8 {
             var list = [(Date, Double)]()
             for point in track!.trackPoints {
@@ -252,11 +230,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             cell!.graphView.color = UIColor(red: 165/255.0, green: 50/255.0, blue: 45/255.0, alpha: 0.3)
             cell!.graphView.numbersList = list
             cell!.graphView.horizontalLineMarkers = [90]
-
-            if let selectedPoint = dlpPoint {
-                cell?.graphView.displayVerticalLine(at: selectedPoint)
-            }
-            
         } else if indexPath.section == 9 {
             var list = [(Date, Double)]()
             for point in track!.trackPoints {
