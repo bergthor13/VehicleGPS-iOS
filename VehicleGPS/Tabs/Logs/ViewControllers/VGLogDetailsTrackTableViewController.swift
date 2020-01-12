@@ -46,7 +46,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 5
+            return 4
         }
         return 1
     }
@@ -81,10 +81,21 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 cell1.textLabel?.text = "No Start Time"
                 return cell1
             }
-            let cell1 = UITableViewCell(style: .value1, reuseIdentifier: "asdf")
-            cell1.textLabel?.text = "Start Time: \(timeStart)"
+            let cell1 = UITableViewCell(style: .value2, reuseIdentifier: "asdf")
+            cell1.textLabel?.text = "Start Time"
+            cell1.detailTextLabel?.text = String(describing: timeStart)
+            
             if indexPath.row == 1 {
-                cell1.textLabel?.text = "End Time: \(timeStart.addingTimeInterval(track.duration))"
+                cell1.textLabel?.text = "End Time"
+                cell1.detailTextLabel?.text = String(describing: timeStart.addingTimeInterval(track.duration))
+            }
+            if indexPath.row == 2 {
+                cell1.textLabel?.text = "Distance"
+                cell1.detailTextLabel?.text = String(track.distance)
+            }
+            if indexPath.row == 3 {
+                cell1.textLabel?.text = "Duration"
+                cell1.detailTextLabel?.text = String(track.duration)
             }
             
             return cell1
