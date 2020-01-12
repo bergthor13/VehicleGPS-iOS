@@ -83,6 +83,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             }
             let cell1 = UITableViewCell(style: .value1, reuseIdentifier: "asdf")
             cell1.textLabel?.text = "Start Time: \(timeStart)"
+            if indexPath.row == 1 {
+                cell1.textLabel?.text = "End Time: \(timeStart.addingTimeInterval(track.duration))"
+            }
+            
             return cell1
         } else if indexPath.section == 1 {
             var list = [(Date, Double)]()
@@ -109,7 +113,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             cell?.graphView.showMinMaxValue = false
             cell!.graphView.color = UIColor(red: 0, green: 0.5, blue: 1, alpha: 0.3)
             cell!.graphView.numbersList = list
-            cell!.graphView.displayHorizontalLine(at: [30, 40, 50, 60, 70, 80, 90])
+            cell!.graphView.horizontalLineMarkers = [30, 40, 50, 60, 70, 80, 90]
             if let selectedPoint = dlpPoint {
                 cell?.graphView.displayVerticalLine(at: selectedPoint)
             }
@@ -128,6 +132,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
+
             if let selectedPoint = dlpPoint {
                 cell?.graphView.displayVerticalLine(at: selectedPoint)
             }
@@ -190,6 +195,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
+            cell!.graphView.horizontalLineMarkers = [30, 40, 50, 60, 70, 80, 90]
             if let selectedPoint = dlpPoint {
                 cell?.graphView.displayVerticalLine(at: selectedPoint)
             }
@@ -219,7 +225,8 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             cell?.graphView.showMinMaxValue = true
             cell!.graphView.color = UIColor(red: 165/255.0, green: 50/255.0, blue: 45/255.0, alpha: 0.3)
             cell!.graphView.numbersList = list
-            cell!.graphView.displayHorizontalLine(at: [90])
+            cell!.graphView.horizontalLineMarkers = [90]
+
             if let selectedPoint = dlpPoint {
                 cell?.graphView.displayVerticalLine(at: selectedPoint)
             }

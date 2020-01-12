@@ -11,13 +11,13 @@ import UIKit
 import CoreLocation
 
 class TrackGraphView: UIView {
-
-	var graphLayer: CAShapeLayer!
+    
+    var graphLayer: CAShapeLayer!
     var lineLayer: CAShapeLayer!
-	var graphClipLayer: CAShapeLayer!
+    var graphClipLayer: CAShapeLayer!
     var graphSelectLayer: CAShapeLayer!
     var graphSelectPath: UIBezierPath!
-
+    
     var tableView: UITableView?
     
     var color: UIColor?
@@ -25,29 +25,37 @@ class TrackGraphView: UIView {
     var minValue: CGFloat = CGFloat(Double.infinity)
     var graphMaxValue: Double?
     var graphMinValue: CGFloat?
-    var graphSeparator: UIView?
+    var graphSeparatorRight: UIView?
+    var graphSeparatorLeft: UIView?
     
-    var graphFrame: CGRect!
+    var graphFrame: UIView!
     
     var maxLabel: UILabel?
     var minLabel: UILabel?
     var startTime: Date?
     var endTime: Date?
     var showMinMaxValue: Bool = true
-    
+    var inset = UIEdgeInsets(top: 12, left: 20, bottom: 12, right: 60)
+
     var selectedPoint: CGPoint?
     var dlpList = [DisplayLineProtocol]()
-
-	private var elePoints = [(Date, CGFloat)]()
-
-	public var numbersList = [(Date, Double)]() {
-		didSet {
+    
+    var horizontalLineMarkers = [Double]() {
+        didSet {
+            setNeedsLayout()
+        }
+    }
+    
+    private var elePoints = [(Date, CGFloat)]()
+    
+    public var numbersList = [(Date, Double)]() {
+        didSet {
             elePoints = []
             guard let endTime = self.endTime else {return}
             guard let startTime = self.startTime else {return}
             self.maxValue = CGFloat(-Double.infinity)
             self.minValue = CGFloat(Double.infinity)
-            let pixelWidth = self.graphFrame.width*UIScreen.main.scale
+            let pixelWidth = self.graphFrame.bounds.width*UIScreen.main.scale
             let totalSeconds = endTime.timeIntervalSince(startTime)
             let secondsPerPixel = totalSeconds/Double(pixelWidth)
             if numbersList.count == 0 {
@@ -55,7 +63,7 @@ class TrackGraphView: UIView {
                 return
             }
             
-			var totalAltitude: CGFloat = 0.0
+            var totalAltitude: CGFloat = 0.0
             var lastPixel = numbersList.first!.0
             var pointCount = 0
             for item in numbersList {
@@ -63,10 +71,10 @@ class TrackGraphView: UIView {
                     continue
                 }
                 pointCount += 1
-				totalAltitude += CGFloat(item.1)
+                totalAltitude += CGFloat(item.1)
                 if item.0.timeIntervalSince(lastPixel) > secondsPerPixel {
                     let currValue = totalAltitude/CGFloat(pointCount)
-
+                    
                     if currValue < minValue {
                         minValue = currValue
                     }
@@ -75,11 +83,11 @@ class TrackGraphView: UIView {
                         maxValue = currValue
                     }
                     elePoints.append((item.0, currValue))
-					pointCount = 0
+                    pointCount = 0
                     totalAltitude = 0.0
                     lastPixel = item.0
-				}
-			}
+                }
+            }
             
             if showMinMaxValue {
                 guard let newMax = self.graphMaxValue else {
@@ -91,130 +99,150 @@ class TrackGraphView: UIView {
                     setNeedsLayout()
                     return
                 }
-
+                
                 self.maxValue = CGFloat(newMax)
                 self.minValue = CGFloat(newMin)
             }
             setNeedsLayout()
-		}
-	}
+        }
+    }
     
     func displayVerticalLine(at point: CGPoint) {
-        if elePoints.count == 0 {
-            return
-        }
-        var thisPoint = point
-        if point.x > self.graphFrame.width {
-            thisPoint = CGPoint(x: self.graphFrame.width, y: point.y)
-            displayVerticalLine(at: CGPoint(x: self.graphFrame.width, y: 0))
-
-        }
-
         graphSelectLayer.sublayers?.removeAll()
         graphSelectLayer.path = nil
         graphSelectLayer.strokeColor = UIColor.gray.cgColor
-        graphSelectLayer.lineWidth = 1
-        layer.addSublayer(graphSelectLayer)
-        let topPoint = CGPoint(x: thisPoint.x, y: 0.0)
-        let bottomPoint = CGPoint(x: thisPoint.x, y: self.graphFrame.height)
-        graphSelectPath = UIBezierPath(rect: CGRect(x: topPoint.x, y: 0, width: 0.5, height: self.graphFrame.height))
+        graphSelectLayer.lineWidth = 0.5
+        self.graphFrame.layer.addSublayer(graphSelectLayer)
+        let topPoint = CGPoint(x: point.x, y: 0.0)
+        let bottomPoint = CGPoint(x: point.x, y: self.graphFrame.bounds.height)
+        graphSelectPath = UIBezierPath(rect: CGRect(x: topPoint.x, y: 0, width: 0.5, height: self.graphFrame.bounds.height))
         graphSelectPath.move(to: topPoint)
         graphSelectPath.addLine(to: bottomPoint)
         graphSelectLayer.path = graphSelectPath.cgPath
-
     }
     
-    func displayHorizontalLine(at list: [CGFloat]) {
+    func displayHorizontalLine(at list: [Double]) {
         if elePoints.count == 0 {
             return
         }
-        for view in self.subviews {
+        for view in self.graphFrame.subviews {
             if view.tag == 300 {
                 view.removeFromSuperview()
             }
         }
+        
+        let topLine = UIView(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: self.graphFrame.frame.width, height: 0.5)))
+        let bottomLine = UIView(frame: CGRect(origin: CGPoint(x: 0, y: self.graphFrame.frame.height), size: CGSize(width: self.graphFrame.frame.width, height: 0.5)))
+
+        topLine.tag = 300
+        bottomLine.tag = 300
+        if traitCollection.userInterfaceStyle == .light {
+             topLine.backgroundColor = .lightGray
+             bottomLine.backgroundColor = .lightGray
+
+         } else {
+            topLine.backgroundColor = .darkGray
+            bottomLine.backgroundColor = .darkGray
+
+        }
+        self.graphFrame.addSubview(topLine)
+        self.graphFrame.addSubview(bottomLine)
+
         for value in list {
-            if getColumnYPoint(graphPoint: value) < 0 {
+            if getColumnYPoint(graphPoint: CGFloat(value)) < 0 {
                 continue
             }
             
-            let line = UIView(frame: CGRect(origin: CGPoint(x: 0, y: getColumnYPoint(graphPoint: value)), size: CGSize(width: self.graphFrame.width, height: 0.5)))
+            let line = UIView(frame: CGRect(origin: CGPoint(x: 0, y: getColumnYPoint(graphPoint: CGFloat(value))), size: CGSize(width: self.graphFrame.frame.width, height: 0.5)))
             line.tag = 300
             if traitCollection.userInterfaceStyle == .light {
                 line.backgroundColor = .lightGray
-
+                
             } else {
                 line.backgroundColor = .darkGray
             }
-            self.addSubview(line)
+            self.graphFrame.addSubview(line)
             
         }
-        setNeedsLayout()
         
     }
     
     // TODO: FIX ME
     func getPointTouched(point: CGPoint) -> Int {
-        let id = Int(round((point.x/self.graphFrame.width)*CGFloat(elePoints.count)))
+        let id = Int(round((point.x/self.graphFrame.bounds.width)*CGFloat(elePoints.count)))
         return id
     }
     
     func getTimeOfTouched(point:CGPoint) -> Date? {
         guard let startTime = self.startTime else {return nil}
         guard let endTime = self.endTime else {return nil}
-
+        
         let totalSeconds = endTime.timeIntervalSince(startTime)
-        let positionPercentage = point.x / self.graphFrame.width
+        let positionPercentage = point.x / self.graphFrame.frame.width
+
         if positionPercentage > 1 {
-            return nil
+            return endTime
         }
+        if positionPercentage < 0 {
+            return startTime
+        }
+        
         let calculatedDate = startTime.addingTimeInterval(totalSeconds*Double(positionPercentage))
         return calculatedDate
     }
-
-	override func layoutSubviews() {
-		super.layoutSubviews()
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
         if elePoints.count == 0 {
             return
         }
-        self.graphFrame = CGRect(x: self.bounds.origin.x, y: self.bounds.origin.y, width: self.bounds.width-60, height: self.bounds.height)
-		drawGraph()
-        self.graphSeparator?.frame = CGRect(origin: CGPoint(x: self.graphFrame.width, y: 0), size: CGSize(width: 0.25, height: self.graphFrame.height))
-        if traitCollection.userInterfaceStyle == .light {
-            self.graphSeparator?.backgroundColor = .lightGray
+        displayHorizontalLine(at: horizontalLineMarkers)
+        self.graphFrame.frame =  CGRect(x: self.bounds.origin.x+inset.left, y: self.bounds.origin.y+inset.top, width: self.bounds.width-inset.left-inset.right, height: self.bounds.height-inset.top-inset.bottom)
+        drawGraph()
+        self.graphSeparatorRight?.frame = CGRect(origin: CGPoint(x: self.graphFrame.frame.width+self.graphFrame.frame.origin.x, y: 0), size: CGSize(width: 0.25, height: self.bounds.height))
+        self.graphSeparatorLeft?.frame = CGRect(origin: CGPoint(x: self.graphFrame.frame.origin.x, y: 0), size: CGSize(width: 0.25, height: self.bounds.height))
 
+        if traitCollection.userInterfaceStyle == .light {
+            self.graphSeparatorRight?.backgroundColor = .lightGray
+            self.graphSeparatorLeft?.backgroundColor = .lightGray
         } else {
-            self.graphSeparator?.backgroundColor = .darkGray
+            self.graphSeparatorRight?.backgroundColor = .darkGray
+            self.graphSeparatorLeft?.backgroundColor = .darkGray
         }
         
         self.maxLabel!.text = String(format: "%.2f", self.maxValue)
         self.minLabel?.text = String(format: "%.2f", self.minValue)
         self.maxLabel?.frame = CGRect(x: self.bounds.width-205, y: 5, width: 200, height: 15)
-        self.minLabel?.frame = CGRect(x: self.bounds.width-205, y: self.graphFrame.height-20, width: 200, height: 15)
-	}
-	
-	required init?(coder aDecoder: NSCoder) {
-		super.init(coder: aDecoder)
+        self.minLabel?.frame = CGRect(x: self.bounds.width-205, y: self.bounds.height-20, width: 200, height: 15)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
         initializeView()
-	}
+    }
     
     func initializeView() {
-        self.graphFrame = self.bounds
+        graphLayer = CAShapeLayer()
+
+        self.graphFrame = UIView(frame: CGRect(x: self.bounds.origin.x+20, y: self.bounds.origin.y+10, width: self.bounds.width-60, height: self.bounds.height))
+        self.addSubview(graphFrame)
         self.isMultipleTouchEnabled = true
         self.maxLabel = UILabel(frame: CGRect(x: self.bounds.width-205, y: 5, width: 200, height: 15))
         self.maxLabel?.font = UIFont.systemFont(ofSize: 12)
         self.maxLabel?.textAlignment = .right
         self.maxLabel?.textColor = UIColor.gray
-        self.minLabel = UILabel(frame: CGRect(x: self.bounds.width-205, y: self.graphFrame.height-20, width: 200, height: 15))
+        self.minLabel = UILabel(frame: CGRect(x: self.bounds.width-205, y: self.bounds.height-20, width: 200, height: 15))
         self.minLabel?.font = UIFont.systemFont(ofSize: 12)
         self.minLabel?.textAlignment = .right
         self.minLabel?.textColor = UIColor.gray
         graphSelectLayer = CAShapeLayer()
         graphSelectPath = UIBezierPath()
-        self.graphSeparator = UIView(frame: CGRect(origin: CGPoint(x: self.graphFrame.width, y: 0), size: CGSize(width: 5, height: self.graphFrame.height)))
+        self.graphSeparatorRight = UIView(frame: CGRect(origin: CGPoint(x: self.graphFrame.frame.width+self.graphFrame.frame.origin.x, y: 0), size: CGSize(width: 5, height: self.graphFrame.bounds.height)))
+        self.graphSeparatorLeft = UIView(frame: CGRect(origin: CGPoint(x: self.graphFrame.frame.origin.x, y: 0), size: CGSize(width: 5, height: self.graphFrame.bounds.height)))
         self.addSubview(self.maxLabel!)
         self.addSubview(self.minLabel!)
-        self.addSubview(self.graphSeparator!)
+        self.addSubview(self.graphSeparatorRight!)
+        self.addSubview(self.graphSeparatorLeft!)
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressed))
         longPressGesture.minimumPressDuration = TimeInterval(0.5)
         self.addGestureRecognizer(longPressGesture)
@@ -226,44 +254,44 @@ class TrackGraphView: UIView {
             graphSelectLayer.path = nil
         }
     }
-
+    
     @objc func longPressed(sender: UILongPressGestureRecognizer) {
         
         let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
+        if sender.state == .began {
+            selectionFeedbackGenerator.selectionChanged()
+        }
         
-        selectedPoint = sender.location(in: self)
+        selectedPoint = sender.location(in: self.graphFrame)
         guard var selectedPoint = selectedPoint else {
             return
         }
         
-        if selectedPoint.x > graphFrame.width {
-            selectedPoint = CGPoint(x: graphFrame.width, y: selectedPoint.y)
-        }
         switch sender.state {
-        case .began:
-            selectionFeedbackGenerator.selectionChanged()
+        case .began, .changed:
+            var drawnPoint = selectedPoint
 
-            displayVerticalLine(at: selectedPoint)
-            for dlp in dlpList {
-                dlp.didTouchGraph(at: selectedPoint)
-            }
-            break
-        case .changed:
-            let i = getPointTouched(point: selectedPoint)
-            if i < elePoints.count || i < 0 {
-                self.maxLabel?.text = String(format: "%.2f", elePoints[i].1)
-            }
-            if selectedPoint.x < self.graphFrame.width {
+            if 0 <= selectedPoint.x && selectedPoint.x < self.graphFrame.bounds.width {
+                drawnPoint = selectedPoint
                 displayVerticalLine(at: selectedPoint)
-            } else {
-                displayVerticalLine(at: CGPoint(x: self.graphFrame.width, y: 0))
+            }
+            
+            if selectedPoint.x < 0.0 {
+                drawnPoint = .zero
+                displayVerticalLine(at: .zero)
+            }
+            
+            if selectedPoint.x > self.graphFrame.bounds.width {
+                drawnPoint = CGPoint(x: self.graphFrame.bounds.width, y: 0)
+                displayVerticalLine(at: drawnPoint)
             }
             for dlp in dlpList {
-                dlp.didTouchGraph(at: selectedPoint)
+                dlp.didTouchGraph(at: drawnPoint)
             }
-            break
-        case .ended, .failed, .cancelled:
+            
 
+
+        case .ended, .failed, .cancelled:
             break
         default:
             break
@@ -282,116 +310,105 @@ class TrackGraphView: UIView {
     }
     
     func getColumnYPoint(graphPoint: CGFloat) -> CGFloat {
-        var y: CGFloat = (CGFloat(graphPoint) - self.minValue) * CGFloat(self.graphFrame.height) / CGFloat(self.maxValue - self.minValue)
-        y = self.graphFrame.height - y
+        var y: CGFloat = (CGFloat(graphPoint) - self.minValue) * CGFloat(self.graphFrame.frame.height) / CGFloat(self.maxValue - self.minValue)
+        y = self.graphFrame.frame.height - y
         
         return y
     }
     
-	public func drawGraph() {
+    fileprivate func clearGraph() {
+        if graphLayer != nil {
+            if graphLayer.superlayer != nil {
+                self.graphLayer.removeFromSuperlayer()
+            }
+        }
+        
+        if graphClipLayer != nil {
+            if graphClipLayer.superlayer != nil {
+                self.graphClipLayer.removeFromSuperlayer()
+            }
+        }
+    }
+    
+    public func drawGraph() {
         guard let endTime = self.endTime else {return}
         guard let startTime = self.startTime else {return}
+        if elePoints.count == 0 { return }
+        UIGraphicsBeginImageContext(self.graphFrame.bounds.size)
         
-		//calculate the x point
-		UIGraphicsBeginImageContext(self.graphFrame.size)
+        clearGraph()
 
-		if graphLayer != nil {
-			if graphLayer.superlayer != nil {
-				self.graphLayer.removeFromSuperlayer()
-			}
-		}
+        let graphHeight = self.graphFrame.bounds.height
+        let graphWidth = self.graphFrame.bounds.width
 
-		if graphClipLayer != nil {
-			if graphClipLayer.superlayer != nil {
-				self.graphClipLayer.removeFromSuperlayer()
-			}
-		}
-
-		if elePoints.count == 0 {
-			return
-		}
-
-		// calculate the y point
-		let graphHeight = self.graphFrame.height
-
-		let columnYPoint = { (graphPoint: Double) -> CGFloat in
-
-			var y: CGFloat = (CGFloat(graphPoint) - self.minValue) * CGFloat(graphHeight) / CGFloat(self.maxValue - self.minValue)
-			y = graphHeight - y
-
-			return y
-		}
-
-		// draw the line graph
-		//set up the points line
-		let graphPath = UIBezierPath()
-		//go to start of line
-
-		graphLayer = CAShapeLayer()
-        lineLayer = CAShapeLayer()
-		graphLayer.strokeColor = self.color?.withAlphaComponent(0.5).cgColor
-		graphLayer.fillColor = UIColor.clear.cgColor
-		graphLayer.lineWidth = 0.75
-		layer.addSublayer(graphLayer)
-        let pixelWidth = self.graphFrame.width
+        let columnYPoint = { (graphPoint: Double) -> CGFloat in
+            var y: CGFloat = (CGFloat(graphPoint) - self.minValue) * CGFloat(graphHeight) / CGFloat(self.maxValue - self.minValue)
+            y = graphHeight - y
+            return y
+        }
+        
+        let graphPath = UIBezierPath()
+        
+        graphLayer.strokeColor = self.color?.withAlphaComponent(0.8).cgColor
+        graphLayer.fillColor = UIColor.clear.cgColor
+        graphLayer.lineWidth = 0.5
+        
+        self.graphFrame.layer.addSublayer(graphLayer)
+        
         let totalSeconds = endTime.timeIntervalSince(startTime)
         let secondsFromStart = elePoints.first!.0.timeIntervalSince(startTime)
-
-		graphPath.move(to: CGPoint(x: CGFloat(secondsFromStart/totalSeconds)*pixelWidth,
+        
+        //go to start of line
+        graphPath.move(to: CGPoint(x: CGFloat(secondsFromStart/totalSeconds)*graphWidth,
                                    y: columnYPoint(Double(elePoints.first!.1))))
-
-		//add points for each item in the graphPoints array
-		//at the correct (x, y) for the point
-		for i in 0 ..< elePoints.count {
+        
+        //add points for each item in the graphPoints array
+        //at the correct (x, y) for the point
+        for i in 0 ..< elePoints.count {
             let secondsFromStart = elePoints[i].0.timeIntervalSince(startTime)
-			let nextPoint = CGPoint(x: CGFloat(secondsFromStart/totalSeconds)*pixelWidth,
-			                        y: columnYPoint(Double(elePoints[i].1)))
-			graphPath.addLine(to: nextPoint)
-		}
-
-		graphLayer.path = graphPath.cgPath
-
-		//Create the clipping path for the graph gradient
-		graphClipLayer = CAShapeLayer()
-
-		//1 - save the state of the context (commented out for now)
-		//CGContextSaveGState(context)
-
-		//2 - make a copy of the path
+            let nextPoint = CGPoint(x: CGFloat(secondsFromStart/totalSeconds)*graphWidth,
+                                    y: columnYPoint(Double(elePoints[i].1)))
+            graphPath.addLine(to: nextPoint)
+        }
+        
+        graphLayer.path = graphPath.cgPath
+        
+        // Create the clipping path for the graph gradient
+        graphClipLayer = CAShapeLayer()
+                
+        // Make a copy of the path
         guard let clippingPath = graphPath.copy() as? UIBezierPath else {
             return
         }
-
-		//3 - add lines to the copied path to complete the clip area
+        
+        // Add lines to the copied path to complete the clip area
         let endFromStart = elePoints.last!.0.timeIntervalSince(startTime)
-
+        
         clippingPath.addLine(to: CGPoint(
-			x: CGFloat(endFromStart/totalSeconds)*pixelWidth,
-			y: self.graphFrame.height))
-		clippingPath.addLine(to: CGPoint(
-			x: CGFloat(secondsFromStart/totalSeconds)*pixelWidth,
-			y: self.graphFrame.height))
-		clippingPath.close()
-
-		//4 - add the clipping path to the context
-		clippingPath.addClip()
-
-		//5 - check clipping path - temporary code
+            x: CGFloat(endFromStart/totalSeconds)*graphWidth,
+            y: self.graphFrame.bounds.height+graphFrame.bounds.origin.y))
+        clippingPath.addLine(to: CGPoint(
+            x: CGFloat(secondsFromStart/totalSeconds)*graphWidth,
+            y: self.graphFrame.bounds.height+graphFrame.bounds.origin.y))
+        clippingPath.close()
+        
+        // Add the clipping path to the context
+        clippingPath.addClip()
+        
         if self.color == nil {
             graphClipLayer.fillColor = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3).cgColor
         } else {
             graphClipLayer.fillColor = self.color?.cgColor
         }
         
-		let rectPath = UIBezierPath(rect: self.graphFrame)
-		rectPath.fill()
-		graphClipLayer.path = clippingPath.cgPath
-
-		//end temporary code
-		layer.addSublayer(graphClipLayer)
-
-		//end temporary code
-		UIGraphicsEndImageContext()
-	}
-
+        let rectPath = UIBezierPath(rect: self.graphFrame.frame)
+        rectPath.fill()
+        graphClipLayer.path = clippingPath.cgPath
+        
+        //end temporary code
+        self.graphFrame.layer.addSublayer(graphClipLayer)
+        
+        //end temporary code
+        UIGraphicsEndImageContext()
+    }
 }
