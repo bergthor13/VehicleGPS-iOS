@@ -212,8 +212,8 @@ class TrackGraphView: UIView {
         
         self.maxLabel!.text = String(format: "%.2f", self.maxValue)
         self.minLabel?.text = String(format: "%.2f", self.minValue)
-        self.maxLabel?.frame = CGRect(x: self.bounds.width-205, y: 5, width: 200, height: 15)
-        self.minLabel?.frame = CGRect(x: self.bounds.width-205, y: self.bounds.height-20, width: 200, height: 15)
+        self.maxLabel?.frame = CGRect(x: self.inset.left+self.graphFrame.frame.width+5, y: 5, width: 200, height: 15)
+        self.minLabel?.frame = CGRect(x: self.inset.left+self.graphFrame.frame.width+5, y: self.bounds.height-20, width: 200, height: 15)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -229,11 +229,11 @@ class TrackGraphView: UIView {
         self.isMultipleTouchEnabled = true
         self.maxLabel = UILabel(frame: CGRect(x: self.bounds.width-205, y: 5, width: 200, height: 15))
         self.maxLabel?.font = UIFont.systemFont(ofSize: 12)
-        self.maxLabel?.textAlignment = .right
+        self.maxLabel?.textAlignment = .left
         self.maxLabel?.textColor = UIColor.gray
         self.minLabel = UILabel(frame: CGRect(x: self.bounds.width-205, y: self.bounds.height-20, width: 200, height: 15))
         self.minLabel?.font = UIFont.systemFont(ofSize: 12)
-        self.minLabel?.textAlignment = .right
+        self.minLabel?.textAlignment = .left
         self.minLabel?.textColor = UIColor.gray
         graphSelectLayer = CAShapeLayer()
         graphSelectPath = UIBezierPath()
