@@ -193,26 +193,11 @@ class VGDataStore {
         dataPoint.setValue(vgDataPoint.fixType, forKey: "fixType")
         dataPoint.setValue(vgDataPoint.gnssFixOk, forKey: "gnssFixOK")
         dataPoint.setValue(vgDataPoint.fullyResolved, forKey: "fullyResolved")
-        if vgDataPoint.rpm != nil {
-            dataPoint.setValue(vgDataPoint.rpm, forKey: "rpm")
-        }
-        
-        if vgDataPoint.engineLoad != nil {
-            dataPoint.setValue(vgDataPoint.engineLoad, forKey: "engineLoad")
-        }
-        
-        if vgDataPoint.coolantTemperature != nil {
-            dataPoint.setValue(vgDataPoint.coolantTemperature, forKey: "coolantTemperature")
-        }
-        
-        if vgDataPoint.ambientTemperature != nil {
-            dataPoint.setValue(vgDataPoint.ambientTemperature, forKey: "ambientTemperature")
-        }
-        
-        if vgDataPoint.throttlePosition != nil {
-            dataPoint.setValue(vgDataPoint.throttlePosition, forKey: "throttlePosition")
-        }
-        
+        dataPoint.setValue(vgDataPoint.rpm, forKey: "rpm")
+        dataPoint.setValue(vgDataPoint.engineLoad, forKey: "engineLoad")
+        dataPoint.setValue(vgDataPoint.coolantTemperature, forKey: "coolantTemperature")
+        dataPoint.setValue(vgDataPoint.ambientTemperature, forKey: "ambientTemperature")
+        dataPoint.setValue(vgDataPoint.throttlePosition, forKey: "throttlePosition")
         dataPoint.setValue(vgTrack, forKey: "track")
         
     }
