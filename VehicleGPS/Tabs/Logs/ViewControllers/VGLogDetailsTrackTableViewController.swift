@@ -46,7 +46,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 4
+            return 5
         }
         return 1
     }
@@ -82,20 +82,35 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 return cell1
             }
             let cell1 = UITableViewCell(style: .value2, reuseIdentifier: "asdf")
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = Locale.current
+            dateFormatter.dateStyle = .long
+            dateFormatter.timeStyle = .medium
             cell1.textLabel?.text = "Start Time"
-            cell1.detailTextLabel?.text = String(describing: timeStart)
+            cell1.detailTextLabel?.text = dateFormatter.string(from: timeStart)
             
             if indexPath.row == 1 {
                 cell1.textLabel?.text = "End Time"
-                cell1.detailTextLabel?.text = String(describing: timeStart.addingTimeInterval(track.duration))
+                cell1.detailTextLabel?.text = dateFormatter.string(from: timeStart.addingTimeInterval(track.duration))
             }
             if indexPath.row == 2 {
                 cell1.textLabel?.text = "Distance"
-                cell1.detailTextLabel?.text = String(track.distance)
+                let lengthFormatter = LengthFormatter()
+                
+                lengthFormatter.unitStyle = .medium
+                cell1.detailTextLabel?.text = lengthFormatter.string(fromMeters: track.distance*1000)
+
             }
             if indexPath.row == 3 {
                 cell1.textLabel?.text = "Duration"
-                cell1.detailTextLabel?.text = String(track.duration)
+                let dcFormatter = DateComponentsFormatter()
+                dcFormatter.allowedUnits = [.hour, .minute, .second]
+                dcFormatter.unitsStyle = .short
+                cell1.detailTextLabel?.text = dcFormatter.string(from: track.duration)
+            }
+            if indexPath.row == 4 {
+                cell1.textLabel?.text = "Points"
+                cell1.detailTextLabel?.text = String(track.trackPoints.count)
             }
             
             return cell1

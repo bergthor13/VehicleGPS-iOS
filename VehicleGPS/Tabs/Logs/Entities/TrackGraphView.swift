@@ -263,7 +263,7 @@ class TrackGraphView: UIView {
         }
         
         selectedPoint = sender.location(in: self.graphFrame)
-        guard var selectedPoint = selectedPoint else {
+        guard let selectedPoint = selectedPoint else {
             return
         }
         
