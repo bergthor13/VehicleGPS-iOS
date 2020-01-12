@@ -154,8 +154,8 @@
 		F2169BEC23C9CE5800DE8547 /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
-				F2169BED23C9D06E00DE8547 /* Journeys */,
 				F23BE8D322A5E566008FD50C /* VGTabBarController.swift */,
+				F2169BED23C9D06E00DE8547 /* Journeys */,
 				F23BE8D522A5E56F008FD50C /* Dashboard */,
 				F23BE8D622A5E576008FD50C /* Logs */,
 				F25839CD23A6602C00E76B54 /* History */,
