@@ -37,7 +37,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         if track!.hasOBDData {
             return sections.count
         } else {
-            return 4
+            return 5
         }
     }
     
@@ -85,15 +85,15 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             dateFormatter.locale = Locale.current
             dateFormatter.dateStyle = .long
             dateFormatter.timeStyle = .medium
-            cell1.textLabel?.text = "Start Time"
+            cell1.textLabel?.text = "Byrjunartími"
             cell1.detailTextLabel?.text = dateFormatter.string(from: timeStart)
             
             if indexPath.row == 1 {
-                cell1.textLabel?.text = "End Time"
+                cell1.textLabel?.text = "Endatími"
                 cell1.detailTextLabel?.text = dateFormatter.string(from: timeStart.addingTimeInterval(track.duration))
             }
             if indexPath.row == 2 {
-                cell1.textLabel?.text = "Distance"
+                cell1.textLabel?.text = "Vegalengd"
                 let lengthFormatter = LengthFormatter()
                 
                 lengthFormatter.unitStyle = .medium
@@ -101,14 +101,14 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
 
             }
             if indexPath.row == 3 {
-                cell1.textLabel?.text = "Duration"
+                cell1.textLabel?.text = "Tímalengd"
                 let dcFormatter = DateComponentsFormatter()
                 dcFormatter.allowedUnits = [.hour, .minute, .second]
                 dcFormatter.unitsStyle = .short
                 cell1.detailTextLabel?.text = dcFormatter.string(from: track.duration)
             }
             if indexPath.row == 4 {
-                cell1.textLabel?.text = "Points"
+                cell1.textLabel?.text = "Gagnapunktar"
                 cell1.detailTextLabel?.text = String(track.trackPoints.count)
             }
             
@@ -190,18 +190,19 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             for point in track!.trackPoints {
                 if let rpm = point.rpm {
                     list.append((point.timestamp!, rpm))
-                } else {
-                    list.append((point.timestamp!, 0.0))
                 }
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
-            
+
         } else if indexPath.section == 6 {
             var list = [(Date, Double)]()
             for point in track!.trackPoints {
                 if let engineLoad = point.engineLoad {
-                    list.append((point.timestamp!, engineLoad))
+                    if !engineLoad.isNaN {
+                        list.append((point.timestamp!, engineLoad))
+                    }
+                    
                 }
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)

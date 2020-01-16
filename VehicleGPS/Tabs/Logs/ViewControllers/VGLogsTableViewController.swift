@@ -33,8 +33,10 @@ class VGLogsTableViewController: UITableViewController {
     var headerDateFormatter: DateFormatter?
     let distanceFormatter = LengthFormatter()
     let form = DateComponentsFormatter()
+    var emptyLabel: UILabel!
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
@@ -46,15 +48,34 @@ class VGLogsTableViewController: UITableViewController {
         self.tableView.register(logHeaderViewNib, forHeaderFooterViewReuseIdentifier: "LogsHeader")
     }
     
+    fileprivate func configureEmptyListLabel() {
+        var height: CGFloat = 0.0
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+            height = view.frame.height-(navigationController?.navigationBar.frame.height)!
+            return
+        }
+        height = view.frame.height-(navigationController?.navigationBar.frame.height)!-delegate.tabController.tabBar.frame.height
+        let frame = CGRect(x: 0.0, y: 0.0, width: view.frame.width, height: height)
+        
+        emptyLabel = UILabel(frame: frame)
+        emptyLabel.textAlignment = .center
+        emptyLabel.font = UIFont.systemFont(ofSize: 22)
+        emptyLabel.text = "Engir ferlar"
+        view.addSubview(emptyLabel)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.clearsSelectionOnViewWillAppear = true
+        configureEmptyListLabel()
+
         headerParseDateFormatter = DateFormatter()
         headerParseDateFormatter!.dateFormat = "yyyy-MM-dd"
         headerParseDateFormatter!.locale = Locale(identifier: "en_US_POSIX")
 
         headerDateFormatter = DateFormatter()
         headerDateFormatter!.dateStyle = .full
-        headerDateFormatter!.locale = Locale(identifier: "is_IS")
+        headerDateFormatter!.locale = Locale.current
         headerDateFormatter!.doesRelativeDateFormatting = true
         
         distanceFormatter.numberFormatter.maximumFractionDigits = 2
@@ -87,8 +108,19 @@ class VGLogsTableViewController: UITableViewController {
         self.navigationItem.rightBarButtonItem = button
         self.navigationItem.leftBarButtonItem = button1
         vgLogParser = VGLogParser()
+        updateData()
+    }
+    
+    func updateData() {
         tracksDict = tracksToDictionary(trackList: dataStore.getAllTracks())
         tableView.reloadData()
+        if self.tracksDict.count > 0 {
+            self.emptyLabel.isHidden = true
+            self.tableView.separatorStyle = .singleLine
+        } else {
+            self.emptyLabel.isHidden = false
+            self.tableView.separatorStyle = .none
+        }
     }
     
     @objc func downloadFiles() {
@@ -260,6 +292,13 @@ class VGLogsTableViewController: UITableViewController {
                 // TODO: Show Error Message
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
+                    if self.tracksDict.count > 0 {
+                        self.emptyLabel.isHidden = true
+                        self.tableView.separatorStyle = .singleLine
+                    } else {
+                        self.emptyLabel.isHidden = false
+                        self.tableView.separatorStyle = .none
+                    }
                     self.tableView.refreshControl?.endRefreshing()
                 }
                 return
@@ -280,6 +319,13 @@ class VGLogsTableViewController: UITableViewController {
             
             DispatchQueue.main.async {
                 self.tableView.reloadData()
+                if self.tracksDict.count > 0 {
+                    self.emptyLabel.isHidden = true
+                    self.tableView.separatorStyle = .singleLine
+                } else {
+                    self.emptyLabel.isHidden = false
+                    self.tableView.separatorStyle = .none
+                }
                 self.tableView.refreshControl?.endRefreshing()
             }
         }
@@ -419,7 +465,10 @@ class VGLogsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return tracksDict[sectionKeys[section]]!.count
+        guard let tracksForSection = tracksDict[sectionKeys[section]] else {
+            return 0
+        }
+        return tracksForSection.count
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -489,13 +538,12 @@ class VGLogsTableViewController: UITableViewController {
                 
                 _ = self.vgFileManager!.dataToFile(data: data, filename: track.fileName)
                 self.dataStore.update(vgTrack: track)
-
-                let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
-                logDetailsView.dataStore = self.dataStore
-                logDetailsView.track = track
-                
                 
                 DispatchQueue.main.async {
+                    let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
+                    logDetailsView.dataStore = self.dataStore
+                    logDetailsView.track = track
+                    
                     cell.update(progress: 0.0)
                     self.navigationController?.pushViewController(logDetailsView, animated: true)
                 }

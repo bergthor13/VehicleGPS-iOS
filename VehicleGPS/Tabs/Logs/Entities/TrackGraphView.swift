@@ -70,6 +70,12 @@ class TrackGraphView: UIView {
                 if item.1 == Double.infinity {
                     continue
                 }
+                if elePoints.count == 0 {
+                    if !item.1.isNaN {
+                        elePoints.append((item.0, CGFloat(item.1)))
+                        lastPixel = item.0
+                    }
+                }
                 pointCount += 1
                 totalAltitude += CGFloat(item.1)
                 if item.0.timeIntervalSince(lastPixel) > secondsPerPixel {
@@ -82,13 +88,24 @@ class TrackGraphView: UIView {
                     if currValue > maxValue {
                         maxValue = currValue
                     }
-                    elePoints.append((item.0, currValue))
+                    if !currValue.isNaN {
+                        elePoints.append((item.0, currValue))
+                    }
+                    
                     pointCount = 0
                     totalAltitude = 0.0
                     lastPixel = item.0
                 }
             }
             
+            if elePoints.count == 1 && numbersList.count > 1 {
+                let elePointsElement = elePoints.first!
+                let numbersListElement = numbersList.last!
+                elePoints.append((numbersListElement.0, CGFloat(numbersListElement.1)))
+                maxValue = CGFloat(max(Double(elePointsElement.1), Double(numbersListElement.1)))
+                minValue = CGFloat(min(Double(numbersListElement.1), Double(elePointsElement.1)))
+            }
+
             if showMinMaxValue {
                 guard let newMax = self.graphMaxValue else {
                     setNeedsLayout()
@@ -122,6 +139,10 @@ class TrackGraphView: UIView {
     }
     
     func displayHorizontalLine(at list: [Double]) {
+        // TODO: Move this!
+        let topLine = UIView(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: self.graphFrame.frame.width, height: 0.5)))
+        let bottomLine = UIView(frame: CGRect(origin: CGPoint(x: 0, y: self.graphFrame.frame.height), size: CGSize(width: self.graphFrame.frame.width, height: 0.5)))
+
         if elePoints.count == 0 {
             return
         }
@@ -131,8 +152,6 @@ class TrackGraphView: UIView {
             }
         }
         
-        let topLine = UIView(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: self.graphFrame.frame.width, height: 0.5)))
-        let bottomLine = UIView(frame: CGRect(origin: CGPoint(x: 0, y: self.graphFrame.frame.height), size: CGSize(width: self.graphFrame.frame.width, height: 0.5)))
 
         topLine.tag = 300
         bottomLine.tag = 300
@@ -193,10 +212,11 @@ class TrackGraphView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        clearGraph()
+        displayHorizontalLine(at: horizontalLineMarkers)
         if elePoints.count == 0 {
             return
         }
-        displayHorizontalLine(at: horizontalLineMarkers)
         self.graphFrame.frame =  CGRect(x: self.bounds.origin.x+inset.left, y: self.bounds.origin.y+inset.top, width: self.bounds.width-inset.left-inset.right, height: self.bounds.height-inset.top-inset.bottom)
         drawGraph()
         self.graphSeparatorRight?.frame = CGRect(origin: CGPoint(x: self.graphFrame.frame.width+self.graphFrame.frame.origin.x, y: 0), size: CGSize(width: 0.25, height: self.bounds.height))
@@ -310,7 +330,19 @@ class TrackGraphView: UIView {
     }
     
     func getColumnYPoint(graphPoint: CGFloat) -> CGFloat {
+        if self.maxValue == self.minValue {
+            if CGFloat(graphPoint) > self.maxValue {
+                return self.graphFrame.frame.height
+            }
+            
+            if CGFloat(graphPoint) < self.maxValue {
+                return 0
+            }
+            return self.graphFrame.frame.height/2
+        }
+        
         var y: CGFloat = (CGFloat(graphPoint) - self.minValue) * CGFloat(self.graphFrame.frame.height) / CGFloat(self.maxValue - self.minValue)
+        
         y = self.graphFrame.frame.height - y
         
         return y
@@ -328,20 +360,32 @@ class TrackGraphView: UIView {
                 self.graphClipLayer.removeFromSuperlayer()
             }
         }
+        self.maxLabel?.text = ""
+        self.minLabel?.text = ""
     }
     
     public func drawGraph() {
+        clearGraph()
         guard let endTime = self.endTime else {return}
         guard let startTime = self.startTime else {return}
         if elePoints.count == 0 { return }
         UIGraphicsBeginImageContext(self.graphFrame.bounds.size)
-        
-        clearGraph()
 
         let graphHeight = self.graphFrame.bounds.height
         let graphWidth = self.graphFrame.bounds.width
 
         let columnYPoint = { (graphPoint: Double) -> CGFloat in
+            if self.maxValue == self.minValue {
+                if CGFloat(graphPoint) > self.maxValue {
+                    return self.graphFrame.frame.height
+                }
+                
+                if CGFloat(graphPoint) < self.maxValue {
+                    return 0
+                }
+                return self.graphFrame.frame.height/2
+            }
+            
             var y: CGFloat = (CGFloat(graphPoint) - self.minValue) * CGFloat(graphHeight) / CGFloat(self.maxValue - self.minValue)
             y = graphHeight - y
             return y

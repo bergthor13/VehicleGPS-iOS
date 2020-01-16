@@ -2,16 +2,19 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19B88" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="DataPoint" representedClassName="DataPoint" syncable="YES" codeGenerationType="class">
         <attribute name="ambientTemperature" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="cadence" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="coolantTemperature" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="elevation" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="engineLoad" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="fixType" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="fullyResolved" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="gnssFixOK" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="heartRate" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="horizontalAccuracy" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="pdop" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="power" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="rpm" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="satellites" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="throttlePosition" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -33,9 +36,20 @@
         <attribute name="processed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="timeStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="trackPoints" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DataPoint" inverseName="track" inverseEntity="DataPoint"/>
+        <relationship name="vehicle" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Vehicle" inverseName="tracks" inverseEntity="Vehicle"/>
     </entity>
+    <entity name="Vehicle" representedClassName="Vehicle" syncable="YES" codeGenerationType="class">
+        <attribute name="colorB" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="colorG" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="colorR" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="image" optional="YES" attributeType="URI"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="tracks" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Track" inverseName="vehicle" inverseEntity="Track"/>
+    </entity>
+    <fetchRequest name="AllTracks" entity="Track"/>
     <elements>
-        <element name="DataPoint" positionX="255.171875" positionY="-65.55859375" width="128" height="28"/>
-        <element name="Track" positionX="-63" positionY="-18" width="128" height="223"/>
+        <element name="DataPoint" positionX="196.8671875" positionY="-25.84765625" width="128" height="358"/>
+        <element name="Track" positionX="-63" positionY="-18" width="128" height="238"/>
+        <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="133"/>
     </elements>
 </model>

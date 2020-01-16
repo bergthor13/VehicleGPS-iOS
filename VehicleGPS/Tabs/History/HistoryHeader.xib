@@ -14,10 +14,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="gD4-Vd-TmP">
-                    <rect key="frame" x="20" y="-1" width="374" height="29"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="28" id="h5v-I1-Zk1"/>
-                    </constraints>
+                    <rect key="frame" x="20" y="11" width="374" height="17"/>
                     <segments>
                         <segment title="Dagur"/>
                         <segment title="Mánuður"/>
@@ -25,7 +22,6 @@
                     </segments>
                 </segmentedControl>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="gD4-Vd-TmP" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="11" id="Qb7-bB-CJS"/>
                 <constraint firstItem="gD4-Vd-TmP" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="20" id="Vei-r2-5fz"/>

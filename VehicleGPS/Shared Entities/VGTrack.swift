@@ -113,7 +113,10 @@ extension VGTrack: Equatable {
 
 extension VGTrack: CustomStringConvertible {
     var description: String {
-        return "timeStart: \(String(describing: timeStart!)), fileName: \(self.fileName)"
+        guard let timeStart = timeStart else {
+            return "fileName: \(self.fileName)"
+        }
+        return "fileName: \(self.fileName), timeStart: \(String(describing: timeStart)),"
     }
 }
 

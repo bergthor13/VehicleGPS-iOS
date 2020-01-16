@@ -67,6 +67,9 @@ class LogsTableViewCell: UITableViewCell {
         form.unitsStyle = .abbreviated
         form.allowedUnits = [ .hour, .minute, .second ]
         form.zeroFormattingBehavior = [ .default ]
+        var calendar = Calendar.current
+         calendar.locale = Locale(identifier: "en")
+         form.calendar = calendar
         
         let formattedDuration = form.string(from: track.duration)
         

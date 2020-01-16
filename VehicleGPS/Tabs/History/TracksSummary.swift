@@ -14,6 +14,7 @@ class TracksSummary {
     var distance: Double = 0.0
     var trackCount: Int = 0
     var dateDescription: String = ""
+    var tracks = [VGTrack]()
     
     init(title:String) {
         self.summaryID = title

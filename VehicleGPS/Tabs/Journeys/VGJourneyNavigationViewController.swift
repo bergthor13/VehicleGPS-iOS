@@ -15,8 +15,5 @@ class VGJourneyNavigationViewController: UINavigationController {
         let journeyController = VGJourneyTableViewController.init(style: .insetGrouped)
         self.navigationBar.prefersLargeTitles = true
         self.pushViewController(journeyController, animated: false)
-        // Do any additional setup after loading the view.
-
-        // Do any additional setup after loading the view.
     }
 }

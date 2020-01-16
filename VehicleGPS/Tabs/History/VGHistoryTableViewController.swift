@@ -13,6 +13,7 @@ class VGHistoryTableViewController: UITableViewController {
     let dateFormatter = DateFormatter()
     let numberFormatter = NumberFormatter()
     var dataStore: VGDataStore!
+    var emptyLabel: UILabel!
 
     var historySections = [HistorySection]() {
         didSet {
@@ -35,24 +36,51 @@ class VGHistoryTableViewController: UITableViewController {
         self.tableView.register(historyHeaderNib, forHeaderFooterViewReuseIdentifier: "HistoryHeader")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.title = "Saga"
-        dateFormatter.locale = Locale(identifier: "is_IS")
-        
+    fileprivate func configureFormatters() {
         numberFormatter.locale = Locale.current
         numberFormatter.maximumFractionDigits = 0
         numberFormatter.minimumFractionDigits = 0
         numberFormatter.usesGroupingSeparator = true
         numberFormatter.numberStyle = .decimal
-
+    }
+    
+    fileprivate func configureEmptyListLabel() {
+        var height: CGFloat = 0.0
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+            height = view.frame.height-(navigationController?.navigationBar.frame.height)!
+            return
+        }
+        height = view.frame.height-(navigationController?.navigationBar.frame.height)!-delegate.tabController.tabBar.frame.height
+        let frame = CGRect(x: 0.0, y: 0.0, width: view.frame.width, height: height)
+        
+        emptyLabel = UILabel(frame: frame)
+        emptyLabel.textAlignment = .center
+        emptyLabel.font = UIFont.systemFont(ofSize: 22)
+        emptyLabel.text = "Engin saga"
+        view.addSubview(emptyLabel)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.title = "Saga"
         registerCells()
+        configureFormatters()
+        configureEmptyListLabel()
+        
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
         }
         
         tracks = dataStore.getAllTracks()
         historySections = getMonthDictionary(tracks: tracks)
+        if historySections.count > 0 {
+            emptyLabel.isHidden = true
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     func getYearDictionary(tracks: [VGTrack]) -> [HistorySection] {
@@ -87,6 +115,7 @@ class VGHistoryTableViewController: UITableViewController {
             
             summary!.distance   += track.distance
             summary!.trackCount += 1
+            summary?.tracks.append(track)
         }
         return result
     }
@@ -127,6 +156,7 @@ class VGHistoryTableViewController: UITableViewController {
             
             summary!.distance   += track.distance
             summary!.trackCount += 1
+            summary?.tracks.append(track)
         }
         return result
     }
@@ -167,6 +197,7 @@ class VGHistoryTableViewController: UITableViewController {
             
             summary!.distance   += track.distance
             summary!.trackCount += 1
+            summary?.tracks.append(track)
         }
         return result
     }
@@ -231,5 +262,12 @@ class VGHistoryTableViewController: UITableViewController {
         cell.lblDate.text = summary.dateDescription
         
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let tracksSummary = historySections[indexPath.section].summaries[indexPath.row]
+        let historyDetails = HistoryDetailsTableViewController(style: .insetGrouped)
+        historyDetails.tracksSummary = tracksSummary
+        navigationController?.pushViewController(historyDetails, animated: true)
     }
 }

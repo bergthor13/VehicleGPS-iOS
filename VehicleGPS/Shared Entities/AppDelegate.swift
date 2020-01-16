@@ -17,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var dataStore: VGDataStore?
     var fileManager: VGFileManager?
+    var tabController: VGTabBarController!
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -26,37 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.dataStore = VGDataStore()
         self.fileManager = VGFileManager()
         
-        let tabController = VGTabBarController()
-        
-        let dashboardController = VGDashboardNavigationController()
-        dashboardController.tabBarItem = UITabBarItem(title: "Mælaborð",
-                                                      image: nil, tag: 0)
-        tabController.addChild(dashboardController)
-        
-        let logsController = VGLogsNavigationViewController()
-        logsController.tabBarItem = UITabBarItem(title: "Ferlar",
-                                                 image: UIImage(imageLiteralResourceName: "LogIcon"),
-                                                 tag: 0)
-        tabController.addChild(logsController)
-
-        let historyController = VGHistoryNavigationController(nibName: "HistoryView", bundle: nil)
-        historyController.tabBarItem = UITabBarItem(title: "Saga",
-                                                    image: nil,
-                                                    tag: 0)
-        tabController.addChild(historyController)
-        
-        let journeysController = VGJourneyNavigationViewController()
-        journeysController.tabBarItem = UITabBarItem(title: "Ferðalög",
-                                                     image: nil,
-                                                     tag: 0)
-        tabController.addChild(journeysController)
-        
-        let settingsController = VGSettingsNavigationController()
-        settingsController.tabBarItem = UITabBarItem(title: "Stillingar",
-                                                     image: nil,
-                                                     tag: 0)
-        tabController.addChild(settingsController)
-        tabController.selectedIndex = 1
+        self.tabController = VGTabBarController()
         
         self.window?.rootViewController = tabController
         self.window?.makeKeyAndVisible()

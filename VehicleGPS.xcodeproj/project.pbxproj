@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		09DD9ED3104045D6742E2711 /* Pods_VehicleGPS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */; };
+		F206FA7523D07F80009A37F6 /* VGDataRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F206FA7423D07F80009A37F6 /* VGDataRepository.swift */; };
+		F206FA7723D09366009A37F6 /* NewJourneyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F206FA7623D09366009A37F6 /* NewJourneyTableViewController.swift */; };
 		F2169BEF23C9D0BE00DE8547 /* VGJourneyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2169BEE23C9D0BE00DE8547 /* VGJourneyTableViewController.swift */; };
 		F2169BF123C9D0E700DE8547 /* VGJourneyNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2169BF023C9D0E700DE8547 /* VGJourneyNavigationViewController.swift */; };
 		F23BE8BF22A5E4B9008FD50C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */; };
@@ -48,6 +50,7 @@
 		F25839DF23A9801400E76B54 /* DetailsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F25839DE23A9801400E76B54 /* DetailsHeaderView.xib */; };
 		F25839E123AAD03C00E76B54 /* HistoryHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F25839E023AAD03C00E76B54 /* HistoryHeader.xib */; };
 		F25839E323AAD1E000E76B54 /* HistoryHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25839E223AAD1E000E76B54 /* HistoryHeader.swift */; };
+		F2797D5723CD1AC500207650 /* HistoryDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2797D5623CD1AC500207650 /* HistoryDetailsTableViewController.swift */; };
 		F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C96EB122A853A500180055 /* VGFileManager.swift */; };
 		F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */; };
 		F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */; };
@@ -58,6 +61,8 @@
 		18EB1CD0499873B64661B1E0 /* Pods-VehicleGPS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.release.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.release.xcconfig"; sourceTree = "<group>"; };
 		91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VehicleGPS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB23282698EF0E65FC3BED1 /* Pods-VehicleGPS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.debug.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.debug.xcconfig"; sourceTree = "<group>"; };
+		F206FA7423D07F80009A37F6 /* VGDataRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGDataRepository.swift; sourceTree = "<group>"; };
+		F206FA7623D09366009A37F6 /* NewJourneyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewJourneyTableViewController.swift; sourceTree = "<group>"; };
 		F2169BEE23C9D0BE00DE8547 /* VGJourneyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGJourneyTableViewController.swift; sourceTree = "<group>"; };
 		F2169BF023C9D0E700DE8547 /* VGJourneyNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGJourneyNavigationViewController.swift; sourceTree = "<group>"; };
 		F23BE8BB22A5E4B9008FD50C /* VehicleGPS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VehicleGPS.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +106,7 @@
 		F25839DE23A9801400E76B54 /* DetailsHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailsHeaderView.xib; sourceTree = "<group>"; };
 		F25839E023AAD03C00E76B54 /* HistoryHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HistoryHeader.xib; sourceTree = "<group>"; };
 		F25839E223AAD1E000E76B54 /* HistoryHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryHeader.swift; sourceTree = "<group>"; };
+		F2797D5623CD1AC500207650 /* HistoryDetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryDetailsTableViewController.swift; sourceTree = "<group>"; };
 		F2C96EB122A853A500180055 /* VGFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFileManager.swift; sourceTree = "<group>"; };
 		F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDataStore.swift; sourceTree = "<group>"; };
 		F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGPXGenerator.swift; sourceTree = "<group>"; };
@@ -143,6 +149,7 @@
 			children = (
 				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
 				F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */,
+				F206FA7423D07F80009A37F6 /* VGDataRepository.swift */,
 				F2C96EB122A853A500180055 /* VGFileManager.swift */,
 				F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */,
 				F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */,
@@ -171,6 +178,7 @@
 			children = (
 				F2169BEE23C9D0BE00DE8547 /* VGJourneyTableViewController.swift */,
 				F2169BF023C9D0E700DE8547 /* VGJourneyNavigationViewController.swift */,
+				F206FA7623D09366009A37F6 /* NewJourneyTableViewController.swift */,
 			);
 			path = Journeys;
 			sourceTree = "<group>";
@@ -292,6 +300,7 @@
 				F25839E223AAD1E000E76B54 /* HistoryHeader.swift */,
 				F23D786E23B1551300DBC64F /* HistorySection.swift */,
 				F25839DC23A6BE8600E76B54 /* TracksSummary.swift */,
+				F2797D5623CD1AC500207650 /* HistoryDetailsTableViewController.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -308,7 +317,6 @@
 				F23BE8B822A5E4B9008FD50C /* Frameworks */,
 				F23BE8B922A5E4B9008FD50C /* Resources */,
 				73324A3AF290B093A55A79C2 /* [CP] Embed Pods Frameworks */,
-				F2548BDA23CA16380052E1D0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -418,23 +426,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F2548BDA23CA16380052E1D0 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -456,12 +447,15 @@
 				F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */,
 				F23BE8DF22A5E596008FD50C /* VGSettingsNavigationController.swift in Sources */,
 				F2169BF123C9D0E700DE8547 /* VGJourneyNavigationViewController.swift in Sources */,
+				F206FA7723D09366009A37F6 /* NewJourneyTableViewController.swift in Sources */,
 				F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */,
+				F206FA7523D07F80009A37F6 /* VGDataRepository.swift in Sources */,
 				F257077E22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift in Sources */,
 				F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */,
 				F23BE8E022A5E596008FD50C /* VGWiFiTableViewController.swift in Sources */,
 				F23BE8F922A5E5BB008FD50C /* VGSFTPManager.swift in Sources */,
 				F23BE8E422A5E5A7008FD50C /* VGDashboardNavigationController.swift in Sources */,
+				F2797D5723CD1AC500207650 /* HistoryDetailsTableViewController.swift in Sources */,
 				F25839D123A6606F00E76B54 /* VGHistoryNavigationController.swift in Sources */,
 				F23D787323B7C16700DBC64F /* DisplayLineProtocol.swift in Sources */,
 				F23BE8F822A5E5BB008FD50C /* LogsTableViewCell.swift in Sources */,

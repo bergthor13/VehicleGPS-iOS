@@ -92,7 +92,7 @@ class VGFileManager {
             fileString = try String(contentsOf: getAbsoluteFilePathFor(track: track)!)
         } catch {/* error handling here */}
         let lines = fileString.split { $0.isNewline }
-        print(getAbsoluteFilePathFor(track: track)!)
+    
         let leftSplit = lines[0 ... pointIndex]
         let rightSplit = lines[pointIndex ..< lines.count]
         let newTrack = VGTrack()
@@ -113,10 +113,7 @@ class VGFileManager {
             
             newTrack.fileName = String(describing: time).prefix(19).replacingOccurrences(of: ":", with: "") + ".csv"
             try result.write(to: logFilePathFor(track: newTrack)!, atomically: true, encoding: .utf8)
-            newTrack.timeStart = time
         } catch {/* error handling here */}
-        
-        dataStore.update(vgTrack: newTrack)
         
     }
     

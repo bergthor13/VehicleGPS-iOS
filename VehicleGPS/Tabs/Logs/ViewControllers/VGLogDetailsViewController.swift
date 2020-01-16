@@ -152,6 +152,7 @@ class VGLogDetailsViewController: UIViewController {
                     return
                 }
                 self.vgFileManager.split(track: self.track, at: selectedTime)
+                self.dataStore.split(track: self.track, at: selectedTime)
             }))
         }
         self.present(alert, animated: true, completion: nil)
