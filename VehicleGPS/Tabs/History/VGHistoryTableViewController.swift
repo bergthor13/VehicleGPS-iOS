@@ -30,10 +30,7 @@ class VGHistoryTableViewController: UITableViewController {
 
     fileprivate func registerCells() {
         let historyTableViewCellNib = UINib(nibName: "HistoryTableViewCell", bundle: nil)
-        let historyHeaderNib = UINib(nibName: "HistoryHeader", bundle: nil)
-        
         self.tableView.register(historyTableViewCellNib, forCellReuseIdentifier: "HistoryCell")
-        self.tableView.register(historyHeaderNib, forHeaderFooterViewReuseIdentifier: "HistoryHeader")
     }
     
     fileprivate func configureFormatters() {
@@ -67,6 +64,20 @@ class VGHistoryTableViewController: UITableViewController {
         configureFormatters()
         configureEmptyListLabel()
         
+        let view = HistoryHeader(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        view.historyTableViewController = self
+        
+        tableView.tableHeaderView = view
+        
+        // 3.
+        view.centerXAnchor.constraint(equalTo: self.tableView.centerXAnchor).isActive = true
+        view.widthAnchor.constraint(equalTo: self.tableView.widthAnchor).isActive = true
+        view.topAnchor.constraint(equalTo: self.tableView.topAnchor).isActive = true
+        // 4.
+        self.tableView.tableHeaderView?.layoutIfNeeded()
+        self.tableView.tableHeaderView = self.tableView.tableHeaderView
+
+        
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
         }
@@ -77,6 +88,12 @@ class VGHistoryTableViewController: UITableViewController {
             emptyLabel.isHidden = true
         }
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.tableHeaderView?.frame.size = CGSize(width: tableView.frame.width, height: 50)
+    }
+    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -200,18 +217,6 @@ class VGHistoryTableViewController: UITableViewController {
             summary?.tracks.append(track)
         }
         return result
-    }
-
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if section == 0 {
-            guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HistoryHeader") as? HistoryHeader else {
-                return UIView()
-            }
-            
-            view.historyTableViewController = self
-            return view
-        }
-        return nil
     }
     
     func segmentChanged(id: Int) {

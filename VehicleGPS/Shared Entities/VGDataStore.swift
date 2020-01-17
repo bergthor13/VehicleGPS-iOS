@@ -10,7 +10,6 @@ import UIKit
 import CoreData
 
 class VGDataStore {
-    var dataRepo = VGDataRepository()
     
         let storeCoordinator: NSPersistentStoreCoordinator
         

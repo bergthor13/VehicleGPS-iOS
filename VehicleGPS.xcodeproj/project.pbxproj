@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		09DD9ED3104045D6742E2711 /* Pods_VehicleGPS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */; };
-		F206FA7523D07F80009A37F6 /* VGDataRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F206FA7423D07F80009A37F6 /* VGDataRepository.swift */; };
 		F206FA7723D09366009A37F6 /* NewJourneyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F206FA7623D09366009A37F6 /* NewJourneyTableViewController.swift */; };
 		F2169BEF23C9D0BE00DE8547 /* VGJourneyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2169BEE23C9D0BE00DE8547 /* VGJourneyTableViewController.swift */; };
 		F2169BF123C9D0E700DE8547 /* VGJourneyNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2169BF023C9D0E700DE8547 /* VGJourneyNavigationViewController.swift */; };
@@ -48,7 +47,6 @@
 		F25839DB23A6810F00E76B54 /* HistoryTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F25839DA23A6810F00E76B54 /* HistoryTableViewCell.xib */; };
 		F25839DD23A6BE8600E76B54 /* TracksSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25839DC23A6BE8600E76B54 /* TracksSummary.swift */; };
 		F25839DF23A9801400E76B54 /* DetailsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F25839DE23A9801400E76B54 /* DetailsHeaderView.xib */; };
-		F25839E123AAD03C00E76B54 /* HistoryHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F25839E023AAD03C00E76B54 /* HistoryHeader.xib */; };
 		F25839E323AAD1E000E76B54 /* HistoryHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25839E223AAD1E000E76B54 /* HistoryHeader.swift */; };
 		F2797D5723CD1AC500207650 /* HistoryDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2797D5623CD1AC500207650 /* HistoryDetailsTableViewController.swift */; };
 		F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C96EB122A853A500180055 /* VGFileManager.swift */; };
@@ -61,7 +59,6 @@
 		18EB1CD0499873B64661B1E0 /* Pods-VehicleGPS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.release.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.release.xcconfig"; sourceTree = "<group>"; };
 		91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VehicleGPS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB23282698EF0E65FC3BED1 /* Pods-VehicleGPS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.debug.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.debug.xcconfig"; sourceTree = "<group>"; };
-		F206FA7423D07F80009A37F6 /* VGDataRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGDataRepository.swift; sourceTree = "<group>"; };
 		F206FA7623D09366009A37F6 /* NewJourneyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewJourneyTableViewController.swift; sourceTree = "<group>"; };
 		F2169BEE23C9D0BE00DE8547 /* VGJourneyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGJourneyTableViewController.swift; sourceTree = "<group>"; };
 		F2169BF023C9D0E700DE8547 /* VGJourneyNavigationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGJourneyNavigationViewController.swift; sourceTree = "<group>"; };
@@ -104,7 +101,6 @@
 		F25839DA23A6810F00E76B54 /* HistoryTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HistoryTableViewCell.xib; sourceTree = "<group>"; };
 		F25839DC23A6BE8600E76B54 /* TracksSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracksSummary.swift; sourceTree = "<group>"; };
 		F25839DE23A9801400E76B54 /* DetailsHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailsHeaderView.xib; sourceTree = "<group>"; };
-		F25839E023AAD03C00E76B54 /* HistoryHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HistoryHeader.xib; sourceTree = "<group>"; };
 		F25839E223AAD1E000E76B54 /* HistoryHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryHeader.swift; sourceTree = "<group>"; };
 		F2797D5623CD1AC500207650 /* HistoryDetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryDetailsTableViewController.swift; sourceTree = "<group>"; };
 		F2C96EB122A853A500180055 /* VGFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFileManager.swift; sourceTree = "<group>"; };
@@ -149,7 +145,6 @@
 			children = (
 				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
 				F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */,
-				F206FA7423D07F80009A37F6 /* VGDataRepository.swift */,
 				F2C96EB122A853A500180055 /* VGFileManager.swift */,
 				F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */,
 				F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */,
@@ -296,7 +291,6 @@
 				F25839D023A6606F00E76B54 /* VGHistoryNavigationController.swift */,
 				F25839D823A680FC00E76B54 /* HistoryTableViewCell.swift */,
 				F25839DA23A6810F00E76B54 /* HistoryTableViewCell.xib */,
-				F25839E023AAD03C00E76B54 /* HistoryHeader.xib */,
 				F25839E223AAD1E000E76B54 /* HistoryHeader.swift */,
 				F23D786E23B1551300DBC64F /* HistorySection.swift */,
 				F25839DC23A6BE8600E76B54 /* TracksSummary.swift */,
@@ -378,7 +372,6 @@
 				F23BE8E122A5E596008FD50C /* messages.plist in Resources */,
 				F25839DF23A9801400E76B54 /* DetailsHeaderView.xib in Resources */,
 				F23BE8CC22A5E4BA008FD50C /* LaunchScreen.storyboard in Resources */,
-				F25839E123AAD03C00E76B54 /* HistoryHeader.xib in Resources */,
 				F25839DB23A6810F00E76B54 /* HistoryTableViewCell.xib in Resources */,
 				F23BE8C922A5E4BA008FD50C /* Assets.xcassets in Resources */,
 			);
@@ -449,7 +442,6 @@
 				F2169BF123C9D0E700DE8547 /* VGJourneyNavigationViewController.swift in Sources */,
 				F206FA7723D09366009A37F6 /* NewJourneyTableViewController.swift in Sources */,
 				F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */,
-				F206FA7523D07F80009A37F6 /* VGDataRepository.swift in Sources */,
 				F257077E22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift in Sources */,
 				F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */,
 				F23BE8E022A5E596008FD50C /* VGWiFiTableViewController.swift in Sources */,
