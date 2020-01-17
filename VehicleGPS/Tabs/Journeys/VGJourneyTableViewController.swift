@@ -25,6 +25,19 @@ class VGJourneyTableViewController: UITableViewController {
         emptyLabel.text = "Engin ferðalög"
         view.addSubview(emptyLabel)
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        var height: CGFloat = 0.0
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+            height = view.frame.height-(navigationController?.navigationBar.frame.height)!
+            return
+        }
+        height = view.frame.height-(navigationController?.navigationBar.frame.height)!-delegate.tabController.tabBar.frame.height
+        let frame = CGRect(x: 0.0, y: 0.0, width: view.frame.width, height: height)
+        
+        emptyLabel.frame = frame
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Ferðalög"
