@@ -76,12 +76,13 @@ class VGDataStore {
         }
         
         func deleteAllData(_ entity:String) {
-            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+            let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
             context.persistentStoreCoordinator = self.storeCoordinator
             
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
             fetchRequest.returnsObjectsAsFaults = false
             fetchRequest.fetchLimit = 1000000
+            context.perform {
             do {
                 let results = try context.fetch(fetchRequest)
                 for object in results {
@@ -97,9 +98,10 @@ class VGDataStore {
                 print("Delete all data in \(entity) error :", error)
             }
         }
+    }
         
         func countAllData(_ entity:String, callback:(Int)->()) {
-            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+            let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
             context.persistentStoreCoordinator = self.storeCoordinator
             
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
@@ -114,9 +116,9 @@ class VGDataStore {
         }
         
         func getAllTracks() -> [VGTrack] {
-            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+            let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
             context.persistentStoreCoordinator = self.storeCoordinator
-
+            
             var result = [VGTrack]()
             //2
             let fetchRequest =
@@ -206,45 +208,47 @@ class VGDataStore {
         }
         
         fileprivate func add(vgTrack: VGTrack) {
-            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+            let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
             context.persistentStoreCoordinator = self.storeCoordinator
             
+            context.perform {
             // 2
-            let entity =
-                NSEntityDescription.entity(forEntityName: "Track",
-                                           in: context)!
-            
-            let track = NSManagedObject(entity: entity,
-                                        insertInto: context)
-            
-            // 3
-            track.setValue(vgTrack.fileName, forKey: "fileName")
-            track.setValue(vgTrack.fileSize, forKey: "fileSize")
-            track.setValue(vgTrack.duration, forKey: "duration")
-            track.setValue(vgTrack.distance, forKey: "distance")
-            track.setValue(vgTrack.minLat, forKey: "minLat")
-            track.setValue(vgTrack.maxLat, forKey: "maxLat")
-            track.setValue(vgTrack.minLon, forKey: "minLon")
-            track.setValue(vgTrack.maxLon, forKey: "maxLon")
-            track.setValue(vgTrack.processed, forKey: "processed")
-            track.setValue(vgTrack.timeStart, forKey: "timeStart")
+                let entity =
+                    NSEntityDescription.entity(forEntityName: "Track",
+                                               in: context)!
+                
+                let track = NSManagedObject(entity: entity,
+                                            insertInto: context)
+                
+                // 3
+                track.setValue(vgTrack.fileName, forKey: "fileName")
+                track.setValue(vgTrack.fileSize, forKey: "fileSize")
+                track.setValue(vgTrack.duration, forKey: "duration")
+                track.setValue(vgTrack.distance, forKey: "distance")
+                track.setValue(vgTrack.minLat, forKey: "minLat")
+                track.setValue(vgTrack.maxLat, forKey: "maxLat")
+                track.setValue(vgTrack.minLon, forKey: "minLon")
+                track.setValue(vgTrack.maxLon, forKey: "maxLon")
+                track.setValue(vgTrack.processed, forKey: "processed")
+                track.setValue(vgTrack.timeStart, forKey: "timeStart")
 
-            for point in vgTrack.trackPoints {
-                if point.hasGoodFix() {
-                    add(vgDataPoint: point, to: track, in: context)
+                for point in vgTrack.trackPoints {
+                    if point.hasGoodFix() {
+                        self.add(vgDataPoint: point, to: track, in: context)
+                    }
                 }
-            }
-            
-            // 4
-            do {
-                try context.save()
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
+                
+                // 4
+                do {
+                    try context.save()
+                } catch let error as NSError {
+                    print("Could not save. \(error), \(error.userInfo)")
+                }
             }
         }
         
         func update(vgTrack: VGTrack) {
-            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+            let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
             context.persistentStoreCoordinator = self.storeCoordinator
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Track")
             fetchRequest.predicate = NSPredicate(format: "fileName = %@", vgTrack.fileName)
@@ -286,8 +290,9 @@ class VGDataStore {
         }
         
         func delete(vgTrack: VGTrack) {
-            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+            let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
             context.persistentStoreCoordinator = self.storeCoordinator
+            context.perform {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Track")
             fetchRequest.predicate = NSPredicate(format: "fileName = %@", vgTrack.fileName)
             do {
@@ -301,14 +306,15 @@ class VGDataStore {
             } catch let error {
                 print(error)
             }
+            }
             
         }
 
     
     func getPointsForTrack(vgTrack:VGTrack) -> [VGDataPoint] {
-        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-
+        
         var result = [VGDataPoint]()
         
         let fetchedDataPoints = getPoints(for: vgTrack, in: context)
@@ -317,7 +323,7 @@ class VGDataStore {
             let vgPoint = VGDataPoint(managedPoint: point)
             result.append(vgPoint)
         }
-
+        
         return result
     }
     
@@ -330,10 +336,10 @@ class VGDataStore {
             }
         }
         
-        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-        
-        let fetchedDataPoints = getPoints(for: track, in: context)
+        context.perform {
+            let fetchedDataPoints = self.getPoints(for: track, in: context)
         
         let lines = fetchedDataPoints.sorted(by: { (first, second) -> Bool in
             
@@ -375,6 +381,7 @@ class VGDataStore {
             try context.save()
         } catch let error {
             print(error)
+        }
         }
         return (track, newTrack)
     }

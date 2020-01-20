@@ -39,7 +39,6 @@ class VGLogsTableViewController: UITableViewController {
     var emptyLabel: UILabel!
     
     // MARK: - View Did Load Functions
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -61,7 +60,7 @@ class VGLogsTableViewController: UITableViewController {
             self.dataStore = appDelegate.dataStore
             self.vgFileManager = appDelegate.fileManager
         }
-        vgLogParser = VGLogParser()
+        vgLogParser = VGLogParser(fileManager: self.vgFileManager!, snapshotter: VGSnapshotMaker(fileManager: self.vgFileManager!))
     }
     
     fileprivate func configureEmptyListLabel() {

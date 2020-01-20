@@ -38,6 +38,9 @@
 		F24A6FCE22F8521F00C8D372 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F24A6FCD22F8521F00C8D372 /* NetworkExtension.framework */; };
 		F24D88C523D3C7BD0071F6BC /* VGDownloadLogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88C423D3C7BD0071F6BC /* VGDownloadLogsViewController.swift */; };
 		F24D88C723D3CB0D0071F6BC /* VGAvailableDownloadTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88C623D3CB0D0071F6BC /* VGAvailableDownloadTableViewController.swift */; };
+		F24D88CB23D622300071F6BC /* VGSnapshotMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88CA23D622300071F6BC /* VGSnapshotMaker.swift */; };
+		F24D88CD23D631C00071F6BC /* VGZeroMapSnapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88CC23D631C00071F6BC /* VGZeroMapSnapshotter.swift */; };
+		F24D88CF23D632D60071F6BC /* VGTrackMapSnapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88CE23D632D60071F6BC /* VGTrackMapSnapshotter.swift */; };
 		F25669BE23CB6DB700CC7934 /* TrackGraphViewConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25669BD23CB6DB700CC7934 /* TrackGraphViewConfig.swift */; };
 		F257077A22F09AAA00F201B3 /* TrackGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F257077922F09AAA00F201B3 /* TrackGraphView.swift */; };
 		F257077E22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F257077D22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift */; };
@@ -96,6 +99,9 @@
 		F24A6FCD22F8521F00C8D372 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		F24D88C423D3C7BD0071F6BC /* VGDownloadLogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDownloadLogsViewController.swift; sourceTree = "<group>"; };
 		F24D88C623D3CB0D0071F6BC /* VGAvailableDownloadTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGAvailableDownloadTableViewController.swift; sourceTree = "<group>"; };
+		F24D88CA23D622300071F6BC /* VGSnapshotMaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGSnapshotMaker.swift; sourceTree = "<group>"; };
+		F24D88CC23D631C00071F6BC /* VGZeroMapSnapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGZeroMapSnapshotter.swift; sourceTree = "<group>"; };
+		F24D88CE23D632D60071F6BC /* VGTrackMapSnapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGTrackMapSnapshotter.swift; sourceTree = "<group>"; };
 		F25669BD23CB6DB700CC7934 /* TrackGraphViewConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackGraphViewConfig.swift; sourceTree = "<group>"; };
 		F257077922F09AAA00F201B3 /* TrackGraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackGraphView.swift; sourceTree = "<group>"; };
 		F257077D22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGLogDetailsTrackTableViewController.swift; sourceTree = "<group>"; };
@@ -151,6 +157,7 @@
 		F2169BEB23C9CE4500DE8547 /* Shared Entities */ = {
 			isa = PBXGroup;
 			children = (
+				F24D88D123D6381D0071F6BC /* Snapshots */,
 				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
 				F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */,
 				F2C96EB122A853A500180055 /* VGFileManager.swift */,
@@ -294,6 +301,16 @@
 				F257077D22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		F24D88D123D6381D0071F6BC /* Snapshots */ = {
+			isa = PBXGroup;
+			children = (
+				F24D88CA23D622300071F6BC /* VGSnapshotMaker.swift */,
+				F24D88CC23D631C00071F6BC /* VGZeroMapSnapshotter.swift */,
+				F24D88CE23D632D60071F6BC /* VGTrackMapSnapshotter.swift */,
+			);
+			path = Snapshots;
 			sourceTree = "<group>";
 		};
 		F25839CD23A6602C00E76B54 /* History */ = {
@@ -455,6 +472,7 @@
 				F23BE8DF22A5E596008FD50C /* VGSettingsNavigationController.swift in Sources */,
 				F2169BF123C9D0E700DE8547 /* VGJourneyNavigationViewController.swift in Sources */,
 				F206FA7723D09366009A37F6 /* NewJourneyTableViewController.swift in Sources */,
+				F24D88CF23D632D60071F6BC /* VGTrackMapSnapshotter.swift in Sources */,
 				F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */,
 				F257077E22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift in Sources */,
 				F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */,
@@ -471,9 +489,11 @@
 				F23BE8E522A5E5A7008FD50C /* DashboardViewController.swift in Sources */,
 				F2169BEF23C9D0BE00DE8547 /* VGJourneyTableViewController.swift in Sources */,
 				F23BE8FA22A5E5BB008FD50C /* VGLogsNavigationViewController.swift in Sources */,
+				F24D88CB23D622300071F6BC /* VGSnapshotMaker.swift in Sources */,
 				F25669BE23CB6DB700CC7934 /* TrackGraphViewConfig.swift in Sources */,
 				F23BE8F522A5E5BB008FD50C /* VGGraphTableViewCell.swift in Sources */,
 				F25839DD23A6BE8600E76B54 /* TracksSummary.swift in Sources */,
+				F24D88CD23D631C00071F6BC /* VGZeroMapSnapshotter.swift in Sources */,
 				F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */,
 				F257078222F0C20000F201B3 /* LogHeaderView.swift in Sources */,
 				F23BE8BF22A5E4B9008FD50C /* AppDelegate.swift in Sources */,

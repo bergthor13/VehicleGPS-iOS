@@ -22,9 +22,9 @@ class VGLogDetailsViewController: UIViewController {
     var track: VGTrack!
     var dataStore: VGDataStore!
     var vgFileManager: VGFileManager!
-    var vgLogParser = VGLogParser()
+    var vgLogParser: VGLogParser!
     var vgGPXGenerator = VGGPXGenerator()
-
+    var vgSnapshotMaker:VGSnapshotMaker!
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = false
     }
@@ -33,7 +33,9 @@ class VGLogDetailsViewController: UIViewController {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.vgFileManager = appDelegate.fileManager
         }
-        
+        vgSnapshotMaker = VGSnapshotMaker(fileManager: self.vgFileManager)
+        self.vgLogParser = VGLogParser(fileManager: vgFileManager, snapshotter: vgSnapshotMaker)
+
         initializeMapView()
         initializeTrackDataView()
 
@@ -105,7 +107,7 @@ class VGLogDetailsViewController: UIViewController {
     }
     
     func process(track: VGTrack) {
-        let logParser = VGLogParser()
+        let logParser = VGLogParser(fileManager: vgFileManager, snapshotter: vgSnapshotMaker)
         let hud = MBProgressHUD.showAdded(to: self.parent!.view, animated: true)
         hud.label.text = "Les skrá..."
         logParser.fileToTrack(fileUrl: self.vgFileManager.getAbsoluteFilePathFor(track: track)!, progress: { (index, count) in
@@ -157,10 +159,10 @@ class VGLogDetailsViewController: UIViewController {
                 let (oldTrack, newTrack) = self.dataStore.split(track: self.track, at: selectedTime)
                 self.dataStore.delete(vgTrack: self.track)
                 oldTrack.process()
-                self.vgLogParser.drawTrack(vgTrack: oldTrack) {}
+                self.vgSnapshotMaker.drawTrack(vgTrack: oldTrack) { (image, style) in}
                 self.dataStore.update(vgTrack: oldTrack)
                 newTrack.process()
-                self.vgLogParser.drawTrack(vgTrack: newTrack) {}
+                self.vgSnapshotMaker.drawTrack(vgTrack: newTrack) { (image, style) in}
                 self.dataStore.update(vgTrack: newTrack)
             }))
         }
