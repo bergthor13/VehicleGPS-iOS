@@ -18,8 +18,6 @@ class LogsTableViewCell: UITableViewCell {
     @IBOutlet weak var lblFileSize: UILabel!
     @IBOutlet weak var progressView: UIView!
     @IBOutlet weak var progressViewWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var fileOnGPSIndicator: UIImageView!
-    @IBOutlet weak var fileOnDeviceIndicator: UIImageView!
     var vgFileManager: VGFileManager!
     var currentTrack: VGTrack?
     let formatter = DateFormatter()
@@ -50,7 +48,7 @@ class LogsTableViewCell: UITableViewCell {
                                                   fromByteCount: Int64(truncating: NSNumber(value: track.fileSize)),
                                                   countStyle: .file)
         
-        self.lblFileSize!.text = String(describing: track.fileSize)
+        self.lblFileSize!.text = fileSizeWithUnit
         let distanceFormatter = LengthFormatter()
         distanceFormatter.numberFormatter.maximumFractionDigits = 2
         distanceFormatter.numberFormatter.minimumFractionDigits = 2
