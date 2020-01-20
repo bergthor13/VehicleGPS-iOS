@@ -166,7 +166,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 if !point.hasGoodFix() {
                     continue
                 }
-                list.append((point.timestamp!, point.pdop))
+                guard let pdop = point.pdop else {
+                    continue
+                }
+                list.append((point.timestamp!, pdop))
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
@@ -180,7 +183,12 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 if !point.hasGoodFix() {
                     continue
                 }
-                list.append((point.timestamp!, point.horizontalAccuracy))
+                
+                guard let horizontalAccuracy = point.horizontalAccuracy else {
+                    continue
+                }
+                
+                list.append((point.timestamp!, horizontalAccuracy))
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list

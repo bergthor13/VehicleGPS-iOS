@@ -68,19 +68,19 @@ class ISO8601DateParser {
 }
 
 class VGDataPoint {
-    
+    // TIME,LATITUDE,LONGITUDE,ELEVATION,SATELLITES,HORIZONTAL_ACCURACY,VERTICAL_ACCURACY,PDOP,FIX_TYPE,GNSS_FIX_OK,FULLY_RESOLVED,RPM,ENGINE_LOAD,COOLANT_TEMPERATURE,AMBIENT_TEMPERATURE,THROTTLE_POSITION
     // 2019-04-24T17:46:17.599829,63.995643,-22.634326,41.482,7,0.994,1.484,3.48,3,True,False,1103.5,34.509803921568626,14,5,14.509803921568627
     var timestamp:Date?
     var latitude:Double?
     var longitude:Double?
     var elevation:Double?
     var satellites:Int?
-    var horizontalAccuracy:Double
-    var verticalAccuracy:Double
-    var pdop:Double
-    var fixType:Int
-    var gnssFixOk:Bool
-    var fullyResolved:Bool
+    var horizontalAccuracy:Double?
+    var verticalAccuracy:Double?
+    var pdop:Double?
+    var fixType:Int?
+    var gnssFixOk:Bool?
+    var fullyResolved:Bool?
     var rpm:Double?
     var engineLoad:Double?
     var coolantTemperature:Double?
@@ -230,7 +230,15 @@ class VGDataPoint {
     
     
     func hasGoodFix() -> Bool {
-        return (!(self.fixType <= 1 || self.horizontalAccuracy > 2)) && timestamp != nil
+        guard let fixType = self.fixType else {
+            return true
+        }
+        
+        guard let horizontalAccuracy = self.horizontalAccuracy else {
+            return true
+        }
+        
+        return (!(fixType <= 1 || horizontalAccuracy > 2)) && timestamp != nil
     }
 }
 
