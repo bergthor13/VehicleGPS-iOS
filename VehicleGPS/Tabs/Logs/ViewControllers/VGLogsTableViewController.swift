@@ -148,7 +148,7 @@ class VGLogsTableViewController: UITableViewController {
     }
     
 
-    // MARK: - Action Functions
+    // MARK: - Interface Action Functions
     @objc func headerViewTapped(_:Any?) {
         let dlViewController = VGDownloadLogsViewController()
         dlViewController.tracks = remoteList
@@ -380,36 +380,7 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     
-    func updateData() {
-        self.tracksDict = self.tracksToDictionary(trackList: self.dataStore.getAllTracks())
-        tableView.reloadData()
-        if self.tracksDict.count > 0 {
-            self.emptyLabel.isHidden = true
-            self.tableView.separatorStyle = .singleLine
-        } else {
-            self.emptyLabel.isHidden = false
-            self.tableView.separatorStyle = .none
-        }
-    }
-    
-    func combineLists(localList: [VGTrack], remoteList: [VGTrack]) -> [VGTrack] {
-        var result = localList
-        
-        for track in result {
-            if remoteList.contains(track) {
-                track.isRemote = true
-            }
-        }
-        
-        for track in remoteList {
-            track.isRemote = true
-            if !(result.contains(track)) {
-                result.append(track)
-            }
-        }
-        return result
-    }
-    
+    // MARK: - GPS Connection Related Functions
     func displayErrorAlert(title: String?, message: String?) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
@@ -496,6 +467,37 @@ class VGLogsTableViewController: UITableViewController {
         
         self.downloadManager = VGSFTPManager(session: self.sftpSession!)
         return true
+    }
+    
+    //MARK: - List Manipulation
+    func updateData() {
+        self.tracksDict = self.tracksToDictionary(trackList: self.dataStore.getAllTracks())
+        tableView.reloadData()
+        if self.tracksDict.count > 0 {
+            self.emptyLabel.isHidden = true
+            self.tableView.separatorStyle = .singleLine
+        } else {
+            self.emptyLabel.isHidden = false
+            self.tableView.separatorStyle = .none
+        }
+    }
+    
+    func combineLists(localList: [VGTrack], remoteList: [VGTrack]) -> [VGTrack] {
+        var result = localList
+        
+        for track in result {
+            if remoteList.contains(track) {
+                track.isRemote = true
+            }
+        }
+        
+        for track in remoteList {
+            track.isRemote = true
+            if !(result.contains(track)) {
+                result.append(track)
+            }
+        }
+        return result
     }
     
     func tracksToDictionary(trackList:[VGTrack]) -> Dictionary<String, [VGTrack]>{
