@@ -12,7 +12,9 @@ import CoreData
 
 class VGLogsTableViewController: UITableViewController {
     
+    // MARK: - Class Variables
     var tracksDict = [String: [VGTrack]]()
+    var remoteList = [VGTrack]()
     var sectionKeys = [String]()
     var cdTracks: [NSManagedObject] = []
     var session: NMSSHSession?
@@ -31,21 +33,35 @@ class VGLogsTableViewController: UITableViewController {
     var parseCount = 0
     var headerParseDateFormatter: DateFormatter?
     var headerDateFormatter: DateFormatter?
+    var headerView: DeviceConnectedHeaderView!
     let distanceFormatter = LengthFormatter()
     let form = DateComponentsFormatter()
     var emptyLabel: UILabel!
+    
+    // MARK: - View Did Load Functions
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.navigationBar.prefersLargeTitles = true
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.title = "Ferlar"
+        
+        initializeClasses()
+        configureEmptyListLabel()
+        configureNavigationBar()
+        configureFormatters()
+        configureRefreshControl()
+        setUpDeviceConnectedBanner()
+        registerCells()
+        startConnectionToVGPS()
+        updateData()
     }
     
-    fileprivate func registerCells() {
-        let logsTableViewCellNib = UINib(nibName: "LogsTableViewCell", bundle: nil)
-        let logHeaderViewNib = UINib(nibName: "LogHeaderView", bundle: nil)
-        
-        self.tableView.register(logsTableViewCellNib, forCellReuseIdentifier: "LogsCell")
-        self.tableView.register(logHeaderViewNib, forHeaderFooterViewReuseIdentifier: "LogsHeader")
+    fileprivate func initializeClasses() {
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            self.dataStore = appDelegate.dataStore
+            self.vgFileManager = appDelegate.fileManager
+        }
+        vgLogParser = VGLogParser()
     }
     
     fileprivate func configureEmptyListLabel() {
@@ -59,20 +75,24 @@ class VGLogsTableViewController: UITableViewController {
         
         emptyLabel = UILabel(frame: frame)
         emptyLabel.textAlignment = .center
-        emptyLabel.font = UIFont.systemFont(ofSize: 22)
+        emptyLabel.font = UIFont.systemFont(ofSize: 20)
+        emptyLabel.textColor = .secondaryLabel
         emptyLabel.text = "Engir ferlar"
         view.addSubview(emptyLabel)
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.clearsSelectionOnViewWillAppear = true
-        configureEmptyListLabel()
-
+    fileprivate func configureNavigationBar() {
+        let button1 = UIBarButtonItem(title: "Þátta", style: .plain, target: self, action: #selector(self.processFiles))
+        self.navigationItem.rightBarButtonItem = button1
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic
+    }
+    
+    fileprivate func configureFormatters() {
         headerParseDateFormatter = DateFormatter()
         headerParseDateFormatter!.dateFormat = "yyyy-MM-dd"
         headerParseDateFormatter!.locale = Locale(identifier: "en_US_POSIX")
-
+        
         headerDateFormatter = DateFormatter()
         headerDateFormatter!.dateStyle = .full
         headerDateFormatter!.locale = Locale.current
@@ -80,61 +100,73 @@ class VGLogsTableViewController: UITableViewController {
         
         distanceFormatter.numberFormatter.maximumFractionDigits = 2
         distanceFormatter.numberFormatter.minimumFractionDigits = 2
-
+        
         form.unitsStyle = .positional
         form.allowedUnits = [ .hour, .minute, .second ]
         form.zeroFormattingBehavior = [ .default ]
-
-        registerCells()
-        self.title = "Ferlar"
+    }
+    
+    fileprivate func configureRefreshControl() {
         // Add Refresh Control to Table View
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(fetchLogList), for: UIControl.Event.valueChanged)
         tableView.refreshControl = refreshControl
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            self.dataStore = appDelegate.dataStore
-            self.vgFileManager = appDelegate.fileManager
-        }
+    }
+    
+    fileprivate func setUpDeviceConnectedBanner() {
+        self.headerView = DeviceConnectedHeaderView.loadFromNibNamed(nibNamed: "DeviceConnectedHeaderView")
+        self.headerView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 0)
+        self.tableView.tableHeaderView = self.headerView
+        self.headerView.lblLogsAvailable.isHidden = true
+        self.headerView.lblConnectedToGPS.isHidden = true
+        self.headerView.imgIcon.isHidden = true
+        self.headerView.greenButton.isHidden = true
+        
+        // Add tap gesture recognizers to the views
+        let headerTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.headerViewTapped(_:)))
+        let downloadTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.downloadFiles))
+
+        self.headerView.greenBackground.addGestureRecognizer(headerTapRecognizer)
+        self.headerView.greenButton.addGestureRecognizer(downloadTapRecognizer)
+    }
+    
+    fileprivate func registerCells() {
+        let logsTableViewCellNib = UINib(nibName: "LogsTableViewCell", bundle: nil)
+        let logHeaderViewNib = UINib(nibName: "LogHeaderView", bundle: nil)
+        
+        self.tableView.register(logsTableViewCellNib, forCellReuseIdentifier: "LogsCell")
+        self.tableView.register(logHeaderViewNib, forHeaderFooterViewReuseIdentifier: "LogsHeader")
+    }
+
+    fileprivate func startConnectionToVGPS() {
         DispatchQueue.global(qos: .background).async {
             self.session = NMSSHSession.init(host: self.host, andUsername: self.username)
             if self.session != nil {
                 self.fetchLogList()
             }
         }
-        
-        let button = UIBarButtonItem(title: "Hlaða niður", style: .plain, target: self, action: #selector(self.downloadFiles))
-        let button1 = UIBarButtonItem(title: "Þátta", style: .plain, target: self, action: #selector(self.processFiles))
-
-        self.navigationItem.rightBarButtonItem = button
-        self.navigationItem.leftBarButtonItem = button1
-        vgLogParser = VGLogParser()
-        updateData()
     }
     
-    func updateData() {
-        tracksDict = tracksToDictionary(trackList: dataStore.getAllTracks())
-        tableView.reloadData()
-        if self.tracksDict.count > 0 {
-            self.emptyLabel.isHidden = true
-            self.tableView.separatorStyle = .singleLine
-        } else {
-            self.emptyLabel.isHidden = false
-            self.tableView.separatorStyle = .none
-        }
+
+    // MARK: - Action Functions
+    @objc func headerViewTapped(_:Any?) {
+        let dlViewController = VGDownloadLogsViewController()
+        dlViewController.tracks = remoteList
+        navigationController?.pushViewController(dlViewController, animated: true)
     }
     
     @objc func downloadFiles() {
         if self.isInDownloadingState {
             shouldStopDownloading = true
-            self.navigationItem.rightBarButtonItem?.title = "Hlaða niður"
-            self.navigationItem.rightBarButtonItem?.style = .plain
+//            self.navigationItem.rightBarButtonItem?.title = "Hlaða niður"
+//            self.navigationItem.rightBarButtonItem?.style = .plain
             self.isInDownloadingState = false
 
             return
         }
         self.isInDownloadingState = true
-        self.navigationItem.rightBarButtonItem?.title = "Stöðva"
-        self.navigationItem.rightBarButtonItem?.style = .done
+//        self.navigationItem.rightBarButtonItem?.title = "Stöðva"
+//        self.navigationItem.rightBarButtonItem?.style = .done
         
         for key in self.sectionKeys {
             guard let trackList = self.tracksDict[key] else {
@@ -146,7 +178,7 @@ class VGLogsTableViewController: UITableViewController {
                 }
             }
         }
-        self.navigationItem.prompt = "Hleður niður. \(downloadCount) ferlar eftir."
+        self.headerView.lblLogsAvailable.text = "Hleður niður. \(downloadCount) ferlar eftir."
         DispatchQueue.global(qos: .background).async {
             for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
                 guard let trackList = self.tracksDict[sectionKey] else {
@@ -178,11 +210,10 @@ class VGLogsTableViewController: UITableViewController {
                             _ = self.vgFileManager!.dataToFile(data: data, filename: track.fileName)
                             self.dataStore.update(vgTrack: track)
                             DispatchQueue.main.async {
-                                self.navigationItem.prompt = "Hleður niður. \(self.downloadCount) ferlar eftir."
+                                self.headerView.lblLogsAvailable.text = "Hleður niður. \(self.downloadCount) ferlar eftir."
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
                                     return
                                 }
-                                cell.fileOnDeviceIndicator.isHidden = false
                                 cell.update(progress: 0)
                             }
                             
@@ -192,10 +223,10 @@ class VGLogsTableViewController: UITableViewController {
             }
             DispatchQueue.main.async {
                 if self.downloadCount == 0 {
-                    self.navigationItem.prompt = nil
+                    self.headerView.lblLogsAvailable.text = "Engir nýjir ferlar í boði"
                 }
-                self.navigationItem.rightBarButtonItem?.title = "Hlaða niður"
-                self.navigationItem.rightBarButtonItem?.style = .plain
+//                self.navigationItem.rightBarButtonItem?.title = "Hlaða niður"
+//                self.navigationItem.rightBarButtonItem?.style = .plain
                 self.isInDownloadingState = false
             }
         }
@@ -268,10 +299,6 @@ class VGLogsTableViewController: UITableViewController {
         
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-    
     @objc func fetchLogList() {
         var trackList = [VGTrack]()
         
@@ -303,6 +330,7 @@ class VGLogsTableViewController: UITableViewController {
                 }
                 return
             }
+            var newFileCount = 0
             
             for file in fileList {
                 let track = VGTrack()
@@ -310,6 +338,10 @@ class VGLogsTableViewController: UITableViewController {
                 if let fileSize = file.fileSize as? Int {
                     track.fileSize = fileSize
                 }
+                if !self.vgFileManager!.fileForTrackExists(track: track) {
+                    newFileCount += 1
+                }
+                self.remoteList.append(track)
                 track.isRemote = true
                 trackList.append(track)
             }
@@ -319,6 +351,21 @@ class VGLogsTableViewController: UITableViewController {
             
             DispatchQueue.main.async {
                 self.tableView.reloadData()
+                if newFileCount == 0 {
+                    self.headerView.lblLogsAvailable.text = "Engir nýir ferlar í boði"
+                } else if newFileCount == 1 {
+                    self.headerView.lblLogsAvailable.text = "\(newFileCount) nýr ferill í boði"
+                } else if (newFileCount-1)%10 == 0 && newFileCount != 11 {
+                    self.headerView.lblLogsAvailable.text = "\(newFileCount) nýr ferill í boði"
+                } else {
+                    self.headerView.lblLogsAvailable.text = "\(newFileCount) nýir ferlar í boði"
+                }
+                if newFileCount == 0 {
+                    self.headerView.greenButton.isHidden = true
+                } else {
+                    self.headerView.greenButton.isHidden = false
+                }
+                
                 if self.tracksDict.count > 0 {
                     self.emptyLabel.isHidden = true
                     self.tableView.separatorStyle = .singleLine
@@ -330,6 +377,19 @@ class VGLogsTableViewController: UITableViewController {
             }
         }
 
+    }
+    
+    
+    func updateData() {
+        self.tracksDict = self.tracksToDictionary(trackList: self.dataStore.getAllTracks())
+        tableView.reloadData()
+        if self.tracksDict.count > 0 {
+            self.emptyLabel.isHidden = true
+            self.tableView.separatorStyle = .singleLine
+        } else {
+            self.emptyLabel.isHidden = false
+            self.tableView.separatorStyle = .none
+        }
     }
     
     func combineLists(localList: [VGTrack], remoteList: [VGTrack]) -> [VGTrack] {
@@ -358,7 +418,28 @@ class VGLogsTableViewController: UITableViewController {
     
     func reconnectToVehicleGPS(session: NMSSHSession) {
         if !session.isConnected || !session.isAuthorized || !sftpSession!.isConnected {
-            connectToVehicleGPS(session: session)
+            if connectToVehicleGPS(session: session) {
+                DispatchQueue.main.async {
+
+                    self.headerView.lblLogsAvailable.isHidden = false
+                    self.headerView.lblConnectedToGPS.isHidden = false
+                    self.headerView.imgIcon.isHidden = false
+                    self.headerView.lblConnectedToGPS.text = "Tengt við \(self.session!.host)"
+
+                    self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
+                    self.tableView.tableHeaderView = self.headerView
+                }
+                
+            } else {
+                DispatchQueue.main.async {
+                    self.tableView.tableHeaderView = nil
+                }
+            }
+            
+        } else {
+            DispatchQueue.main.async {
+                self.tableView.tableHeaderView = nil
+            }
         }
     }
     
@@ -400,20 +481,21 @@ class VGLogsTableViewController: UITableViewController {
         return true
     }
     
-    func connectToVehicleGPS(session:NMSSHSession) {
+    func connectToVehicleGPS(session:NMSSHSession) -> Bool {
         if tryToConnectSSH(session: session) != true {
-            return
+            return false
         }
         
         if tryToAuthenticate(session: session) != true {
-            return
+            return false
         }
         
         if tryToConnectSFTP(session: session) != true {
-            return
+            return false
         }
         
         self.downloadManager = VGSFTPManager(session: self.sftpSession!)
+        return true
     }
     
     func tracksToDictionary(trackList:[VGTrack]) -> Dictionary<String, [VGTrack]>{
@@ -483,7 +565,10 @@ class VGLogsTableViewController: UITableViewController {
         var totalDistance = 0.0
         var distanceString = ""
         var durationString = ""
-        for track in tracksDict[day]! {
+        guard let trackSection = tracksDict[day] else {
+            return UIView()
+        }
+        for track in trackSection {
             totalDuration += track.duration
             totalDistance += track.distance
         }
@@ -582,49 +667,21 @@ class VGLogsTableViewController: UITableViewController {
         // Return false if you do not want the specified item to be editable.
         return true
     }
- 
-//    // Override to support editing the table view.
-//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//        if editingStyle == .delete {
-//            // Delete the row from the data source
-//            let track = self.getTrackAt(indexPath: indexPath)
-//            self.dataStore.delete(vgTrack: track)
-//            self.vgFileManager?.deleteFileFor(track: track)
-//
-//            DispatchQueue.main.async {
-//                self.tracksDict[self.sectionKeys[indexPath.section]]?.remove(at: indexPath.row)
-//                tableView.deleteRows(at: [indexPath], with: .fade)
-//
-//                if self.tracksDict[self.sectionKeys[indexPath.section]]?.count == 0 {
-//                    self.sectionKeys.remove(at: indexPath.section)
-//                    tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
-//                }
-//            }
-//        }
-//    }
-
     
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
             let track = self.getTrackAt(indexPath: indexPath)
-            self.downloadManager?.deleteFile(filename: track.fileName, callback: { (success) in
-                if success {
-                    DispatchQueue.main.async {
-                        self.tracksDict[self.sectionKeys[indexPath.section]]?.remove(at: indexPath.row)
-                        tableView.deleteRows(at: [indexPath], with: .fade)
+            self.tracksDict[self.sectionKeys[indexPath.section]]?.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
 
-                        if self.tracksDict[self.sectionKeys[indexPath.section]]?.count == 0 {
-                            self.sectionKeys.remove(at: indexPath.section)
-                            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
-                        }
-
-                        self.vgFileManager?.deleteFileFor(track: track)
-                        self.dataStore.delete(vgTrack: track)
-                    }
-                }
-            })
+            if self.tracksDict[self.sectionKeys[indexPath.section]]?.count == 0 {
+                self.sectionKeys.remove(at: indexPath.section)
+                tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
+            }
+            self.vgFileManager?.deleteFileFor(track: track)
+            self.dataStore.delete(vgTrack: track)
         }
     }
 }

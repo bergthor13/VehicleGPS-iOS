@@ -114,7 +114,6 @@ class VGFileManager {
             newTrack.fileName = String(describing: time).prefix(19).replacingOccurrences(of: ":", with: "") + ".csv"
             try result.write(to: logFilePathFor(track: newTrack)!, atomically: true, encoding: .utf8)
         } catch {/* error handling here */}
-        
     }
     
     func getDocumentsFolder() -> URL? {
@@ -235,7 +234,13 @@ class VGFileManager {
     
     func getPNGPathFor(track: VGTrack, style: UIUserInterfaceStyle) -> URL {
         let imageFolder = self.getImageFolder(style: style)
+        
+//        if let timeStart = track.timeStart {
+//            filename
+//        }
+        
         let fileNameWithoutExt = track.fileName.split(separator: ".")[0]
+        
         return (imageFolder?.appendingPathComponent(String(fileNameWithoutExt)).appendingPathExtension("png"))!
     }
     
@@ -245,7 +250,6 @@ class VGFileManager {
     
     func savePNG(image: UIImage, for track: VGTrack, style: UIUserInterfaceStyle) {
         let path = getPNGPathFor(track: track, style: style)
-        print(path)
         do {
             try image.pngData()?.write(to: path)
         } catch let error {

@@ -50,7 +50,7 @@ class LogsTableViewCell: UITableViewCell {
                                                   fromByteCount: Int64(truncating: NSNumber(value: track.fileSize)),
                                                   countStyle: .file)
         
-        self.lblFileSize!.text = fileSizeWithUnit
+        self.lblFileSize!.text = String(describing: track.fileSize)
         let distanceFormatter = LengthFormatter()
         distanceFormatter.numberFormatter.maximumFractionDigits = 2
         distanceFormatter.numberFormatter.minimumFractionDigits = 2
@@ -74,17 +74,7 @@ class LogsTableViewCell: UITableViewCell {
         let formattedDuration = form.string(from: track.duration)
         
         self.lblDuration.attributedText = styleString(unstyledString: formattedDuration!, substrings: ["h", "m", "s"])
-        if vgFileManager.fileForTrackExists(track: track) {
-            self.fileOnDeviceIndicator.isHidden = false
-        } else {
-            self.fileOnDeviceIndicator.isHidden = true
-        }
-        
-        if track.isRemote {
-            self.fileOnGPSIndicator.isHidden = false
-        } else {
-            self.fileOnGPSIndicator.isHidden = true
-        }
+
         trackView.image = vgFileManager.openImageFor(track: track, style: self.traitCollection.userInterfaceStyle)
         trackView.layer.borderWidth = 0.5
         trackView.layer.borderColor = UIColor.secondaryLabel.cgColor

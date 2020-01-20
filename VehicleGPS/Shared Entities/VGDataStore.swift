@@ -243,26 +243,6 @@ class VGDataStore {
             }
         }
         
-    //    func update(vgDataPoint:VGDataPoint, to track: NSManagedObject) {
-    //        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "DataPoint")
-    //        fetchRequest.predicate = NSPredicate(format: "timeStamp = %@", vgDataPoint.timestamp! as CVarArg)
-    //        do {
-    //            let test = try context.fetch(fetchRequest)
-    //            print(test)
-    //            if test.count > 0 {
-    //                if let trackUpdate = test[0] as? NSManagedObject {
-    //                    try context.save()
-    //                }
-    //            } else {
-    //                self.add(vgDataPoint: vgDataPoint, to: track)
-    //            }
-    //
-    //        } catch let error {
-    //            print(error)
-    //        }
-    //
-    //    }
-        
         func update(vgTrack: VGTrack) {
             let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
             context.persistentStoreCoordinator = self.storeCoordinator
@@ -341,8 +321,8 @@ class VGDataStore {
         return result
     }
     
-    func split(track:VGTrack, at time:Date) {
-        
+    func split(track:VGTrack, at time:Date) -> (VGTrack, VGTrack) {
+        var newTrack = VGTrack()
         var pointIndex = -1
         for (index, dataPoint) in track.trackPoints.enumerated() {
             if dataPoint.timestamp! < time {
@@ -352,56 +332,50 @@ class VGDataStore {
         
         let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-
         
+        let fetchedDataPoints = getPoints(for: track, in: context)
+        
+        let lines = fetchedDataPoints.sorted(by: { (first, second) -> Bool in
+            
+            guard let firstDate = first.value(forKey: "timeStamp") as?  Date else {
+                return false
+            }
+            guard let secondDate = second.value(forKey: "timeStamp") as? Date else {
+                return false
+            }
+            
+            return  firstDate < secondDate
+        })
+        
+        let leftSplit = lines[0 ... pointIndex]
+        let rightSplit = lines[pointIndex ..< lines.count]
+        
+        if rightSplit.count != 0 {
+            let entity =
+                NSEntityDescription.entity(forEntityName: "Track",
+                                           in: context)!
+            
+            let trackMo = NSManagedObject(entity: entity,
+                                        insertInto: context)
+            let fileName = String(describing: time).prefix(19).replacingOccurrences(of: ":", with: "") + ".csv"
+            trackMo.setValue(fileName, forKey: "fileName")
+            
+            track.trackPoints = []
+            for item in leftSplit {
+                let dp = VGDataPoint(managedPoint: item)
+                track.trackPoints.append(dp)
+            }
+            newTrack = VGTrack(object: trackMo)
+            for item in rightSplit {
+                let dp = VGDataPoint(managedPoint: item)
+                newTrack.trackPoints.append(dp)
+            }
+        }
         do {
-            guard let fetchedTrack = getTrack(for: track, in: context) else {
-                print("Fetching track failed")
-                return
-            }
-            
-            let fetchedDataPoints = getPoints(for: track, in: context)
-            
-            let lines = fetchedDataPoints.sorted(by: { (first, second) -> Bool in
-                
-                guard let firstDate = first.value(forKey: "timeStamp") as?  Date else {
-                    return false
-                }
-                guard let secondDate = second.value(forKey: "timeStamp") as? Date else {
-                    return false
-                }
-                
-                return  firstDate < secondDate
-            })
-            
-            let rightSplit = lines[pointIndex ..< lines.count]
-            
-            if rightSplit.count != 0 {
-                let entity =
-                    NSEntityDescription.entity(forEntityName: "Track",
-                                               in: context)!
-                
-                let trackMo = NSManagedObject(entity: entity,
-                                            insertInto: context)
-                let fileName = String(describing: time).prefix(19).replacingOccurrences(of: ":", with: "") + ".csv"
-                trackMo.setValue(fileName, forKey: "fileName")
-                trackMo.setValue(time, forKey: "timeStart")
-                
-                let newLeftTime = time.timeIntervalSince(track.timeStart!)
-                let newRightTime = track.duration-newLeftTime
-                
-                trackMo.setValue(newRightTime, forKey: "duration")
-                for item in rightSplit {
-                    item.setValue(trackMo, forKey: "track")
-                }
-                
-                fetchedTrack.setValue(newLeftTime, forKey: "duration")
-                
-            }
             try context.save()
-            
         } catch let error {
             print(error)
         }
+        return (track, newTrack)
     }
 }

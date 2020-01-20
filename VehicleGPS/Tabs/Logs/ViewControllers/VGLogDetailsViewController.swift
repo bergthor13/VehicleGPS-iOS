@@ -33,6 +33,7 @@ class VGLogDetailsViewController: UIViewController {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.vgFileManager = appDelegate.fileManager
         }
+        
         initializeMapView()
         initializeTrackDataView()
 
@@ -151,8 +152,16 @@ class VGLogDetailsViewController: UIViewController {
                 guard let selectedTime = self.trackDataTableViewController?.dlpTime else {
                     return
                 }
+
                 self.vgFileManager.split(track: self.track, at: selectedTime)
-                self.dataStore.split(track: self.track, at: selectedTime)
+                let (oldTrack, newTrack) = self.dataStore.split(track: self.track, at: selectedTime)
+                self.dataStore.delete(vgTrack: self.track)
+                oldTrack.process()
+                self.vgLogParser.drawTrack(vgTrack: oldTrack) {}
+                self.dataStore.update(vgTrack: oldTrack)
+                newTrack.process()
+                self.vgLogParser.drawTrack(vgTrack: newTrack) {}
+                self.dataStore.update(vgTrack: newTrack)
             }))
         }
         self.present(alert, animated: true, completion: nil)

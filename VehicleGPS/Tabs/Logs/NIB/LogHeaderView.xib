@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -32,9 +30,9 @@
                 <constraint firstItem="erY-cX-gyd" firstAttribute="top" secondItem="LzT-8m-p2I" secondAttribute="bottom" priority="999" constant="2" id="AZb-Vz-qTW"/>
                 <constraint firstItem="LzT-8m-p2I" firstAttribute="leading" secondItem="4kF-wA-7kV" secondAttribute="leading" constant="20" id="JOG-tn-GQu"/>
                 <constraint firstAttribute="bottom" secondItem="erY-cX-gyd" secondAttribute="bottom" constant="2" id="ULn-GZ-Uqj"/>
-                <constraint firstAttribute="trailing" secondItem="erY-cX-gyd" secondAttribute="trailing" priority="999" constant="20" id="aaw-RP-HzV"/>
+                <constraint firstItem="4kF-wA-7kV" firstAttribute="trailing" secondItem="erY-cX-gyd" secondAttribute="trailing" priority="999" constant="20" id="aaw-RP-HzV"/>
                 <constraint firstItem="LzT-8m-p2I" firstAttribute="top" secondItem="4kF-wA-7kV" secondAttribute="top" constant="2" id="hwD-zc-IPa"/>
-                <constraint firstItem="erY-cX-gyd" firstAttribute="leading" secondItem="59m-u1-mAg" secondAttribute="leading" constant="20" id="q0w-UP-s9I"/>
+                <constraint firstItem="erY-cX-gyd" firstAttribute="leading" secondItem="4kF-wA-7kV" secondAttribute="leading" constant="20" id="q0w-UP-s9I"/>
                 <constraint firstItem="4kF-wA-7kV" firstAttribute="trailing" secondItem="LzT-8m-p2I" secondAttribute="trailing" priority="999" constant="20" id="wn6-d0-XEE"/>
             </constraints>
             <nil key="simulatedTopBarMetrics"/>

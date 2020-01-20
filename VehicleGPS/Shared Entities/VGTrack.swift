@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreLocation
+import CoreData
 
 class VGTrack {
     var duration:Double // In seconds
@@ -27,6 +28,66 @@ class VGTrack {
         get {
             return distance/duration/60/60
         }
+    }
+    
+    init(object:NSManagedObject) {
+        if let duration = object.value(forKey: "duration") as? Double {
+            self.duration = duration
+        } else {
+            self.duration = 0.0
+        }
+        
+        if let distance = object.value(forKey: "distance") as? Double {
+            self.distance = distance
+        } else {
+            self.distance = 0.0
+        }
+        
+        if let fileName = object.value(forKey: "fileName") as? String {
+            self.fileName = fileName
+        } else {
+            self.fileName = ""
+        }
+        
+        if let fileSize = object.value(forKey: "fileSize") as? Int {
+            self.fileSize = fileSize
+        } else {
+            self.fileSize = 0
+        }
+        
+        if let minLat = object.value(forKey: "minLat") as? Double {
+            self.minLat = minLat
+        } else {
+            self.minLat = -200.0
+        }
+        
+        if let maxLat = object.value(forKey: "maxLat") as? Double {
+            self.maxLat = maxLat
+        } else {
+            self.maxLat = 200
+        }
+        
+        if let minLon = object.value(forKey: "minLon") as? Double {
+            self.minLon = minLon
+        } else {
+            self.minLon = -200
+        }
+        
+        if let maxLon = object.value(forKey: "maxLon") as? Double {
+            self.maxLon = maxLon
+        } else {
+            self.maxLon = 200
+        }
+        
+        if let processed = object.value(forKey: "processed") as? Bool {
+            self.processed = processed
+        } else {
+            self.processed = false
+        }
+        
+        self.isRemote = false
+        
+        trackPoints = [VGDataPoint]()
     }
     
     init() {
@@ -103,6 +164,56 @@ class VGTrack {
         }
         return list
     }
+    
+    func process() {
+        var lastDataPoint: VGDataPoint?
+        self.distance = 0.0
+        minLat = -200.0
+        maxLat = 200.0
+        minLon = -200.0
+        maxLon = 200.0
+        for dataPoint in trackPoints {
+            if dataPoint.fixType > 1 && self.timeStart == nil && dataPoint.timestamp! > Date(timeIntervalSince1970: 1388534400) {
+                self.timeStart = dataPoint.timestamp
+            }
+            
+            if dataPoint.hasGoodFix() {
+                guard let latitude = dataPoint.latitude, let longitude = dataPoint.longitude else {
+                    continue
+                }
+                
+                if self.minLat < latitude {
+                    self.minLat = latitude
+                }
+                if self.maxLat > latitude {
+                    self.maxLat = latitude
+                }
+                if self.minLon < longitude {
+                    self.minLon = longitude
+                }
+                if self.maxLon > longitude {
+                    self.maxLon = longitude
+                }
+
+                if lastDataPoint != nil && lastDataPoint!.hasGoodFix() {
+                    guard let lastLatitude = lastDataPoint!.latitude, let lastLongitude = lastDataPoint!.longitude else {
+                        continue
+                    }
+                    let coord = CLLocation(latitude: latitude, longitude: longitude)
+                    let lastCoord = CLLocation(latitude: lastLatitude, longitude: lastLongitude)
+
+                    self.distance += coord.distance(from: lastCoord)/1000
+                }
+            }
+            
+            lastDataPoint = dataPoint
+        }
+        
+        if self.timeStart != nil {
+            self.duration = Double(self.trackPoints.last!.timestamp!.timeIntervalSince(self.timeStart!))
+        }
+        self.processed = true
+    }
 }
 
 extension VGTrack: Equatable {
@@ -116,7 +227,7 @@ extension VGTrack: CustomStringConvertible {
         guard let timeStart = timeStart else {
             return "fileName: \(self.fileName)"
         }
-        return "fileName: \(self.fileName), timeStart: \(String(describing: timeStart)),"
+        return "fileName: \(self.fileName), timeStart: \(String(describing: timeStart)), maxLat: \(self.maxLat), maxLon: \(self.maxLon), minLat: \(self.minLat), minLon: \(self.minLon)"
     }
 }
 
