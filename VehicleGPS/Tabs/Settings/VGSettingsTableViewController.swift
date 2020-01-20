@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import NetworkExtension
 
 class VGSettingsTableViewController: UITableViewController {
 
@@ -25,18 +26,18 @@ class VGSettingsTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 3
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 { return "Almennt" }
-        if section == 1 { return "GPS kubbur" }
+        if section == 1 { return nil }
         if section == 2 { return "Öryggisafrit og samstilling" }
         return ""
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 { return 3 }
-        if section == 1 { return 2 }
+        if section == 0 { return 1 }
+        if section == 1 { return 1 }
         if section == 2 { return 3 }
         return 0
     }
@@ -45,26 +46,20 @@ class VGSettingsTableViewController: UITableViewController {
         var cell = UITableViewCell()
         if indexPath.section == 0 {
             if indexPath.row == 0 {
-                cell = UITableViewCell.init(style: .default, reuseIdentifier: "unitsCell")
-                cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = "Einingar"
-            }
-            if indexPath.row == 1 {
-                cell = UITableViewCell.init(style: .default, reuseIdentifier: "gaugesCell")
-                cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = "Mælar"
-            }
-            if indexPath.row == 2 {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: "databaseCell")
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "Gagnagrunnur"
             }
+            if indexPath.row == 1 {
+            }
+
         }
         if indexPath.section == 1 {
             if indexPath.row == 0 {
-                cell = UITableViewCell.init(style: .default, reuseIdentifier: "messagesCell")
-                cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = "Skilaboð"
+                cell = UITableViewCell.init(style: .default, reuseIdentifier: "unitsCell")
+                cell.textLabel?.textColor = view.tintColor
+                cell.textLabel?.text = "Tengjast við VehicleGPS"
+
             }
             if indexPath.row == 1 {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: "ForceColdStartCell")
@@ -97,16 +92,28 @@ class VGSettingsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             if indexPath.row == 0 {
-            }
-            if indexPath.row == 1 {
-            }
-            if indexPath.row == 2 {
                 let databaseController = VGDatabaseTableViewController.init(style: .grouped)
                 navigationController?.pushViewController(databaseController, animated: true)
+
+            }
+            if indexPath.row == 1 {
+
+            }
+            if indexPath.row == 2 {
             }
         }
         if indexPath.section == 1 {
             if indexPath.row == 0 {
+                let configuration = NEHotspotConfiguration(ssid: "VehicleGPS", passphrase: "easyprintsequence", isWEP: false)
+                configuration.joinOnce = true
+                configuration.hidden = true
+                NEHotspotConfigurationManager.shared.apply(configuration) { (error) in
+                    if error == nil {
+                        // TODO: Update the list...
+                    }
+                }
+                tableView.deselectRow(at: indexPath, animated: true)
+
             }
             if indexPath.row == 1 {
             }

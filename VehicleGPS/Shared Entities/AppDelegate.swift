@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreData
-import NetworkExtension
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -31,13 +30,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.window?.rootViewController = tabController
         self.window?.makeKeyAndVisible()
-        
-        let configuration = NEHotspotConfiguration(ssid: "VehicleGPS", passphrase: "easyprintsequence", isWEP: false)
-        configuration.joinOnce = true
-        configuration.hidden = true
-//        NEHotspotConfigurationManager.shared.apply(configuration) { (error) in
-//            print(error)
-//        }
         return true
     }
 
