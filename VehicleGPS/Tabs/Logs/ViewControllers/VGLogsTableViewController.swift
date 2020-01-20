@@ -277,7 +277,10 @@ class VGLogsTableViewController: UITableViewController {
                                 }
                                 cell.show(track: track)
                                 cell.update(progress: 0)
-                                self.tableView.reloadSections(IndexSet(integer: sectionIndex), with: .none)
+                                if let header = self.tableView.headerView(forSection: sectionIndex) as? LogHeaderView {
+                                    self.getViewForHeader(view: header, section: sectionIndex)
+                                }
+                                
                             }
                         }, imageCallback: { (track) in
                             track.beingProcessed = false
@@ -538,6 +541,36 @@ class VGLogsTableViewController: UITableViewController {
         let file = dayFileList![indexPath.row]
         return file
     }
+    
+    func getViewForHeader(view:LogHeaderView, section:Int) {
+        let day = sectionKeys[section]
+        let date = headerParseDateFormatter!.date(from:day)!
+        let dateString = headerDateFormatter!.string(from: date)
+        var totalDuration = 0.0
+        var totalDistance = 0.0
+        var distanceString = ""
+        var durationString = ""
+        guard let trackSection = tracksDict[day] else {
+            return
+        }
+        for track in trackSection {
+            totalDuration += track.duration
+            totalDistance += track.distance
+        }
+        if totalDistance > 1 {
+            distanceString = distanceFormatter.string(fromValue: totalDistance, unit: .kilometer)
+        } else {
+            distanceString = distanceFormatter.string(fromValue: totalDistance*1000, unit: .meter)
+        }
+        
+        
+        let formattedDuration = form.string(from: totalDuration)
+        durationString = String(formattedDuration!)
+        
+        
+        view.dateLabel.text = dateString
+        view.detailsLabel.text = distanceString + " - " + durationString
+    }
 
     // MARK: - Table View Data Source
 
@@ -558,34 +591,7 @@ class VGLogsTableViewController: UITableViewController {
         guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as? LogHeaderView else {
             return UIView()
         }
-
-        let day = sectionKeys[section]
-        let date = headerParseDateFormatter!.date(from:day)!
-        let dateString = headerDateFormatter!.string(from: date)
-        var totalDuration = 0.0
-        var totalDistance = 0.0
-        var distanceString = ""
-        var durationString = ""
-        guard let trackSection = tracksDict[day] else {
-            return UIView()
-        }
-        for track in trackSection {
-            totalDuration += track.duration
-            totalDistance += track.distance
-        }
-        if totalDistance > 1 {
-            distanceString = distanceFormatter.string(fromValue: totalDistance, unit: .kilometer)
-        } else {
-            distanceString = distanceFormatter.string(fromValue: totalDistance*1000, unit: .meter)
-        }
-        
-        
-        let formattedDuration = form.string(from: totalDuration)
-        durationString = String(formattedDuration!)
-        
-        
-        view.dateLabel.text = dateString
-        view.detailsLabel.text = distanceString + " - " + durationString
+        getViewForHeader(view: view, section: section)
         return view
     }
 
