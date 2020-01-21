@@ -38,6 +38,13 @@ class VGLogDetailsViewController: UIViewController {
 
         initializeMapView()
         initializeTrackDataView()
+        
+        if !vgFileManager.pngForTrackExists(track: track, style: .light) {
+            vgSnapshotMaker.drawTrack(vgTrack: track)
+        }
+        if !vgFileManager.pngForTrackExists(track: track, style: .dark) {
+            vgSnapshotMaker.drawTrack(vgTrack: track)
+        }
 
         let shareButton = UIBarButtonItem(barButtonSystemItem: .action,
                                           target: self,
@@ -117,6 +124,7 @@ class VGLogDetailsViewController: UIViewController {
                 hud.label.text = "Þáttar línur"
             }
         }, callback: { (track) in
+            // TODO: Check for main in debugger
             self.track = track
             self.trackDataTableViewController?.track = track
             DispatchQueue.main.async {

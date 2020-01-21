@@ -39,7 +39,9 @@ class LogsTableViewCell: UITableViewCell {
         currentTrack = track
         formatter.dateFormat = "HH:mm:ss"
         if track.timeStart == nil {
-            self.lblTimeStart!.text = formatter.string(from: fileNameToDate(dateString: track.fileName))
+            if let fileDate = fileNameToDate(dateString: track.fileName) {
+                self.lblTimeStart!.text = formatter.string(from: fileDate)
+            }
         } else {
             self.lblTimeStart!.text = formatter.string(from: track.timeStart!)
         }
@@ -118,12 +120,14 @@ class LogsTableViewCell: UITableViewCell {
         return index
     }
     
-    func fileNameToDate(dateString: String) -> Date {
+    func fileNameToDate(dateString: String) -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HHmmss"
         dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
-        let date = dateFormatter.date(from: String(dateString.prefix(17)))
-        return date!
+        if let date = dateFormatter.date(from: String(dateString.prefix(17))) {
+            return date
+        }
+        return nil
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

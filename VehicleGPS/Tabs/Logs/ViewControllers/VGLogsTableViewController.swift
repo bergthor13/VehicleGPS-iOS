@@ -282,14 +282,16 @@ class VGLogsTableViewController: UITableViewController {
                                 }
                                 
                             }
-                        }, imageCallback: { (track) in
+                        }, imageCallback: { (track, style) in
                             track.beingProcessed = false
                             DispatchQueue.main.async {
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
                                     return
                                 }
                                 cell.show(track: track)
-                                cell.activityView.stopAnimating()
+                                if style == self.traitCollection.userInterfaceStyle {
+                                    cell.activityView.stopAnimating()
+                                }
                             }
                         })
                     }
@@ -544,7 +546,12 @@ class VGLogsTableViewController: UITableViewController {
     
     func getViewForHeader(view:LogHeaderView, section:Int) {
         let day = sectionKeys[section]
-        let date = headerParseDateFormatter!.date(from:day)!
+        view.dateLabel.text = " "
+        view.detailsLabel.text = " "
+
+        guard let date = headerParseDateFormatter!.date(from:day) else {
+            return
+        }
         let dateString = headerDateFormatter!.string(from: date)
         var totalDuration = 0.0
         var totalDistance = 0.0

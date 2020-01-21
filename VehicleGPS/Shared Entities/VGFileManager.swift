@@ -172,6 +172,7 @@ class VGFileManager {
                 }
                 result.append(track)
             }
+            print(fileList)
             return result
         } catch let error {
             print(error)
@@ -232,12 +233,12 @@ class VGFileManager {
         
     }
     
-    func getPNGPathFor(track: VGTrack, style: UIUserInterfaceStyle) -> URL {
-        let imageFolder = self.getImageFolder(style: style)
+    func getPNGPathFor(track: VGTrack, style: UIUserInterfaceStyle) -> URL? {
+        if track.fileName == "" {
+            return nil
+        }
         
-//        if let timeStart = track.timeStart {
-//            filename
-//        }
+        let imageFolder = self.getImageFolder(style: style)
         
         let fileNameWithoutExt = track.fileName.split(separator: ".")[0]
         
@@ -245,22 +246,29 @@ class VGFileManager {
     }
     
     func pngForTrackExists(track: VGTrack, style: UIUserInterfaceStyle) -> Bool {
-        return self.fileManager.fileExists(atPath: getPNGPathFor(track: track, style: style).path)
+        guard let pathUrl = getPNGPathFor(track: track, style: style) else {
+            return false
+        }
+        return self.fileManager.fileExists(atPath: pathUrl.path)
     }
     
     func savePNG(image: UIImage, for track: VGTrack, style: UIUserInterfaceStyle) {
-        let path = getPNGPathFor(track: track, style: style)
+        guard let pathUrl = getPNGPathFor(track: track, style: style) else {
+            return
+        }
         do {
-            try image.pngData()?.write(to: path)
+            try image.pngData()?.write(to: pathUrl)
         } catch let error {
             print(error)
         }
     }
     
     func openImageFor(track: VGTrack, style: UIUserInterfaceStyle) -> UIImage? {
-        let path = getPNGPathFor(track: track, style: style)
-        if fileManager.fileExists(atPath: path.path) {
-            return UIImage(contentsOfFile: path.path)
+        guard let pathUrl = getPNGPathFor(track: track, style: style) else {
+            return nil
+        }
+        if fileManager.fileExists(atPath: pathUrl.path) {
+            return UIImage(contentsOfFile: pathUrl.path)
         }
         return nil
     }

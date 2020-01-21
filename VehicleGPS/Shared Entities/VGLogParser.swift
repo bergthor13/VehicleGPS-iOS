@@ -21,9 +21,10 @@ class VGLogParser {
     init(fileManager:VGFileManager, snapshotter:VGSnapshotMaker) {
         self.vgFileManager = fileManager
         self.vgSnapshotMaker = snapshotter
+        
     }
     
-    func fileToTrack(fileUrl:URL, progress:@escaping (UInt, UInt) -> Void, callback:@escaping (VGTrack) -> Void, imageCallback: ((VGTrack) -> Void)? = nil) {
+    func fileToTrack(fileUrl:URL, progress:@escaping (UInt, UInt) -> Void, callback:@escaping (VGTrack) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)? = nil) {
         DispatchQueue.global(qos: .background).async {
             var lastProgressUpdate = Date()
             var fileString = String()
@@ -34,8 +35,9 @@ class VGLogParser {
             track.fileName = fileUrl.lastPathComponent
             do {
                 let resources = try fileUrl.resourceValues(forKeys: [.fileSizeKey])
-                let fileSize = resources.fileSize!
-                track.fileSize = fileSize
+                if let fileSize = resources.fileSize {
+                    track.fileSize = fileSize
+                }
             } catch {
                 print("Error: \(error)")
             }
@@ -59,9 +61,10 @@ class VGLogParser {
             
             self.vgSnapshotMaker.drawTrack(vgTrack: track) { (image, style) in
                 guard let imageCallback = imageCallback else {
-                    return
+                    return nil
                 }
-                imageCallback(track)
+                imageCallback(track, style)
+                return nil
             }
             callback(track)
         }

@@ -17,7 +17,7 @@ class VGSnapshotMaker {
         vgFileManager = fileManager
     }
     
-    func drawTrack(vgTrack:VGTrack, imageCallback:@escaping (UIImage?,UIUserInterfaceStyle?)->Void) {
+    func drawTrack(vgTrack:VGTrack, imageCallback:(@escaping(UIImage?,UIUserInterfaceStyle?)->Void?) = {_,_ in }) {
         let coordinateList = vgTrack.getCoordinateList()
         var snapshotter:MKMapSnapshotter?
         
@@ -29,7 +29,7 @@ class VGSnapshotMaker {
             }
             
             snapshotter?.start(completionHandler: { (snapshot, error) in
-                DispatchQueue.global(qos: .userInteractive).async {
+                DispatchQueue.global(qos: .userInitiated).async {
                     guard let snapshot = snapshot else {
                         imageCallback(nil,style)
                         return
