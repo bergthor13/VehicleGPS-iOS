@@ -101,18 +101,30 @@ class VGDataStore {
     }
         
         func countAllData(_ entity:String, callback:(Int)->()) {
-            let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+            let fetchLimit = 500000
+            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
             context.persistentStoreCoordinator = self.storeCoordinator
             
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
             fetchRequest.returnsObjectsAsFaults = false
-            do {
-                let results = try context.fetch(fetchRequest)
-                callback(results.count)
-            } catch let error {
-                print("Count all data in \(entity) error :", error)
-                callback(0)
-            }
+            fetchRequest.fetchLimit = fetchLimit
+
+            var offset = 0
+            var fetchCount = 0
+            var totalCount = 0
+            repeat {
+                do {
+                    fetchRequest.fetchOffset = offset
+                    fetchCount = try context.fetch(fetchRequest).count
+                    totalCount += fetchCount
+                } catch let error {
+                    print("Count all data in \(entity) error :", error)
+                    callback(0)
+                }
+                offset += fetchLimit
+            } while fetchCount == fetchLimit
+            
+            callback(totalCount)
         }
         
         func getAllTracks() -> [VGTrack] {
