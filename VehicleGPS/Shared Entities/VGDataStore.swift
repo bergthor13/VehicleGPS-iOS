@@ -336,7 +336,7 @@ class VGDataStore {
             result.append(vgPoint)
         }
         
-        return result
+        return result.sorted()
     }
     
     func split(track:VGTrack, at time:Date) -> (VGTrack, VGTrack) {

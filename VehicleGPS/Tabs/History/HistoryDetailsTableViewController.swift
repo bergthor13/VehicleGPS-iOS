@@ -62,7 +62,7 @@ class HistoryDetailsTableViewController: UITableViewController {
         activity.startAnimating()
         DispatchQueue.global(qos: .userInitiated).async {
             for track in self.tracksSummary!.tracks {
-                track.trackPoints = self.dataStore.getPointsForTrack(vgTrack: track).sorted()
+                track.trackPoints = self.dataStore.getPointsForTrack(vgTrack: track)
             }
             DispatchQueue.main.async {
                 self.display(tracks: self.tracksSummary!.tracks, on: self.mapView)

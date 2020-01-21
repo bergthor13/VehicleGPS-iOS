@@ -64,8 +64,10 @@ class VGSnapshotMaker {
                         UIColor.red.setStroke()
                         path.stroke()
                     }
-                    self.vgFileManager.savePNG(image: finalImage, for: vgTrack, style: style)
-                    imageCallback(finalImage,style)
+                    if coordinateList.count > 0 {
+                        self.vgFileManager.savePNG(image: finalImage, for: vgTrack, style: style)
+                        imageCallback(finalImage,style)
+                    }
                 }
             })
         }

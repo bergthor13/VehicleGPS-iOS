@@ -38,6 +38,9 @@ class VGLogDetailsViewController: UIViewController {
 
         initializeMapView()
         initializeTrackDataView()
+        if track.trackPoints.count == 0 {
+            track.trackPoints = dataStore.getPointsForTrack(vgTrack: track)
+        }
         
         if !vgFileManager.pngForTrackExists(track: track, style: .light) {
             vgSnapshotMaker.drawTrack(vgTrack: track)
@@ -60,7 +63,7 @@ class VGLogDetailsViewController: UIViewController {
         self.mapView.delegate = self
         self.mapView.mapType = .hybrid
         DispatchQueue.global(qos: .userInitiated).async {
-            let list = self.dataStore.getPointsForTrack(vgTrack: self.track).sorted()
+            let list = self.dataStore.getPointsForTrack(vgTrack: self.track)
             var points = [CLLocationCoordinate2D]()
             self.track.trackPoints = list
             if list.count > 0 {
@@ -167,10 +170,10 @@ class VGLogDetailsViewController: UIViewController {
                 let (oldTrack, newTrack) = self.dataStore.split(track: self.track, at: selectedTime)
                 self.dataStore.delete(vgTrack: self.track)
                 oldTrack.process()
-                self.vgSnapshotMaker.drawTrack(vgTrack: oldTrack) { (image, style) in}
+                self.vgSnapshotMaker.drawTrack(vgTrack: oldTrack)
                 self.dataStore.update(vgTrack: oldTrack)
                 newTrack.process()
-                self.vgSnapshotMaker.drawTrack(vgTrack: newTrack) { (image, style) in}
+                self.vgSnapshotMaker.drawTrack(vgTrack: newTrack)
                 self.dataStore.update(vgTrack: newTrack)
             }))
         }
