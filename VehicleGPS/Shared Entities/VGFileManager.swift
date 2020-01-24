@@ -81,18 +81,26 @@ class VGFileManager {
     }
     
     func split(track:VGTrack, at time:Date) {
-        var pointIndex = -1
-        for (index, dataPoint) in track.trackPoints.enumerated() {
-            if dataPoint.timestamp! < time {
-                pointIndex = index
-            }
-        }
+
         var fileString = String()
         do {
             fileString = try String(contentsOf: getAbsoluteFilePathFor(track: track)!)
         } catch {/* error handling here */}
         let lines = fileString.split { $0.isNewline }
     
+        var pointIndex = -1
+        for (index, line) in lines.enumerated() {
+            let split = line.split(separator: ",", maxSplits: 1, omittingEmptySubsequences: true)
+            guard let timestamp = ISO8601DateParser.parse(String(split[0])) else {
+                continue
+            }
+            
+            if timestamp >= time {
+                pointIndex = index
+                break
+            }
+        }
+        
         let leftSplit = lines[0 ... pointIndex]
         let rightSplit = lines[pointIndex ..< lines.count]
         let newTrack = VGTrack()

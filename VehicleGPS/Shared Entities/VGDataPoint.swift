@@ -93,50 +93,7 @@ class VGDataPoint {
     
     var relatedTrack: VGTrack?
     
-    init(csvLine:String) {
-        let data = csvLine.split(separator: ",")
-        
-        timestamp = ISO8601DateParser.parse(String(data[0]))
-        latitude = Double(data[1])
-        longitude = Double(data[2])
-        elevation = Double(data[3])
-        satellites = Int(data[4])
-        horizontalAccuracy = Double(data[5])!
-        verticalAccuracy = Double(data[6])!
-        pdop = Double(data[7])!
-        fixType = Int(data[8])!
-        
-        if data[9] == "True" {
-            gnssFixOk = true
-        } else {
-            gnssFixOk = false
-        }
-        
-        if data[10] == "True" {
-            fullyResolved = true
-        } else {
-            fullyResolved = false
-        }
-        
-        if data[11] != "None" {
-            rpm = Double(data[11])
-        }
-        
-        if data[12] != "None" {
-            engineLoad = Double(data[12])
-        }
-        
-        if data[13] != "None" {
-            coolantTemperature = Double(data[13])
-        }
-        
-        if data[14] != "None" {
-            ambientTemperature = Double(data[14])
-        }
-        
-        if data[15] != "None" {
-            throttlePosition = Double(data[15])
-        }
+    init() {
     }
     
     init(managedPoint:NSManagedObject) {
