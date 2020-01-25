@@ -18,26 +18,33 @@ class VGTabBarController: UITabBarController {
 //        self.addChild(dashboardController)
         
         let logsController = VGLogsNavigationViewController()
-        logsController.tabBarItem = UITabBarItem(title: "Ferlar",
+        logsController.tabBarItem = UITabBarItem(title: NSLocalizedString("Ferlar", comment: "Vehicles Title"),
                                                  image: UIImage(imageLiteralResourceName: "LogIcon"),
                                                  tag: 0)
         self.addChild(logsController)
 
         let historyController = VGHistoryNavigationController(nibName: "HistoryView", bundle: nil)
-        historyController.tabBarItem = UITabBarItem(title: "Saga",
-                                                    image: UIImage(imageLiteralResourceName: "HistoryIcon"),
+        historyController.tabBarItem = UITabBarItem(title: NSLocalizedString("Saga", comment: "Vehicles Title"),
+                                                    image: UIImage(systemName: "memories"),
                                                     tag: 0)
         self.addChild(historyController)
         
         let journeysController = VGJourneyNavigationViewController()
-        journeysController.tabBarItem = UITabBarItem(title: "Ferðalög",
-                                                     image: UIImage(imageLiteralResourceName: "JourneyIcon"),
+        journeysController.tabBarItem = UITabBarItem(title: NSLocalizedString("Ferðalög", comment: "Vehicles Title"),
+                                                     image: UIImage(systemName: "globe"),
                                                      tag: 0)
         self.addChild(journeysController)
         
+        let vehiclesController = VGVehiclesTableViewController(style: .insetGrouped)
+        
+        vehiclesController.tabBarItem = UITabBarItem(title: NSLocalizedString("Farartæki", comment: "Vehicles Title"),
+                                                     image: UIImage(systemName: "car"),
+                                                     tag: 0)
+        self.addChild(UINavigationController(rootViewController: vehiclesController))
+        
         let settingsController = VGSettingsNavigationController()
-        settingsController.tabBarItem = UITabBarItem(title: "Stillingar",
-                                                     image: UIImage(imageLiteralResourceName: "SettingsIcon"),
+        settingsController.tabBarItem = UITabBarItem(title: NSLocalizedString("Stillingar", comment: "Vehicles Title"),
+                                                     image: UIImage(systemName: "gear"),
                                                      tag: 0)
         self.addChild(settingsController)
 

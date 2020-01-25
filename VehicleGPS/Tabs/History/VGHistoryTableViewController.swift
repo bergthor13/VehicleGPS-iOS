@@ -52,14 +52,16 @@ class VGHistoryTableViewController: UITableViewController {
         
         emptyLabel = UILabel(frame: frame)
         emptyLabel.textAlignment = .center
-        emptyLabel.font = UIFont.systemFont(ofSize: 22)
-        emptyLabel.text = "Engin saga"
+        emptyLabel.font = UIFont.systemFont(ofSize: 20)
+        emptyLabel.textColor = .secondaryLabel
+        emptyLabel.text = NSLocalizedString("Engin saga", comment: "")
         view.addSubview(emptyLabel)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Saga"
+        title = NSLocalizedString("Saga", comment: "Vehicles Title")
+
         registerCells()
         configureFormatters()
         configureEmptyListLabel()
@@ -263,7 +265,7 @@ class VGHistoryTableViewController: UITableViewController {
                                    range: NSMakeRange(unformattedDistance.count-3, 3))
         cell.lblDistance.attributedText = distanceText
         
-        unformattedDistance = String(summary.trackCount) + " ferðir"
+        unformattedDistance = String(summary.trackCount) + " ferlar"
         distanceText = NSMutableAttributedString.init(string: unformattedDistance)
         
         distanceText.setAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .semibold),

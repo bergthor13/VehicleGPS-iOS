@@ -33,7 +33,7 @@ class VGGPXGenerator {
         guard let timestamp = point.timestamp else {
             return ""
         }
-        return "<trkpt lat=\"\(String(describing: point.latitude!))\" lon=\"\(String(describing: point.longitude!))\"><ele>\(String(describing: point.elevation!))</ele><time>\(dateFormatter.string(from: timestamp))</time><pdop>\(point.pdop)</pdop></trkpt>"
+        return "<trkpt lat=\"\(String(describing: point.latitude!))\" lon=\"\(String(describing: point.longitude!))\"><ele>\(String(describing: point.elevation!))</ele><time>\(dateFormatter.string(from: timestamp))</time><pdop>\(String(describing: point.pdop))</pdop></trkpt>"
     }
     
     func generateGPXFor(track: VGTrack) -> URL? {

@@ -100,6 +100,41 @@ class VGDataStore {
         }
     }
     
+    func add(_ vehicle:VGVehicle) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        let entityDescription = NSEntityDescription.entity(forEntityName: "Vehicle", in: context)!
+        let newVehicle = Vehicle.init(entity: entityDescription, insertInto: context)
+        newVehicle.name = vehicle.name
+        context.insert(newVehicle)
+        do {
+            try context.save()
+        } catch let error {
+            print(error)
+        }
+        
+    }
+    
+    func getAllVehicles() -> [VGVehicle] {
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+
+        let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
+        do {
+            var returnList = [VGVehicle]()
+            let result =  try context.fetch(fetchRequest)
+            for item in result {
+                let newVehicle = VGVehicle()
+                newVehicle.name = item.name
+                returnList.append(newVehicle)
+            }
+            return returnList
+        } catch let error {
+            print(error)
+        }
+        return []
+    }
+    
     func countAllData(_ entity:String, callback:(Int)->()) {
         let fetchLimit = 500000
         let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
@@ -299,6 +334,27 @@ class VGDataStore {
             
         }
         
+    }
+    
+    func delete(vgVehicle: VGVehicle, callback:@escaping()->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
+            fetchRequest.predicate = NSPredicate(format: "name = %@", vgVehicle.name!)
+            do {
+                let test = try context.fetch(fetchRequest)
+                if test.count > 0 {
+                    context.delete(test[0])
+                    try context.save()
+                    callback()
+                }
+            } catch let error {
+                print(error)
+                callback()
+            }
+
+        }
     }
     
     func delete(vgTrack: VGTrack) {

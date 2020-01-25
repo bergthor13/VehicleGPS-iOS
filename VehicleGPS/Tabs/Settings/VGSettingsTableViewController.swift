@@ -14,7 +14,8 @@ class VGSettingsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.title = "Stillingar"
+        self.title = NSLocalizedString("Stillingar", comment: "Vehicles Title")
+
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -30,7 +31,7 @@ class VGSettingsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 { return "Almennt" }
+        if section == 0 { return NSLocalizedString("Almennt", comment: "") }
         if section == 1 { return nil }
         if section == 2 { return "Öryggisafrit og samstilling" }
         return ""
@@ -48,7 +49,7 @@ class VGSettingsTableViewController: UITableViewController {
             if indexPath.row == 0 {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: "databaseCell")
                 cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = "Gagnagrunnur"
+                cell.textLabel?.text = NSLocalizedString("Gagnagrunnur", comment: "")
             }
             if indexPath.row == 1 {
             }
@@ -58,7 +59,7 @@ class VGSettingsTableViewController: UITableViewController {
             if indexPath.row == 0 {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: "unitsCell")
                 cell.textLabel?.textColor = view.tintColor
-                cell.textLabel?.text = "Tengjast við VehicleGPS"
+                cell.textLabel?.text = NSLocalizedString("Tengjast við VehicleGPS", comment: "")
 
             }
             if indexPath.row == 1 {

@@ -41,7 +41,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         }
     }
     
-    let sections = ["Samantekt", "Hraði", "Hæð yfir sjávarmáli", "PDOP", "Lárétt nákvæmni", "Snúningar á mínútu", "Álag vélar", "Eldsneytisgjöf", "Hiti á kælivökva", "Útihiti"]
+    let sections = [NSLocalizedString("Samantekt", comment: ""), NSLocalizedString("Hraði", comment: ""), NSLocalizedString("Hæð yfir sjávarmáli", comment: ""), "PDOP", NSLocalizedString("Lárétt nákvæmni", comment: ""), NSLocalizedString("Snúningar á mínútu", comment: ""), NSLocalizedString("Álag vélar", comment: ""), NSLocalizedString("Eldsneytisgjöf", comment: ""), NSLocalizedString("Hiti á kælivökva", comment: ""), NSLocalizedString("Útihiti", comment: "")]
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
@@ -85,15 +85,15 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             dateFormatter.locale = Locale.current
             dateFormatter.dateStyle = .long
             dateFormatter.timeStyle = .medium
-            cell1.textLabel?.text = "Byrjunartími"
+            cell1.textLabel?.text = NSLocalizedString("Byrjunartími", comment: "")
             cell1.detailTextLabel?.text = dateFormatter.string(from: timeStart)
             
             if indexPath.row == 1 {
-                cell1.textLabel?.text = "Endatími"
+                cell1.textLabel?.text = NSLocalizedString("Endatími", comment: "")
                 cell1.detailTextLabel?.text = dateFormatter.string(from: timeStart.addingTimeInterval(track.duration))
             }
             if indexPath.row == 2 {
-                cell1.textLabel?.text = "Vegalengd"
+                cell1.textLabel?.text = NSLocalizedString("Vegalengd", comment: "")
                 let lengthFormatter = LengthFormatter()
                 
                 lengthFormatter.unitStyle = .medium
@@ -101,14 +101,14 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
 
             }
             if indexPath.row == 3 {
-                cell1.textLabel?.text = "Tímalengd"
+                cell1.textLabel?.text = NSLocalizedString("Tímalengd", comment: "")
                 let dcFormatter = DateComponentsFormatter()
                 dcFormatter.allowedUnits = [.hour, .minute, .second]
                 dcFormatter.unitsStyle = .short
                 cell1.detailTextLabel?.text = dcFormatter.string(from: track.duration)
             }
             if indexPath.row == 4 {
-                cell1.textLabel?.text = "Gagnapunktar"
+                cell1.textLabel?.text = NSLocalizedString("Gagnapunktar", comment: "")
                 cell1.detailTextLabel?.text = String(track.trackPoints.count)
             }
             

@@ -21,8 +21,9 @@ class VGJourneyTableViewController: UITableViewController {
         
         emptyLabel = UILabel(frame: frame)
         emptyLabel.textAlignment = .center
-        emptyLabel.font = UIFont.systemFont(ofSize: 22)
-        emptyLabel.text = "Engin ferðalög"
+        emptyLabel.font = UIFont.systemFont(ofSize: 20)
+        emptyLabel.textColor = .secondaryLabel
+        emptyLabel.text = NSLocalizedString("Engin ferðalög", comment: "")
         view.addSubview(emptyLabel)
     }
     
@@ -40,10 +41,11 @@ class VGJourneyTableViewController: UITableViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Ferðalög"
+        title = NSLocalizedString("Ferðalög", comment: "Vehicles Title")
+
         configureEmptyListLabel()
 
-        let button = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.didTapAddJourney))
+        let button = UIBarButtonItem(image: UIImage(systemName: "plus.circle.fill"), style: .plain, target: self, action: #selector(self.didTapAddJourney))
         self.navigationItem.rightBarButtonItem = button
     }
     

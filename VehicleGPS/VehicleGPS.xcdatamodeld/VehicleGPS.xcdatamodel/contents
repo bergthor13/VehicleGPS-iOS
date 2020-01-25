@@ -39,17 +39,20 @@
         <relationship name="vehicle" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Vehicle" inverseName="tracks" inverseEntity="Vehicle"/>
     </entity>
     <entity name="Vehicle" representedClassName="Vehicle" syncable="YES" codeGenerationType="class">
-        <attribute name="colorB" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="colorG" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="colorR" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="image" optional="YES" attributeType="URI"/>
+        <attribute name="mapColor" optional="YES" attributeType="Transformable"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="tracks" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Track" inverseName="vehicle" inverseEntity="Track"/>
     </entity>
-    <fetchRequest name="AllTracks" entity="Track"/>
+    <entity name="VehicleType" representedClassName="VehicleType" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <elements>
         <element name="DataPoint" positionX="196.8671875" positionY="-25.84765625" width="128" height="358"/>
         <element name="Track" positionX="-63" positionY="-18" width="128" height="238"/>
-        <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="133"/>
+        <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="118"/>
+        <element name="VehicleType" positionX="144" positionY="126" width="128" height="73"/>
     </elements>
 </model>

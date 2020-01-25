@@ -17,9 +17,9 @@ class VGDatabaseTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Gagnagrunnur"
-        dataTypes = ["Track", "DataPoint"]
-        fileTypes = ["Ferlaskrár", "Yfirlitsmyndir"]
+        title = NSLocalizedString("Gagnagrunnur", comment: "")
+        dataTypes = ["Track", "DataPoint", "Vehicle"]
+        fileTypes = [NSLocalizedString("Ferlaskrár", comment: ""), NSLocalizedString("Yfirlitsmyndir", comment: "")]
         
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
@@ -31,9 +31,9 @@ class VGDatabaseTableViewController: UITableViewController {
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-            return "Hlutir"
+            return NSLocalizedString("Hlutir", comment: "")
         } else if section == 1 {
-            return "Skrár"
+            return NSLocalizedString("Skrár", comment: "")
         } else {
             return nil
         }
@@ -44,7 +44,7 @@ class VGDatabaseTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 2
+            return dataTypes.count
         } else if section == 1 {
             return 2
         } else {
@@ -82,7 +82,7 @@ class VGDatabaseTableViewController: UITableViewController {
 
         } else if indexPath.section == 2 {
             cell = UITableViewCell.init(style: .default, reuseIdentifier: "wifiCell")
-            cell.textLabel?.text = "Framkvæma gagnagrunnsviðhald"
+            cell.textLabel?.text = NSLocalizedString("Framkvæma gagnagrunnsviðhald", comment: "")
             cell.textLabel?.textColor = view.tintColor
         }
         return cell

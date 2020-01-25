@@ -24,9 +24,9 @@ class HistoryHeader: UIView {
         let layoutBottom = NSLayoutConstraint(item: sortingSegment, attribute: .bottom, relatedBy: .equal, toItem: self.safeAreaLayoutGuide, attribute: .bottom, multiplier: 1, constant: 11)
 
         self.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
-        sortingSegment.insertSegment(withTitle: "Dagur", at: 0, animated: false)
-        sortingSegment.insertSegment(withTitle: "Mánuður", at: 1, animated: false)
-        sortingSegment.insertSegment(withTitle: "Ár", at: 2, animated: false)
+        sortingSegment.insertSegment(withTitle: NSLocalizedString("Dagur", comment: ""), at: 0, animated: false)
+        sortingSegment.insertSegment(withTitle: NSLocalizedString("Mánuður", comment: ""), at: 1, animated: false)
+        sortingSegment.insertSegment(withTitle: NSLocalizedString("Ár", comment: ""), at: 2, animated: false)
         sortingSegment.selectedSegmentIndex = 1
         let bla = NSLayoutConstraint(item: sortingSegment, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 28)
         sortingSegment.addConstraint(bla)

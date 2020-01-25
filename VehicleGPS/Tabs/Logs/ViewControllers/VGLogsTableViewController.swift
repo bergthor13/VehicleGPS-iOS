@@ -42,7 +42,8 @@ class VGLogsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "Ferlar"
+        title = NSLocalizedString("Ferlar", comment: "Vehicles Title")
+
         
         initializeClasses()
         configureEmptyListLabel()
@@ -76,12 +77,12 @@ class VGLogsTableViewController: UITableViewController {
         emptyLabel.textAlignment = .center
         emptyLabel.font = UIFont.systemFont(ofSize: 20)
         emptyLabel.textColor = .secondaryLabel
-        emptyLabel.text = "Engir ferlar"
+        emptyLabel.text = NSLocalizedString("Engir ferlar", comment: "")
         view.addSubview(emptyLabel)
     }
     
     fileprivate func configureNavigationBar() {
-        let button1 = UIBarButtonItem(title: "Þátta", style: .plain, target: self, action: #selector(self.processFiles))
+        let button1 = UIBarButtonItem(title: NSLocalizedString("Þátta", comment: ""), style: .plain, target: self, action: #selector(self.processFiles))
         self.navigationItem.rightBarButtonItem = button1
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic

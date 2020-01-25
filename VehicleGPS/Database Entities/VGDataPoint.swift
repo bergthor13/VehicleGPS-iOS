@@ -212,8 +212,8 @@ extension VGDataPoint: Comparable {
     }
 }
 
-extension VGDataPoint: CustomStringConvertible {
-    var description: String {
-        return "timestamp: \(String(describing: timestamp)) latitude: \(String(describing: latitude)) longitude: \(String(describing: longitude)) elevation: \(String(describing: elevation)) satellites: \(String(describing: satellites)) horizontalAccuracy: \(horizontalAccuracy) verticalAccuracy: \(verticalAccuracy) pdop: \(pdop) fixType: \(fixType) gnssFixOk: \(gnssFixOk) fullyResolved: \(fullyResolved) rpm: \(String(describing: rpm)) engineLoad: \(String(describing: engineLoad)) coolantTemperature: \(String(describing: coolantTemperature)) ambientTemperature: \(String(describing: ambientTemperature)) throttlePosition: \(String(describing: throttlePosition))"
-    }
-}
+//extension VGDataPoint: CustomStringConvertible {
+//    var description: String {
+//        return "timestamp: \(String(describing: timestamp)) latitude: \(String(describing: latitude)) longitude: \(String(describing: longitude)) elevation: \(String(describing: elevation)) satellites: \(String(describing: satellites)) horizontalAccuracy: \(horizontalAccuracy) verticalAccuracy: \(verticalAccuracy) pdop: \(pdop) fixType: \(fixType) gnssFixOk: \(gnssFixOk) fullyResolved: \(fullyResolved) rpm: \(String(describing: rpm)) engineLoad: \(String(describing: engineLoad)) coolantTemperature: \(String(describing: coolantTemperature)) ambientTemperature: \(String(describing: ambientTemperature)) throttlePosition: \(String(describing: throttlePosition))"
+//    }
+//}

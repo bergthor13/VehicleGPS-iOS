@@ -53,7 +53,7 @@ class VGLogDetailsViewController: UIViewController {
                                           target: self,
                                           action: #selector(displayShareSelection))
         self.navigationItem.rightBarButtonItem = shareButton
-        let detailSegment = UISegmentedControl(items: ["Kort", "Tölfræði"])
+        let detailSegment = UISegmentedControl(items: [NSLocalizedString("Kort", comment: ""), NSLocalizedString("Tölfræði", comment: "")])
         detailSegment.addTarget(self, action: Selector(("segmentedControlValueChanged:")), for: .valueChanged)
         detailSegment.selectedSegmentIndex = 0
         self.navigationItem.titleView = detailSegment
@@ -144,24 +144,24 @@ class VGLogDetailsViewController: UIViewController {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.popoverPresentationController?.barButtonItem = self.navigationItem.rightBarButtonItem
         
-        alert.addAction(UIAlertAction(title: "Hætta við", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Hætta við", comment: ""), style: .cancel, handler: nil))
 
         if vgFileManager.fileForTrackExists(track: track) {
-            alert.addAction(UIAlertAction(title: "Hlaða niður CSV skrá", style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Deila CSV skrá", comment: ""), style: .default, handler: { (_) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: "Hlaða niður GPX skrá", style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Deila GPX skrá", comment: ""), style: .default, handler: { (_) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: "Vinna úr skránni aftur", style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Vinna úr skránni aftur", comment: ""), style: .default, handler: { (_) in
                 self.process(track: self.track)
             }))
             
-            alert.addAction(UIAlertAction(title: "Skipta ferli í tvennt", style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Skipta ferli í tvennt", comment: ""), style: .default, handler: { (_) in
                 guard let selectedTime = self.trackDataTableViewController?.dlpTime else {
                     return
                 }

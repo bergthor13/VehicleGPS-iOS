@@ -1,0 +1,55 @@
+/* 
+  Localizable.strings
+  VehicleGPS
+
+  Created by Bergþór Þrastarson on 24/01/2020.
+  Copyright © 2020 Bergþór Þrastarson. All rights reserved.
+*/
+"Farartæki" = "Vehicles";
+"Ferðalög" = "Journeys";
+"Saga" = "History";
+"Ferlar" = "Logs";
+"Stillingar" = "Settings";
+"Dagur" = "Day";
+"Mánuður" = "Month";
+"Ár" = "Year";
+"Engir ferlar" = "No Logs";
+"Engin saga" = "No History";
+"Engin ferðalög" = "No Journeys";
+"Engin farartæki" = "No Vehicles";
+"Gagnagrunnur" = "Database";
+"Almennt" = "General";
+"Tengjast við VehicleGPS" = "Connect to VehicleGPS";
+"Hlutir" = "Objects";
+"Skrár" = "Files";
+"Ferlaskrár" = "Log Files";
+"Yfirlitsmyndir" = "Map Preview Images";
+"Framkvæma gagnagrunnsviðhald" = "Perform Database Maintenance";
+"Nýtt farartæki" = "New Vehicle";
+"Vista" = "Save";
+"Hætta við" = "Cancel";
+"Nýtt ferðalag" = "New Journey";
+"Kort" = "Map";
+"Tölfræði" = "Statistics";
+"Samantekt" = "Summary";
+"Byrjunartími" = "Start Time";
+"Endatími" = "End Time";
+"Vegalengd" = "Distance";
+"Tímalengd" = "Duration";
+"Gagnapunktar" = "Data Points";
+
+"Deila CSV skrá" = "Share CSV File";
+"Deila GPX skrá" = "Share GPX File";
+"Vinna úr skránni aftur" = "Process File Again";
+"Skipta ferli í tvennt" = "Split Log";
+
+"Hraði" = "Speed";
+"Hæð yfir sjávarmáli" = "Elevation";
+"Lárétt nákvæmni" = "Horizontal Accuracy";
+"Snúningar á mínútu" = "RPM";
+"Álag vélar" = "Engine Load";
+"Eldsneytisgjöf" = "Throttle Position";
+"Hiti á kælivökva" = "Coolant Temperature";
+"Útihiti" = "Ambient Temperature";
+
+"Þátta" = "Parse";

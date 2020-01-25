@@ -8,16 +8,23 @@
 
 import UIKit
 
-class NewJourneyTableViewController: UITableViewController {
+class NewVehicleTableViewController: UITableViewController {
 
+    var cell: NewVehicleTableViewCell!
+    var dataStore: VGDataStore!
+    var vehiclesController: VGVehiclesTableViewController!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Nýtt ferðalag"
+        title = NSLocalizedString("Nýtt farartæki", comment: "")
+        dataStore = VGDataStore()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Vista", comment: ""), style: .done, target: self, action: #selector(tappedSave))
-            self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(tappedCancel))
+        registerCells()
+        
+        tableView.tintColor = navigationController?.view.tintColor
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Vista", comment: ""), style: .done, target: self, action: #selector(tappedSave))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(tappedCancel))
     }
 
     // MARK: - Table view data source
@@ -27,50 +34,31 @@ class NewJourneyTableViewController: UITableViewController {
     }
     
     @objc func tappedSave() {
+        let vehicle = VGVehicle()
+        vehicle.name = cell.txtName.text
+        dataStore.add(vehicle)
+        if let vehiclesController = vehiclesController {
+            vehiclesController.reloadVehicles(shouldReloadTableView: true)
+        }
         dismiss(animated: true, completion: nil)
     }
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 2
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if section == 0 {
-            return 1
-        }
-        
-        if section == 1 {
-            return 2
-        }
-        return 0
+        return 1
     }
-
+    fileprivate func registerCells() {
+        let newVehicleCell = UINib(nibName: "NewVehicleTableViewCell", bundle: nil)
+        self.tableView.register(newVehicleCell, forCellReuseIdentifier: "NewVehicleCell")
+    }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        if indexPath.section == 0 {
-            let cell1 = UITableViewCell(style: .value2, reuseIdentifier: "asdf")
-            cell1.detailTextLabel!.text = "Titill"
-            cell1.textLabel!.text = "Titill"
-            return cell1
-        }
-        
-        if indexPath.section == 1 {
-            if indexPath.row == 0 {
-                let cell1 = UITableViewCell(style: .value2, reuseIdentifier: "asdf")
-                cell1.textLabel!.text = "Byrjun"
-                cell1.detailTextLabel!.text = "16.01.2020 08:00"
-                return cell1
-            }
-            
-            if indexPath.row == 1 {
-                let cell1 = UITableViewCell(style: .value2, reuseIdentifier: "asdf")
-                cell1.textLabel!.text = "Endir"
-                cell1.detailTextLabel!.text = "18.01.2020 08:00"
-                return cell1
-            }
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "NewVehicleCell", for: indexPath)
+        self.cell = cell as? NewVehicleTableViewCell
         return cell
     }
     
@@ -91,7 +79,7 @@ class NewJourneyTableViewController: UITableViewController {
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
     }
     */
 
