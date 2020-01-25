@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 class VGVehicle {
+    public var id: UUID?
     public var image: UIImage?
     public var mapColor: UIColor?
     public var name: String?

@@ -106,6 +106,13 @@ class VGDataStore {
         let entityDescription = NSEntityDescription.entity(forEntityName: "Vehicle", in: context)!
         let newVehicle = Vehicle.init(entity: entityDescription, insertInto: context)
         newVehicle.name = vehicle.name
+        newVehicle.id = UUID()
+        newVehicle.mapColor = vehicle.mapColor
+        
+        // TODO: Create a image file.
+        //newVehicle.image =
+        
+        
         context.insert(newVehicle)
         do {
             try context.save()
@@ -126,6 +133,7 @@ class VGDataStore {
             for item in result {
                 let newVehicle = VGVehicle()
                 newVehicle.name = item.name
+                newVehicle.id = item.id
                 returnList.append(newVehicle)
             }
             return returnList
@@ -341,7 +349,7 @@ class VGDataStore {
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
             let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
-            fetchRequest.predicate = NSPredicate(format: "name = %@", vgVehicle.name!)
+            fetchRequest.predicate = NSPredicate(format: "id = %@", argumentArray: [vgVehicle.id!])
             do {
                 let test = try context.fetch(fetchRequest)
                 if test.count > 0 {
@@ -353,7 +361,6 @@ class VGDataStore {
                 print(error)
                 callback()
             }
-
         }
     }
     

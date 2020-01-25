@@ -39,6 +39,7 @@
         <relationship name="vehicle" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Vehicle" inverseName="tracks" inverseEntity="Vehicle"/>
     </entity>
     <entity name="Vehicle" representedClassName="Vehicle" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="image" optional="YES" attributeType="URI"/>
         <attribute name="mapColor" optional="YES" attributeType="Transformable"/>
         <attribute name="name" optional="YES" attributeType="String"/>
@@ -52,7 +53,7 @@
     <elements>
         <element name="DataPoint" positionX="196.8671875" positionY="-25.84765625" width="128" height="358"/>
         <element name="Track" positionX="-63" positionY="-18" width="128" height="238"/>
-        <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="118"/>
+        <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="133"/>
         <element name="VehicleType" positionX="144" positionY="126" width="128" height="73"/>
     </elements>
 </model>
