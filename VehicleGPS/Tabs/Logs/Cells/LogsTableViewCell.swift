@@ -21,6 +21,8 @@ class LogsTableViewCell: UITableViewCell {
     var vgFileManager: VGFileManager!
     var currentTrack: VGTrack?
     let formatter = DateFormatter()
+    let distanceFormatter = VGDistanceFormatter()
+    let form = VGDurationFormatter()
     
     func update(progress: Double) {
         let viewWidth = self.frame.width
@@ -51,9 +53,6 @@ class LogsTableViewCell: UITableViewCell {
                                                   countStyle: .file)
         
         self.lblFileSize!.text = fileSizeWithUnit
-        let distanceFormatter = LengthFormatter()
-        distanceFormatter.numberFormatter.maximumFractionDigits = 2
-        distanceFormatter.numberFormatter.minimumFractionDigits = 2
         
         if track.distance > 1 {
             self.lblDistance.text = distanceFormatter.string(fromValue: track.distance, unit: .kilometer)
@@ -62,14 +61,6 @@ class LogsTableViewCell: UITableViewCell {
         }
         
         self.lblDistance.attributedText = styleString(unstyledString: self.lblDistance.text!, substrings: [" km", " m"])
-        
-        let form = DateComponentsFormatter()
-        form.unitsStyle = .abbreviated
-        form.allowedUnits = [ .hour, .minute, .second ]
-        form.zeroFormattingBehavior = [ .default ]
-        var calendar = Calendar.current
-         calendar.locale = Locale(identifier: "en")
-         form.calendar = calendar
         
         let formattedDuration = form.string(from: track.duration)
         

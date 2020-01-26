@@ -44,19 +44,12 @@ class VGVehiclesTableViewController: UITableViewController {
     }
     
     fileprivate func configureEmptyListLabel() {
-        var height: CGFloat = 0.0
-        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
-            height = view.frame.height-(navigationController?.navigationBar.frame.height)!
-            return
-        }
-        height = view.frame.height-(navigationController?.navigationBar.frame.height)!-delegate.tabController.tabBar.frame.height
-        let frame = CGRect(x: 0.0, y: 0.0, width: view.frame.width, height: height)
-        
-        emptyLabel = UILabel(frame: frame)
-        emptyLabel.textAlignment = .center
-        emptyLabel.font = UIFont.systemFont(ofSize: 20)
-        emptyLabel.textColor = .secondaryLabel
-        emptyLabel.text = NSLocalizedString("Engin farartæki", comment: "")
+        if let delegate = UIApplication.shared.delegate as? AppDelegate {
+              emptyLabel = VGListEmptyLabel(text: NSLocalizedString("Engin farartæki", comment: ""),
+                                            containerView: self.view,
+                                            navigationBar: navigationController!.navigationBar,
+                                            tabBar: delegate.tabController.tabBar)
+          }
         view.addSubview(emptyLabel)
     }
     

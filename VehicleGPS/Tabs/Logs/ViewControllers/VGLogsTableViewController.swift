@@ -31,11 +31,11 @@ class VGLogsTableViewController: UITableViewController {
     var shouldStopDownloading = false
     var downloadCount = 0
     var parseCount = 0
-    var headerParseDateFormatter: DateFormatter?
-    var headerDateFormatter: DateFormatter?
+    var headerParseDateFormatter = HeaderParseDateFormatter()
+    let headerDateFormatter = HeaderDateFormatter()
     var headerView: DeviceConnectedHeaderView!
     let distanceFormatter = LengthFormatter()
-    let form = DateComponentsFormatter()
+    let durationFormatter = VGDurationFormatter()
     var emptyLabel: UILabel!
     
     // MARK: - View Did Load Functions
@@ -48,7 +48,6 @@ class VGLogsTableViewController: UITableViewController {
         initializeClasses()
         configureEmptyListLabel()
         configureNavigationBar()
-        configureFormatters()
         configureRefreshControl()
         setUpDeviceConnectedBanner()
         registerCells()
@@ -65,19 +64,13 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     fileprivate func configureEmptyListLabel() {
-        var height: CGFloat = 0.0
-        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
-            height = view.frame.height-(navigationController?.navigationBar.frame.height)!
-            return
+        if let delegate = UIApplication.shared.delegate as? AppDelegate {
+            emptyLabel = VGListEmptyLabel(text: NSLocalizedString("Engir ferlar", comment: ""),
+                                          containerView: self.view,
+                                          navigationBar: navigationController!.navigationBar,
+                                          tabBar: delegate.tabController.tabBar)
         }
-        height = view.frame.height-(navigationController?.navigationBar.frame.height)!-delegate.tabController.tabBar.frame.height
-        let frame = CGRect(x: 0.0, y: 0.0, width: view.frame.width, height: height)
-        
-        emptyLabel = UILabel(frame: frame)
-        emptyLabel.textAlignment = .center
-        emptyLabel.font = UIFont.systemFont(ofSize: 20)
-        emptyLabel.textColor = .secondaryLabel
-        emptyLabel.text = NSLocalizedString("Engir ferlar", comment: "")
+
         view.addSubview(emptyLabel)
     }
     
@@ -86,24 +79,6 @@ class VGLogsTableViewController: UITableViewController {
         self.navigationItem.rightBarButtonItem = button1
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic
-    }
-    
-    fileprivate func configureFormatters() {
-        headerParseDateFormatter = DateFormatter()
-        headerParseDateFormatter!.dateFormat = "yyyy-MM-dd"
-        headerParseDateFormatter!.locale = Locale(identifier: "en_US_POSIX")
-        
-        headerDateFormatter = DateFormatter()
-        headerDateFormatter!.dateStyle = .full
-        headerDateFormatter!.locale = Locale.current
-        headerDateFormatter!.doesRelativeDateFormatting = true
-        
-        distanceFormatter.numberFormatter.maximumFractionDigits = 2
-        distanceFormatter.numberFormatter.minimumFractionDigits = 2
-        
-        form.unitsStyle = .positional
-        form.allowedUnits = [ .hour, .minute, .second ]
-        form.zeroFormattingBehavior = [ .default ]
     }
     
     fileprivate func configureRefreshControl() {
@@ -550,10 +525,10 @@ class VGLogsTableViewController: UITableViewController {
         view.dateLabel.text = " "
         view.detailsLabel.text = " "
 
-        guard let date = headerParseDateFormatter!.date(from:day) else {
+        guard let date = headerParseDateFormatter.date(from:day) else {
             return
         }
-        let dateString = headerDateFormatter!.string(from: date)
+        let dateString = headerDateFormatter.string(from: date)
         var totalDuration = 0.0
         var totalDistance = 0.0
         var distanceString = ""
@@ -572,7 +547,7 @@ class VGLogsTableViewController: UITableViewController {
         }
         
         
-        let formattedDuration = form.string(from: totalDuration)
+        let formattedDuration = durationFormatter.string(from: totalDuration)
         durationString = String(formattedDuration!)
         
         
@@ -659,7 +634,6 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     func downloadFileFor(track: VGTrack, progress:@escaping (UInt, UInt)->Bool, callback:@escaping (Data?)->Void) {
-        
         self.downloadManager?.downloadFile(filename: track.fileName, progress: { (received, total) in
             progress(received, total)
         }, callback: { (data) in
