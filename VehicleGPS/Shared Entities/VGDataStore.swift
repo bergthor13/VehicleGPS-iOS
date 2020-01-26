@@ -134,6 +134,9 @@ class VGDataStore {
                 let newVehicle = VGVehicle()
                 newVehicle.name = item.name
                 newVehicle.id = item.id
+                newVehicle.mapColor = item.mapColor as? UIColor
+                // TODO: Open image and load to UIImage
+                //newVehicle.image =
                 returnList.append(newVehicle)
             }
             return returnList
