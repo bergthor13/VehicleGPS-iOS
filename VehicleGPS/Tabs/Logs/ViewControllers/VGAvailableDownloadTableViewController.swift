@@ -12,6 +12,7 @@ class VGAvailableDownloadTableViewController: UITableViewController {
     
     var tracksDict = [String: [VGTrack]]()
     var sectionKeys = [String]()
+    let headerDateFormatter = HeaderDateFormatter()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,7 +50,7 @@ class VGAvailableDownloadTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sectionKeys[section]
+        return headerDateFormatter.sectionKeyToDateString(sectionKey: sectionKeys[section])
     }
     
 
