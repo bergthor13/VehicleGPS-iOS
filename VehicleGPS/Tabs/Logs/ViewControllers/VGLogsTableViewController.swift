@@ -31,7 +31,6 @@ class VGLogsTableViewController: UITableViewController {
     var shouldStopDownloading = false
     var downloadCount = 0
     var parseCount = 0
-    var headerParseDateFormatter = HeaderParseDateFormatter()
     let headerDateFormatter = HeaderDateFormatter()
     var headerView: DeviceConnectedHeaderView!
     let distanceFormatter = LengthFormatter()
@@ -525,10 +524,7 @@ class VGLogsTableViewController: UITableViewController {
         view.dateLabel.text = " "
         view.detailsLabel.text = " "
 
-        guard let date = headerParseDateFormatter.date(from:day) else {
-            return
-        }
-        let dateString = headerDateFormatter.string(from: date)
+        let dateString = headerDateFormatter.sectionKeyToDateString(sectionKey: day)
         var totalDuration = 0.0
         var totalDistance = 0.0
         var distanceString = ""

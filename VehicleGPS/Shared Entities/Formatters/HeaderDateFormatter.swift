@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 class HeaderDateFormatter: DateFormatter {
+    let parsingFormatter = DateFormatter()
     override init() {
         super.init()
         configure()
@@ -24,5 +25,16 @@ class HeaderDateFormatter: DateFormatter {
         self.dateStyle = .full
         self.locale = Locale.current
         self.doesRelativeDateFormatting = true
+        
+        parsingFormatter.dateFormat = "yyyy-MM-dd"
+        parsingFormatter.locale = Locale(identifier: "en_US_POSIX")
+    }
+    
+    func sectionKeyToDateString(sectionKey:String) -> String {
+        guard let date = parsingFormatter.date(from:sectionKey) else {
+            return ""
+        }
+        return self.string(from: date)
+
     }
 }
