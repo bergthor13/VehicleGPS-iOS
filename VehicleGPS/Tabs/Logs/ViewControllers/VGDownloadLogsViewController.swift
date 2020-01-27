@@ -11,13 +11,27 @@ import UIKit
 class VGDownloadLogsViewController: UIViewController {
 
     var tracks: [VGTrack]?
-    var sectionKeys = [String]()
-    var availableLogsTVC = VGAvailableDownloadTableViewController(style: .plain)
+    var availableSectionKeys = [String]()
+    var availableLogs = [String: [VGTrack]]()
+    var allSectionKeys = [String]()
+    var allLogs = [String: [VGTrack]]()
     var vgFileManager = VGFileManager()
     var safeArea: UILayoutGuide!
+    var downloadManager:VGSFTPManager?
+    var availableLogsTVC: VGAvailableDownloadTableViewController!
+    init(downloadManager:VGSFTPManager?) {
+        super.init(nibName: nil, bundle: nil)
+        self.downloadManager = downloadManager
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        availableLogsTVC = VGAvailableDownloadTableViewController(style: .plain, downloadManager: downloadManager)
         view.backgroundColor = .systemBackground
         self.navigationController?.navigationBar.prefersLargeTitles = false
         let segmentedControl = UISegmentedControl(items: ["Í boði", "Allir ferlar", "Stillingar"])
@@ -29,7 +43,13 @@ class VGDownloadLogsViewController: UIViewController {
     }
     
     @objc func segmentedControlChanged(sender:UISegmentedControl) {
-        print(sender.selectedSegmentIndex)
+        if sender.selectedSegmentIndex == 0 {
+            availableLogsTVC.sectionKeys = availableSectionKeys
+            availableLogsTVC.tracksDict = availableLogs
+        } else if sender.selectedSegmentIndex == 1 {
+            availableLogsTVC.sectionKeys = allSectionKeys
+            availableLogsTVC.tracksDict = allLogs
+        }
     }
 
     func setupTableView() {
@@ -42,15 +62,21 @@ class VGDownloadLogsViewController: UIViewController {
         var newList = [VGTrack]()
         for track in tracks! {
             if !vgFileManager.fileForTrackExists(track: track) {
+                track.isLocal = false
                 newList.append(track)
+            } else {
+                track.isLocal = true
             }
         }
-        availableLogsTVC.tracksDict = tracksToDictionary(trackList: newList)
-        availableLogsTVC.sectionKeys = sectionKeys
+        (availableSectionKeys, availableLogs) = tracksToDictionary(trackList: newList)
+        (allSectionKeys, allLogs) = tracksToDictionary(trackList: tracks!)
+        availableLogsTVC.sectionKeys = availableSectionKeys
+        availableLogsTVC.tracksDict = availableLogs
     }
     
-    func tracksToDictionary(trackList:[VGTrack]) -> Dictionary<String, [VGTrack]>{
+    func tracksToDictionary(trackList:[VGTrack]) -> ([String], Dictionary<String, [VGTrack]>){
         var result = Dictionary<String, [VGTrack]>()
+        var sectionKeys = [String]()
         for track in trackList {
             var day = ""
             if let timeStart = track.timeStart {
@@ -69,7 +95,7 @@ class VGDownloadLogsViewController: UIViewController {
         }
         
         // Reorder the sections and lists to display the newest log first.
-        self.sectionKeys = self.sectionKeys.sorted().reversed()
+        sectionKeys = sectionKeys.sorted().reversed()
         
         for (day, list) in result {
             result[day] = list.sorted { (first, second) -> Bool in
@@ -80,18 +106,6 @@ class VGDownloadLogsViewController: UIViewController {
             }
         }
         
-        return result
+        return (sectionKeys, result)
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

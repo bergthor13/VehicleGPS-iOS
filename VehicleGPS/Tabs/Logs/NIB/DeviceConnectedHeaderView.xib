@@ -89,7 +89,7 @@
                 <outlet property="lblConnectedToGPS" destination="8pn-NV-c4E" id="ZvE-2X-rjI"/>
                 <outlet property="lblLogsAvailable" destination="lvg-q4-UWn" id="mcJ-TW-TSa"/>
             </connections>
-            <point key="canvasLocation" x="101.44927536231884" y="-410.15625"/>
+            <point key="canvasLocation" x="-67" y="-336"/>
         </view>
     </objects>
     <resources>

@@ -95,7 +95,7 @@
                 <outlet property="progressViewWidthConstraint" destination="BWr-BD-VXR" id="La2-2j-LLv"/>
                 <outlet property="trackView" destination="1Pa-LR-faQ" id="3vB-tb-D5Z"/>
             </connections>
-            <point key="canvasLocation" x="69.565217391304358" y="398.77232142857139"/>
+            <point key="canvasLocation" x="-278" y="192"/>
         </tableViewCell>
     </objects>
 </document>

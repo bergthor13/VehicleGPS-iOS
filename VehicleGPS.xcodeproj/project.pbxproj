@@ -48,6 +48,8 @@
 		F24754F723DDAAD8007E0DF8 /* VGDistanceFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24754F623DDAAD8007E0DF8 /* VGDistanceFormatter.swift */; };
 		F24754FC23DDAE26007E0DF8 /* VGDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24754FB23DDAE26007E0DF8 /* VGDurationFormatter.swift */; };
 		F24754FE23DDAFA8007E0DF8 /* VGListEmptyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24754FD23DDAFA8007E0DF8 /* VGListEmptyLabel.swift */; };
+		F247550023DDBB87007E0DF8 /* AvailableLogsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F24754FF23DDBB87007E0DF8 /* AvailableLogsTableViewCell.xib */; };
+		F247550223DDBC43007E0DF8 /* AvailableLogsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F247550123DDBC43007E0DF8 /* AvailableLogsTableViewCell.swift */; };
 		F24A6FCE22F8521F00C8D372 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F24A6FCD22F8521F00C8D372 /* NetworkExtension.framework */; };
 		F24D88C523D3C7BD0071F6BC /* VGDownloadLogsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88C423D3C7BD0071F6BC /* VGDownloadLogsViewController.swift */; };
 		F24D88C723D3CB0D0071F6BC /* VGAvailableDownloadTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88C623D3CB0D0071F6BC /* VGAvailableDownloadTableViewController.swift */; };
@@ -123,6 +125,8 @@
 		F24754F623DDAAD8007E0DF8 /* VGDistanceFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDistanceFormatter.swift; sourceTree = "<group>"; };
 		F24754FB23DDAE26007E0DF8 /* VGDurationFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDurationFormatter.swift; sourceTree = "<group>"; };
 		F24754FD23DDAFA8007E0DF8 /* VGListEmptyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGListEmptyLabel.swift; sourceTree = "<group>"; };
+		F24754FF23DDBB87007E0DF8 /* AvailableLogsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AvailableLogsTableViewCell.xib; sourceTree = "<group>"; };
+		F247550123DDBC43007E0DF8 /* AvailableLogsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvailableLogsTableViewCell.swift; sourceTree = "<group>"; };
 		F24A6FCC22F8521E00C8D372 /* VehicleGPS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VehicleGPS.entitlements; sourceTree = "<group>"; };
 		F24A6FCD22F8521F00C8D372 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		F24D88C423D3C7BD0071F6BC /* VGDownloadLogsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDownloadLogsViewController.swift; sourceTree = "<group>"; };
@@ -330,6 +334,7 @@
 		F23BE8FD22A6FAE1008FD50C /* NIB */ = {
 			isa = PBXGroup;
 			children = (
+				F24754FF23DDBB87007E0DF8 /* AvailableLogsTableViewCell.xib */,
 				F23BE8EC22A5E5BB008FD50C /* LogsTableViewCell.xib */,
 				F27CB77B23D38A3D002BF28F /* DeviceConnectedHeaderView.xib */,
 				F257077F22F0C10B00F201B3 /* LogHeaderView.xib */,
@@ -341,6 +346,7 @@
 		F23BE8FE22A6FB08008FD50C /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				F247550123DDBC43007E0DF8 /* AvailableLogsTableViewCell.swift */,
 				F23BE8ED22A5E5BB008FD50C /* LogsTableViewCell.swift */,
 				F23BE8EA22A5E5BB008FD50C /* VGGraphTableViewCell.swift */,
 			);
@@ -471,6 +477,7 @@
 				F25839DF23A9801400E76B54 /* DetailsHeaderView.xib in Resources */,
 				F23BE8CC22A5E4BA008FD50C /* LaunchScreen.storyboard in Resources */,
 				F27CB77C23D38A3D002BF28F /* DeviceConnectedHeaderView.xib in Resources */,
+				F247550023DDBB87007E0DF8 /* AvailableLogsTableViewCell.xib in Resources */,
 				F25839DB23A6810F00E76B54 /* HistoryTableViewCell.xib in Resources */,
 				F23BE8C922A5E4BA008FD50C /* Assets.xcassets in Resources */,
 				F215AC8523DB45FD0001AF24 /* NewVehicleTableViewCell.xib in Resources */,
@@ -557,6 +564,7 @@
 				F23BE8E422A5E5A7008FD50C /* VGDashboardNavigationController.swift in Sources */,
 				F23A32D123DBA85100B21050 /* VehicleTableViewCell.swift in Sources */,
 				F2797D5723CD1AC500207650 /* HistoryDetailsTableViewController.swift in Sources */,
+				F247550223DDBC43007E0DF8 /* AvailableLogsTableViewCell.swift in Sources */,
 				F215AC8723DB8E0D0001AF24 /* NewVehicleTableViewCell.swift in Sources */,
 				F25839D123A6606F00E76B54 /* VGHistoryNavigationController.swift in Sources */,
 				F23D787323B7C16700DBC64F /* DisplayLineProtocol.swift in Sources */,

@@ -43,7 +43,7 @@
                 <outlet property="dateLabel" destination="LzT-8m-p2I" id="FCR-64-He3"/>
                 <outlet property="detailsLabel" destination="erY-cX-gyd" id="5WO-BW-LjL"/>
             </connections>
-            <point key="canvasLocation" x="95.652173913043484" y="-378.68303571428572"/>
+            <point key="canvasLocation" x="439" y="-146"/>
         </view>
     </objects>
 </document>

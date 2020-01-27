@@ -9,30 +9,41 @@
 import UIKit
 
 class VGAvailableDownloadTableViewController: UITableViewController {
-    
-    var tracksDict = [String: [VGTrack]]()
+    var tracksDict = [String: [VGTrack]]() {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     var sectionKeys = [String]()
     let headerDateFormatter = HeaderDateFormatter()
-
+    
+    var downloadManager:VGSFTPManager?
+    init(style: UITableView.Style, downloadManager:VGSFTPManager?) {
+        super.init(style: style)
+        self.downloadManager = downloadManager
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    fileprivate func registerCells() {
+        let availableLogsTableViewCellNib = UINib(nibName: "AvailableLogsTableViewCell", bundle: nil)
+        self.tableView.register(availableLogsTableViewCellNib, forCellReuseIdentifier: "AvailableLogsCell")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        registerCells()
     }
 
     // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return sectionKeys.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         guard let tracksForSection = tracksDict[sectionKeys[section]] else {
             return 0
         }
@@ -41,11 +52,11 @@ class VGAvailableDownloadTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .value1, reuseIdentifier: "cell")
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "AvailableLogsCell", for: indexPath) as? AvailableLogsTableViewCell else {
+            return UITableViewCell()
+        }
         
-        cell.textLabel?.text = tracksDict[sectionKeys[indexPath.section]]![indexPath.row].fileName
-        cell.detailTextLabel?.text = String(tracksDict[sectionKeys[indexPath.section]]![indexPath.row].fileSize)
-
+        cell.show(track: tracksDict[sectionKeys[indexPath.section]]![indexPath.row])
         return cell
     }
     
@@ -53,50 +64,38 @@ class VGAvailableDownloadTableViewController: UITableViewController {
         return headerDateFormatter.sectionKeyToDateString(sectionKey: sectionKeys[section])
     }
     
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50
     }
-    */
-
-    /*
+    
+    func getTrackAt(indexPath:IndexPath) -> VGTrack {
+        let dayFileList = tracksDict[sectionKeys[indexPath.section]]
+        let file = dayFileList![indexPath.row]
+        return file
+    }
+    
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+            let track = self.getTrackAt(indexPath: indexPath)
+            
+            self.downloadManager?.deleteFile(filename: track.fileName, callback: { (success) in
+                if success {
+                    DispatchQueue.main.async {
+                        tableView.beginUpdates()
+                        self.tracksDict[self.sectionKeys[indexPath.section]]?.remove(at: indexPath.row)
+                        tableView.deleteRows(at: [indexPath], with: .fade)
+
+                        if self.tracksDict[self.sectionKeys[indexPath.section]]?.count == 0 {
+                            self.sectionKeys.remove(at: indexPath.section)
+                            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .top)
+                        }
+                        tableView.endUpdates()
+                    }
+                }
+            })
+        }
     }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

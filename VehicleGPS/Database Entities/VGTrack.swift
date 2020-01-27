@@ -23,6 +23,7 @@ class VGTrack {
     var maxLon:Double
     var processed:Bool
     var isRemote:Bool
+    var isLocal:Bool
     var beingProcessed = false
     var averageSpeed:Double {
         get {
@@ -86,6 +87,7 @@ class VGTrack {
         }
         
         self.isRemote = false
+        self.isLocal = false
         
         trackPoints = [VGDataPoint]()
     }
@@ -101,6 +103,7 @@ class VGTrack {
         maxLon = 200.0
         processed = false
         isRemote = false
+        isLocal = false
         
         trackPoints = [VGDataPoint]()
     }

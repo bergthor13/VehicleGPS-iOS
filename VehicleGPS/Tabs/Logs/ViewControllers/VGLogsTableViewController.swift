@@ -124,8 +124,8 @@ class VGLogsTableViewController: UITableViewController {
 
     // MARK: - Interface Action Functions
     @objc func headerViewTapped(_:Any?) {
-        let dlViewController = VGDownloadLogsViewController()
-        dlViewController.tracks = remoteList
+        let dlViewController = VGDownloadLogsViewController(downloadManager: self.downloadManager)
+        dlViewController.tracks = self.combineLists(localList: self.dataStore.getAllTracks(), remoteList: remoteList)
         navigationController?.pushViewController(dlViewController, animated: true)
     }
     
