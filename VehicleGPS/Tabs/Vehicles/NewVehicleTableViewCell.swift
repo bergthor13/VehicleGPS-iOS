@@ -12,6 +12,7 @@ class NewVehicleTableViewCell: UITableViewCell {
 
     @IBOutlet weak var txtName: UITextField!
     @IBOutlet weak var imgProfile: UIImageView!
+    @IBOutlet weak var colorContainer: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

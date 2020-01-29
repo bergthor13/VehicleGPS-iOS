@@ -82,6 +82,7 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="colorContainer" destination="BjF-jK-yuN" id="NOa-5q-FUz"/>
                 <outlet property="imgProfile" destination="1Pa-LR-faQ" id="BPd-RD-3VL"/>
                 <outlet property="txtName" destination="CYu-A8-AOf" id="maI-oZ-s59"/>
             </connections>

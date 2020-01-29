@@ -161,6 +161,13 @@ class VGLogDetailsViewController: UIViewController {
                 self.process(track: self.track)
             }))
             
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Velja farartæki", comment: ""), style: .default, handler: { (_) in
+                let vehCont = VGVehiclesSelectionTableViewController(style: .insetGrouped)
+                vehCont.track = self.track
+                let navCont = UINavigationController(rootViewController: vehCont)
+                self.present(navCont, animated: true, completion: nil)
+            }))
+            
             alert.addAction(UIAlertAction(title: NSLocalizedString("Skipta ferli í tvennt", comment: ""), style: .default, handler: { (_) in
                 guard let selectedTime = self.trackDataTableViewController?.dlpTime else {
                     return

@@ -75,6 +75,20 @@ class VGDataStore {
         }
     }
     
+    fileprivate func getVehicle(for vgVehicle: VGVehicle, in context:NSManagedObjectContext) -> NSManagedObject? {
+        let vehicleFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Vehicle")
+        vehicleFetchRequest.predicate = NSPredicate(format: "id = %@", argumentArray: [vgVehicle.id!])
+        do {
+            guard let fetchedVehicle = try context.fetch(vehicleFetchRequest).first else {
+                print("Fetching vehicle failed")
+                return nil
+            }
+            return fetchedVehicle
+        } catch {
+            return nil
+        }
+    }
+    
     func deleteAllData(_ entity:String) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
@@ -135,6 +149,8 @@ class VGDataStore {
                 newVehicle.name = item.name
                 newVehicle.id = item.id
                 newVehicle.mapColor = item.mapColor as? UIColor
+                newVehicle.tracks = getAllTracks(for: newVehicle, in: context)
+                
                 // TODO: Open image and load to UIImage
                 //newVehicle.image =
                 returnList.append(newVehicle)
@@ -144,6 +160,76 @@ class VGDataStore {
             print(error)
         }
         return []
+    }
+    
+    func getAllTracks(for vgVehicle:VGVehicle, in context: NSManagedObjectContext) -> [VGTrack] {
+        var result = [VGTrack]()
+        //2
+        let fetchRequest =
+            NSFetchRequest<NSManagedObject>(entityName: "Track")
+        fetchRequest.predicate = NSPredicate(format: "vehicle.id = %@", argumentArray: [vgVehicle.id!])
+        
+        //3
+        do {
+            let cdTracks = try context.fetch(fetchRequest)
+            for track in cdTracks  {
+                let vgTrack = VGTrack()
+                
+                if let distance = track.value(forKey: "distance") as? Double {
+                    vgTrack.distance = distance
+                }
+                
+                if let duration = track.value(forKey: "duration") as? Double {
+                    vgTrack.duration = duration
+                }
+                
+                if let fileName = track.value(forKey: "fileName") as? String {
+                    vgTrack.fileName = fileName
+                }
+                
+                if let fileSize = track.value(forKey: "fileSize") as? Int {
+                    vgTrack.fileSize = fileSize
+                }
+                
+                if let minLat = track.value(forKey: "minLat") as? Double {
+                    vgTrack.minLat = minLat
+                }
+                
+                if let maxLat = track.value(forKey: "maxLat") as? Double {
+                    vgTrack.maxLat = maxLat
+                }
+                
+                if let minLon = track.value(forKey: "minLon") as? Double {
+                    vgTrack.minLon = minLon
+                }
+                
+                if let maxLon = track.value(forKey: "maxLon") as? Double {
+                    vgTrack.maxLon = maxLon
+                }
+                
+                if let processed = track.value(forKey: "processed") as? Bool {
+                    vgTrack.processed = processed
+                }
+                
+                if let timeStart = track.value(forKey: "timeStart") as? Date {
+                    vgTrack.timeStart = timeStart
+                }
+                
+                if let vehicle = track.value(forKey: "vehicle") as? Vehicle {
+                    let vgVehicle = VGVehicle()
+                    vgVehicle.id = vehicle.id
+                    vgVehicle.name = vehicle.name
+                    vgTrack.vehicle = vgVehicle
+                }
+                
+                result.append(vgTrack)
+            }
+            
+        } catch {
+            return []
+        }
+        return result
+
     }
     
     func countAllData(_ entity:String, callback:(Int)->()) {
@@ -226,6 +312,13 @@ class VGDataStore {
                 
                 if let timeStart = track.value(forKey: "timeStart") as? Date {
                     vgTrack.timeStart = timeStart
+                }
+                
+                if let vehicle = track.value(forKey: "vehicle") as? Vehicle {
+                    let vgVehicle = VGVehicle()
+                    vgVehicle.id = vehicle.id
+                    vgVehicle.name = vehicle.name
+                    vgTrack.vehicle = vgVehicle
                 }
                 
                 result.append(vgTrack)
@@ -403,6 +496,23 @@ class VGDataStore {
         }
         
         return result.sorted()
+    }
+    
+    func add(vgVehicle:VGVehicle, to vgTrack:VGTrack) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        
+        // Get the track in question
+        let fetchedTrack = getTrack(for: vgTrack, in: context)
+        
+        let fetchedVehicle = getVehicle(for: vgVehicle, in: context)
+        
+        fetchedTrack?.setValue(fetchedVehicle, forKey: "vehicle")
+        do {
+            try context.save()
+        } catch let error {
+            print(error)
+        }
     }
     
     func split(track:VGTrack, at time:Date) -> (VGTrack, VGTrack) {

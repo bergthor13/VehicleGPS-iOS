@@ -34,13 +34,14 @@ class NewVehicleTableViewController: UITableViewController {
     }
     
     @objc func tappedSave() {
-        let vehicle = VGVehicle()
-        vehicle.name = cell.txtName.text
-        dataStore.add(vehicle)
-        if let vehiclesController = vehiclesController {
-            vehiclesController.reloadVehicles(shouldReloadTableView: true)
+        dismiss(animated: true) {
+            let vehicle = VGVehicle()
+            vehicle.name = self.cell.txtName.text
+            self.dataStore.add(vehicle)
+            if let vehiclesController = self.vehiclesController {
+                vehiclesController.addVehicle(vehicle)
+            }
         }
-        dismiss(animated: true, completion: nil)
     }
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections

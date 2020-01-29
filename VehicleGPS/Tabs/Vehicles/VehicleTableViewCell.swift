@@ -12,6 +12,8 @@ class VehicleTableViewCell: UITableViewCell {
 
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var colorBanner: UIView!
+    @IBOutlet weak var lblDistance: UILabel!
+    @IBOutlet weak var lblDuration: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

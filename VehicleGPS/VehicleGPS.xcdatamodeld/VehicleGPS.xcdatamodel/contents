@@ -44,16 +44,18 @@
         <attribute name="mapColor" optional="YES" attributeType="Transformable"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="tracks" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Track" inverseName="vehicle" inverseEntity="Track"/>
+        <relationship name="tracks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Track" inverseName="vehicle" inverseEntity="Track"/>
+        <relationship name="vehicleType" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="VehicleType" inverseName="vehicles" inverseEntity="VehicleType"/>
     </entity>
     <entity name="VehicleType" representedClassName="VehicleType" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="vehicles" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Vehicle" inverseName="vehicleType" inverseEntity="Vehicle"/>
     </entity>
     <elements>
         <element name="DataPoint" positionX="196.8671875" positionY="-25.84765625" width="128" height="358"/>
         <element name="Track" positionX="-63" positionY="-18" width="128" height="238"/>
-        <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="133"/>
-        <element name="VehicleType" positionX="144" positionY="126" width="128" height="73"/>
+        <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="148"/>
+        <element name="VehicleType" positionX="144" positionY="126" width="128" height="88"/>
     </elements>
 </model>

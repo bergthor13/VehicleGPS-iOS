@@ -25,6 +25,7 @@ class VGTrack {
     var isRemote:Bool
     var isLocal:Bool
     var beingProcessed = false
+    var vehicle:VGVehicle?
     var averageSpeed:Double {
         get {
             return distance/duration/60/60
@@ -84,6 +85,13 @@ class VGTrack {
             self.processed = processed
         } else {
             self.processed = false
+        }
+        
+        if let vehicle = object.value(forKey: "vehicle") as? Vehicle {
+            
+            let vgVehicle = VGVehicle()
+            vgVehicle.id = vehicle.id
+            vgVehicle.name = vehicle.name
         }
         
         self.isRemote = false

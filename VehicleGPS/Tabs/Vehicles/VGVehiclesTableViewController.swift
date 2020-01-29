@@ -23,7 +23,7 @@ class VGVehiclesTableViewController: UITableViewController {
         registerCells()
         reloadVehicles(shouldReloadTableView: true)
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationItem.leftBarButtonItem = editButtonItem
+        
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.circle.fill"), style: .plain, target: self, action: #selector(didTapAddVehicle))
     }
     fileprivate func registerCells() {
@@ -41,6 +41,19 @@ class VGVehiclesTableViewController: UITableViewController {
         if shouldReloadTableView {
             tableView.reloadData()
         }
+    }
+    
+    func addVehicle(_ vehicle:VGVehicle) {
+        tableView.beginUpdates()
+        if vehicles.count == 0 {
+            tableView.insertRows(at: [IndexPath(row: vehicles.count, section: 0)], with: .automatic)
+        } else {
+             tableView.insertRows(at: [IndexPath(row: vehicles.count, section: 0)], with: .top)
+        }
+        
+        vehicles.append(vehicle)
+        reloadVehicles(shouldReloadTableView: false)
+        tableView.endUpdates()
     }
     
     fileprivate func configureEmptyListLabel() {
@@ -80,7 +93,7 @@ class VGVehiclesTableViewController: UITableViewController {
             dataStore.delete(vgVehicle: vehicle) {
                 DispatchQueue.main.async {
                     self.vehicles.remove(at: indexPath.row)
-                    tableView.deleteRows(at: [indexPath], with: .fade)
+                    tableView.deleteRows(at: [indexPath], with: .top)
                     self.reloadVehicles(shouldReloadTableView: false)
                 }
             }
@@ -105,14 +118,28 @@ class VGVehiclesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "VehicleCell", for: indexPath) as! VehicleTableViewCell
         cell.lblName.text = vehicles[indexPath.row].name
+        guard let tracks = vehicles[indexPath.row].tracks else {
+            return cell
+        }
+        var distance = 0.0
+        var duration = 0.0
+        for track in tracks {
+            distance += track.distance
+            duration += track.duration
+        }
+        
+        cell.lblDistance.text = VGDistanceFormatter().string(for: distance)
+        cell.lblDuration.text = VGDurationFormatter().string(from: duration)
+        
         return cell
     }
     
-
-    
-
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        navigationController?.pushViewController(UIViewController(), animated: true)
     }
     
     /*

@@ -14,5 +14,5 @@ class VGVehicle {
     public var image: UIImage?
     public var mapColor: UIColor?
     public var name: String?
-    public var tracks: [Track]?
+    public var tracks: [VGTrack]?
 }
