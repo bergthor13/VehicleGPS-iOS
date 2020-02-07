@@ -10,7 +10,13 @@ import UIKit
 import NMSSH
 import CoreData
 
-class VGLogsTableViewController: UITableViewController {
+class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProtocol {
+    func didTapVehicle(track: VGTrack) {
+        let selectionVC = VGVehiclesSelectionTableViewController(style: .insetGrouped)
+        selectionVC.track = track
+        present(UINavigationController(rootViewController: selectionVC), animated: true, completion: nil)
+    }
+    
     
     // MARK: - Class Variables
     var tracksDict = [String: [VGTrack]]()
@@ -583,7 +589,7 @@ class VGLogsTableViewController: UITableViewController {
             return UITableViewCell()
         }
         cell.update(progress: 0.0)
-        
+        cell.delegate = self
         let track = getTrackAt(indexPath: indexPath)
         cell.show(track:track)
         return cell

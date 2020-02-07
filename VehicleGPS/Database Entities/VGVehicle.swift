@@ -15,4 +15,18 @@ class VGVehicle {
     public var mapColor: UIColor?
     public var name: String?
     public var tracks: [VGTrack]?
+    
+    init(vehicle:Vehicle) {
+        self.id = vehicle.id
+        self.name = vehicle.name
+        self.mapColor = vehicle.mapColor as? UIColor
+    }
+    
+    init() {
+        
+    }
+    
+    static func == (lhs: VGVehicle, rhs: VGVehicle) -> Bool {
+        return lhs.id == rhs.id
+    }
 }

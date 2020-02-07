@@ -33,8 +33,14 @@ class VGVehiclesSelectionTableViewController: VGVehiclesTableViewController {
             distance += track.distance
             duration += track.duration
         }
-        cell.lblDistance.text = VGDistanceFormatter().string(for: distance)
-        cell.lblDuration.text = VGDurationFormatter().string(from: duration)
+        if let color = vehicles[indexPath.row].mapColor {
+            cell.colorBanner.backgroundColor = color
+        } else {
+            cell.colorBanner.backgroundColor = .red
+        }
+
+        cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
+        cell.lblDuration.text = durationFormatter.string(from: duration)
 
         return cell
     }

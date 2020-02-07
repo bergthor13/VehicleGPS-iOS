@@ -63,24 +63,19 @@ class HistoryDetailsTableViewController: UITableViewController {
         DispatchQueue.global(qos: .userInitiated).async {
             for track in self.tracksSummary!.tracks {
                 track.trackPoints = self.dataStore.getPointsForTrack(vgTrack: track)
+                self.display(track: track, on: self.mapView, in: self.getRegion(for: self.tracksSummary!.tracks))
+                track.trackPoints = []
+
             }
             DispatchQueue.main.async {
-                self.display(tracks: self.tracksSummary!.tracks, on: self.mapView)
                 activity.stopAnimating()
             }
         }
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 2
     }
 
@@ -95,9 +90,18 @@ class HistoryDetailsTableViewController: UITableViewController {
         if indexPath.section == 0 {
             return 300
         }
-        return 76
+        return UITableView.automaticDimension
     }
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 1 {
+            let track = self.tracksSummary!.tracks[indexPath.row]
+            let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
+            logDetailsView.dataStore = self.dataStore
+            logDetailsView.track = track
+            self.navigationController?.pushViewController(logDetailsView, animated: true)
+        }
+    }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -114,21 +118,15 @@ class HistoryDetailsTableViewController: UITableViewController {
         cell.show(track:self.tracksSummary!.tracks[indexPath.row])
         return cell
     }
+    var vehicleColor:UIColor = .red
     
-    func display(tracks: [VGTrack], on mapView: MKMapView) {
+    func getRegion(for tracks: [VGTrack]) -> MKCoordinateRegion {
         var maxLat = -Double.infinity
         var minLat = Double.infinity
         var maxLon = -Double.infinity
         var minLon = Double.infinity
-        var hasPoints = false
         
         for track in tracks {
-            let list = track.getCoordinateList()
-            if list.count > 0 {
-                hasPoints = true
-            } else {
-                continue
-            }
             if maxLat < max(track.maxLat, track.minLat)  {
                 maxLat = max(track.maxLat, track.minLat)
             }
@@ -143,11 +141,6 @@ class HistoryDetailsTableViewController: UITableViewController {
             
             if minLon > min(track.minLon, track.maxLon)  {
                 minLon = min(track.minLon, track.maxLon)
-            }
-            
-            DispatchQueue.main.async {
-                let polyline = MKPolyline(coordinates: list, count: list.count)
-                mapView.addOverlay(polyline)
             }
         }
         
@@ -171,7 +164,29 @@ class HistoryDetailsTableViewController: UITableViewController {
         
         let longitudeDelta = abs((maxLon - minLon) * MAP_PADDING)
         let span = MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
-        let region = MKCoordinateRegion(center: centerCoord, span: span)
+        return MKCoordinateRegion(center: centerCoord, span: span)
+
+    }
+    func display(track: VGTrack, on mapView: MKMapView, in region: MKCoordinateRegion) {
+        let hasPoints = track.trackPoints.count > 0
+
+        if !hasPoints {
+            return
+        }
+
+        let list = track.getCoordinateList()
+        let polyline = MKPolyline(coordinates: list, count: list.count)
+        
+        if let color = track.vehicle?.mapColor {
+            self.vehicleColor = color
+        } else {
+            self.vehicleColor = .red
+        }
+        DispatchQueue.main.async {
+            mapView.addOverlay(polyline)
+        }
+
+
         if hasPoints {
             self.mapView.setRegion(region, animated: false)
         }
@@ -230,7 +245,7 @@ extension HistoryDetailsTableViewController: MKMapViewDelegate {
         
         if overlay is MKPolyline {
             let polylineRender = MKPolylineRenderer(overlay: overlay)
-            polylineRender.strokeColor = UIColor.red
+            polylineRender.strokeColor = vehicleColor
             polylineRender.lineWidth = 2
             return polylineRender
         }

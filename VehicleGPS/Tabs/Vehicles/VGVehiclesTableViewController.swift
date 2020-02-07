@@ -13,6 +13,9 @@ class VGVehiclesTableViewController: UITableViewController {
     var vehicles = [VGVehicle]()
     let dataStore = VGDataStore()
     
+    var distanceFormatter = VGDistanceFormatter()
+    var durationFormatter = VGDurationFormatter()
+    
     var emptyLabel: UILabel!
 
     override func viewDidLoad() {
@@ -52,6 +55,23 @@ class VGVehiclesTableViewController: UITableViewController {
         }
         
         vehicles.append(vehicle)
+        reloadVehicles(shouldReloadTableView: false)
+        tableView.endUpdates()
+    }
+    
+    func editVehicle(_ editedVehicle:VGVehicle) {
+        tableView.beginUpdates()
+        for (index, vehicle) in vehicles.enumerated() {
+            if vehicle == editedVehicle {
+                let bla = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as! VehicleTableViewCell
+                bla.lblName.text = editedVehicle.name
+                bla.colorBanner.backgroundColor = editedVehicle.mapColor
+                vehicles.remove(at: index)
+                vehicles.insert(editedVehicle, at: index)
+                
+            }
+        }
+        
         reloadVehicles(shouldReloadTableView: false)
         tableView.endUpdates()
     }
@@ -128,9 +148,15 @@ class VGVehiclesTableViewController: UITableViewController {
             duration += track.duration
         }
         
-        cell.lblDistance.text = VGDistanceFormatter().string(for: distance)
-        cell.lblDuration.text = VGDurationFormatter().string(from: duration)
+        if let color = vehicles[indexPath.row].mapColor {
+            cell.colorBanner.backgroundColor = color
+        } else {
+            cell.colorBanner.backgroundColor = .red
+        }
         
+        cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
+        cell.lblDuration.text = durationFormatter.string(from: duration)
+
         return cell
     }
     
@@ -139,52 +165,8 @@ class VGVehiclesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigationController?.pushViewController(UIViewController(), animated: true)
+        let detailsVC = VehicleDetailsTableViewController(style: .insetGrouped)
+        detailsVC.vehicle = vehicles[indexPath.row]
+        navigationController?.pushViewController(detailsVC, animated: true)
     }
-    
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

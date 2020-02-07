@@ -32,72 +32,33 @@ class VGTrack {
         }
     }
     
-    init(object:NSManagedObject) {
-        if let duration = object.value(forKey: "duration") as? Double {
-            self.duration = duration
-        } else {
-            self.duration = 0.0
-        }
-        
-        if let distance = object.value(forKey: "distance") as? Double {
-            self.distance = distance
-        } else {
-            self.distance = 0.0
-        }
-        
-        if let fileName = object.value(forKey: "fileName") as? String {
+    init(track:Track) {
+        // Database stored values
+        self.duration = track.duration
+        self.distance = track.distance
+        if let fileName = track.fileName {
             self.fileName = fileName
         } else {
             self.fileName = ""
         }
+        self.fileSize = Int(track.fileSize)
+        self.timeStart = track.timeStart
+        self.minLat = track.minLat
+        self.maxLat = track.maxLat
+        self.minLon = track.minLon
+        self.maxLon = track.maxLon
+        self.processed = track.processed
         
-        if let fileSize = object.value(forKey: "fileSize") as? Int {
-            self.fileSize = fileSize
-        } else {
-            self.fileSize = 0
+        if let vehicle = track.vehicle {
+            self.vehicle = VGVehicle(vehicle:vehicle)
         }
-        
-        if let minLat = object.value(forKey: "minLat") as? Double {
-            self.minLat = minLat
-        } else {
-            self.minLat = -200.0
-        }
-        
-        if let maxLat = object.value(forKey: "maxLat") as? Double {
-            self.maxLat = maxLat
-        } else {
-            self.maxLat = 200
-        }
-        
-        if let minLon = object.value(forKey: "minLon") as? Double {
-            self.minLon = minLon
-        } else {
-            self.minLon = -200
-        }
-        
-        if let maxLon = object.value(forKey: "maxLon") as? Double {
-            self.maxLon = maxLon
-        } else {
-            self.maxLon = 200
-        }
-        
-        if let processed = object.value(forKey: "processed") as? Bool {
-            self.processed = processed
-        } else {
-            self.processed = false
-        }
-        
-        if let vehicle = object.value(forKey: "vehicle") as? Vehicle {
-            
-            let vgVehicle = VGVehicle()
-            vgVehicle.id = vehicle.id
-            vgVehicle.name = vehicle.name
-        }
-        
+
+        trackPoints = [VGDataPoint]()
+
+        // Memory stored values
         self.isRemote = false
         self.isLocal = false
-        
-        trackPoints = [VGDataPoint]()
+
     }
     
     init() {

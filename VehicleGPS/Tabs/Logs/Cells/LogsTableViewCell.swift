@@ -8,16 +8,24 @@
 
 import UIKit
 
+protocol DisplaySelectVehicleProtocol {
+    func didTapVehicle(track:VGTrack)
+}
+
 class LogsTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var btnVehicle: UIButton!
     @IBOutlet weak var trackView: UIImageView!
     @IBOutlet weak var activityView: UIActivityIndicatorView!
     @IBOutlet weak var lblDuration: UILabel!
     @IBOutlet weak var lblDistance: UILabel!
     @IBOutlet weak var lblTimeStart: UILabel!
     @IBOutlet weak var lblFileSize: UILabel!
+    @IBOutlet weak var lblVehicle: UILabel!
+    @IBOutlet weak var imgVehicle: UIImageView!
     @IBOutlet weak var progressView: UIView!
     @IBOutlet weak var progressViewWidthConstraint: NSLayoutConstraint!
+    var delegate: DisplaySelectVehicleProtocol!
     var vgFileManager: VGFileManager!
     var currentTrack: VGTrack?
     let formatter = DateFormatter()
@@ -69,12 +77,21 @@ class LogsTableViewCell: UITableViewCell {
         trackView.image = vgFileManager.openImageFor(track: track, style: self.traitCollection.userInterfaceStyle)
         trackView.layer.borderWidth = 0.5
         trackView.layer.borderColor = UIColor.secondaryLabel.cgColor
+        if let vehicle = track.vehicle {
+            lblVehicle.text = vehicle.name
+        } else {
+            lblVehicle.text = "Ekkert farartæki"
+        }
+        
         if track.beingProcessed {
             activityView.startAnimating()
         } else {
             activityView.stopAnimating()
         }
 
+    }
+    @IBAction func didTapVehicle(_ sender: Any) {
+        delegate.didTapVehicle(track: currentTrack!)
     }
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         guard let track = currentTrack else {return}

@@ -75,8 +75,8 @@ class VGDataStore {
         }
     }
     
-    fileprivate func getVehicle(for vgVehicle: VGVehicle, in context:NSManagedObjectContext) -> NSManagedObject? {
-        let vehicleFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Vehicle")
+    fileprivate func getVehicle(for vgVehicle: VGVehicle, in context:NSManagedObjectContext) -> Vehicle? {
+        let vehicleFetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
         vehicleFetchRequest.predicate = NSPredicate(format: "id = %@", argumentArray: [vgVehicle.id!])
         do {
             guard let fetchedVehicle = try context.fetch(vehicleFetchRequest).first else {
@@ -133,7 +133,27 @@ class VGDataStore {
         } catch let error {
             print(error)
         }
+    }
+    
+    func update(_ vehicle:VGVehicle) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
         
+        guard let newVehicle = getVehicle(for: vehicle, in: context) else {
+            return
+        }
+        
+        newVehicle.name = vehicle.name
+        newVehicle.id = UUID()
+        newVehicle.mapColor = vehicle.mapColor
+        
+        // TODO: Create a image file.
+        //newVehicle.image =
+        do {
+            try context.save()
+        } catch let error {
+            print(error)
+        }
     }
     
     func getAllVehicles() -> [VGVehicle] {
@@ -145,14 +165,8 @@ class VGDataStore {
             var returnList = [VGVehicle]()
             let result =  try context.fetch(fetchRequest)
             for item in result {
-                let newVehicle = VGVehicle()
-                newVehicle.name = item.name
-                newVehicle.id = item.id
-                newVehicle.mapColor = item.mapColor as? UIColor
+                let newVehicle = VGVehicle(vehicle: item)
                 newVehicle.tracks = getAllTracks(for: newVehicle, in: context)
-                
-                // TODO: Open image and load to UIImage
-                //newVehicle.image =
                 returnList.append(newVehicle)
             }
             return returnList
@@ -216,10 +230,7 @@ class VGDataStore {
                 }
                 
                 if let vehicle = track.value(forKey: "vehicle") as? Vehicle {
-                    let vgVehicle = VGVehicle()
-                    vgVehicle.id = vehicle.id
-                    vgVehicle.name = vehicle.name
-                    vgTrack.vehicle = vgVehicle
+                    vgTrack.vehicle = VGVehicle(vehicle: vehicle)
                 }
                 
                 result.append(vgTrack)
@@ -315,10 +326,7 @@ class VGDataStore {
                 }
                 
                 if let vehicle = track.value(forKey: "vehicle") as? Vehicle {
-                    let vgVehicle = VGVehicle()
-                    vgVehicle.id = vehicle.id
-                    vgVehicle.name = vehicle.name
-                    vgTrack.vehicle = vgVehicle
+                    vgTrack.vehicle = VGVehicle(vehicle: vehicle)
                 }
                 
                 result.append(vgTrack)
@@ -558,7 +566,7 @@ class VGDataStore {
                     let dp = VGDataPoint(managedPoint: item)
                     track.trackPoints.append(dp)
                 }
-                newTrack = VGTrack(object: trackMo)
+                newTrack = VGTrack(track: trackMo as! Track)
                 for item in rightSplit {
                     let dp = VGDataPoint(managedPoint: item)
                     newTrack.trackPoints.append(dp)

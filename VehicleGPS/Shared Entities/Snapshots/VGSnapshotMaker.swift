@@ -61,7 +61,12 @@ class VGSnapshotMaker {
                         
                         // Create a line with the Bezier Path.
                         path.lineWidth = 3
-                        UIColor.red.setStroke()
+                        if let mapColor = vgTrack.vehicle?.mapColor {
+                            mapColor.setStroke()
+                        } else {
+                            UIColor.red.setStroke()
+                        }
+                        
                         path.stroke()
                     }
                     if coordinateList.count > 0 {

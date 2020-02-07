@@ -33,22 +33,10 @@ class VGLogDetailsViewController: UIViewController {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.vgFileManager = appDelegate.fileManager
         }
-        vgSnapshotMaker = VGSnapshotMaker(fileManager: self.vgFileManager)
-        self.vgLogParser = VGLogParser(fileManager: vgFileManager, snapshotter: vgSnapshotMaker)
-
         initializeMapView()
         initializeTrackDataView()
-        if track.trackPoints.count == 0 {
-            track.trackPoints = dataStore.getPointsForTrack(vgTrack: track)
-        }
+        self.view.backgroundColor = .systemBackground
         
-        if !vgFileManager.pngForTrackExists(track: track, style: .light) {
-            vgSnapshotMaker.drawTrack(vgTrack: track)
-        }
-        if !vgFileManager.pngForTrackExists(track: track, style: .dark) {
-            vgSnapshotMaker.drawTrack(vgTrack: track)
-        }
-
         let shareButton = UIBarButtonItem(barButtonSystemItem: .action,
                                           target: self,
                                           action: #selector(displayShareSelection))
@@ -58,14 +46,23 @@ class VGLogDetailsViewController: UIViewController {
         detailSegment.selectedSegmentIndex = 0
         self.navigationItem.titleView = detailSegment
         view.addSubview(mapSegmentView)
-    
-        self.view.backgroundColor = .systemBackground
+ 
         self.mapView.delegate = self
         self.mapView.mapType = .hybrid
+        
+
+        
         DispatchQueue.global(qos: .userInitiated).async {
+            self.vgSnapshotMaker = VGSnapshotMaker(fileManager: self.vgFileManager)
+            self.vgLogParser = VGLogParser(fileManager: self.vgFileManager, snapshotter: self.vgSnapshotMaker)
+        
             let list = self.dataStore.getPointsForTrack(vgTrack: self.track)
             var points = [CLLocationCoordinate2D]()
             self.track.trackPoints = list
+            
+            self.vgSnapshotMaker.drawTrack(vgTrack: self.track)
+
+            
             if list.count > 0 {
                 for point in list {
                     guard let latitude = point.latitude, let longitude = point.longitude else {
@@ -236,7 +233,12 @@ extension VGLogDetailsViewController: MKMapViewDelegate {
         
         if overlay is MKPolyline {
             let polylineRender = MKPolylineRenderer(overlay: overlay)
-            polylineRender.strokeColor = UIColor.red
+            if let color = track.vehicle?.mapColor {
+                polylineRender.strokeColor = color
+            } else {
+                polylineRender.strokeColor = .red
+            }
+            
             polylineRender.lineWidth = 2
             return polylineRender
         }
