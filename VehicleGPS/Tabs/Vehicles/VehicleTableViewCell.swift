@@ -14,6 +14,9 @@ class VehicleTableViewCell: UITableViewCell {
     @IBOutlet weak var colorBanner: UIView!
     @IBOutlet weak var lblDistance: UILabel!
     @IBOutlet weak var lblDuration: UILabel!
+    @IBOutlet weak var imgVehicle: UIImageView!
+    
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -21,15 +24,11 @@ class VehicleTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        colorBanner.layer.borderColor = UIColor.tertiaryLabel.cgColor
+        colorBanner.layer.borderWidth = 0.5
+
         colorBanner.roundCorners(corners: [.bottomRight, .topRight], radius: 3.0)
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-
 }
 
 extension UIView {

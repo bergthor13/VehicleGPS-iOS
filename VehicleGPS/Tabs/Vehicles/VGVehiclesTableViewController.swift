@@ -153,15 +153,16 @@ class VGVehiclesTableViewController: UITableViewController {
         } else {
             cell.colorBanner.backgroundColor = .red
         }
-        
+
         cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
         cell.lblDuration.text = durationFormatter.string(from: duration)
-
+        cell.imgVehicle?.image = VGFileManager().getImage(for: vehicles[indexPath.row])
+        
         return cell
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+        return 84
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

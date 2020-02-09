@@ -61,9 +61,15 @@ class HistoryDetailsTableViewController: UITableViewController {
 
         activity.startAnimating()
         DispatchQueue.global(qos: .userInitiated).async {
+            let region = self.getRegion(for:self.tracksSummary!.tracks)
+            if region.span.latitudeDelta != 400 {
+                DispatchQueue.main.async {
+                    self.mapView.setRegion(region, animated: false)
+                }
+            }
             for track in self.tracksSummary!.tracks {
                 track.trackPoints = self.dataStore.getPointsForTrack(vgTrack: track)
-                self.display(track: track, on: self.mapView, in: self.getRegion(for: self.tracksSummary!.tracks))
+                self.display(track: track, on: self.mapView)
                 track.trackPoints = []
 
             }
@@ -127,20 +133,23 @@ class HistoryDetailsTableViewController: UITableViewController {
         var minLon = Double.infinity
         
         for track in tracks {
-            if maxLat < max(track.maxLat, track.minLat)  {
-                maxLat = max(track.maxLat, track.minLat)
+            let maxLatMax = max(track.maxLat, track.minLat)
+            if maxLat < maxLatMax && maxLatMax != 200 {
+                maxLat = maxLatMax
             }
             
-            if maxLon < max(track.maxLon, track.minLon)  {
-                maxLon = max(track.maxLon, track.minLon)
+            let maxLonMax = max(track.maxLon, track.minLon)
+            if maxLon < maxLonMax && maxLonMax != 200 {
+                maxLon = maxLonMax
+            }
+            let minLatMin = min(track.minLat, track.maxLat)
+            if minLat > minLatMin && minLatMin != -200 {
+                minLat = minLatMin
             }
             
-            if minLat > min(track.minLat, track.maxLat)  {
-                minLat = min(track.minLat, track.maxLat)
-            }
-            
-            if minLon > min(track.minLon, track.maxLon)  {
-                minLon = min(track.minLon, track.maxLon)
+            let minLonMin = min(track.minLon, track.maxLon)
+            if minLon > minLonMin && minLonMin != -200 {
+                minLon = minLonMin
             }
         }
         
@@ -167,7 +176,7 @@ class HistoryDetailsTableViewController: UITableViewController {
         return MKCoordinateRegion(center: centerCoord, span: span)
 
     }
-    func display(track: VGTrack, on mapView: MKMapView, in region: MKCoordinateRegion) {
+    func display(track: VGTrack, on mapView: MKMapView) {
         let hasPoints = track.trackPoints.count > 0
 
         if !hasPoints {
@@ -185,59 +194,7 @@ class HistoryDetailsTableViewController: UITableViewController {
         DispatchQueue.main.async {
             mapView.addOverlay(polyline)
         }
-
-
-        if hasPoints {
-            self.mapView.setRegion(region, animated: false)
-        }
     }
-    
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
 extension HistoryDetailsTableViewController: MKMapViewDelegate {

@@ -38,9 +38,9 @@ class VGVehiclesSelectionTableViewController: VGVehiclesTableViewController {
         } else {
             cell.colorBanner.backgroundColor = .red
         }
-
         cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
         cell.lblDuration.text = durationFormatter.string(from: duration)
+        cell.imgVehicle?.image = VGFileManager().getImage(for: vehicles[indexPath.row])
 
         return cell
     }

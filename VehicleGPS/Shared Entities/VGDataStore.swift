@@ -12,7 +12,7 @@ import CoreData
 class VGDataStore {
     
     let storeCoordinator: NSPersistentStoreCoordinator
-    
+    let vgFileManager = VGFileManager()
     init() {
         guard let modelURL = Bundle.main.url(forResource: "VehicleGPS", withExtension:"momd") else {
             fatalError("Error loading model from bundle")
@@ -122,11 +122,9 @@ class VGDataStore {
         newVehicle.name = vehicle.name
         newVehicle.id = UUID()
         newVehicle.mapColor = vehicle.mapColor
-        
-        // TODO: Create a image file.
-        //newVehicle.image =
-        
-        
+        vehicle.id = newVehicle.id
+        newVehicle.image = vgFileManager.imageToFile(image: vehicle.image!, for: vehicle)
+
         context.insert(newVehicle)
         do {
             try context.save()
@@ -144,17 +142,21 @@ class VGDataStore {
         }
         
         newVehicle.name = vehicle.name
-        newVehicle.id = UUID()
+        newVehicle.id = vehicle.id
         newVehicle.mapColor = vehicle.mapColor
-        
-        // TODO: Create a image file.
-        //newVehicle.image =
+        if newVehicle.image != nil {
+            _ = vgFileManager.deleteImage(for: vehicle)
+        }
+        newVehicle.image = vgFileManager.imageToFile(image: vehicle.image!, for: vehicle)
+
         do {
             try context.save()
         } catch let error {
             print(error)
         }
     }
+    
+
     
     func getAllVehicles() -> [VGVehicle] {
         let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
@@ -496,13 +498,13 @@ class VGDataStore {
         
         var result = [VGDataPoint]()
         
-        let fetchedDataPoints = getPoints(for: vgTrack, in: context)
+        var fetchedDataPoints = getPoints(for: vgTrack, in: context)
         
         for point in fetchedDataPoints {
             let vgPoint = VGDataPoint(managedPoint: point)
             result.append(vgPoint)
         }
-        
+        fetchedDataPoints = []
         return result.sorted()
     }
     

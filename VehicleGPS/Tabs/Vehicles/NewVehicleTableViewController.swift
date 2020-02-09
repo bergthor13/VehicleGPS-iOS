@@ -26,6 +26,7 @@ class NewVehicleTableViewController: UITableViewController, UINavigationControll
     var vehiclesController: VGVehiclesTableViewController!
     var vehicle: VGVehicle?
     var imagePicker: UIImagePickerController!
+    var selectedImage:UIImage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +60,8 @@ class NewVehicleTableViewController: UITableViewController, UINavigationControll
             print("Image not found!")
             return
         }
-        cell.imgProfile.image = selectedImage
+        self.selectedImage = selectedImage
+        cell.imgProfile.image = self.selectedImage
     }
 
     // MARK: - Table view data source
@@ -98,6 +100,7 @@ class NewVehicleTableViewController: UITableViewController, UINavigationControll
             vehicle.mapColor = UIColor.white
             vehicle.name = self.cell.txtName.text
             vehicle.id = self.vehicle?.id
+            vehicle.image = self.selectedImage
             self.dataStore.add(vehicle)
             if let vehiclesController = self.vehiclesController {
                 vehiclesController.addVehicle(vehicle)

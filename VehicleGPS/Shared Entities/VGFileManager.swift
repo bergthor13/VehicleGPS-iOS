@@ -15,6 +15,7 @@ class VGFileManager {
     var LOG_DIRECTORY = "OriginalLogs"
     var IMAGE_DIRECTORY_LIGHT = "OverviewSnapsLight"
     var IMAGE_DIRECTORY_DARK = "OverviewSnapsDark"
+    var VEHICLE_IMAGE_DIRECTORY = "VehicleImages"
     init() {
         fileManager = FileManager.default
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
@@ -23,6 +24,7 @@ class VGFileManager {
         createDirectory(directoryName: LOG_DIRECTORY)
         createDirectory(directoryName: IMAGE_DIRECTORY_LIGHT)
         createDirectory(directoryName: IMAGE_DIRECTORY_DARK)
+        createDirectory(directoryName: VEHICLE_IMAGE_DIRECTORY)
     }
     
     func createDirectory(directoryName:String) {
@@ -53,6 +55,44 @@ class VGFileManager {
             print(error)
             return nil
         }
+    }
+    
+    func getImage(for vehicle:VGVehicle) -> UIImage? {
+        let path = getPathToImage(for: vehicle)
+        guard let pathString = path?.path else {
+            return nil
+        }
+        return UIImage(contentsOfFile: pathString)
+    }
+    
+    func getPathToImage(for vehicle: VGVehicle) -> URL? {
+        var path = getVehicleImagesFolder()
+        path = path!.appendingPathComponent(vehicle.id!.uuidString)
+        path = path!.appendingPathExtension("png")
+        return path
+    }
+    
+    func imageToFile(image:UIImage, for vehicle:VGVehicle) -> URL? {
+        let path = getPathToImage(for: vehicle)
+
+        do {
+            try image.pngData()?.write(to: path!)
+            return path
+        } catch let error {
+            print(error)
+        }
+        return nil
+    }
+    
+    func deleteImage(for vehicle:VGVehicle) -> Bool{
+        let path = getPathToImage(for: vehicle)
+        do {
+            try fileManager.removeItem(atPath: path!.path)
+        } catch let error {
+            print(error)
+            return false
+        }
+        return true
     }
     
     func deleteFileFor(track: VGTrack) {
@@ -134,6 +174,14 @@ class VGFileManager {
     func getLogsFolder() -> URL? {
         if var dir = getDocumentsFolder() {
             dir.appendPathComponent(LOG_DIRECTORY)
+            return dir
+        }
+        return nil
+    }
+    
+    func getVehicleImagesFolder() -> URL? {
+        if var dir = getDocumentsFolder() {
+            dir.appendPathComponent(VEHICLE_IMAGE_DIRECTORY)
             return dir
         }
         return nil
