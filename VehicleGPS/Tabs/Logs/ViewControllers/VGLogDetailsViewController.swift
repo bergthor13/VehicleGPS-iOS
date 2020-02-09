@@ -51,7 +51,6 @@ class VGLogDetailsViewController: UIViewController {
         self.mapView.mapType = .hybrid
         
         DispatchQueue.global(qos: .userInitiated).async {
-            self.vgLogParser = VGLogParser(fileManager: self.vgFileManager, snapshotter: self.vgSnapshotMaker)
         
             let mapList = self.dataStore.getMapPointsForTrack(vgTrack: self.track)
             if mapList.count > 0 {
@@ -78,6 +77,8 @@ class VGLogDetailsViewController: UIViewController {
                 }
             }
             self.vgSnapshotMaker = VGSnapshotMaker(fileManager: self.vgFileManager)
+            self.vgLogParser = VGLogParser(fileManager: self.vgFileManager, snapshotter: self.vgSnapshotMaker)
+
             self.vgSnapshotMaker.drawTrack(vgTrack: self.track)
         }
     }

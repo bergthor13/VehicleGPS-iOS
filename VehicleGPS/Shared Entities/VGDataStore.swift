@@ -195,12 +195,12 @@ class VGDataStore {
     }
     
     func add(vgMapPoint:VGMapPoint, to vgTrack: Track, in context:NSManagedObjectContext) {
-        let entity = NSEntityDescription.entity(forEntityName: "DataPoint", in: context)!
-        let dataPoint = NSManagedObject(entity: entity, insertInto: context)
-        dataPoint.setValue(vgMapPoint.timestamp, forKey: "timeStamp")
-        dataPoint.setValue(vgMapPoint.latitude, forKey: "latitude")
-        dataPoint.setValue(vgMapPoint.longitude, forKey: "longitude")
-        dataPoint.setValue(vgTrack, forKey: "track")
+        let entity = NSEntityDescription.entity(forEntityName: "MapPoint", in: context)!
+        let mapPoint = NSManagedObject(entity: entity, insertInto: context)
+        mapPoint.setValue(vgMapPoint.timestamp, forKey: "timeStamp")
+        mapPoint.setValue(vgMapPoint.latitude, forKey: "latitude")
+        mapPoint.setValue(vgMapPoint.longitude, forKey: "longitude")
+        mapPoint.setValue(vgTrack, forKey: "track")
     }
     
 
