@@ -17,6 +17,7 @@ class VGTrack {
     var fileSize:Int // In bytes
     var timeStart:Date?
     var trackPoints:[VGDataPoint]
+    var mapPoints:[VGMapPoint]
     var minLat:Double
     var maxLat:Double
     var minLon:Double
@@ -54,11 +55,11 @@ class VGTrack {
         }
 
         trackPoints = [VGDataPoint]()
+        mapPoints = [VGMapPoint]()
 
         // Memory stored values
         self.isRemote = false
         self.isLocal = false
-
     }
     
     init() {
@@ -75,6 +76,7 @@ class VGTrack {
         isLocal = false
         
         trackPoints = [VGDataPoint]()
+        mapPoints = [VGMapPoint]()
     }
     
     var hasOBDData: Bool {
@@ -116,25 +118,102 @@ class VGTrack {
         }
         
         for (point1, point2) in zip(trackPoints, trackPoints.dropFirst()) {
-            guard let latitude1 = point1.latitude, let longitude1 = point1.longitude else {
+            guard let _ = point1.latitude, let _ = point1.longitude else {
                 continue
             }
             guard let latitude2 = point2.latitude, let longitude2 = point2.longitude else {
                 continue
             }
-            let duration = point2.timestamp?.timeIntervalSince(point1.timestamp!)
-            let lastCoord = CLLocation(latitude: latitude1, longitude: longitude1)
-            let coord = CLLocation(latitude: latitude2, longitude: longitude2)
-            
-            let distance = coord.distance(from: lastCoord)
-            
-            let speed = (distance/duration!)*3.6
+            let speed = VGTrack.getSpeedBetween(point1: point1, point2: point2)
             if speed > 0.5 && point1.hasGoodFix() && point2.hasGoodFix() {
                 list.append(CLLocationCoordinate2D(latitude: latitude2, longitude: longitude2))
             }
             
         }
         return list
+    }
+    
+    func getFilteredPointList(list:[VGDataPoint]) -> [VGMapPoint] {
+        let maxDurationBetweenPoints = 60.0 // in seconds
+        let minDurationBetweenPoints = 1.0
+        
+        var mapPoints = [VGMapPoint]()
+        var lastAddedPoint: VGMapPoint?
+        var lastBearing: Double?
+        for (point1, point2) in zip(list, list.dropFirst()) {
+            guard let latitude1 = point1.latitude, let longitude1 = point1.longitude else {
+                continue
+            }
+            guard let latitude2 = point2.latitude, let longitude2 = point2.longitude else {
+                continue
+            }
+            
+            let p1 = CLLocationCoordinate2D(latitude: latitude1, longitude: longitude1)
+            let p2 = CLLocationCoordinate2D(latitude: latitude2, longitude: longitude2)
+            
+            let speed = VGTrack.getSpeedBetween(point1: point1, point2: point2)
+            if speed <= 0.5 {
+                continue
+            }
+            let bearing = VGTrack.getBearingBetween(point1: p1, point2: p2)
+
+            
+            if lastAddedPoint == nil {
+                let newPoint = VGMapPoint(point: p1, timestamp: point1.timestamp!)
+                mapPoints.append(newPoint)
+                lastBearing = bearing
+                lastAddedPoint = newPoint
+                continue
+            }
+            
+            if (point1.timestamp?.timeIntervalSince(lastAddedPoint!.timestamp))! < minDurationBetweenPoints {
+                continue
+            }
+            
+            let timeCondition = (point1.timestamp?.timeIntervalSince(lastAddedPoint!.timestamp))! > maxDurationBetweenPoints
+            let courseCondition = (abs(lastBearing!-bearing)) > 1.0
+            
+            if timeCondition || courseCondition {
+                let newPoint = VGMapPoint(point: p1, timestamp: point1.timestamp!)
+                mapPoints.append(newPoint)
+                lastBearing = bearing
+                lastAddedPoint = newPoint
+                continue
+            }
+        }
+        let newPoint = VGMapPoint(point: CLLocationCoordinate2D(latitude: list.last!.latitude!, longitude: list.last!.longitude!), timestamp: list.last!.timestamp!)
+        mapPoints.append(newPoint)
+        return mapPoints
+    }
+    static func degreesToRadians(degrees: Double) -> Double { return degrees * .pi / 180.0 }
+    static func radiansToDegrees(radians: Double) -> Double { return radians * 180.0 / .pi }
+
+    static func getBearingBetween(point1 : CLLocationCoordinate2D, point2 : CLLocationCoordinate2D) -> Double {
+
+        let lat1 = degreesToRadians(degrees: point1.latitude)
+        let lon1 = degreesToRadians(degrees: point1.longitude)
+
+        let lat2 = degreesToRadians(degrees: point2.latitude)
+        let lon2 = degreesToRadians(degrees: point2.longitude)
+
+        let dLon = lon2 - lon1
+
+        let y = sin(dLon) * cos(lat2)
+        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
+        let radiansBearing = atan2(y, x)
+
+        return radiansToDegrees(radians: radiansBearing)
+    }
+    
+    static func getSpeedBetween(point1:VGDataPoint, point2:VGDataPoint) -> Double {
+        let duration = point2.timestamp?.timeIntervalSince(point1.timestamp!)
+        let lastCoord = CLLocation(latitude: point1.latitude!, longitude: point1.longitude!)
+        let coord = CLLocation(latitude: point2.latitude!, longitude: point2.longitude!)
+        
+        let distance = coord.distance(from: lastCoord)
+        
+        return (distance/duration!)*3.6
+
     }
     
     func process() {

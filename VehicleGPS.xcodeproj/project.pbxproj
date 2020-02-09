@@ -75,6 +75,7 @@
 		F27CB77C23D38A3D002BF28F /* DeviceConnectedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F27CB77B23D38A3D002BF28F /* DeviceConnectedHeaderView.xib */; };
 		F27CB77E23D38C50002BF28F /* DeviceConnectedHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27CB77D23D38C50002BF28F /* DeviceConnectedHeaderView.swift */; };
 		F2AC16FE23EDAFA400516498 /* EditVehicleTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AC16FD23EDAFA400516498 /* EditVehicleTableViewController.swift */; };
+		F2AC170223F0094C00516498 /* VGMapPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AC170123F0094C00516498 /* VGMapPoint.swift */; };
 		F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C96EB122A853A500180055 /* VGFileManager.swift */; };
 		F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */; };
 		F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */; };
@@ -156,6 +157,7 @@
 		F27CB77B23D38A3D002BF28F /* DeviceConnectedHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DeviceConnectedHeaderView.xib; sourceTree = "<group>"; };
 		F27CB77D23D38C50002BF28F /* DeviceConnectedHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConnectedHeaderView.swift; sourceTree = "<group>"; };
 		F2AC16FD23EDAFA400516498 /* EditVehicleTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditVehicleTableViewController.swift; sourceTree = "<group>"; };
+		F2AC170123F0094C00516498 /* VGMapPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGMapPoint.swift; sourceTree = "<group>"; };
 		F2C96EB122A853A500180055 /* VGFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFileManager.swift; sourceTree = "<group>"; };
 		F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDataStore.swift; sourceTree = "<group>"; };
 		F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGPXGenerator.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 				F215AC6323DB1AA40001AF24 /* VGVehicle.swift */,
 				F215AC6523DB1AAC0001AF24 /* VGJourney.swift */,
 				F23BE8E922A5E5BB008FD50C /* VGTrack.swift */,
+				F2AC170123F0094C00516498 /* VGMapPoint.swift */,
 			);
 			path = "Database Entities";
 			sourceTree = "<group>";
@@ -555,6 +558,7 @@
 				F23BE8F222A5E5BB008FD50C /* VGLogDetailsViewController.swift in Sources */,
 				F257077A22F09AAA00F201B3 /* TrackGraphView.swift in Sources */,
 				F23BE8C722A5E4B9008FD50C /* VehicleGPS.xcdatamodeld in Sources */,
+				F2AC170223F0094C00516498 /* VGMapPoint.swift in Sources */,
 				F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */,
 				F24D88C523D3C7BD0071F6BC /* VGDownloadLogsViewController.swift in Sources */,
 				F23BE8DF22A5E596008FD50C /* VGSettingsNavigationController.swift in Sources */,

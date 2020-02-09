@@ -94,6 +94,7 @@ class VGDataPoint {
     var relatedTrack: VGTrack?
     
     init() {
+        
     }
     
     init(managedPoint:NSManagedObject) {

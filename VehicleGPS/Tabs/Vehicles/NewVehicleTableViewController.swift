@@ -101,7 +101,7 @@ class NewVehicleTableViewController: UITableViewController, UINavigationControll
             vehicle.name = self.cell.txtName.text
             vehicle.id = self.vehicle?.id
             vehicle.image = self.selectedImage
-            self.dataStore.add(vehicle)
+            self.dataStore.add(vgVehicle: vehicle)
             if let vehiclesController = self.vehiclesController {
                 vehiclesController.addVehicle(vehicle)
             }

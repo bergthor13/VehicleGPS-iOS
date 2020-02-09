@@ -10,22 +10,9 @@ import UIKit
 import CoreData
 
 class VGDataStore {
-    
+    // MARK: - Initialization
     let storeCoordinator: NSPersistentStoreCoordinator
     let vgFileManager = VGFileManager()
-    init() {
-        guard let modelURL = Bundle.main.url(forResource: "VehicleGPS", withExtension:"momd") else {
-            fatalError("Error loading model from bundle")
-        }
-        
-        // The managed object model for the application. It is a fatal error for the application not to be able to find and load its model.
-        guard let mom = NSManagedObjectModel(contentsOf: modelURL) else {
-            fatalError("Error initializing mom from: \(modelURL)")
-        }
-        
-        self.storeCoordinator = NSPersistentStoreCoordinator(managedObjectModel: mom)
-        initializeContainer()
-    }
     
     func initializeContainer() {
         let container = NSPersistentContainer(name: "VehicleGPS")
@@ -43,15 +30,40 @@ class VGDataStore {
         })
     }
     
-    fileprivate func getPoints(for track:VGTrack, in context:NSManagedObjectContext) -> [NSManagedObject] {
-        let trackFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Track")
-        trackFetchRequest.predicate = NSPredicate(format: "fileName = %@", track.fileName)
+    init() {
+        guard let modelURL = Bundle.main.url(forResource: "VehicleGPS", withExtension:"momd") else {
+            fatalError("Error loading model from bundle")
+        }
         
+        // The managed object model for the application. It is a fatal error for the application not to be able to find and load its model.
+        guard let mom = NSManagedObjectModel(contentsOf: modelURL) else {
+            fatalError("Error initializing mom from: \(modelURL)")
+        }
+        
+        self.storeCoordinator = NSPersistentStoreCoordinator(managedObjectModel: mom)
+        initializeContainer()
+    }
+    
+
+    // MARK: - Private Functions
+    fileprivate func getPoints(for track:VGTrack, in context:NSManagedObjectContext) -> [NSManagedObject] {
+        let fetchedTrack = getTrack(for: track, in: context)!
+
+        let dataPointFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "DataPoint")
+        dataPointFetchRequest.predicate = NSPredicate(format: "track = %@", fetchedTrack)
+    
         do {
-            guard let fetchedTrack = try context.fetch(trackFetchRequest).first else {
-                return []
-            }
-            let dataPointFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "DataPoint")
+            return try context.fetch(dataPointFetchRequest)
+        } catch {
+            return []
+        }
+    }
+    
+    fileprivate func getMapPoints(for track:VGTrack, in context:NSManagedObjectContext) -> [MapPoint] {
+        let fetchedTrack = getTrack(for: track, in: context)!
+
+        do {
+            let dataPointFetchRequest = NSFetchRequest<MapPoint>(entityName: "MapPoint")
             dataPointFetchRequest.predicate = NSPredicate(format: "track = %@", fetchedTrack)
             
             return try context.fetch(dataPointFetchRequest)
@@ -89,96 +101,7 @@ class VGDataStore {
         }
     }
     
-    func deleteAllData(_ entity:String) {
-        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        context.persistentStoreCoordinator = self.storeCoordinator
-        
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
-        fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.fetchLimit = 1000000
-        context.perform {
-            do {
-                let results = try context.fetch(fetchRequest)
-                for object in results {
-                    guard let objectData = object as? NSManagedObject else {continue}
-                    context.delete(objectData)
-                }
-                do {
-                    try context.save()
-                } catch let error {
-                    print(error)
-                }
-            } catch let error {
-                print("Delete all data in \(entity) error :", error)
-            }
-        }
-    }
-    
-    func add(_ vehicle:VGVehicle) {
-        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        context.persistentStoreCoordinator = self.storeCoordinator
-        let entityDescription = NSEntityDescription.entity(forEntityName: "Vehicle", in: context)!
-        let newVehicle = Vehicle.init(entity: entityDescription, insertInto: context)
-        newVehicle.name = vehicle.name
-        newVehicle.id = UUID()
-        newVehicle.mapColor = vehicle.mapColor
-        vehicle.id = newVehicle.id
-        newVehicle.image = vgFileManager.imageToFile(image: vehicle.image!, for: vehicle)
-
-        context.insert(newVehicle)
-        do {
-            try context.save()
-        } catch let error {
-            print(error)
-        }
-    }
-    
-    func update(_ vehicle:VGVehicle) {
-        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        context.persistentStoreCoordinator = self.storeCoordinator
-        
-        guard let newVehicle = getVehicle(for: vehicle, in: context) else {
-            return
-        }
-        
-        newVehicle.name = vehicle.name
-        newVehicle.id = vehicle.id
-        newVehicle.mapColor = vehicle.mapColor
-        if newVehicle.image != nil {
-            _ = vgFileManager.deleteImage(for: vehicle)
-        }
-        newVehicle.image = vgFileManager.imageToFile(image: vehicle.image!, for: vehicle)
-
-        do {
-            try context.save()
-        } catch let error {
-            print(error)
-        }
-    }
-    
-
-    
-    func getAllVehicles() -> [VGVehicle] {
-        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        context.persistentStoreCoordinator = self.storeCoordinator
-
-        let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
-        do {
-            var returnList = [VGVehicle]()
-            let result =  try context.fetch(fetchRequest)
-            for item in result {
-                let newVehicle = VGVehicle(vehicle: item)
-                newVehicle.tracks = getAllTracks(for: newVehicle, in: context)
-                returnList.append(newVehicle)
-            }
-            return returnList
-        } catch let error {
-            print(error)
-        }
-        return []
-    }
-    
-    func getAllTracks(for vgVehicle:VGVehicle, in context: NSManagedObjectContext) -> [VGTrack] {
+    fileprivate func getAllTracks(for vgVehicle:VGVehicle, in context: NSManagedObjectContext) -> [VGTrack] {
         var result = [VGTrack]()
         //2
         let fetchRequest =
@@ -245,10 +168,72 @@ class VGDataStore {
 
     }
     
-    func countAllData(_ entity:String, callback:(Int)->()) {
-        let fetchLimit = 500000
-        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+    fileprivate func add(vgDataPoint:VGDataPoint, to vgTrack: Track, in context:NSManagedObjectContext) {
+        let entity = NSEntityDescription.entity(forEntityName: "DataPoint", in: context)!
+        
+        let dataPoint = NSManagedObject(entity: entity, insertInto: context)
+        if vgDataPoint.timestamp != nil {
+            dataPoint.setValue(vgDataPoint.timestamp, forKey: "timeStamp")
+        }
+        
+        dataPoint.setValue(vgDataPoint.latitude, forKey: "latitude")
+        dataPoint.setValue(vgDataPoint.longitude, forKey: "longitude")
+        dataPoint.setValue(vgDataPoint.elevation, forKey: "elevation")
+        dataPoint.setValue(vgDataPoint.satellites, forKey: "satellites")
+        dataPoint.setValue(vgDataPoint.horizontalAccuracy, forKey: "horizontalAccuracy")
+        dataPoint.setValue(vgDataPoint.verticalAccuracy, forKey: "verticalAccuracy")
+        dataPoint.setValue(vgDataPoint.pdop, forKey: "pdop")
+        dataPoint.setValue(vgDataPoint.fixType, forKey: "fixType")
+        dataPoint.setValue(vgDataPoint.gnssFixOk, forKey: "gnssFixOK")
+        dataPoint.setValue(vgDataPoint.fullyResolved, forKey: "fullyResolved")
+        dataPoint.setValue(vgDataPoint.rpm, forKey: "rpm")
+        dataPoint.setValue(vgDataPoint.engineLoad, forKey: "engineLoad")
+        dataPoint.setValue(vgDataPoint.coolantTemperature, forKey: "coolantTemperature")
+        dataPoint.setValue(vgDataPoint.ambientTemperature, forKey: "ambientTemperature")
+        dataPoint.setValue(vgDataPoint.throttlePosition, forKey: "throttlePosition")
+        dataPoint.setValue(vgTrack, forKey: "track")
+    }
+    
+    func add(vgMapPoint:VGMapPoint, to vgTrack: Track, in context:NSManagedObjectContext) {
+        let entity = NSEntityDescription.entity(forEntityName: "DataPoint", in: context)!
+        let dataPoint = NSManagedObject(entity: entity, insertInto: context)
+        dataPoint.setValue(vgMapPoint.timestamp, forKey: "timeStamp")
+        dataPoint.setValue(vgMapPoint.latitude, forKey: "latitude")
+        dataPoint.setValue(vgMapPoint.longitude, forKey: "longitude")
+        dataPoint.setValue(vgTrack, forKey: "track")
+    }
+    
+
+    
+    // MARK: - Public Functions
+    // MARK: Database Functions
+    func deleteAllData(entity:String) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
+        fetchRequest.returnsObjectsAsFaults = false
+        fetchRequest.fetchLimit = 1000000
+        context.perform {
+            do {
+                let results = try context.fetch(fetchRequest)
+                for object in results {
+                    guard let objectData = object as? NSManagedObject else {continue}
+                    context.delete(objectData)
+                }
+                do {
+                    try context.save()
+                } catch let error {
+                    print(error)
+                }
+            } catch let error {
+                print("Delete all data in \(entity) error :", error)
+            }
+        }
+    }
+    
+    func countAllData(entity:String, callback:(Int)->()) {
+        let fetchLimit = 500000
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
         fetchRequest.returnsObjectsAsFaults = false
@@ -260,7 +245,10 @@ class VGDataStore {
         repeat {
             do {
                 fetchRequest.fetchOffset = offset
-                fetchCount = try context.fetch(fetchRequest).count
+                let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+                context.persistentStoreCoordinator = self.storeCoordinator
+                let result = try context.fetch(fetchRequest)
+                fetchCount = result.count
                 totalCount += fetchCount
             } catch let error {
                 print("Count all data in \(entity) error :", error)
@@ -272,6 +260,7 @@ class VGDataStore {
         callback(totalCount)
     }
     
+    // MARK: Track
     func getAllTracks() -> [VGTrack] {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
@@ -340,35 +329,7 @@ class VGDataStore {
         return result
     }
     
-    func add(vgDataPoint:VGDataPoint, to vgTrack: NSManagedObject, in context:NSManagedObjectContext) {
-        // 2
-        let entity = NSEntityDescription.entity(forEntityName: "DataPoint", in: context)!
-        
-        let dataPoint = NSManagedObject(entity: entity, insertInto: context)
-        if vgDataPoint.timestamp != nil {
-            dataPoint.setValue(vgDataPoint.timestamp, forKey: "timeStamp")
-        }
-        
-        dataPoint.setValue(vgDataPoint.latitude, forKey: "latitude")
-        dataPoint.setValue(vgDataPoint.longitude, forKey: "longitude")
-        dataPoint.setValue(vgDataPoint.elevation, forKey: "elevation")
-        dataPoint.setValue(vgDataPoint.satellites, forKey: "satellites")
-        dataPoint.setValue(vgDataPoint.horizontalAccuracy, forKey: "horizontalAccuracy")
-        dataPoint.setValue(vgDataPoint.verticalAccuracy, forKey: "verticalAccuracy")
-        dataPoint.setValue(vgDataPoint.pdop, forKey: "pdop")
-        dataPoint.setValue(vgDataPoint.fixType, forKey: "fixType")
-        dataPoint.setValue(vgDataPoint.gnssFixOk, forKey: "gnssFixOK")
-        dataPoint.setValue(vgDataPoint.fullyResolved, forKey: "fullyResolved")
-        dataPoint.setValue(vgDataPoint.rpm, forKey: "rpm")
-        dataPoint.setValue(vgDataPoint.engineLoad, forKey: "engineLoad")
-        dataPoint.setValue(vgDataPoint.coolantTemperature, forKey: "coolantTemperature")
-        dataPoint.setValue(vgDataPoint.ambientTemperature, forKey: "ambientTemperature")
-        dataPoint.setValue(vgDataPoint.throttlePosition, forKey: "throttlePosition")
-        dataPoint.setValue(vgTrack, forKey: "track")
-        
-    }
-    
-    fileprivate func add(vgTrack: VGTrack) {
+    func add(vgTrack: VGTrack) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         
@@ -378,8 +339,7 @@ class VGDataStore {
                 NSEntityDescription.entity(forEntityName: "Track",
                                            in: context)!
             
-            let track = NSManagedObject(entity: entity,
-                                        insertInto: context)
+            let track = Track.init(entity: entity, insertInto: context)
             
             // 3
             track.setValue(vgTrack.fileName, forKey: "fileName")
@@ -397,6 +357,10 @@ class VGDataStore {
                 if point.hasGoodFix() {
                     self.add(vgDataPoint: point, to: track, in: context)
                 }
+            }
+            
+            for point in vgTrack.mapPoints {
+                self.add(vgMapPoint: point, to: track, in: context)
             }
             
             // 4
@@ -417,7 +381,7 @@ class VGDataStore {
             do {
                 let test = try context.fetch(fetchRequest)
                 if test.count > 0 {
-                    if let trackUpdate = test[0] as? NSManagedObject {
+                    if let trackUpdate = test[0] as? Track {
                         trackUpdate.setValue(vgTrack.fileName, forKey: "fileName")
                         trackUpdate.setValue(vgTrack.fileSize, forKey: "fileSize")
                         trackUpdate.setValue(vgTrack.duration, forKey: "duration")
@@ -450,26 +414,6 @@ class VGDataStore {
         
     }
     
-    func delete(vgVehicle: VGVehicle, callback:@escaping()->()) {
-        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        context.persistentStoreCoordinator = self.storeCoordinator
-        context.perform {
-            let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
-            fetchRequest.predicate = NSPredicate(format: "id = %@", argumentArray: [vgVehicle.id!])
-            do {
-                let test = try context.fetch(fetchRequest)
-                if test.count > 0 {
-                    context.delete(test[0])
-                    try context.save()
-                    callback()
-                }
-            } catch let error {
-                print(error)
-                callback()
-            }
-        }
-    }
-    
     func delete(vgTrack: VGTrack) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
@@ -493,7 +437,7 @@ class VGDataStore {
     
     
     func getPointsForTrack(vgTrack:VGTrack) -> [VGDataPoint] {
-        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         
         var result = [VGDataPoint]()
@@ -507,6 +451,106 @@ class VGDataStore {
         fetchedDataPoints = []
         return result.sorted()
     }
+    
+    func getMapPointsForTrack(vgTrack:VGTrack) -> [VGMapPoint] {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        
+        var result = [VGMapPoint]()
+        
+        var fetchedDataPoints = getMapPoints(for: vgTrack, in: context)
+        
+        for point in fetchedDataPoints {
+            let vgPoint = VGMapPoint(point: point)
+            result.append(vgPoint)
+        }
+        fetchedDataPoints = []
+        return result.sorted()
+    }
+
+    // MARK: Vehicle
+    func getAllVehicles() -> [VGVehicle] {
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+
+        let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
+        do {
+            var returnList = [VGVehicle]()
+            let result =  try context.fetch(fetchRequest)
+            for item in result {
+                let newVehicle = VGVehicle(vehicle: item)
+                newVehicle.tracks = getAllTracks(for: newVehicle, in: context)
+                returnList.append(newVehicle)
+            }
+            return returnList
+        } catch let error {
+            print(error)
+        }
+        return []
+    }
+    func add(vgVehicle:VGVehicle) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        let entityDescription = NSEntityDescription.entity(forEntityName: "Vehicle", in: context)!
+        let newVehicle = Vehicle.init(entity: entityDescription, insertInto: context)
+        newVehicle.name = vgVehicle.name
+        newVehicle.id = UUID()
+        newVehicle.mapColor = vgVehicle.mapColor
+        vgVehicle.id = newVehicle.id
+        newVehicle.image = vgFileManager.imageToFile(image: vgVehicle.image!, for: vgVehicle)
+
+        context.insert(newVehicle)
+        do {
+            try context.save()
+        } catch let error {
+            print(error)
+        }
+    }
+    
+    func update(vgVehicle:VGVehicle) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        
+        guard let newVehicle = getVehicle(for: vgVehicle, in: context) else {
+            return
+        }
+        
+        newVehicle.name = vgVehicle.name
+        newVehicle.id = vgVehicle.id
+        newVehicle.mapColor = vgVehicle.mapColor
+        if newVehicle.image != nil {
+            _ = vgFileManager.deleteImage(for: vgVehicle)
+        }
+        newVehicle.image = vgFileManager.imageToFile(image: vgVehicle.image!, for: vgVehicle)
+
+        do {
+            try context.save()
+        } catch let error {
+            print(error)
+        }
+    }
+
+    func delete(vgVehicle: VGVehicle, callback:@escaping()->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
+            fetchRequest.predicate = NSPredicate(format: "id = %@", argumentArray: [vgVehicle.id!])
+            do {
+                let test = try context.fetch(fetchRequest)
+                if test.count > 0 {
+                    context.delete(test[0])
+                    try context.save()
+                    callback()
+                }
+            } catch let error {
+                print(error)
+                callback()
+            }
+        }
+    }
+    
+
     
     func add(vgVehicle:VGVehicle, to vgTrack:VGTrack) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -525,6 +569,7 @@ class VGDataStore {
         }
     }
     
+    // MARK: Other
     func split(track:VGTrack, at time:Date) -> (VGTrack, VGTrack) {
         var newTrack = VGTrack()
         var pointIndex = -1

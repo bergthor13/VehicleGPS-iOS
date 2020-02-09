@@ -60,7 +60,7 @@ class VGDatabaseTableViewController: UITableViewController {
             cell.textLabel?.text = dataTypes[indexPath.row]
 
             DispatchQueue.global(qos: .userInitiated).async {
-                self.dataStore.countAllData(self.dataTypes[indexPath.row]) { (count) in
+                self.dataStore.countAllData(entity: self.dataTypes[indexPath.row]) { (count) in
                     DispatchQueue.main.async {
                         cell.detailTextLabel!.text = String(count)
                     }
@@ -97,7 +97,7 @@ class VGDatabaseTableViewController: UITableViewController {
             )
             
             alert.addAction(UIAlertAction(title: "Eyða", style: .destructive, handler: { (_) in
-                self.dataStore.deleteAllData(self.dataTypes[indexPath.row])
+                self.dataStore.deleteAllData(entity: self.dataTypes[indexPath.row])
             }))
             
             alert.addAction(UIAlertAction(title: "Hætta við", style: .cancel, handler: nil))

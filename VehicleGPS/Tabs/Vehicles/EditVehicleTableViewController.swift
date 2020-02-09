@@ -28,7 +28,7 @@ class EditVehicleTableViewController: NewVehicleTableViewController {
             vehicle.name = self.cell.txtName.text
             vehicle.id = self.vehicle?.id
             vehicle.image = self.selectedImage
-            self.dataStore.update(vehicle)
+            self.dataStore.update(vgVehicle: vehicle)
             if let vehiclesController = self.vehiclesController {
                 vehiclesController.editVehicle(vehicle)
             }

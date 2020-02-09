@@ -50,36 +50,46 @@ class VGLogDetailsViewController: UIViewController {
         self.mapView.delegate = self
         self.mapView.mapType = .hybrid
         
-
-        
         DispatchQueue.global(qos: .userInitiated).async {
-            self.vgSnapshotMaker = VGSnapshotMaker(fileManager: self.vgFileManager)
             self.vgLogParser = VGLogParser(fileManager: self.vgFileManager, snapshotter: self.vgSnapshotMaker)
         
-            let list = self.dataStore.getPointsForTrack(vgTrack: self.track)
-            var points = [CLLocationCoordinate2D]()
-            self.track.trackPoints = list
-            
-            self.vgSnapshotMaker.drawTrack(vgTrack: self.track)
-
-            
-            if list.count > 0 {
-                for point in list {
-                    guard let latitude = point.latitude, let longitude = point.longitude else {
-                        continue
-                    }
-                    points.append(CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
+            let mapList = self.dataStore.getMapPointsForTrack(vgTrack: self.track)
+            if mapList.count > 0 {
+                let points = mapList.map { (point) -> CLLocationCoordinate2D in
+                    return CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude)
                 }
                 DispatchQueue.main.async {
                     self.display(track: self.track, list: points, on: self.mapView)
                 }
-            } else {
-                DispatchQueue.main.async {
+            }
+            
+            let fullList = self.dataStore.getPointsForTrack(vgTrack: self.track)
+            if fullList.count > 0 {
+                
+            }
+            
+            self.track.trackPoints = fullList
+            
+            DispatchQueue.main.async {
+                if fullList.count > 0 {
+                    self.display(track: self.track, list: self.track.getCoordinateList(), on: self.mapView)
+                } else {
                     self.process(track: self.track)
                 }
             }
+            self.vgSnapshotMaker = VGSnapshotMaker(fileManager: self.vgFileManager)
+            self.vgSnapshotMaker.drawTrack(vgTrack: self.track)
         }
     }
+    
+    func addRadiusCircle(location: CLLocationCoordinate2D){
+        self.mapView.delegate = self
+        let circle = MKCircle(center: location, radius: 0.5 as CLLocationDistance)
+        self.mapView.addOverlay(circle)
+    }
+    
+
+
     
     func display(track: VGTrack, list: [CLLocationCoordinate2D], on mapView: MKMapView) {
         // pad our map by 10% around the farthest annotations
@@ -242,7 +252,15 @@ extension VGLogDetailsViewController: MKMapViewDelegate {
             polylineRender.lineWidth = 2
             return polylineRender
         }
+        
+        if overlay is MKCircle {
+            var circle = MKCircleRenderer(overlay: overlay)
+            circle.strokeColor = UIColor.green
+            circle.fillColor = UIColor(red: 0, green: 255, blue: 0)
+            circle.lineWidth = 1
+            return circle
+        }
+
         return MKOverlayRenderer(overlay: overlay)
     }
-    
 }
