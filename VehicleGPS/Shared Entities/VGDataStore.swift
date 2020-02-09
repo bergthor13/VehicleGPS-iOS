@@ -399,6 +399,10 @@ class VGDataStore {
                             }
                         }
                         
+                        for point in vgTrack.mapPoints {
+                            self.add(vgMapPoint: point, to: trackUpdate, in: context)
+                        }
+                        
                         try context.save()
                     }
                 } else {
