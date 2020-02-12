@@ -32,5 +32,9 @@ class DeviceConnectedHeaderView: UIView {
         super.awakeFromNib()
         self.greenBackground.layer.cornerRadius = 5
         self.greenButton.layer.cornerRadius = 5
+        self.greenBackground.layer.borderColor = UIColor.init(named: "appColor")?.cgColor
+        self.greenButton.layer.borderColor = UIColor.init(named: "appColor")?.cgColor
+        self.greenBackground.layer.borderWidth = 0.5
+        self.greenButton.layer.borderWidth = 0.5
     }
 }

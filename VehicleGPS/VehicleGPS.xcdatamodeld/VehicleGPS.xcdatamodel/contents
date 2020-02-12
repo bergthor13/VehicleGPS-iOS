@@ -26,7 +26,7 @@
     <entity name="MapPoint" representedClassName="MapPoint" syncable="YES" codeGenerationType="class">
         <attribute name="latitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="longitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="timeStamp" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="track" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Track" inverseName="mapPoints" inverseEntity="Track"/>
     </entity>
     <entity name="Track" representedClassName="Track" syncable="YES" codeGenerationType="class">
@@ -61,9 +61,9 @@
     </entity>
     <elements>
         <element name="DataPoint" positionX="196.8671875" positionY="-25.84765625" width="128" height="358"/>
+        <element name="MapPoint" positionX="144" positionY="126" width="128" height="103"/>
         <element name="Track" positionX="-63" positionY="-18" width="128" height="253"/>
         <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="148"/>
         <element name="VehicleType" positionX="144" positionY="126" width="128" height="88"/>
-        <element name="MapPoint" positionX="144" positionY="126" width="128" height="103"/>
     </elements>
 </model>

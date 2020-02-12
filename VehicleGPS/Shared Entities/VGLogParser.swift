@@ -59,6 +59,11 @@ class VGLogParser: IVGLogParser {
 
             track.process()
             
+            let mapPoints = track.trackPoints.filter { (point) -> Bool in
+                return point.hasGoodFix()
+            }
+            track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
+            
             self.vgSnapshotMaker.drawTrack(vgTrack: track) { (image, style) in
                 guard let imageCallback = imageCallback else {
                     return nil

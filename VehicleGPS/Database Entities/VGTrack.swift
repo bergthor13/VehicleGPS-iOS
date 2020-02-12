@@ -91,7 +91,7 @@ class VGTrack {
         return false
     }
     
-    var isoStartTime : String {
+    var isoStartTime: String {
         guard let startTime = timeStart else {
             return fileName
         }
@@ -133,7 +133,7 @@ class VGTrack {
         return list
     }
     
-    func getFilteredPointList(list:[VGDataPoint]) -> [VGMapPoint] {
+    static func getFilteredPointList(list:[VGDataPoint]) -> [VGMapPoint] {
         let maxDurationBetweenPoints = 60.0 // in seconds
         let minDurationBetweenPoints = 1.0
         
@@ -181,15 +181,17 @@ class VGTrack {
                 continue
             }
         }
-        let newPoint = VGMapPoint(point: CLLocationCoordinate2D(latitude: list.last!.latitude!, longitude: list.last!.longitude!), timestamp: list.last!.timestamp!)
-        mapPoints.append(newPoint)
+        if let last = list.last {
+            let newPoint = VGMapPoint(point: CLLocationCoordinate2D(latitude: last.latitude!, longitude: last.longitude!), timestamp: last.timestamp!)
+            mapPoints.append(newPoint)
+        }
         return mapPoints
     }
+    
     static func degreesToRadians(degrees: Double) -> Double { return degrees * .pi / 180.0 }
     static func radiansToDegrees(radians: Double) -> Double { return radians * 180.0 / .pi }
 
     static func getBearingBetween(point1 : CLLocationCoordinate2D, point2 : CLLocationCoordinate2D) -> Double {
-
         let lat1 = degreesToRadians(degrees: point1.latitude)
         let lon1 = degreesToRadians(degrees: point1.longitude)
 

@@ -141,6 +141,10 @@ class VGLogDetailsViewController: UIViewController {
             DispatchQueue.main.async {
                 hud.hide(animated: true)
             }
+            let mapPoints = track.trackPoints.filter { (point) -> Bool in
+                return point.hasGoodFix()
+            }
+            track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
             self.dataStore.update(vgTrack: track)
             
             let points = track.getCoordinateList()
@@ -255,7 +259,7 @@ extension VGLogDetailsViewController: MKMapViewDelegate {
         }
         
         if overlay is MKCircle {
-            var circle = MKCircleRenderer(overlay: overlay)
+            let circle = MKCircleRenderer(overlay: overlay)
             circle.strokeColor = UIColor.green
             circle.fillColor = UIColor(red: 0, green: 255, blue: 0)
             circle.lineWidth = 1

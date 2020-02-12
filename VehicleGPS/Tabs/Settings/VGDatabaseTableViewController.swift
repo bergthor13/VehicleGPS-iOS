@@ -18,7 +18,7 @@ class VGDatabaseTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = NSLocalizedString("Gagnagrunnur", comment: "")
-        dataTypes = ["Track", "DataPoint", "Vehicle"]
+        dataTypes = ["Track", "DataPoint", "MapPoint", "Vehicle"]
         fileTypes = [NSLocalizedString("Ferlaskrár", comment: ""), NSLocalizedString("Yfirlitsmyndir", comment: "")]
         
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {

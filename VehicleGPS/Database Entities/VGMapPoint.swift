@@ -18,7 +18,7 @@ class VGMapPoint {
     init(point:MapPoint) {
         self.latitude = point.latitude
         self.longitude = point.longitude
-        self.timestamp = point.timestamp!
+        self.timestamp = point.timeStamp!
     }
     
     init(point:CLLocationCoordinate2D, timestamp:Date) {

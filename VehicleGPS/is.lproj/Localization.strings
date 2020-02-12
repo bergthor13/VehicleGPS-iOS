@@ -5,7 +5,8 @@
   Created by Bergþór Þrastarson on 24/01/2020.
   Copyright © 2020 Bergþór Þrastarson. All rights reserved.
 */
-"Farartæki" = "Vehicles";
+
+"Farartæki" = "Farartæki";
 "Ferðalög" = "Journeys";
 "Saga" = "History";
 "Ferlar" = "Logs";

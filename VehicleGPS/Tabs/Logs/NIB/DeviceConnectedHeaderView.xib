@@ -3,7 +3,6 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
-        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -42,7 +41,7 @@
                             </constraints>
                         </imageView>
                     </subviews>
-                    <color key="backgroundColor" name="appColor"/>
+                    <color key="backgroundColor" red="0.10199999809265137" green="0.74500000476837158" blue="0.11299999803304672" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstItem="oKw-zu-jzV" firstAttribute="centerY" secondItem="esp-ek-sNn" secondAttribute="centerY" id="83j-Sd-AZi"/>
                         <constraint firstItem="oKw-zu-jzV" firstAttribute="leading" secondItem="YCL-Yj-9CJ" secondAttribute="trailing" constant="11" id="aSo-vG-Rrm"/>
@@ -57,7 +56,7 @@
                             <rect key="frame" x="5" y="0.0" width="31" height="41"/>
                         </imageView>
                     </subviews>
-                    <color key="backgroundColor" name="appColor"/>
+                    <color key="backgroundColor" red="0.10199999809265137" green="0.74500000476837158" blue="0.11299999803304672" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstAttribute="trailing" secondItem="iOb-or-Czc" secondAttribute="trailing" constant="5" id="Q9L-mY-rtd"/>
                         <constraint firstAttribute="bottom" secondItem="iOb-or-Czc" secondAttribute="bottom" id="Sc4-4t-gn7"/>
@@ -95,8 +94,5 @@
     <resources>
         <image name="DownloadIcon" width="512" height="512"/>
         <image name="onGPSIcon" width="2034" height="1390"/>
-        <namedColor name="appColor">
-            <color red="0.10199999809265137" green="0.74500000476837158" blue="0.11299999803304672" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
     </resources>
 </document>

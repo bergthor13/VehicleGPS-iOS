@@ -68,10 +68,8 @@ class HistoryDetailsTableViewController: UITableViewController {
                 }
             }
             for track in self.tracksSummary!.tracks {
-                track.trackPoints = self.dataStore.getPointsForTrack(vgTrack: track)
+                track.mapPoints = self.dataStore.getMapPointsForTrack(vgTrack: track)
                 self.display(track: track, on: self.mapView)
-                track.trackPoints = []
-
             }
             DispatchQueue.main.async {
                 activity.stopAnimating()
@@ -177,14 +175,14 @@ class HistoryDetailsTableViewController: UITableViewController {
 
     }
     func display(track: VGTrack, on mapView: MKMapView) {
-        let hasPoints = track.trackPoints.count > 0
-
-        if !hasPoints {
+        if !(track.mapPoints.count > 0) {
             return
         }
 
-        let list = track.getCoordinateList()
-        let polyline = MKPolyline(coordinates: list, count: list.count)
+        let points = track.mapPoints.map { (point) -> CLLocationCoordinate2D in
+            return CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude)
+        }
+        let polyline = MKPolyline(coordinates: points, count: points.count)
         
         if let color = track.vehicle?.mapColor {
             self.vehicleColor = color
