@@ -81,7 +81,8 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     
     fileprivate func configureNavigationBar() {
         let button1 = UIBarButtonItem(title: NSLocalizedString("Þátta", comment: ""), style: .plain, target: self, action: #selector(self.processFiles))
-        self.navigationItem.rightBarButtonItem = button1
+        self.navigationItem.leftBarButtonItem = button1
+        self.navigationItem.rightBarButtonItem = editButtonItem
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic
     }
@@ -650,7 +651,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
 
     
     override func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-        return "Delete"
+        return "Eyða"
     }
     
     // Override to support conditional editing of the table view.
