@@ -501,7 +501,10 @@ class VGDataStore {
         newVehicle.id = UUID()
         newVehicle.mapColor = vgVehicle.mapColor
         vgVehicle.id = newVehicle.id
-        newVehicle.image = vgFileManager.imageToFile(image: vgVehicle.image!, for: vgVehicle)
+        if let image = vgVehicle.image {
+            newVehicle.image = vgFileManager.imageToFile(image: image, for: vgVehicle)
+        }
+        
 
         context.insert(newVehicle)
         do {
@@ -525,7 +528,9 @@ class VGDataStore {
         if newVehicle.image != nil {
             _ = vgFileManager.deleteImage(for: vgVehicle)
         }
-        newVehicle.image = vgFileManager.imageToFile(image: vgVehicle.image!, for: vgVehicle)
+        if let image = vgVehicle.image {
+            newVehicle.image = vgFileManager.imageToFile(image: image, for: vgVehicle)
+        }
 
         do {
             try context.save()
