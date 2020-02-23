@@ -9,10 +9,20 @@ class VehicleDetailsTableViewController: UITableViewController {
             title = vehicle.name
         }
         
+        NotificationCenter.default.addObserver(self, selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated, object: nil)
+        
         let logsTableViewCellNib = UINib(nibName: "LogsTableViewCell", bundle: nil)
         self.tableView.register(logsTableViewCellNib, forCellReuseIdentifier: "LogsCell")
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEdit))
+    }
+    
+    @objc func onVehicleUpdated(_ notification:Notification) {
+        guard let updatedVehicle = notification.object as? VGVehicle else {
+            return
+        }
+        vehicle = updatedVehicle
+        title = updatedVehicle.name
     }
     
     @objc func didTapEdit() {
@@ -27,7 +37,10 @@ class VehicleDetailsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return vehicle!.tracks!.count
+        guard let tracks = vehicle?.tracks else {
+            return 0
+        }
+        return tracks.count
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

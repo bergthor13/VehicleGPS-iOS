@@ -253,7 +253,11 @@ class VGHistoryTableViewController: UITableViewController {
         var unformattedDistance = String(numberFormatter.string(from: NSNumber(value: summary.distance))!) + " km"
         var distanceText = NSMutableAttributedString.init(string: unformattedDistance)
         
-        distanceText.setAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 17, weight: .semibold),
+        
+        let scaledFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        let fontMetrics = UIFontMetrics(forTextStyle: .body)
+
+        distanceText.setAttributes([NSAttributedString.Key.font: fontMetrics.scaledFont(for: scaledFont),
                                   NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel],
                                    range: NSMakeRange(unformattedDistance.count-3, 3))
         cell.lblDistance.attributedText = distanceText
@@ -261,7 +265,10 @@ class VGHistoryTableViewController: UITableViewController {
         unformattedDistance = String(summary.trackCount) + " ferlar"
         distanceText = NSMutableAttributedString.init(string: unformattedDistance)
         
-        distanceText.setAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .semibold),
+        let scaledTrackFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        let fontTrackMetrics = UIFontMetrics(forTextStyle: .body)
+        
+        distanceText.setAttributes([NSAttributedString.Key.font: fontTrackMetrics.scaledFont(for: scaledTrackFont),
                                   NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel],
                                    range: NSMakeRange(unformattedDistance.count-7, 7))
         cell.lblTripCount.attributedText = distanceText

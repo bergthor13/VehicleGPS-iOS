@@ -36,13 +36,19 @@ class LogsTableViewCell: UITableViewCell {
         let viewWidth = self.frame.width
         progressViewWidthConstraint.constant = viewWidth*CGFloat(progress)
     }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.vgFileManager = appDelegate.fileManager
         }
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(preferredContentSizeChanged(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+
+    }
+    
+    @objc func preferredContentSizeChanged(_ sender:Any) {
+        lblVehicle.sizeToFit()
     }
     
     func show(track: VGTrack) {
@@ -82,6 +88,7 @@ class LogsTableViewCell: UITableViewCell {
         } else {
             lblVehicle.text = "Ekkert farartæki"
         }
+        lblVehicle.sizeToFit()
         
         if track.beingProcessed {
             activityView.startAnimating()
@@ -90,9 +97,11 @@ class LogsTableViewCell: UITableViewCell {
         }
 
     }
+    
     @IBAction func didTapVehicle(_ sender: Any) {
         delegate.didTapVehicle(track: currentTrack!)
     }
+    
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         guard let track = currentTrack else {return}
         trackView.layer.borderColor = UIColor.secondaryLabel.cgColor
@@ -116,7 +125,6 @@ class LogsTableViewCell: UITableViewCell {
         text.setAttributes([ .font: UIFont.systemFont(ofSize: 17, weight: .semibold),
                                   .foregroundColor: UIColor.secondaryLabel],
                                    range: range)
-
     }
     
     func find(char: String, in string: String) -> Int? {
@@ -140,8 +148,5 @@ class LogsTableViewCell: UITableViewCell {
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
-
 }

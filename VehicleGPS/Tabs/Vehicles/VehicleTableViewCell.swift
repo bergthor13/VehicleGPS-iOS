@@ -15,6 +15,7 @@ class VehicleTableViewCell: UITableViewCell {
     @IBOutlet weak var lblDistance: UILabel!
     @IBOutlet weak var lblDuration: UILabel!
     @IBOutlet weak var imgVehicle: UIImageView!
+    @IBOutlet weak var defaultViewBackground: UIView!
     
     
     override func awakeFromNib() {
@@ -28,6 +29,8 @@ class VehicleTableViewCell: UITableViewCell {
         colorBanner.layer.borderWidth = 0.5
 
         colorBanner.roundCorners(corners: [.bottomRight, .topRight], radius: 3.0)
+        
+        defaultViewBackground.layer.cornerRadius = defaultViewBackground.bounds.height/2
     }
 }
 

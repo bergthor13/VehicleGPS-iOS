@@ -25,6 +25,7 @@ class VGVehiclesTableViewController: UITableViewController {
         configureEmptyListLabel()
         registerCells()
         reloadVehicles(shouldReloadTableView: true)
+        NotificationCenter.default.addObserver(self, selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated, object: nil)
         self.navigationController?.navigationBar.prefersLargeTitles = true
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.circle.fill"), style: .plain, target: self, action: #selector(didTapAddVehicle))
@@ -104,13 +105,33 @@ class VGVehiclesTableViewController: UITableViewController {
         
         emptyLabel.frame = frame
     }
+    
+    @objc func onVehicleUpdated(_ notification:Notification) {
+        guard let updatedVehicle = notification.object as? VGVehicle else {
+            return
+        }
+        
+        for (index, vehicle) in vehicles.enumerated() {
+            if vehicle.id == updatedVehicle.id {
+                vehicles[index] = updatedVehicle
+                break
+            }
+        }
+        tableView.reloadData()
+    }
 
     // MARK: - Table view data source
-
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            let vehicle = vehicles[indexPath.row]
-            dataStore.delete(vgVehicle: vehicle) {
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        
+        let setDefaultAction = UIContextualAction(style: .normal, title: "Setja sem sjálfgefið") { (action, view, completion) in
+            completion(true)
+        }
+        
+        let deleteAction = UIContextualAction(style: .destructive, title: "Eyða") { (action, view, completion) in
+            let vehicle = self.vehicles[indexPath.row]
+            self.dataStore.delete(vgVehicle: vehicle) {
                 DispatchQueue.main.async {
                     self.vehicles.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .top)
@@ -118,19 +139,16 @@ class VGVehiclesTableViewController: UITableViewController {
                 }
             }
         }
-    }
-    
-    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         
+        let actionConfig = UISwipeActionsConfiguration(actions: [deleteAction, setDefaultAction])
+        return actionConfig
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return vehicles.count
     }
 
