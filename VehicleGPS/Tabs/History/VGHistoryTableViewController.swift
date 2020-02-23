@@ -14,6 +14,7 @@ class VGHistoryTableViewController: UITableViewController {
     let numberFormatter = NumberFormatter()
     var dataStore: VGDataStore!
     var emptyLabel: UILabel!
+    var historyHeader: HistoryHeader!
 
     var historySections = [HistorySection]() {
         didSet {
@@ -59,15 +60,15 @@ class VGHistoryTableViewController: UITableViewController {
         configureFormatters()
         configureEmptyListLabel()
         
-        let view = HistoryHeader(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        view.historyTableViewController = self
+        historyHeader = HistoryHeader(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        historyHeader.historyTableViewController = self
         
-        tableView.tableHeaderView = view
+        tableView.tableHeaderView = historyHeader
         
         // 3.
-        view.centerXAnchor.constraint(equalTo: self.tableView.centerXAnchor).isActive = true
-        view.widthAnchor.constraint(equalTo: self.tableView.widthAnchor).isActive = true
-        view.topAnchor.constraint(equalTo: self.tableView.topAnchor).isActive = true
+        historyHeader.centerXAnchor.constraint(equalTo: self.tableView.centerXAnchor).isActive = true
+        historyHeader.widthAnchor.constraint(equalTo: self.tableView.widthAnchor).isActive = true
+        historyHeader.topAnchor.constraint(equalTo: self.tableView.topAnchor).isActive = true
         // 4.
         self.tableView.tableHeaderView?.layoutIfNeeded()
         self.tableView.tableHeaderView = self.tableView.tableHeaderView
@@ -82,6 +83,17 @@ class VGHistoryTableViewController: UITableViewController {
         if historySections.count > 0 {
             emptyLabel.isHidden = true
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tracks = dataStore.getAllTracks()
+        historySections = getMonthDictionary(tracks: tracks)
+        segmentChanged(id: historyHeader.sortingSegment.selectedSegmentIndex)
+        if historySections.count > 0 {
+            emptyLabel.isHidden = true
+        }
+
     }
     
     override func viewDidLayoutSubviews() {

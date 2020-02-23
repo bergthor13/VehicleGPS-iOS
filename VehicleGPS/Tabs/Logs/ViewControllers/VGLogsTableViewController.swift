@@ -1,11 +1,3 @@
-//
-//  VGLogsTableViewController.swift
-//  VehicleGPS
-//
-//  Created by Bergþór Þrastarson on 05/10/2018.
-//  Copyright © 2018 Bergþór Þrastarson. All rights reserved.
-//
-
 import UIKit
 import NMSSH
 import CoreData
@@ -27,7 +19,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     var sftpSession: NMSFTP?
     var downloadManager: VGSFTPManager?
     var vgFileManager: VGFileManager?
-    var vgLogParser: VGLogParser?
+    var vgLogParser: IVGLogParser?
     let host = "cargps.local"
     let username = "pi"
     let password = "easyprintsequence"
@@ -39,7 +31,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     var parseCount = 0
     let headerDateFormatter = HeaderDateFormatter()
     var headerView: DeviceConnectedHeaderView!
-    let distanceFormatter = LengthFormatter()
+    let distanceFormatter = VGDistanceFormatter()
     let durationFormatter = VGDurationFormatter()
     var emptyLabel: UILabel!
     
@@ -65,7 +57,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             self.dataStore = appDelegate.dataStore
             self.vgFileManager = appDelegate.fileManager
         }
-        vgLogParser = VGLogParser(fileManager: self.vgFileManager!, snapshotter: VGSnapshotMaker(fileManager: self.vgFileManager!))
+        vgLogParser = VGCSVParser(snapshotter: VGSnapshotMaker(fileManager: self.vgFileManager!))
     }
     
     fileprivate func configureEmptyListLabel() {
@@ -142,10 +134,12 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
 //            self.navigationItem.rightBarButtonItem?.title = "Hlaða niður"
 //            self.navigationItem.rightBarButtonItem?.style = .plain
             self.isInDownloadingState = false
+            UIApplication.shared.isIdleTimerDisabled = true
 
             return
         }
         self.isInDownloadingState = true
+        UIApplication.shared.isIdleTimerDisabled = false
 //        self.navigationItem.rightBarButtonItem?.title = "Stöðva"
 //        self.navigationItem.rightBarButtonItem?.style = .done
         
@@ -191,7 +185,13 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                             _ = self.vgFileManager!.dataToFile(data: data, filename: track.fileName)
                             self.dataStore.update(vgTrack: track)
                             DispatchQueue.main.async {
-                                self.headerView.lblLogsAvailable.text = "Hleður niður. \(self.downloadCount) ferlar eftir."
+                                if self.downloadCount == 0 {
+                                    UIApplication.shared.isIdleTimerDisabled = false
+                                    self.headerView.lblLogsAvailable.text = "Niðurhali lokið."
+
+                                } else {
+                                    self.headerView.lblLogsAvailable.text = "Hleður niður. \(self.downloadCount) ferlar eftir."
+                                }
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
                                     return
                                 }
@@ -209,11 +209,13 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
 //                self.navigationItem.rightBarButtonItem?.title = "Hlaða niður"
 //                self.navigationItem.rightBarButtonItem?.style = .plain
                 self.isInDownloadingState = false
+                UIApplication.shared.isIdleTimerDisabled = true
             }
         }
     }
     
     @objc func processFiles() {
+        UIApplication.shared.isIdleTimerDisabled = true
         for key in self.sectionKeys {
             guard let trackList = self.tracksDict[key] else {
                 continue
@@ -252,6 +254,10 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                             self.tracksDict[sectionKey]![rowIndex] = track
                             DispatchQueue.main.async {
                                 self.parseCount -= 1
+                                if self.parseCount == 0 {
+                                    UIApplication.shared.isIdleTimerDisabled = false
+                                    self.navigationItem.prompt = nil
+                                }
                                 self.navigationItem.prompt = "Þátta. \(self.parseCount) ferlar eftir."
                                 track.beingProcessed = true
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
@@ -262,8 +268,9 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                                 if let header = self.tableView.headerView(forSection: sectionIndex) as? LogHeaderView {
                                     self.getViewForHeader(view: header, section: sectionIndex)
                                 }
-                                
+                                track.trackPoints = []
                             }
+                            
                         }, imageCallback: { (track, style) in
                             track.beingProcessed = false
                             DispatchQueue.main.async {
@@ -280,7 +287,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                 }
             }
         }
-        
+        UIApplication.shared.isIdleTimerDisabled = false
         self.navigationItem.prompt = nil
         
     }

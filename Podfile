@@ -8,4 +8,5 @@ target 'VehicleGPS' do
   pod 'MBProgressHUD', '~> 1.1'
   pod 'Socket.IO-Client-Swift', '~> 15.2.0'
   pod 'SwiftLint'
+  pod "fastCSV"
 end

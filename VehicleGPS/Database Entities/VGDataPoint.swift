@@ -11,48 +11,53 @@ import CoreData
 
 class ISO8601DateParser {
   
-    
-  static func parse(_ dateString: String) -> Date? {
+static var calendar = Calendar(identifier: .gregorian)
+
+    static func parse(_ dateString: String) -> Date? {
     var components = DateComponents()
     guard let year = getItem(string: dateString, startIndex: 0, count: 4) else {
         return nil
     }
-    
+
     guard let month = getItem(string: dateString, startIndex: 5, count: 2) else {
         return nil
     }
-    
+
     guard let day = getItem(string: dateString, startIndex: 8, count: 2) else {
         return nil
     }
-    
+
     guard let hour = getItem(string: dateString, startIndex: 11, count: 2) else {
         return nil
     }
-    
+
     guard let minute = getItem(string: dateString, startIndex: 14, count: 2) else {
         return nil
     }
-    
+
     guard let second = getItem(string: dateString, startIndex: 17, count: 2) else {
         return nil
     }
-    
-    if let nanosecond = getItem(string: dateString, startIndex: 20, count: 6) {
-        components.nanosecond = nanosecond*1000
+        
+    if dateString.count >= 26 {
+        if let nanosecond = getItem(string: dateString, startIndex: 20, count: 6) {
+            components.nanosecond = nanosecond*1000
+        } else {
+            components.nanosecond = 0
+        }
     } else {
         components.nanosecond = 0
     }
     
+
     components.year   = year
     components.month  = month
     components.day    = day
     components.hour   = hour
     components.minute = minute
     components.second = second
-    
-    let calendar = Calendar(identifier: .gregorian)
-    return calendar.date(from: components)
+    let date = calendar.date(from: components)
+    return date
   }
 
     static private func getItem(string:String, startIndex:Int, count:Int) -> Int? {
@@ -177,15 +182,6 @@ class VGDataPoint {
             self.throttlePosition = 0.0
         }
     }
-    static func isValid(line:String) -> Bool {
-        let data = line.split(separator: ",")
-        if data.count < 16 {
-            return false
-        }
-        return true
-    }
-    
-    
     
     func hasGoodFix() -> Bool {
         guard let fixType = self.fixType else {

@@ -1,4 +1,5 @@
 PODS:
+  - fastCSV (0.1.0)
   - MBProgressHUD (1.1.0)
   - NMSSH (2.3.1)
   - Socket.IO-Client-Swift (15.2.0):
@@ -7,6 +8,7 @@ PODS:
   - SwiftLint (0.38.1)
 
 DEPENDENCIES:
+  - fastCSV
   - MBProgressHUD (~> 1.1)
   - NMSSH
   - Socket.IO-Client-Swift (~> 15.2.0)
@@ -14,6 +16,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - fastCSV
     - MBProgressHUD
     - NMSSH
     - Socket.IO-Client-Swift
@@ -21,12 +24,13 @@ SPEC REPOS:
     - SwiftLint
 
 SPEC CHECKSUMS:
+  fastCSV: 81fbee732b8dfe0da7e9d6eb5dd05a94ed386eec
   MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
   NMSSH: cd689ae535a1581a6dd9fd4600ff71247df510a6
   Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
   Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
   SwiftLint: 0aeb99ca7ccfc222ef93e2560a35e669f5465e6c
 
-PODFILE CHECKSUM: 68d4842b1d49cdb1de0102ba873ec6c728131d46
+PODFILE CHECKSUM: 9aef445e87483e9bfad402528991e4523f6aad9b
 
 COCOAPODS: 1.8.4

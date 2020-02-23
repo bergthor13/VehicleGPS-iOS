@@ -39,10 +39,25 @@ class VGListEmptyLabel: UILabel {
         super.init(coder: coder)
         self.configure()
     }
+    @objc func preferredContentSizeChanged(_ notification: Notification) {
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if previousTraitCollection?.preferredContentSizeCategory != traitCollection.preferredContentSizeCategory {
+            let scaledFont = UIFont.systemFont(ofSize: 20)
+            let fontMetrics = UIFontMetrics(forTextStyle: .body)
+            self.font = fontMetrics.scaledFont(for: scaledFont)
+        }
+    }
+
     
     func configure() {
         self.textAlignment = .center
-        self.font = UIFont.systemFont(ofSize: 20)
+        let scaledFont = UIFont.systemFont(ofSize: 20)
+        let fontMetrics = UIFontMetrics(forTextStyle: .body)
+        self.font = fontMetrics.scaledFont(for: scaledFont)
         self.textColor = .secondaryLabel
     }
 }

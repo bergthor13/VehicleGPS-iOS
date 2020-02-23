@@ -1,11 +1,3 @@
-//
-//  VGLogParser.swift
-//  VehicleGPS
-//
-//  Created by Bergþór Þrastarson on 02/06/2019.
-//  Copyright © 2019 Bergþór Þrastarson. All rights reserved.
-//
-
 import Foundation
 import UIKit
 import CoreLocation
@@ -15,13 +7,18 @@ import MapKit
 class VGLogParser: IVGLogParser {
     let progress_update_delay = TimeInterval(0.1)
     let PNG_PADDING:CGFloat = 0.9
-    var vgFileManager:VGFileManager
     var vgSnapshotMaker:VGSnapshotMaker
     
-    init(fileManager:VGFileManager, snapshotter:VGSnapshotMaker) {
-        self.vgFileManager = fileManager
+    init(snapshotter:VGSnapshotMaker) {
         self.vgSnapshotMaker = snapshotter
-        
+    }
+    
+    func isValid(line:String) -> Bool {
+        let data = line.split(separator: ",")
+        if data.count < 16 {
+            return false
+        }
+        return true
     }
     
     func fileToTrack(fileUrl:URL, progress:@escaping (UInt, UInt) -> Void, callback:@escaping (VGTrack) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)? = nil) {
@@ -49,7 +46,7 @@ class VGLogParser: IVGLogParser {
                     progress(UInt(index), UInt(lineCount))
                     lastProgressUpdate = Date()
                 }
-                if !VGDataPoint.isValid(line: String(line)) {
+                if !self.isValid(line: String(line)) {
                     continue
                 }
 

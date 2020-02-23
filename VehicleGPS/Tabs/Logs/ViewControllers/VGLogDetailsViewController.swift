@@ -22,7 +22,7 @@ class VGLogDetailsViewController: UIViewController {
     var track: VGTrack!
     var dataStore: VGDataStore!
     var vgFileManager: VGFileManager!
-    var vgLogParser: VGLogParser!
+    var vgLogParser: IVGLogParser!
     var vgGPXGenerator = VGGPXGenerator()
     var vgSnapshotMaker:VGSnapshotMaker!
     override func viewWillAppear(_ animated: Bool) {
@@ -51,7 +51,6 @@ class VGLogDetailsViewController: UIViewController {
         self.mapView.mapType = .hybrid
         
         DispatchQueue.global(qos: .userInitiated).async {
-        
             let mapList = self.dataStore.getMapPointsForTrack(vgTrack: self.track)
             if mapList.count > 0 {
                 let points = mapList.map { (point) -> CLLocationCoordinate2D in
@@ -67,6 +66,9 @@ class VGLogDetailsViewController: UIViewController {
                 
             }
             
+            self.vgSnapshotMaker = VGSnapshotMaker(fileManager: self.vgFileManager)
+            self.vgLogParser = VGCSVParser(snapshotter: self.vgSnapshotMaker)
+
             self.track.trackPoints = fullList
             
             DispatchQueue.main.async {
@@ -76,8 +78,6 @@ class VGLogDetailsViewController: UIViewController {
                     self.process(track: self.track)
                 }
             }
-            self.vgSnapshotMaker = VGSnapshotMaker(fileManager: self.vgFileManager)
-            self.vgLogParser = VGLogParser(fileManager: self.vgFileManager, snapshotter: self.vgSnapshotMaker)
 
             self.vgSnapshotMaker.drawTrack(vgTrack: self.track)
         }
@@ -125,10 +125,9 @@ class VGLogDetailsViewController: UIViewController {
     }
     
     func process(track: VGTrack) {
-        let logParser = VGLogParser(fileManager: vgFileManager, snapshotter: vgSnapshotMaker)
         let hud = MBProgressHUD.showAdded(to: self.parent!.view, animated: true)
         hud.label.text = "Les skrá..."
-        logParser.fileToTrack(fileUrl: self.vgFileManager.getAbsoluteFilePathFor(track: track)!, progress: { (index, count) in
+        vgLogParser.fileToTrack(fileUrl: self.vgFileManager.getAbsoluteFilePathFor(track: track)!, progress: { (index, count) in
             DispatchQueue.main.async {
                 hud.mode = .annularDeterminate
                 hud.progress = Float(index)/Float(count)
@@ -149,7 +148,7 @@ class VGLogDetailsViewController: UIViewController {
             
             let points = track.getCoordinateList()
             self.display(track: track, list: points, on: self.mapView)
-        })
+        }, imageCallback: nil)
     }
     
     @objc func displayShareSelection() {

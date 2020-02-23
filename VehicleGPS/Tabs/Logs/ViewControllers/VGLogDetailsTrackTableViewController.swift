@@ -94,7 +94,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             }
             if indexPath.row == 2 {
                 cell1.textLabel?.text = NSLocalizedString("Vegalengd", comment: "")
-                let lengthFormatter = LengthFormatter()
+                let lengthFormatter = VGDistanceFormatter()
                 
                 lengthFormatter.unitStyle = .medium
                 cell1.detailTextLabel?.text = lengthFormatter.string(fromMeters: track.distance*1000)
