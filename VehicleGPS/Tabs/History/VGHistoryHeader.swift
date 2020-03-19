@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HistoryHeader: UIView {
+class VGHistoryHeader: UIView {
 
     var sortingSegment: UISegmentedControl
     var historyTableViewController: VGHistoryTableViewController?

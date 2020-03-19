@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AvailableLogsTableViewCell: UITableViewCell {
+class VGAvailableLogsTableViewCell: UITableViewCell {
 
     @IBOutlet weak var lblTimeOfDay: UILabel!
     @IBOutlet weak var lblFileSize: UILabel!

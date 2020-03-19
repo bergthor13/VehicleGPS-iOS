@@ -29,8 +29,8 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     var shouldStopDownloading = false
     var downloadCount = 0
     var parseCount = 0
-    let headerDateFormatter = HeaderDateFormatter()
-    var headerView: DeviceConnectedHeaderView!
+    let headerDateFormatter = VGHeaderDateFormatter()
+    var headerView: VGDeviceConnectedHeaderView!
     let distanceFormatter = VGDistanceFormatter()
     let durationFormatter = VGDurationFormatter()
     var emptyLabel: UILabel!
@@ -101,7 +101,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
     
     fileprivate func setUpDeviceConnectedBanner() {
-        self.headerView = DeviceConnectedHeaderView.loadFromNibNamed(nibNamed: "DeviceConnectedHeaderView")
+        self.headerView = VGDeviceConnectedHeaderView.loadFromNibNamed(nibNamed: "VGDeviceConnectedHeaderView")
         self.headerView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 0)
         self.tableView.tableHeaderView = self.headerView
         self.headerView.lblLogsAvailable.isHidden = true
@@ -118,8 +118,8 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
     
     fileprivate func registerCells() {
-        let logsTableViewCellNib = UINib(nibName: "LogsTableViewCell", bundle: nil)
-        let logHeaderViewNib = UINib(nibName: "LogHeaderView", bundle: nil)
+        let logsTableViewCellNib = UINib(nibName: "VGLogsTableViewCell", bundle: nil)
+        let logHeaderViewNib = UINib(nibName: "VGLogHeaderView", bundle: nil)
         
         self.tableView.register(logsTableViewCellNib, forCellReuseIdentifier: "LogsCell")
         self.tableView.register(logHeaderViewNib, forHeaderFooterViewReuseIdentifier: "LogsHeader")
@@ -180,7 +180,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
 
                         self.downloadFileFor(track: track, progress: { (received, total) in
                             DispatchQueue.main.async {
-                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
+                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
                                     return
                                 }
                                 cell.progressView.backgroundColor = UIColor(rgb: 0x007F00).withAlphaComponent(0.2)
@@ -206,7 +206,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                                 } else {
                                     self.headerView.lblLogsAvailable.text = "Hleður niður. \(self.downloadCount) ferlar eftir."
                                 }
-                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
+                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
                                     return
                                 }
                                 cell.update(progress: 0)
@@ -251,7 +251,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                     if !track.processed && self.vgFileManager?.getAbsoluteFilePathFor(track: track) != nil {
                         track.beingProcessed = true
                         DispatchQueue.main.async {
-                            guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
+                            guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
                                 return
                             }
                             cell.activityView.startAnimating()
@@ -259,7 +259,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                         self.vgLogParser = self.vgFileManager?.getParser(for: track)
                         self.vgLogParser?.fileToTrack(fileUrl: (self.vgFileManager?.getAbsoluteFilePathFor(track: track))!, progress: { (current, total) in
                             DispatchQueue.main.async {
-                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
+                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
                                     return
                                 }
                                 cell.update(progress: Double(current)/Double(total))
@@ -275,12 +275,12 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                                 }
                                 self.navigationItem.prompt = "Þátta. \(self.parseCount) ferlar eftir."
                                 track.beingProcessed = true
-                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
+                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
                                     return
                                 }
                                 cell.show(track: track)
                                 cell.update(progress: 0)
-                                if let header = self.tableView.headerView(forSection: sectionIndex) as? LogHeaderView {
+                                if let header = self.tableView.headerView(forSection: sectionIndex) as? VGLogHeaderView {
                                     self.getViewForHeader(view: header, section: sectionIndex)
                                 }
                                 track.trackPoints = []
@@ -289,7 +289,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                         }, imageCallback: { (track, style) in
                             track.beingProcessed = false
                             DispatchQueue.main.async {
-                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
+                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
                                     return
                                 }
                                 cell.show(track: track)
@@ -550,7 +550,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         return file
     }
     
-    func getViewForHeader(view:LogHeaderView, section:Int) {
+    func getViewForHeader(view:VGLogHeaderView, section:Int) {
         let day = sectionKeys[section]
         view.dateLabel.text = " "
         view.detailsLabel.text = " "
@@ -592,7 +592,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as? LogHeaderView else {
+        guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as? VGLogHeaderView else {
             return UIView()
         }
         getViewForHeader(view: view, section: section)
@@ -604,7 +604,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: "LogsCell",
             for: indexPath
-            ) as? LogsTableViewCell else {
+            ) as? VGLogsTableViewCell else {
             return UITableViewCell()
         }
         cell.update(progress: 0.0)
@@ -617,7 +617,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = self.tableView.cellForRow(at: indexPath) as? LogsTableViewCell else {
+        guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
             return
         }
         guard let track = getTrackAt(indexPath: indexPath) else {

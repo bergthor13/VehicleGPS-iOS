@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NewJourneyTableViewController: UITableViewController {
+class VGNewJourneyTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

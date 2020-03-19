@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DeviceConnectedHeaderView: UIView {
+class VGDeviceConnectedHeaderView: UIView {
 
     @IBOutlet weak var greenBackground: UIView!
     @IBOutlet weak var greenButton: UIView!
@@ -16,11 +16,11 @@ class DeviceConnectedHeaderView: UIView {
     @IBOutlet weak var lblLogsAvailable: UILabel!
     @IBOutlet weak var imgIcon: UIImageView!
     
-    class func loadFromNibNamed(nibNamed: String, bundle: Bundle? = nil) -> DeviceConnectedHeaderView? {
+    class func loadFromNibNamed(nibNamed: String, bundle: Bundle? = nil) -> VGDeviceConnectedHeaderView? {
         return UINib(
             nibName: nibNamed,
             bundle: bundle
-        ).instantiate(withOwner: nil, options: nil)[0] as? DeviceConnectedHeaderView
+        ).instantiate(withOwner: nil, options: nil)[0] as? VGDeviceConnectedHeaderView
     }
     
     required init?(coder: NSCoder) {

@@ -9,8 +9,8 @@
 import UIKit
 import MapKit
 
-class HistoryDetailsTableViewController: UITableViewController {
-    var tracksSummary: TracksSummary? {
+class VGHistoryDetailsTableViewController: UITableViewController {
+    var tracksSummary: VGTracksSummary? {
         didSet {
             tracksSummary!.tracks.sort { (first, second) -> Bool in
                 if first.timeStart != nil && second.timeStart != nil {
@@ -30,7 +30,7 @@ class HistoryDetailsTableViewController: UITableViewController {
             title = tracksSummary.dateDescription
         }
         
-        let logsTableViewCellNib = UINib(nibName: "LogsTableViewCell", bundle: nil)
+        let logsTableViewCellNib = UINib(nibName: "VGLogsTableViewCell", bundle: nil)
         self.tableView.register(logsTableViewCellNib, forCellReuseIdentifier: "LogsCell")
         navigationController?.navigationBar.prefersLargeTitles = false
         
@@ -115,7 +115,7 @@ class HistoryDetailsTableViewController: UITableViewController {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: "LogsCell",
             for: indexPath
-            ) as? LogsTableViewCell else {
+            ) as? VGLogsTableViewCell else {
             return UITableViewCell()
         }
         
@@ -195,7 +195,7 @@ class HistoryDetailsTableViewController: UITableViewController {
     }
 }
 
-extension HistoryDetailsTableViewController: MKMapViewDelegate {
+extension VGHistoryDetailsTableViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         
         if overlay is MKPolyline {

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EditVehicleTableViewController: NewVehicleTableViewController {
+class VGEditVehicleTableViewController: VGNewVehicleTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -15,7 +15,7 @@ class VGAvailableDownloadTableViewController: UITableViewController {
         }
     }
     var sectionKeys = [String]()
-    let headerDateFormatter = HeaderDateFormatter()
+    let headerDateFormatter = VGHeaderDateFormatter()
     
     var downloadManager:VGSFTPManager?
     init(style: UITableView.Style, downloadManager:VGSFTPManager?) {
@@ -28,7 +28,7 @@ class VGAvailableDownloadTableViewController: UITableViewController {
     }
     
     fileprivate func registerCells() {
-        let availableLogsTableViewCellNib = UINib(nibName: "AvailableLogsTableViewCell", bundle: nil)
+        let availableLogsTableViewCellNib = UINib(nibName: "VGAvailableLogsTableViewCell", bundle: nil)
         self.tableView.register(availableLogsTableViewCellNib, forCellReuseIdentifier: "AvailableLogsCell")
     }
     
@@ -52,7 +52,7 @@ class VGAvailableDownloadTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "AvailableLogsCell", for: indexPath) as? AvailableLogsTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "AvailableLogsCell", for: indexPath) as? VGAvailableLogsTableViewCell else {
             return UITableViewCell()
         }
         

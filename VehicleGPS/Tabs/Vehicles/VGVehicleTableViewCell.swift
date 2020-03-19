@@ -8,7 +8,7 @@
 
 import UIKit
 
-class VehicleTableViewCell: UITableViewCell {
+class VGVehicleTableViewCell: UITableViewCell {
 
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var colorBanner: UIView!

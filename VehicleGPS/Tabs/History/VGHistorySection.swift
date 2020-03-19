@@ -8,9 +8,9 @@
 
 import Foundation
 
-class HistorySection {
+class VGHistorySection {
     var sectionID: String = ""
-    var summaries = [TracksSummary]()
+    var summaries = [VGTracksSummary]()
     var dateDescription: String = ""
 
     

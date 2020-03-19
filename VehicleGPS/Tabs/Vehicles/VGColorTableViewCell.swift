@@ -1,18 +1,18 @@
 //
-//  HistoryTableViewCell.swift
+//  ColorTableViewCell.swift
 //  VehicleGPS
 //
-//  Created by Bergþór Þrastarson on 15/12/2019.
-//  Copyright © 2019 Bergþór Þrastarson. All rights reserved.
+//  Created by Bergþór Þrastarson on 17/02/2020.
+//  Copyright © 2020 Bergþór Þrastarson. All rights reserved.
 //
 
 import UIKit
 
-class HistoryTableViewCell: UITableViewCell {
+class VGColorTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var lblDistance: UILabel!
-    @IBOutlet weak var lblDate: UILabel!
-    @IBOutlet weak var lblTripCount: UILabel!
+    @IBOutlet weak var colorView: UIView!
+    @IBOutlet weak var lblColorTitle: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

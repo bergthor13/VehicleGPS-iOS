@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLineProtocol {
+class VGLogDetailsTrackTableViewController: UITableViewController, VGDisplayLineProtocol {
     var dlpPoint: CGPoint?
     var dlpTime: Date?
     

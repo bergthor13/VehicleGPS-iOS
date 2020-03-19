@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NewVehicleTableViewCell: UITableViewCell {
+class VGNewVehicleTableViewCell: UITableViewCell {
 
     @IBOutlet weak var txtName: UITextField!
     @IBOutlet weak var imgProfile: UIImageView!

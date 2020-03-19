@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class HeaderDateFormatter: DateFormatter {
+class VGHeaderDateFormatter: DateFormatter {
     let parsingFormatter = DateFormatter()
     override init() {
         super.init()

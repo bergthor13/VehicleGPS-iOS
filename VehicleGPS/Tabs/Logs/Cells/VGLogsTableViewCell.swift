@@ -12,7 +12,7 @@ protocol DisplaySelectVehicleProtocol {
     func didTapVehicle(track:VGTrack)
 }
 
-class LogsTableViewCell: UITableViewCell {
+class VGLogsTableViewCell: UITableViewCell {
 
     @IBOutlet weak var btnVehicle: UIButton!
     @IBOutlet weak var trackView: UIImageView!

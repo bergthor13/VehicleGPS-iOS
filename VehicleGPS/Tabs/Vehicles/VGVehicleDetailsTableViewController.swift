@@ -1,6 +1,6 @@
 import UIKit
 
-class VehicleDetailsTableViewController: UITableViewController {
+class VGVehicleDetailsTableViewController: UITableViewController {
     var vehicle:VGVehicle?
     var dataStore = VGDataStore()
     override func viewDidLoad() {
@@ -11,7 +11,7 @@ class VehicleDetailsTableViewController: UITableViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated, object: nil)
         
-        let logsTableViewCellNib = UINib(nibName: "LogsTableViewCell", bundle: nil)
+        let logsTableViewCellNib = UINib(nibName: "VGLogsTableViewCell", bundle: nil)
         self.tableView.register(logsTableViewCellNib, forCellReuseIdentifier: "LogsCell")
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEdit))
@@ -26,7 +26,7 @@ class VehicleDetailsTableViewController: UITableViewController {
     }
     
     @objc func didTapEdit() {
-        let editVehicleVC = EditVehicleTableViewController(style: .grouped)
+        let editVehicleVC = VGEditVehicleTableViewController(style: .grouped)
         editVehicleVC.vehicle = vehicle!
         present(UINavigationController(rootViewController: editVehicleVC), animated: true, completion: nil)
     }
@@ -55,7 +55,7 @@ class VehicleDetailsTableViewController: UITableViewController {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: "LogsCell",
             for: indexPath
-            ) as? LogsTableViewCell else {
+            ) as? VGLogsTableViewCell else {
             return UITableViewCell()
         }
         

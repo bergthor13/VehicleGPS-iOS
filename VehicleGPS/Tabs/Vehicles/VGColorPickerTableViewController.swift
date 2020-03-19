@@ -8,12 +8,12 @@
 
 import UIKit
 
-class ColorPickerTableViewController: UITableViewController {
+class VGColorPickerTableViewController: UITableViewController {
     let colors:[String: UIColor] = ["Rauður":.red, "Grænn":.green, "Svartur":.black, "Blár":.blue, "Brúnn":.brown, "Dökk grár":.darkGray, "Hvítur":.white]
     var delegate: ColorPickerDelegate?
     override func viewDidLoad() {
         super.viewDidLoad()
-        let colorCellNib = UINib(nibName: "ColorTableViewCell", bundle: nil)
+        let colorCellNib = UINib(nibName: "VGColorTableViewCell", bundle: nil)
         self.tableView.register(colorCellNib, forCellReuseIdentifier: "colorCell")
 
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(didTapCancel))
@@ -49,7 +49,7 @@ class ColorPickerTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "colorCell", for: indexPath) as? ColorTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "colorCell", for: indexPath) as? VGColorTableViewCell else {
             return UITableViewCell()
         }
         cell.lblColorTitle.text = Array(colors.keys)[indexPath.row]

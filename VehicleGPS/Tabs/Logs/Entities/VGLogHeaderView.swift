@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LogHeaderView: UITableViewHeaderFooterView {
+class VGLogHeaderView: UITableViewHeaderFooterView {
     var blurViewTag = 4009
 
     @IBOutlet weak var dateLabel: UILabel!

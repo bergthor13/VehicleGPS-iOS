@@ -9,7 +9,7 @@
 import Foundation
 
 
-class TracksSummary {
+class VGTracksSummary {
     var summaryID: String = ""
     var distance: Double = 0.0
     var trackCount: Int = 0

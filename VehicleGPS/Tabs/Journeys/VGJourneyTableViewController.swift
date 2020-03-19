@@ -59,7 +59,7 @@ class VGJourneyTableViewController: UITableViewController {
     }
     
     @objc func didTapAddJourney() {
-        let newJourneyVC = NewJourneyTableViewController(style: .grouped)
+        let newJourneyVC = VGNewJourneyTableViewController(style: .grouped)
         let newJourneyNavController = UINavigationController()
         newJourneyNavController.pushViewController(newJourneyVC, animated: false)
         self.present(newJourneyNavController, animated: true, completion: nil)

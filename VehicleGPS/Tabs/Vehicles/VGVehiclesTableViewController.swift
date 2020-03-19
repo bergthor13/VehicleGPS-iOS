@@ -48,7 +48,7 @@ class VGVehiclesTableViewController: UITableViewController {
         
     }
     fileprivate func registerCells() {
-        let newVehicleCell = UINib(nibName: "VehicleTableViewCell", bundle: nil)
+        let newVehicleCell = UINib(nibName: "VGVehicleTableViewCell", bundle: nil)
         self.tableView.register(newVehicleCell, forCellReuseIdentifier: "VehicleCell")
     }
     
@@ -81,7 +81,7 @@ class VGVehiclesTableViewController: UITableViewController {
         tableView.beginUpdates()
         for (index, vehicle) in vehicles.enumerated() {
             if vehicle == editedVehicle {
-                let bla = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as! VehicleTableViewCell
+                let bla = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as! VGVehicleTableViewCell
                 bla.lblName.text = editedVehicle.name
                 bla.colorBanner.backgroundColor = editedVehicle.mapColor
                 vehicles.remove(at: index)
@@ -105,7 +105,7 @@ class VGVehiclesTableViewController: UITableViewController {
     }
     
     @objc func didTapAddVehicle() {
-        let newVehicleVC = NewVehicleTableViewController(style: .grouped)
+        let newVehicleVC = VGNewVehicleTableViewController(style: .grouped)
         newVehicleVC.vehiclesController = self
         self.present(UINavigationController(rootViewController: newVehicleVC), animated: true, completion: nil)
     }
@@ -171,7 +171,7 @@ class VGVehiclesTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "VehicleCell", for: indexPath) as! VehicleTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "VehicleCell", for: indexPath) as! VGVehicleTableViewCell
         cell.lblName.text = vehicles[indexPath.row].name
         guard let tracks = vehicles[indexPath.row].tracks else {
             return cell
@@ -201,7 +201,7 @@ class VGVehiclesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let detailsVC = VehicleDetailsTableViewController(style: .insetGrouped)
+        let detailsVC = VGVehicleDetailsTableViewController(style: .insetGrouped)
         detailsVC.vehicle = vehicles[indexPath.row]
         navigationController?.pushViewController(detailsVC, animated: true)
     }

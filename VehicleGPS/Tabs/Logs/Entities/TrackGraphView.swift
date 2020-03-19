@@ -38,7 +38,7 @@ class TrackGraphView: UIView {
     var inset = UIEdgeInsets(top: 12, left: 20, bottom: 12, right: 60)
 
     var selectedPoint: CGPoint?
-    var dlpList = [DisplayLineProtocol]()
+    var dlpList = [VGDisplayLineProtocol]()
     
     var horizontalLineMarkers = [Double]() {
         didSet {

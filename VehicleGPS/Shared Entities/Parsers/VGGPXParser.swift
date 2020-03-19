@@ -18,19 +18,11 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
     
     var track = VGTrack()
     
-    func isValid(row:[String]) -> Bool {
-        if row.count < 5 {
-            return false
-        }
-        return true
-    }
-    
     init(snapshotter:VGSnapshotMaker) {
         self.vgSnapshotMaker = snapshotter
     }
     
     func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, callback: @escaping (VGTrack) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)?) {
-        var lastProgressUpdate = Date()
         
         track.fileName = fileUrl.lastPathComponent
         do {
@@ -49,22 +41,26 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
 
         //Parse the data, here the file will be read
         let success = parser.parse()
-        
-        track.process()
-        
-        let mapPoints = track.trackPoints.filter { (point) -> Bool in
-            return point.hasGoodFix()
-        }
-        track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
-        
-        self.vgSnapshotMaker.drawTrack(vgTrack: track) { (image, style) in
-            guard let imageCallback = imageCallback else {
+        if success {
+            track.process()
+            
+            let mapPoints = track.trackPoints.filter { (point) -> Bool in
+                return point.hasGoodFix()
+            }
+            track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
+            
+            self.vgSnapshotMaker.drawTrack(vgTrack: track) { (image, style) in
+                guard let imageCallback = imageCallback else {
+                    return nil
+                }
+                imageCallback(self.track, style)
                 return nil
             }
-            imageCallback(self.track, style)
-            return nil
+            callback(track)
+
         }
-        callback(track)
+        // TODO: Allow nil.
+        callback(VGTrack())
     }
     
     var currPoint = VGDataPoint()

@@ -12,9 +12,9 @@ protocol ColorPickerDelegate {
     func didPick(color:UIColor)
 }
 
-class NewVehicleTableViewController: UITableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+class VGNewVehicleTableViewController: UITableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
 
-    var cell: NewVehicleTableViewCell! {
+    var cell: VGNewVehicleTableViewCell! {
         didSet {
             cell.txtName.text = vehicle.name
             cell.colorBox.backgroundColor = vehicle.mapColor
@@ -72,7 +72,7 @@ class NewVehicleTableViewController: UITableViewController, UINavigationControll
 
     // MARK: - Table view data source
     @objc func didTapColor() {
-        let colorPicker = ColorPickerTableViewController(style: .insetGrouped)
+        let colorPicker = VGColorPickerTableViewController(style: .insetGrouped)
         colorPicker.delegate = self
         
         self.present(UINavigationController(rootViewController: colorPicker), animated: true, completion: nil)
@@ -132,19 +132,19 @@ class NewVehicleTableViewController: UITableViewController, UINavigationControll
         return 1
     }
     fileprivate func registerCells() {
-        let newVehicleCell = UINib(nibName: "NewVehicleTableViewCell", bundle: nil)
+        let newVehicleCell = UINib(nibName: "VGNewVehicleTableViewCell", bundle: nil)
         self.tableView.register(newVehicleCell, forCellReuseIdentifier: "NewVehicleCell")
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NewVehicleCell", for: indexPath)
-        self.cell = cell as? NewVehicleTableViewCell
+        self.cell = cell as? VGNewVehicleTableViewCell
         return cell
     }
 }
 
 
-extension NewVehicleTableViewController: ColorPickerDelegate {
+extension VGNewVehicleTableViewController: ColorPickerDelegate {
     func didPick(color: UIColor) {
         self.cell.colorBox.backgroundColor = color
         vehicle.mapColor = color

@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-protocol DisplayLineProtocol {
+protocol VGDisplayLineProtocol {
     var dlpPoint: CGPoint? { get set }
     var dlpTime: Date? { get set }
     func didTouchGraph(at point: CGPoint)
