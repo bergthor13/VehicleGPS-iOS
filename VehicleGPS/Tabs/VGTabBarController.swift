@@ -12,37 +12,11 @@ class VGTabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let logsController = VGLogsNavigationViewController()
-        logsController.tabBarItem = UITabBarItem(title: NSLocalizedString("Ferlar", comment: "Vehicles Title"),
-                                                 image: UIImage(imageLiteralResourceName: "LogIcon"),
-                                                 tag: 0)
-        self.addChild(logsController)
-
-        let historyController = VGHistoryNavigationController(nibName: "HistoryView", bundle: nil)
-        historyController.tabBarItem = UITabBarItem(title: NSLocalizedString("Saga", comment: "Vehicles Title"),
-                                                    image: UIImage(systemName: "memories"),
-                                                    tag: 0)
-        self.addChild(historyController)
-        
-        let journeysController = VGJourneyNavigationViewController()
-        journeysController.tabBarItem = UITabBarItem(title: NSLocalizedString("Ferðalög", comment: "Vehicles Title"),
-                                                     image: UIImage(systemName: "globe"),
-                                                     tag: 0)
-        self.addChild(journeysController)
-        
-        let vehiclesController = VGVehiclesTableViewController(style: .insetGrouped)
-        
-        vehiclesController.tabBarItem = UITabBarItem(title: NSLocalizedString("Farartæki", comment: "Vehicles Title"),
-                                                     image: UIImage(systemName: "car"),
-                                                     tag: 0)
-        self.addChild(UINavigationController(rootViewController: vehiclesController))
-        
-        let settingsController = VGSettingsNavigationController()
-        settingsController.tabBarItem = UITabBarItem(title: NSLocalizedString("Stillingar", comment: "Vehicles Title"),
-                                                     image: UIImage(systemName: "gear"),
-                                                     tag: 0)
-        self.addChild(settingsController)
+        self.addChild(UINavigationController(rootViewController: VGLogsTableViewController(style: .plain)))
+        self.addChild(UINavigationController(rootViewController: VGHistoryTableViewController(style: .insetGrouped)))
+        self.addChild(UINavigationController(rootViewController: VGJourneyTableViewController(style: .insetGrouped)))
+        self.addChild(UINavigationController(rootViewController: VGVehiclesTableViewController(style: .insetGrouped)))
+        self.addChild(UINavigationController(rootViewController: VGSettingsTableViewController(style: .grouped)))
 
         self.selectedIndex = 0
     }

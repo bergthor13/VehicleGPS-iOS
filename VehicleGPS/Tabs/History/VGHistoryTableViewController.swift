@@ -52,10 +52,29 @@ class VGHistoryTableViewController: UITableViewController {
         view.addSubview(emptyLabel)
     }
     
+    override init(style: UITableView.Style) {
+        super.init(style: style)
+        initializeTableViewController()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        initializeTableViewController()
+
+    }
+
+    func initializeTableViewController() {
+        title = NSLocalizedString("Saga", comment: "Vehicles Title")
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        tabBarItem = UITabBarItem(title: NSLocalizedString("Saga", comment: "Vehicles Title"),
+                                  image: UIImage(systemName: "memories"),
+                                  tag: 0)
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = NSLocalizedString("Saga", comment: "Vehicles Title")
-
+        
         registerCells()
         configureFormatters()
         configureEmptyListLabel()

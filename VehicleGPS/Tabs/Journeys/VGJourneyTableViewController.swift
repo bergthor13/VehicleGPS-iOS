@@ -32,14 +32,30 @@ class VGJourneyTableViewController: UITableViewController {
         
         emptyLabel.frame = frame
     }
+    
+    override init(style: UITableView.Style) {
+        super.init(style: style)
+        initializeTableViewController()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        initializeTableViewController()
+
+    }
+
+    func initializeTableViewController() {
+        title = NSLocalizedString("Ferðalög", comment: "Vehicles Title")
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        tabBarItem = UITabBarItem(title: NSLocalizedString("Ferðalög", comment: "Vehicles Title"),
+                                                     image: UIImage(systemName: "globe"),
+                                                     tag: 0)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.circle.fill"), style: .plain, target: self, action: #selector(self.didTapAddJourney))
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = NSLocalizedString("Ferðalög", comment: "Vehicles Title")
-
         configureEmptyListLabel()
-
-        let button = UIBarButtonItem(image: UIImage(systemName: "plus.circle.fill"), style: .plain, target: self, action: #selector(self.didTapAddJourney))
-        self.navigationItem.rightBarButtonItem = button
     }
     
     @objc func didTapAddJourney() {

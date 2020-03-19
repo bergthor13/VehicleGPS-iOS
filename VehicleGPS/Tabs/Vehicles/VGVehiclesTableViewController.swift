@@ -17,18 +17,35 @@ class VGVehiclesTableViewController: UITableViewController {
     var durationFormatter = VGDurationFormatter()
     
     var emptyLabel: UILabel!
+    
+    override init(style: UITableView.Style) {
+        super.init(style: style)
+        initializeTableViewController()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        initializeTableViewController()
 
+    }
+
+    func initializeTableViewController() {
+        title = NSLocalizedString("Farartæki", comment: "Vehicles Title")
+        tabBarItem = UITabBarItem(title: NSLocalizedString("Farartæki", comment: "Vehicles Title"),
+                                                     image: UIImage(systemName: "car"),
+                                                     tag: 0)
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.circle.fill"), style: .plain, target: self, action: #selector(didTapAddVehicle))
+
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = NSLocalizedString("Farartæki", comment: "Vehicles Title")
         tableView.tintColor = navigationController?.view.tintColor
         configureEmptyListLabel()
         registerCells()
         reloadVehicles(shouldReloadTableView: true)
         NotificationCenter.default.addObserver(self, selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated, object: nil)
-        self.navigationController?.navigationBar.prefersLargeTitles = true
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.circle.fill"), style: .plain, target: self, action: #selector(didTapAddVehicle))
     }
     fileprivate func registerCells() {
         let newVehicleCell = UINib(nibName: "VehicleTableViewCell", bundle: nil)

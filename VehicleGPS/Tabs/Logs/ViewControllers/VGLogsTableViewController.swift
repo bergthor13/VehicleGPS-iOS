@@ -35,13 +35,28 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     let durationFormatter = VGDurationFormatter()
     var emptyLabel: UILabel!
     
+    override init(style: UITableView.Style) {
+        super.init(style: style)
+        initializeTableViewController()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        initializeTableViewController()
+
+    }
+
+    func initializeTableViewController() {
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        title = NSLocalizedString("Ferlar", comment: "Vehicles Title")
+        tabBarItem = UITabBarItem(title: NSLocalizedString("Ferlar", comment: "Vehicles Title"),
+                                  image: UIImage(imageLiteralResourceName: "LogIcon"),
+                                  tag: 0)
+    }
+    
     // MARK: - View Did Load Functions
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        title = NSLocalizedString("Ferlar", comment: "Vehicles Title")
-
-        
         initializeClasses()
         configureEmptyListLabel()
         configureNavigationBar()
