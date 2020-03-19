@@ -12,10 +12,6 @@ class VGTabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        let dashboardController = VGDashboardNavigationController()
-//        dashboardController.tabBarItem = UITabBarItem(title: "Mælaborð",
-//                                                      image: UIImage(imageLiteralResourceName: "DashboardIcon"), tag: 0)
-//        self.addChild(dashboardController)
         
         let logsController = VGLogsNavigationViewController()
         logsController.tabBarItem = UITabBarItem(title: NSLocalizedString("Ferlar", comment: "Vehicles Title"),

@@ -62,7 +62,9 @@ class VGDatabaseTableViewController: UITableViewController {
             DispatchQueue.global(qos: .userInitiated).async {
                 self.dataStore.countAllData(entity: self.dataTypes[indexPath.row]) { (count) in
                     DispatchQueue.main.async {
-                        cell.detailTextLabel!.text = String(count)
+                        let nf = NumberFormatter()
+                        nf.numberStyle = .decimal
+                        cell.detailTextLabel!.text = nf.string(from: NSNumber(value: count))
                     }
                 }
             }

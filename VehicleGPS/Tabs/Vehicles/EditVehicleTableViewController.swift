@@ -17,15 +17,20 @@ class EditVehicleTableViewController: NewVehicleTableViewController {
     }
     
     @objc override func tappedSave() {
-        let vehicle = VGVehicle()
-        vehicle.name = self.cell.txtName.text
-        vehicle.id = self.vehicle?.id
-        vehicle.image = self.selectedImage
-        self.dataStore.update(vgVehicle: vehicle)
-        if let vehiclesController = self.vehiclesController {
-            vehiclesController.editVehicle(vehicle)
+        if self.vehicle.mapColor == nil {
+            self.vehicle.mapColor = UIColor.red
         }
-        NotificationCenter.default.post(name: .vehicleUpdated, object: vehicle)
+        
+        self.vehicle.name = self.cell.txtName.text
+        self.vehicle.id = self.vehicle.id
+        self.vehicle.image = self.selectedImage
+        self.dataStore.update(vgVehicle: self.vehicle)
+        if let vehiclesController = self.vehiclesController {
+            vehiclesController.editVehicle(self.vehicle)
+        }
+        NotificationCenter.default.post(name: .vehicleUpdated, object: self.vehicle)
+
         dismiss(animated: true)
+
     }
 }

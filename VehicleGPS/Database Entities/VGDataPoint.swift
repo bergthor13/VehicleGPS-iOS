@@ -9,69 +9,6 @@
 import Foundation
 import CoreData
 
-class ISO8601DateParser {
-  
-static var calendar = Calendar(identifier: .gregorian)
-
-    static func parse(_ dateString: String) -> Date? {
-    var components = DateComponents()
-    guard let year = getItem(string: dateString, startIndex: 0, count: 4) else {
-        return nil
-    }
-
-    guard let month = getItem(string: dateString, startIndex: 5, count: 2) else {
-        return nil
-    }
-
-    guard let day = getItem(string: dateString, startIndex: 8, count: 2) else {
-        return nil
-    }
-
-    guard let hour = getItem(string: dateString, startIndex: 11, count: 2) else {
-        return nil
-    }
-
-    guard let minute = getItem(string: dateString, startIndex: 14, count: 2) else {
-        return nil
-    }
-
-    guard let second = getItem(string: dateString, startIndex: 17, count: 2) else {
-        return nil
-    }
-        
-    if dateString.count >= 26 {
-        if let nanosecond = getItem(string: dateString, startIndex: 20, count: 6) {
-            components.nanosecond = nanosecond*1000
-        } else {
-            components.nanosecond = 0
-        }
-    } else {
-        components.nanosecond = 0
-    }
-    
-
-    components.year   = year
-    components.month  = month
-    components.day    = day
-    components.hour   = hour
-    components.minute = minute
-    components.second = second
-    let date = calendar.date(from: components)
-    return date
-  }
-
-    static private func getItem(string:String, startIndex:Int, count:Int) -> Int? {
-        if string.count < startIndex+count {
-            return nil
-        }
-        let start = string.index(string.startIndex, offsetBy: startIndex)
-        let end = string.index(string.startIndex, offsetBy: startIndex+count)
-        let range = start..<end
-        return Int(String(string[range]))
-    }
-
-}
-
 class VGDataPoint {
     // TIME,LATITUDE,LONGITUDE,ELEVATION,SATELLITES,HORIZONTAL_ACCURACY,VERTICAL_ACCURACY,PDOP,FIX_TYPE,GNSS_FIX_OK,FULLY_RESOLVED,RPM,ENGINE_LOAD,COOLANT_TEMPERATURE,AMBIENT_TEMPERATURE,THROTTLE_POSITION
     // 2019-04-24T17:46:17.599829,63.995643,-22.634326,41.482,7,0.994,1.484,3.48,3,True,False,1103.5,34.509803921568626,14,5,14.509803921568627
@@ -143,9 +80,8 @@ class VGDataPoint {
         }
         if let fixType = managedPoint.value(forKey: "fixType") as? Int {
             self.fixType = fixType
-        } else {
-            self.fixType = 0
         }
+        
         if let gnssFixOk = managedPoint.value(forKey: "gnssFixOK") as? Bool {
             self.gnssFixOk = gnssFixOk
         } else {

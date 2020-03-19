@@ -57,7 +57,6 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             self.dataStore = appDelegate.dataStore
             self.vgFileManager = appDelegate.fileManager
         }
-        vgLogParser = VGCSVParser(snapshotter: VGSnapshotMaker(fileManager: self.vgFileManager!))
     }
     
     fileprivate func configureEmptyListLabel() {
@@ -242,6 +241,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                             }
                             cell.activityView.startAnimating()
                         }
+                        self.vgLogParser = self.vgFileManager?.getParser(for: track)
                         self.vgLogParser?.fileToTrack(fileUrl: (self.vgFileManager?.getAbsoluteFilePathFor(track: track))!, progress: { (current, total) in
                             DispatchQueue.main.async {
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? LogsTableViewCell else {
@@ -527,9 +527,11 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         return result
     }
     
-    func getTrackAt(indexPath:IndexPath) -> VGTrack {
-        let dayFileList = tracksDict[sectionKeys[indexPath.section]]
-        let file = dayFileList![indexPath.row]
+    func getTrackAt(indexPath:IndexPath) -> VGTrack? {
+        guard let dayFileList = tracksDict[sectionKeys[indexPath.section]] else {
+            return nil
+        }
+        let file = dayFileList[indexPath.row]
         return file
     }
     
@@ -550,16 +552,10 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             totalDuration += track.duration
             totalDistance += track.distance
         }
-        if totalDistance > 1 {
-            distanceString = distanceFormatter.string(fromValue: totalDistance, unit: .kilometer)
-        } else {
-            distanceString = distanceFormatter.string(fromValue: totalDistance*1000, unit: .meter)
-        }
-        
+        distanceString = distanceFormatter.string(fromMeters: totalDistance*1000)
         
         let formattedDuration = durationFormatter.string(from: totalDuration)
         durationString = String(formattedDuration!)
-        
         
         view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
@@ -598,8 +594,10 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         }
         cell.update(progress: 0.0)
         cell.delegate = self
-        let track = getTrackAt(indexPath: indexPath)
-        cell.show(track:track)
+        if let track = getTrackAt(indexPath: indexPath) {
+            cell.show(track:track)
+        }
+        
         return cell
     }
     
@@ -607,7 +605,18 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         guard let cell = self.tableView.cellForRow(at: indexPath) as? LogsTableViewCell else {
             return
         }
-        let track = getTrackAt(indexPath: indexPath)
+        guard let track = getTrackAt(indexPath: indexPath) else {
+            return
+        }
+        track.trackPoints = dataStore.getPointsForTrack(vgTrack: track)
+        if track.trackPoints.count > 0 {
+            let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
+            logDetailsView.dataStore = self.dataStore
+            logDetailsView.track = track
+            self.navigationController?.pushViewController(logDetailsView, animated: true)
+            return
+        }
+        
         
         if vgFileManager!.getAbsoluteFilePathFor(track:track) == nil {
             self.downloadFileFor(track: track, progress: { (received, total) in
@@ -671,7 +680,10 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
-            let track = self.getTrackAt(indexPath: indexPath)
+            guard let track = self.getTrackAt(indexPath: indexPath) else {
+                return
+            }
+            
             self.tracksDict[self.sectionKeys[indexPath.section]]?.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
 

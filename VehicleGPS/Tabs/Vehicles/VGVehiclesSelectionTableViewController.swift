@@ -11,6 +11,15 @@ import UIKit
 class VGVehiclesSelectionTableViewController: VGVehiclesTableViewController {
 
     var track: VGTrack?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(didTapCancel))
+    }
+    
+    @objc func didTapCancel() {
+        self.dismiss(animated: true)
+    }
 
     // MARK: - Table view data source    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

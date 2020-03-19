@@ -10,6 +10,7 @@ import UIKit
 
 class ColorPickerTableViewController: UITableViewController {
     let colors:[String: UIColor] = ["Rauður":.red, "Grænn":.green, "Svartur":.black, "Blár":.blue, "Brúnn":.brown, "Dökk grár":.darkGray, "Hvítur":.white]
+    var delegate: ColorPickerDelegate?
     override func viewDidLoad() {
         super.viewDidLoad()
         let colorCellNib = UINib(nibName: "ColorTableViewCell", bundle: nil)
@@ -26,12 +27,10 @@ class ColorPickerTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return colors.count
     }
     
@@ -40,7 +39,13 @@ class ColorPickerTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        dismiss(animated: true, completion: nil)
+        guard let delegate = delegate else {
+            dismiss(animated: true)
+            return
+        }
+        
+        delegate.didPick(color: colors[Array(colors.keys)[indexPath.row]]!)
+        dismiss(animated: true)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

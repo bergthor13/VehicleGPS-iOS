@@ -183,13 +183,13 @@ class HistoryDetailsTableViewController: UITableViewController {
             return CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude)
         }
         let polyline = MKPolyline(coordinates: points, count: points.count)
-        
-        if let color = track.vehicle?.mapColor {
-            self.vehicleColor = color
-        } else {
-            self.vehicleColor = .red
-        }
+
         DispatchQueue.main.async {
+            if let color = track.vehicle?.mapColor {
+                self.vehicleColor = color
+            } else {
+                self.vehicleColor = .red
+            }
             mapView.addOverlay(polyline)
         }
     }
@@ -201,7 +201,7 @@ extension HistoryDetailsTableViewController: MKMapViewDelegate {
         if overlay is MKPolyline {
             let polylineRender = MKPolylineRenderer(overlay: overlay)
             polylineRender.strokeColor = vehicleColor
-            polylineRender.lineWidth = 2
+            polylineRender.lineWidth = 1
             return polylineRender
         }
         return MKOverlayRenderer(overlay: overlay)

@@ -8,13 +8,17 @@
 
 import UIKit
 
+protocol ColorPickerDelegate {
+    func didPick(color:UIColor)
+}
+
 class NewVehicleTableViewController: UITableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
 
     var cell: NewVehicleTableViewCell! {
         didSet {
-            if let vehicle = self.vehicle {
-                cell.txtName.text = vehicle.name
-            }
+            cell.txtName.text = vehicle.name
+            cell.colorBox.backgroundColor = vehicle.mapColor
+
             self.cell.imgProfile.isUserInteractionEnabled = true
             let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapImage))
             self.cell.imgProfile?.addGestureRecognizer(imageTapGesture)
@@ -26,7 +30,7 @@ class NewVehicleTableViewController: UITableViewController, UINavigationControll
     
     var dataStore: VGDataStore!
     var vehiclesController: VGVehiclesTableViewController!
-    var vehicle: VGVehicle?
+    var vehicle = VGVehicle()
     var imagePicker: UIImagePickerController!
     var selectedImage:UIImage?
     
@@ -68,9 +72,13 @@ class NewVehicleTableViewController: UITableViewController, UINavigationControll
 
     // MARK: - Table view data source
     @objc func didTapColor() {
-        let nav = UINavigationController(rootViewController: ColorPickerTableViewController(style: .insetGrouped))
-        self.present(nav, animated: true, completion: nil)
+        let colorPicker = ColorPickerTableViewController(style: .insetGrouped)
+        colorPicker.delegate = self
+        
+        self.present(UINavigationController(rootViewController: colorPicker), animated: true, completion: nil)
     }
+    
+    
     @objc func didTapImage() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Taka mynd", style: .default, handler: { (action) in
@@ -101,14 +109,16 @@ class NewVehicleTableViewController: UITableViewController, UINavigationControll
     
     @objc func tappedSave() {
         dismiss(animated: true) {
-            let vehicle = VGVehicle()
-            vehicle.mapColor = UIColor.red
-            vehicle.name = self.cell.txtName.text
-            vehicle.id = self.vehicle?.id
-            vehicle.image = self.selectedImage
-            self.dataStore.add(vgVehicle: vehicle)
+            if self.vehicle.mapColor == nil {
+                self.vehicle.mapColor = UIColor.red
+            }
+            
+            self.vehicle.name = self.cell.txtName.text
+            self.vehicle.id = self.vehicle.id
+            self.vehicle.image = self.selectedImage
+            self.dataStore.add(vgVehicle: self.vehicle)
             if let vehiclesController = self.vehiclesController {
-                vehiclesController.addVehicle(vehicle)
+                vehiclesController.addVehicle(self.vehicle)
             }
         }
     }
@@ -131,51 +141,12 @@ class NewVehicleTableViewController: UITableViewController, UINavigationControll
         self.cell = cell as? NewVehicleTableViewCell
         return cell
     }
-    
+}
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+
+extension NewVehicleTableViewController: ColorPickerDelegate {
+    func didPick(color: UIColor) {
+        self.cell.colorBox.backgroundColor = color
+        vehicle.mapColor = color
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

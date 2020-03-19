@@ -42,7 +42,7 @@ class VGLogDetailsViewController: UIViewController {
                                           action: #selector(displayShareSelection))
         self.navigationItem.rightBarButtonItem = shareButton
         let detailSegment = UISegmentedControl(items: [NSLocalizedString("Kort", comment: ""), NSLocalizedString("Tölfræði", comment: "")])
-        detailSegment.addTarget(self, action: Selector(("segmentedControlValueChanged:")), for: .valueChanged)
+        detailSegment.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
         detailSegment.selectedSegmentIndex = 0
         self.navigationItem.titleView = detailSegment
         view.addSubview(mapSegmentView)
@@ -61,16 +61,11 @@ class VGLogDetailsViewController: UIViewController {
                 }
             }
             
-            let fullList = self.dataStore.getPointsForTrack(vgTrack: self.track)
-            if fullList.count > 0 {
-                
-            }
-            
-            self.vgSnapshotMaker = VGSnapshotMaker(fileManager: self.vgFileManager)
-            self.vgLogParser = VGCSVParser(snapshotter: self.vgSnapshotMaker)
 
+            let fullList = self.dataStore.getPointsForTrack(vgTrack: self.track)
             self.track.trackPoints = fullList
-            
+            self.vgSnapshotMaker = VGSnapshotMaker(fileManager: self.vgFileManager)
+
             DispatchQueue.main.async {
                 if fullList.count > 0 {
                     self.display(track: self.track, list: self.track.getCoordinateList(), on: self.mapView)
@@ -82,15 +77,6 @@ class VGLogDetailsViewController: UIViewController {
             self.vgSnapshotMaker.drawTrack(vgTrack: self.track)
         }
     }
-    
-    func addRadiusCircle(location: CLLocationCoordinate2D){
-        self.mapView.delegate = self
-        let circle = MKCircle(center: location, radius: 0.5 as CLLocationDistance)
-        self.mapView.addOverlay(circle)
-    }
-    
-
-
     
     func display(track: VGTrack, list: [CLLocationCoordinate2D], on mapView: MKMapView) {
         // pad our map by 10% around the farthest annotations
@@ -127,6 +113,7 @@ class VGLogDetailsViewController: UIViewController {
     func process(track: VGTrack) {
         let hud = MBProgressHUD.showAdded(to: self.parent!.view, animated: true)
         hud.label.text = "Les skrá..."
+        vgLogParser = vgFileManager?.getParser(for: track)
         vgLogParser.fileToTrack(fileUrl: self.vgFileManager.getAbsoluteFilePathFor(track: track)!, progress: { (index, count) in
             DispatchQueue.main.async {
                 hud.mode = .annularDeterminate

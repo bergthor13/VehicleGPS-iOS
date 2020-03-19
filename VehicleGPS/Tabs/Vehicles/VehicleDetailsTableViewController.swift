@@ -27,7 +27,7 @@ class VehicleDetailsTableViewController: UITableViewController {
     
     @objc func didTapEdit() {
         let editVehicleVC = EditVehicleTableViewController(style: .grouped)
-        editVehicleVC.vehicle = vehicle
+        editVehicleVC.vehicle = vehicle!
         present(UINavigationController(rootViewController: editVehicleVC), animated: true, completion: nil)
     }
 

@@ -68,13 +68,9 @@ class LogsTableViewCell: UITableViewCell {
         
         self.lblFileSize!.text = fileSizeWithUnit
         
-        if track.distance > 1 {
-            self.lblDistance.text = distanceFormatter.string(fromValue: track.distance, unit: .kilometer)
-        } else {
-            self.lblDistance.text = distanceFormatter.string(fromValue: track.distance*1000, unit: .meter)
-        }
-        
-        self.lblDistance.attributedText = styleString(unstyledString: self.lblDistance.text!, substrings: [" km", " m"])
+        self.lblDistance.text = distanceFormatter.string(fromMeters: track.distance*1000)
+                
+        self.lblDistance.attributedText = styleString(unstyledString: self.lblDistance.text!, substrings: [distanceFormatter.unitString(fromMeters: track.distance*1000, usedUnit: nil)])
         
         let formattedDuration = form.string(from: track.duration)
         

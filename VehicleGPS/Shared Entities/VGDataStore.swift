@@ -47,7 +47,9 @@ class VGDataStore {
 
     // MARK: - Private Functions
     fileprivate func getPoints(for track:VGTrack, in context:NSManagedObjectContext) -> [NSManagedObject] {
-        let fetchedTrack = getTrack(for: track, in: context)!
+        guard let fetchedTrack = getTrack(for: track, in: context) else {
+            return [NSManagedObject]()
+        }
 
         let dataPointFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "DataPoint")
         dataPointFetchRequest.predicate = NSPredicate(format: "track = %@", fetchedTrack)
@@ -60,7 +62,9 @@ class VGDataStore {
     }
     
     fileprivate func getMapPoints(for track:VGTrack, in context:NSManagedObjectContext) -> [MapPoint] {
-        let fetchedTrack = getTrack(for: track, in: context)!
+        guard let fetchedTrack = getTrack(for: track, in: context) else {
+            return [MapPoint]()
+        }
 
         do {
             let dataPointFetchRequest = NSFetchRequest<MapPoint>(entityName: "MapPoint")
@@ -233,31 +237,21 @@ class VGDataStore {
     }
     
     func countAllData(entity:String, callback:(Int)->()) {
-        let fetchLimit = 500000
-        
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
-        fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.fetchLimit = fetchLimit
+        var result = 0
         
-        var offset = 0
-        var fetchCount = 0
-        var totalCount = 0
-        repeat {
-            do {
-                fetchRequest.fetchOffset = offset
-                let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-                context.persistentStoreCoordinator = self.storeCoordinator
-                let result = try context.fetch(fetchRequest)
-                fetchCount = result.count
-                totalCount += fetchCount
-            } catch let error {
-                print("Count all data in \(entity) error :", error)
-                callback(0)
-            }
-            offset += fetchLimit
-        } while fetchCount == fetchLimit
+        fetchRequest.includesPropertyValues = false
+        fetchRequest.includesSubentities    = false
+        fetchRequest.resultType = NSFetchRequestResultType.countResultType
+        do {
+            result = try context.count(for: fetchRequest)
+        } catch let error {
+            print(error)
+        }
         
-        callback(totalCount)
+        callback(result)
     }
     
     // MARK: Track
@@ -354,9 +348,8 @@ class VGDataStore {
             track.setValue(vgTrack.timeStart, forKey: "timeStart")
             
             for point in vgTrack.trackPoints {
-                if point.hasGoodFix() {
-                    self.add(vgDataPoint: point, to: track, in: context)
-                }
+                                    self.add(vgDataPoint: point, to: track, in: context)
+
             }
             
             for point in vgTrack.mapPoints {
@@ -394,9 +387,7 @@ class VGDataStore {
                         trackUpdate.setValue(vgTrack.timeStart, forKey: "timeStart")
                         
                         for point in vgTrack.trackPoints {
-                            if point.hasGoodFix() {
-                                self.add(vgDataPoint: point, to: trackUpdate, in: context)
-                            }
+                            self.add(vgDataPoint: point, to: trackUpdate, in: context)
                         }
                         
                         for point in vgTrack.mapPoints {

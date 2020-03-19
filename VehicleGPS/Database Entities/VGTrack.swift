@@ -226,10 +226,12 @@ class VGTrack {
         minLon = -200.0
         maxLon = 200.0
         for dataPoint in trackPoints {
-            guard let fixType = dataPoint.fixType else {
-                continue
+            var typeOfFix = dataPoint.fixType
+            if typeOfFix == nil {
+                typeOfFix = 2
             }
-            if fixType > 1 && self.timeStart == nil && dataPoint.timestamp! > Date(timeIntervalSince1970: 1388534400) {
+            
+            if typeOfFix! > 1 && self.timeStart == nil && dataPoint.timestamp! > Date(timeIntervalSince1970: 1388534400) {
                 self.timeStart = dataPoint.timestamp
             }
             

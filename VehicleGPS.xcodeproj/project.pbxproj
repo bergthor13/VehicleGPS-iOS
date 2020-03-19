@@ -32,10 +32,7 @@
 		F23BE8DF22A5E596008FD50C /* VGSettingsNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8DA22A5E596008FD50C /* VGSettingsNavigationController.swift */; };
 		F23BE8E022A5E596008FD50C /* VGWiFiTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8DB22A5E596008FD50C /* VGWiFiTableViewController.swift */; };
 		F23BE8E122A5E596008FD50C /* messages.plist in Resources */ = {isa = PBXBuildFile; fileRef = F23BE8DC22A5E596008FD50C /* messages.plist */; };
-		F23BE8E422A5E5A7008FD50C /* VGDashboardNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8E222A5E5A7008FD50C /* VGDashboardNavigationController.swift */; };
-		F23BE8E522A5E5A7008FD50C /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8E322A5E5A7008FD50C /* DashboardViewController.swift */; };
 		F23BE8F222A5E5BB008FD50C /* VGLogDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8E722A5E5BB008FD50C /* VGLogDetailsViewController.swift */; };
-		F23BE8F322A5E5BB008FD50C /* VGLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */; };
 		F23BE8F422A5E5BB008FD50C /* VGTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8E922A5E5BB008FD50C /* VGTrack.swift */; };
 		F23BE8F522A5E5BB008FD50C /* VGGraphTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8EA22A5E5BB008FD50C /* VGGraphTableViewCell.swift */; };
 		F23BE8F622A5E5BB008FD50C /* VGDataPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */; };
@@ -72,17 +69,21 @@
 		F25839E323AAD1E000E76B54 /* HistoryHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25839E223AAD1E000E76B54 /* HistoryHeader.swift */; };
 		F258F5E623FB02C70079C1EE /* ColorTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F258F5E523FB02C70079C1EE /* ColorTableViewCell.swift */; };
 		F258F5E823FB02DC0079C1EE /* ColorTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F258F5E723FB02DC0079C1EE /* ColorTableViewCell.xib */; };
-		F26CCB6B23DBB44600697EFA /* Localization.strings in Resources */ = {isa = PBXBuildFile; fileRef = F26CCB6D23DBB44600697EFA /* Localization.strings */; };
+		F26CCB6B23DBB44600697EFA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F26CCB6D23DBB44600697EFA /* Localizable.strings */; };
 		F2797D5723CD1AC500207650 /* HistoryDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2797D5623CD1AC500207650 /* HistoryDetailsTableViewController.swift */; };
 		F27CB77C23D38A3D002BF28F /* DeviceConnectedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F27CB77B23D38A3D002BF28F /* DeviceConnectedHeaderView.xib */; };
 		F27CB77E23D38C50002BF28F /* DeviceConnectedHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27CB77D23D38C50002BF28F /* DeviceConnectedHeaderView.swift */; };
+		F27DFBA824194E330089DFF1 /* VGGPXParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27DFBA724194E330089DFF1 /* VGGPXParser.swift */; };
 		F29BE69223FAC162006959C3 /* ColorPickerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29BE69123FAC162006959C3 /* ColorPickerTableViewController.swift */; };
 		F2AC16FE23EDAFA400516498 /* EditVehicleTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AC16FD23EDAFA400516498 /* EditVehicleTableViewController.swift */; };
 		F2AC170223F0094C00516498 /* VGMapPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AC170123F0094C00516498 /* VGMapPoint.swift */; };
+		F2B50C2C24151C9D002ECCC6 /* VGShortCSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B50C2B24151C9D002ECCC6 /* VGShortCSVParser.swift */; };
 		F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C96EB122A853A500180055 /* VGFileManager.swift */; };
 		F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */; };
 		F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */; };
 		F2D8C30523FDD01500D77BF2 /* NotificationCenterNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D8C30423FDD01500D77BF2 /* NotificationCenterNames.swift */; };
+		F2DCA9442402E3BA00CA9CF1 /* VGArduinoCSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */; };
+		F2EE0CB02407E76C00916DD9 /* StreamReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EE0CAF2407E76C00916DD9 /* StreamReader.swift */; };
 		F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FDA85D23C646B3000B8B76 /* VGDatabaseTableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -116,10 +117,7 @@
 		F23BE8DA22A5E596008FD50C /* VGSettingsNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGSettingsNavigationController.swift; sourceTree = "<group>"; };
 		F23BE8DB22A5E596008FD50C /* VGWiFiTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGWiFiTableViewController.swift; sourceTree = "<group>"; };
 		F23BE8DC22A5E596008FD50C /* messages.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = messages.plist; sourceTree = "<group>"; };
-		F23BE8E222A5E5A7008FD50C /* VGDashboardNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGDashboardNavigationController.swift; sourceTree = "<group>"; };
-		F23BE8E322A5E5A7008FD50C /* DashboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
 		F23BE8E722A5E5BB008FD50C /* VGLogDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGLogDetailsViewController.swift; sourceTree = "<group>"; };
-		F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGLogParser.swift; sourceTree = "<group>"; };
 		F23BE8E922A5E5BB008FD50C /* VGTrack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGTrack.swift; sourceTree = "<group>"; };
 		F23BE8EA22A5E5BB008FD50C /* VGGraphTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGGraphTableViewCell.swift; sourceTree = "<group>"; };
 		F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGDataPoint.swift; sourceTree = "<group>"; };
@@ -157,17 +155,22 @@
 		F25839E223AAD1E000E76B54 /* HistoryHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryHeader.swift; sourceTree = "<group>"; };
 		F258F5E523FB02C70079C1EE /* ColorTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTableViewCell.swift; sourceTree = "<group>"; };
 		F258F5E723FB02DC0079C1EE /* ColorTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ColorTableViewCell.xib; sourceTree = "<group>"; };
-		F26CCB6C23DBB44600697EFA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localization.strings; sourceTree = "<group>"; };
+		F26CCB6C23DBB44600697EFA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F2797D5623CD1AC500207650 /* HistoryDetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryDetailsTableViewController.swift; sourceTree = "<group>"; };
 		F27CB77B23D38A3D002BF28F /* DeviceConnectedHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DeviceConnectedHeaderView.xib; sourceTree = "<group>"; };
 		F27CB77D23D38C50002BF28F /* DeviceConnectedHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConnectedHeaderView.swift; sourceTree = "<group>"; };
+		F27DFBA724194E330089DFF1 /* VGGPXParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGPXParser.swift; sourceTree = "<group>"; };
 		F29BE69123FAC162006959C3 /* ColorPickerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerTableViewController.swift; sourceTree = "<group>"; };
 		F2AC16FD23EDAFA400516498 /* EditVehicleTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditVehicleTableViewController.swift; sourceTree = "<group>"; };
 		F2AC170123F0094C00516498 /* VGMapPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGMapPoint.swift; sourceTree = "<group>"; };
+		F2B50C2B24151C9D002ECCC6 /* VGShortCSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGShortCSVParser.swift; sourceTree = "<group>"; };
 		F2C96EB122A853A500180055 /* VGFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFileManager.swift; sourceTree = "<group>"; };
 		F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDataStore.swift; sourceTree = "<group>"; };
 		F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGPXGenerator.swift; sourceTree = "<group>"; };
 		F2D8C30423FDD01500D77BF2 /* NotificationCenterNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterNames.swift; sourceTree = "<group>"; };
+		F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGArduinoCSVParser.swift; sourceTree = "<group>"; };
+		F2DCA94524043FFC00CA9CF1 /* is */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = is; path = is.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F2EE0CAF2407E76C00916DD9 /* StreamReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamReader.swift; sourceTree = "<group>"; };
 		F2FDA85D23C646B3000B8B76 /* VGDatabaseTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDatabaseTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -236,8 +239,10 @@
 		F215ADFA2402786B000ECFFF /* Parsers */ = {
 			isa = PBXGroup;
 			children = (
-				F23BE8E822A5E5BB008FD50C /* VGLogParser.swift */,
 				F215ADFB2402799C000ECFFF /* VGCSVParser.swift */,
+				F2B50C2B24151C9D002ECCC6 /* VGShortCSVParser.swift */,
+				F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */,
+				F27DFBA724194E330089DFF1 /* VGGPXParser.swift */,
 				F228C43B23D76A9700E5BBB7 /* IVGLogParser.swift */,
 			);
 			path = Parsers;
@@ -252,6 +257,7 @@
 				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
 				F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */,
 				F2C96EB122A853A500180055 /* VGFileManager.swift */,
+				F2EE0CAF2407E76C00916DD9 /* StreamReader.swift */,
 				F23BE8EE22A5E5BB008FD50C /* VGSFTPManager.swift */,
 				F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */,
 				F24754FD23DDAFA8007E0DF8 /* VGListEmptyLabel.swift */,
@@ -265,7 +271,6 @@
 			children = (
 				F23BE8D322A5E566008FD50C /* VGTabBarController.swift */,
 				F2169BED23C9D06E00DE8547 /* Journeys */,
-				F23BE8D522A5E56F008FD50C /* Dashboard */,
 				F23BE8D622A5E576008FD50C /* Logs */,
 				F25839CD23A6602C00E76B54 /* History */,
 				F23BE8D722A5E585008FD50C /* Settings */,
@@ -307,7 +312,7 @@
 			children = (
 				F24A6FCC22F8521E00C8D372 /* VehicleGPS.entitlements */,
 				F23BE8CD22A5E4BA008FD50C /* Info.plist */,
-				F26CCB6D23DBB44600697EFA /* Localization.strings */,
+				F26CCB6D23DBB44600697EFA /* Localizable.strings */,
 				F23BE8C822A5E4BA008FD50C /* Assets.xcassets */,
 				F23BE8C522A5E4B9008FD50C /* VehicleGPS.xcdatamodeld */,
 				F215AC7523DB1EF80001AF24 /* Database Entities */,
@@ -315,15 +320,6 @@
 				F2169BEC23C9CE5800DE8547 /* Tabs */,
 			);
 			path = VehicleGPS;
-			sourceTree = "<group>";
-		};
-		F23BE8D522A5E56F008FD50C /* Dashboard */ = {
-			isa = PBXGroup;
-			children = (
-				F23BE8E322A5E5A7008FD50C /* DashboardViewController.swift */,
-				F23BE8E222A5E5A7008FD50C /* VGDashboardNavigationController.swift */,
-			);
-			path = Dashboard;
 			sourceTree = "<group>";
 		};
 		F23BE8D622A5E576008FD50C /* Logs */ = {
@@ -484,6 +480,7 @@
 			knownRegions = (
 				en,
 				is,
+				Base,
 			);
 			mainGroup = F23BE8B222A5E4B9008FD50C;
 			productRefGroup = F23BE8BC22A5E4B9008FD50C /* Products */;
@@ -502,7 +499,7 @@
 			files = (
 				F257078022F0C10B00F201B3 /* LogHeaderView.xib in Resources */,
 				F23BE8F722A5E5BB008FD50C /* LogsTableViewCell.xib in Resources */,
-				F26CCB6B23DBB44600697EFA /* Localization.strings in Resources */,
+				F26CCB6B23DBB44600697EFA /* Localizable.strings in Resources */,
 				F23A32CF23DBA82100B21050 /* VehicleTableViewCell.xib in Resources */,
 				F23BE8E122A5E596008FD50C /* messages.plist in Resources */,
 				F258F5E823FB02DC0079C1EE /* ColorTableViewCell.xib in Resources */,
@@ -571,7 +568,6 @@
 				F23BE8F422A5E5BB008FD50C /* VGTrack.swift in Sources */,
 				F25839D923A680FC00E76B54 /* HistoryTableViewCell.swift in Sources */,
 				F25839E323AAD1E000E76B54 /* HistoryHeader.swift in Sources */,
-				F23BE8F322A5E5BB008FD50C /* VGLogParser.swift in Sources */,
 				F23BE8DD22A5E596008FD50C /* NewNetworkTableViewController.swift in Sources */,
 				F23BE8D422A5E566008FD50C /* VGTabBarController.swift in Sources */,
 				F23BE8F222A5E5BB008FD50C /* VGLogDetailsViewController.swift in Sources */,
@@ -592,11 +588,11 @@
 				F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */,
 				F257077E22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift in Sources */,
 				F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */,
+				F27DFBA824194E330089DFF1 /* VGGPXParser.swift in Sources */,
 				F215AC7E23DB38D90001AF24 /* VGVehiclesTableViewController.swift in Sources */,
 				F23BE8E022A5E596008FD50C /* VGWiFiTableViewController.swift in Sources */,
 				F27CB77E23D38C50002BF28F /* DeviceConnectedHeaderView.swift in Sources */,
 				F23BE8F922A5E5BB008FD50C /* VGSFTPManager.swift in Sources */,
-				F23BE8E422A5E5A7008FD50C /* VGDashboardNavigationController.swift in Sources */,
 				F23A32D123DBA85100B21050 /* VehicleTableViewCell.swift in Sources */,
 				F2797D5723CD1AC500207650 /* HistoryDetailsTableViewController.swift in Sources */,
 				F22235FF23E21216008EF8E5 /* VehicleDetailsTableViewController.swift in Sources */,
@@ -608,9 +604,10 @@
 				F22235FD23E1D9D5008EF8E5 /* VGVehiclesSelectionTableViewController.swift in Sources */,
 				F23BE8F622A5E5BB008FD50C /* VGDataPoint.swift in Sources */,
 				F24D88C723D3CB0D0071F6BC /* VGAvailableDownloadTableViewController.swift in Sources */,
-				F23BE8E522A5E5A7008FD50C /* DashboardViewController.swift in Sources */,
+				F2EE0CB02407E76C00916DD9 /* StreamReader.swift in Sources */,
 				F2169BEF23C9D0BE00DE8547 /* VGJourneyTableViewController.swift in Sources */,
 				F23BE8FA22A5E5BB008FD50C /* VGLogsNavigationViewController.swift in Sources */,
+				F2B50C2C24151C9D002ECCC6 /* VGShortCSVParser.swift in Sources */,
 				F24D88CB23D622300071F6BC /* VGSnapshotMaker.swift in Sources */,
 				F25669BE23CB6DB700CC7934 /* TrackGraphViewConfig.swift in Sources */,
 				F24754F723DDAAD8007E0DF8 /* VGDistanceFormatter.swift in Sources */,
@@ -623,6 +620,7 @@
 				F228C43C23D76A9700E5BBB7 /* IVGLogParser.swift in Sources */,
 				F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */,
 				F257078222F0C20000F201B3 /* LogHeaderView.swift in Sources */,
+				F2DCA9442402E3BA00CA9CF1 /* VGArduinoCSVParser.swift in Sources */,
 				F23BE8BF22A5E4B9008FD50C /* AppDelegate.swift in Sources */,
 				F215AC6623DB1AAC0001AF24 /* VGJourney.swift in Sources */,
 				F23BE8FB22A5E5BB008FD50C /* VGLogsTableViewController.swift in Sources */,
@@ -633,12 +631,13 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		F26CCB6D23DBB44600697EFA /* Localization.strings */ = {
+		F26CCB6D23DBB44600697EFA /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				F26CCB6C23DBB44600697EFA /* en */,
+				F2DCA94524043FFC00CA9CF1 /* is */,
 			);
-			name = Localization.strings;
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

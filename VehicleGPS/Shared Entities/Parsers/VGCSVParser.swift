@@ -38,7 +38,7 @@ class VGCSVParser: IVGLogParser {
                 fileString = try String(contentsOf: fileUrl)
             } catch {/* error handling here */}
 
-            let csv = CSV(string: fileString)
+            let csv = CSV(string: fileString, column: ",", line: "\n")
 
             let lineCount = csv.rows.count
             for (index,row) in csv.rows.enumerated() {
@@ -119,4 +119,76 @@ class VGCSVParser: IVGLogParser {
         return dataPoint
     }
     
+}
+
+
+class ISO8601DateParser {
+  
+static var calendar = Calendar(identifier: .gregorian)
+
+    static func parse(_ dateString: String) -> Date? {
+    var components = DateComponents()
+    guard let year = getItem(string: dateString, startIndex: 0, count: 4) else {
+        return nil
+    }
+
+    guard let month = getItem(string: dateString, startIndex: 5, count: 2) else {
+        return nil
+    }
+
+    guard let day = getItem(string: dateString, startIndex: 8, count: 2) else {
+        return nil
+    }
+
+    guard let hour = getItem(string: dateString, startIndex: 11, count: 2) else {
+        return nil
+    }
+
+    guard let minute = getItem(string: dateString, startIndex: 14, count: 2) else {
+        return nil
+    }
+
+    guard let second = getItem(string: dateString, startIndex: 17, count: 2) else {
+        return nil
+    }
+        
+    if dateString.count >= 26 {
+        if let nanosecond = getItem(string: dateString, startIndex: 20, count: 6) {
+            components.nanosecond = nanosecond*1000
+        } else {
+            components.nanosecond = 0
+        }
+    } else {
+        if dateString.count >= 23 {
+            if let nanosecond = getItem(string: dateString, startIndex: 20, count: 3) {
+                components.nanosecond = nanosecond*1000000
+            } else {
+                components.nanosecond = 0
+            }
+        } else {
+            components.nanosecond = 0
+        }
+    }
+    
+
+    components.year   = year
+    components.month  = month
+    components.day    = day
+    components.hour   = hour
+    components.minute = minute
+    components.second = second
+    let date = calendar.date(from: components)
+    return date
+  }
+
+    static private func getItem(string:String, startIndex:Int, count:Int) -> Int? {
+        if string.count < startIndex+count {
+            return nil
+        }
+        let start = string.index(string.startIndex, offsetBy: startIndex)
+        let end = string.index(string.startIndex, offsetBy: startIndex+count)
+        let range = start..<end
+        return Int(String(string[range]))
+    }
+
 }

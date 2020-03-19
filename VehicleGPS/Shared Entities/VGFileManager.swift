@@ -16,6 +16,7 @@ class VGFileManager {
     var IMAGE_DIRECTORY_LIGHT = "OverviewSnapsLight"
     var IMAGE_DIRECTORY_DARK = "OverviewSnapsDark"
     var VEHICLE_IMAGE_DIRECTORY = "VehicleImages"
+    
     init() {
         fileManager = FileManager.default
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
@@ -118,6 +119,40 @@ class VGFileManager {
             print(error)
         }
         
+    }
+    
+    func getParser(for track:VGTrack) -> IVGLogParser? {
+        let fileExtension = track.fileName.split(separator: ".").last!.lowercased()
+        
+        if fileExtension == "gpx" {
+            return VGGPXParser(snapshotter: VGSnapshotMaker(fileManager: self))
+        }
+        if let aStreamReader = StreamReader(path: getAbsoluteFilePathFor(track: track)!) {
+            defer {
+                aStreamReader.close()
+            }
+            guard let firstLine = aStreamReader.nextLine() else {
+                return nil
+            }
+            var colCount = firstLine.split(separator: ",").count
+            
+            if colCount == 1 {
+                colCount = firstLine.split(separator: ";").count
+            }
+            
+            if colCount == 16 {
+                return VGCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
+            }
+            
+            if colCount == 15 {
+                return VGShortCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
+            }
+            
+            if colCount == 5 {
+                return VGArduinoCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
+            }
+        }
+        return VGCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
     }
     
     func split(track:VGTrack, at time:Date) {

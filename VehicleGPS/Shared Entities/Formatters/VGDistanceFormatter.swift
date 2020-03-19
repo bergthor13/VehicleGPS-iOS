@@ -22,6 +22,5 @@ class VGDistanceFormatter: LengthFormatter {
     func configure() {
         self.numberFormatter.maximumFractionDigits = 2
         self.numberFormatter.minimumFractionDigits = 2
-
     }
 }
