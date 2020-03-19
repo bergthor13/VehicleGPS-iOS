@@ -39,7 +39,7 @@
 		F23BE8F922A5E5BB008FD50C /* VGSFTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8EE22A5E5BB008FD50C /* VGSFTPManager.swift */; };
 		F23BE8FB22A5E5BB008FD50C /* VGLogsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8F022A5E5BB008FD50C /* VGLogsTableViewController.swift */; };
 		F23D786F23B1551300DBC64F /* VGHistorySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23D786E23B1551300DBC64F /* VGHistorySection.swift */; };
-		F23D787323B7C16700DBC64F /* VGDisplayLineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23D787223B7C16700DBC64F /* VGDisplayLineProtocol.swift */; };
+		F23D787323B7C16700DBC64F /* DisplayLineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23D787223B7C16700DBC64F /* DisplayLineProtocol.swift */; };
 		F24754F523DD9219007E0DF8 /* VGHeaderDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24754F423DD9219007E0DF8 /* VGHeaderDateFormatter.swift */; };
 		F24754F723DDAAD8007E0DF8 /* VGDistanceFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24754F623DDAAD8007E0DF8 /* VGDistanceFormatter.swift */; };
 		F24754FC23DDAE26007E0DF8 /* VGDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24754FB23DDAE26007E0DF8 /* VGDurationFormatter.swift */; };
@@ -120,7 +120,7 @@
 		F23BE8EE22A5E5BB008FD50C /* VGSFTPManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGSFTPManager.swift; sourceTree = "<group>"; };
 		F23BE8F022A5E5BB008FD50C /* VGLogsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGLogsTableViewController.swift; sourceTree = "<group>"; };
 		F23D786E23B1551300DBC64F /* VGHistorySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGHistorySection.swift; sourceTree = "<group>"; };
-		F23D787223B7C16700DBC64F /* VGDisplayLineProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDisplayLineProtocol.swift; sourceTree = "<group>"; };
+		F23D787223B7C16700DBC64F /* DisplayLineProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayLineProtocol.swift; sourceTree = "<group>"; };
 		F24754F423DD9219007E0DF8 /* VGHeaderDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGHeaderDateFormatter.swift; sourceTree = "<group>"; };
 		F24754F623DDAAD8007E0DF8 /* VGDistanceFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDistanceFormatter.swift; sourceTree = "<group>"; };
 		F24754FB23DDAE26007E0DF8 /* VGDurationFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDurationFormatter.swift; sourceTree = "<group>"; };
@@ -341,8 +341,8 @@
 			children = (
 				F257077922F09AAA00F201B3 /* TrackGraphView.swift */,
 				F25669BD23CB6DB700CC7934 /* TrackGraphViewConfig.swift */,
+				F23D787223B7C16700DBC64F /* DisplayLineProtocol.swift */,
 				F257078122F0C20000F201B3 /* VGLogHeaderView.swift */,
-				F23D787223B7C16700DBC64F /* VGDisplayLineProtocol.swift */,
 				F27CB77D23D38C50002BF28F /* VGDeviceConnectedHeaderView.swift */,
 			);
 			path = Entities;
@@ -584,7 +584,7 @@
 				F22235FF23E21216008EF8E5 /* VGVehicleDetailsTableViewController.swift in Sources */,
 				F247550223DDBC43007E0DF8 /* VGAvailableLogsTableViewCell.swift in Sources */,
 				F215AC8723DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift in Sources */,
-				F23D787323B7C16700DBC64F /* VGDisplayLineProtocol.swift in Sources */,
+				F23D787323B7C16700DBC64F /* DisplayLineProtocol.swift in Sources */,
 				F23BE8F822A5E5BB008FD50C /* VGLogsTableViewCell.swift in Sources */,
 				F22235FD23E1D9D5008EF8E5 /* VGVehiclesSelectionTableViewController.swift in Sources */,
 				F23BE8F622A5E5BB008FD50C /* VGDataPoint.swift in Sources */,
