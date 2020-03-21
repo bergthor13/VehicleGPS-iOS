@@ -152,7 +152,10 @@ class VGHistoryTableViewController: UITableViewController {
                 dateFormatter.dateFormat = "yyyy"
                 let date = dateFormatter.date(from: summaryKey)
                 dateFormatter.dateFormat = "yyyy"
-                summary!.dateDescription = dateFormatter.string(from: date!)
+                if let date = date {
+                    summary!.dateDescription = dateFormatter.string(from: date)
+                }
+                
                 section?.summaries.append(summary!)
             }
             
@@ -226,7 +229,10 @@ class VGHistoryTableViewController: UITableViewController {
                 dateFormatter.dateFormat = "yyyy-MM"
                 let date = dateFormatter.date(from: sectionKey)
                 dateFormatter.dateFormat = "MMMM yyyy"
-                section!.dateDescription = dateFormatter.string(from: date!)
+                if let date = date {
+                    section!.dateDescription = dateFormatter.string(from: date)
+                }
+                
 
                 result.append(section!)
             }
@@ -240,7 +246,10 @@ class VGHistoryTableViewController: UITableViewController {
                 dateFormatter.dateFormat = "yyyy-MM-dd"
                 let date = dateFormatter.date(from: summaryKey)
                 dateFormatter.dateStyle = .long
-                summary!.dateDescription = dateFormatter.string(from: date!)
+                if let date = date {
+                    summary!.dateDescription = dateFormatter.string(from: date)
+                }
+                
                 section?.summaries.append(summary!)
             }
             
