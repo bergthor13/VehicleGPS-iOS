@@ -122,7 +122,7 @@ class VGFileManager {
     }
     
     func getParser(for track:VGTrack) -> IVGLogParser? {
-        let fileExtension = track.fileName.split(separator: ".").last!.lowercased()
+        var fileExtension = track.fileName.split(separator: ".").last?.lowercased()
         
         if fileExtension == "gpx" {
             return VGGPXParser(snapshotter: VGSnapshotMaker(fileManager: self))
