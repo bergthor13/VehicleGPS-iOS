@@ -88,6 +88,7 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="colorBanner" destination="eqr-AR-rDb" id="Vzn-UJ-GfG"/>
+                <outlet property="defaultStarView" destination="xpd-tx-PJg" id="FF9-oy-Xnk"/>
                 <outlet property="defaultViewBackground" destination="MjZ-WG-wfV" id="uak-y6-QHQ"/>
                 <outlet property="imgVehicle" destination="1Pa-LR-faQ" id="oSb-yN-dlI"/>
                 <outlet property="lblDistance" destination="exl-c1-B0p" id="VqQ-YK-Ybw"/>

@@ -16,6 +16,7 @@ class VGVehicleTableViewCell: UITableViewCell {
     @IBOutlet weak var lblDuration: UILabel!
     @IBOutlet weak var imgVehicle: UIImageView!
     @IBOutlet weak var defaultViewBackground: UIView!
+    @IBOutlet weak var defaultStarView: UIImageView!
     
     
     override func awakeFromNib() {

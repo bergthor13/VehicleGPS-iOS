@@ -362,6 +362,14 @@ class VGDataStore {
             } catch let error as NSError {
                 print("Could not save. \(error), \(error.userInfo)")
             }
+            if let items = UserDefaults.standard.data(forKey: "DefaultVehicle") {
+                let decoder = JSONDecoder()
+                if let defaultVehicleID = try? decoder.decode(UUID.self, from: items) {
+                    let newVehicle = VGVehicle()
+                    newVehicle.id = defaultVehicleID
+                    self.add(vgVehicle: newVehicle, to: vgTrack)
+                }
+            }
         }
     }
     

@@ -143,6 +143,25 @@ class VGVehiclesTableViewController: UITableViewController {
         
         
         let setDefaultAction = UIContextualAction(style: .normal, title: "Setja sem sjálfgefið") { (action, view, completion) in
+            let vehicle = self.vehicles[indexPath.row]
+            let ud = UserDefaults.standard
+            let encoder = JSONEncoder()
+            if let encoded = try? encoder.encode(vehicle.id) {
+                ud.set(encoded, forKey: "DefaultVehicle")
+            }
+            let visibleVehicles = tableView.indexPathsForVisibleRows
+
+            for visVehicleIndexPath in visibleVehicles! {
+                let cell = tableView.cellForRow(at: visVehicleIndexPath) as! VGVehicleTableViewCell
+                if vehicle.id == self.vehicles[visVehicleIndexPath.row].id {
+                    cell.defaultViewBackground.isHidden = false
+                    cell.defaultStarView.isHidden = false
+                } else {
+                    cell.defaultViewBackground.isHidden = true
+                    cell.defaultStarView.isHidden = true
+                }
+            }
+            
             completion(true)
         }
         
@@ -192,6 +211,27 @@ class VGVehiclesTableViewController: UITableViewController {
         cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
         cell.lblDuration.text = durationFormatter.string(from: duration)
         cell.imgVehicle?.image = VGFileManager().getImage(for: vehicles[indexPath.row])
+        
+        guard let items = UserDefaults.standard.data(forKey: "DefaultVehicle") else {
+            cell.defaultViewBackground.isHidden = true
+            cell.defaultStarView.isHidden = true
+            return cell
+        }
+        
+        let decoder = JSONDecoder()
+        guard let defaultVehicleID = try? decoder.decode(UUID.self, from: items) else {
+            return cell
+        }
+        
+        if defaultVehicleID == vehicles[indexPath.row].id {
+            cell.defaultViewBackground.isHidden = false
+            cell.defaultStarView.isHidden = false
+        } else {
+            cell.defaultViewBackground.isHidden = true
+            cell.defaultStarView.isHidden = true
+        }
+
+
         
         return cell
     }
