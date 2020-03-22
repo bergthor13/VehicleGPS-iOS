@@ -283,7 +283,6 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                                 if let header = self.tableView.headerView(forSection: sectionIndex) as? VGLogHeaderView {
                                     self.getViewForHeader(view: header, section: sectionIndex)
                                 }
-                                track.trackPoints = []
                             }
                             
                         }, imageCallback: { (track, style) in
@@ -574,6 +573,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         
         view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
+        view.detailsLabel.sizeToFit()
     }
 
     // MARK: - Table View Data Source
