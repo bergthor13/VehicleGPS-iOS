@@ -34,7 +34,7 @@ class VGDownloadLogsViewController: UIViewController {
         availableLogsTVC = VGAvailableDownloadTableViewController(style: .plain, downloadManager: downloadManager)
         view.backgroundColor = .systemBackground
         self.navigationController?.navigationBar.prefersLargeTitles = false
-        let segmentedControl = UISegmentedControl(items: ["Í boði", "Allir ferlar", "Stillingar"])
+        let segmentedControl = UISegmentedControl(items: ["Nýjir", "Allir ferlar", "Stillingar"])
         segmentedControl.addTarget(self, action: #selector(segmentedControlChanged(sender:)), for: .valueChanged)
         segmentedControl.selectedSegmentIndex = 0
         self.navigationItem.titleView = segmentedControl

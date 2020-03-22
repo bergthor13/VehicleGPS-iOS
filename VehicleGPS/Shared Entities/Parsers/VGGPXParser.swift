@@ -57,6 +57,7 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
                 return nil
             }
             callback(track)
+            return
 
         }
         // TODO: Allow nil.

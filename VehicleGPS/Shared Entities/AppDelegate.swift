@@ -52,22 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       open url: URL,
       options: [UIApplication.OpenURLOptionsKey : Any] = [:]
     ) -> Bool {
-      let needTo = url.startAccessingSecurityScopedResource()
-
-        let asdf = VGGPXParser(snapshotter: VGSnapshotMaker(fileManager: VGFileManager()))
-          asdf.fileToTrack(fileUrl: url, progress: { (curr, count) in
-              
-          }, callback: { (track) in
-              print(track)
-            self.dataStore?.update(vgTrack: track)
-          }) { (track, style) in
-              
-          }
-
-          if needTo {
-            url.stopAccessingSecurityScopedResource()
-          }
-
+        window?.rootViewController?.present(UINavigationController(rootViewController: VGImportFileTableViewController(style: .insetGrouped, fileUrl: url)), animated: true)
         return true
         
     }
