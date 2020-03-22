@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -9,7 +10,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="59m-u1-mAg" customClass="VGLogHeaderView" customModule="VehicleGPS" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="103"/>
+            <rect key="frame" x="0.0" y="0.0" width="414" height="52"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="@@Date" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LzT-8m-p2I">
@@ -19,7 +20,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@@Distance and Time" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="erY-cX-gyd">
-                    <rect key="frame" x="20" y="24.5" width="374" height="76.5"/>
+                    <rect key="frame" x="20" y="24.5" width="374" height="25.5"/>
                     <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
@@ -30,7 +31,7 @@
                 <constraint firstItem="LzT-8m-p2I" firstAttribute="leading" secondItem="4kF-wA-7kV" secondAttribute="leading" constant="20" id="JOG-tn-GQu"/>
                 <constraint firstAttribute="bottom" secondItem="erY-cX-gyd" secondAttribute="bottom" constant="2" id="ULn-GZ-Uqj"/>
                 <constraint firstItem="4kF-wA-7kV" firstAttribute="trailing" secondItem="erY-cX-gyd" secondAttribute="trailing" priority="999" constant="20" id="aaw-RP-HzV"/>
-                <constraint firstItem="LzT-8m-p2I" firstAttribute="top" secondItem="4kF-wA-7kV" secondAttribute="top" constant="2" id="hwD-zc-IPa"/>
+                <constraint firstItem="LzT-8m-p2I" firstAttribute="top" secondItem="59m-u1-mAg" secondAttribute="top" constant="2" id="hwD-zc-IPa"/>
                 <constraint firstItem="erY-cX-gyd" firstAttribute="leading" secondItem="4kF-wA-7kV" secondAttribute="leading" constant="20" id="q0w-UP-s9I"/>
                 <constraint firstItem="4kF-wA-7kV" firstAttribute="trailing" secondItem="LzT-8m-p2I" secondAttribute="trailing" priority="999" constant="20" id="wn6-d0-XEE"/>
             </constraints>
@@ -42,7 +43,7 @@
                 <outlet property="dateLabel" destination="LzT-8m-p2I" id="FCR-64-He3"/>
                 <outlet property="detailsLabel" destination="erY-cX-gyd" id="5WO-BW-LjL"/>
             </connections>
-            <point key="canvasLocation" x="439" y="-146"/>
+            <point key="canvasLocation" x="437.68115942028987" y="-163.39285714285714"/>
         </view>
     </objects>
 </document>
