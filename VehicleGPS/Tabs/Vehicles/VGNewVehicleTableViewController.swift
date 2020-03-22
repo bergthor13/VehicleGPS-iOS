@@ -25,6 +25,9 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
             let colorTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapColor))
             self.cell.colorContainer.addGestureRecognizer(colorTapGesture)
             
+            self.cell.txtName.addTarget(self, action: #selector(nameDidChange(_:)), for: .editingChanged)
+            enableDisableSave(button: self.navigationItem.rightBarButtonItem!, string: self.cell.txtName.text!)
+            
         }
     }
     
@@ -33,6 +36,10 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
     var vehicle = VGVehicle()
     var imagePicker: UIImagePickerController!
     var selectedImage:UIImage?
+    
+    @objc func nameDidChange(_ sender:UITextField) {
+        enableDisableSave(button: self.navigationItem.rightBarButtonItem!, string: sender.text!)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +51,14 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         tableView.tintColor = navigationController?.view.tintColor
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Vista", comment: ""), style: .done, target: self, action: #selector(tappedSave))
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(tappedCancel))
+    }
+    
+    func enableDisableSave(button:UIBarButtonItem, string:String) {
+        if string.count == 0 {
+            button.isEnabled = false
+        } else {
+            button.isEnabled = true
+        }
     }
     
     //MARK: - Add image to Library
