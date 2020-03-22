@@ -144,11 +144,10 @@ class VGVehiclesTableViewController: UITableViewController {
         
         let setDefaultAction = UIContextualAction(style: .normal, title: "Setja sem sjálfgefið") { (action, view, completion) in
             let vehicle = self.vehicles[indexPath.row]
-            let ud = UserDefaults.standard
-            let encoder = JSONEncoder()
-            if let encoded = try? encoder.encode(vehicle.id) {
-                ud.set(encoded, forKey: "DefaultVehicle")
+            if let vehicleID = vehicle.id {
+                self.dataStore.setDefaultVehicleID(id: vehicleID)
             }
+            
             let visibleVehicles = tableView.indexPathsForVisibleRows
 
             for visVehicleIndexPath in visibleVehicles! {

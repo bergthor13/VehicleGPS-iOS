@@ -355,20 +355,19 @@ class VGDataStore {
             for point in vgTrack.mapPoints {
                 self.add(vgMapPoint: point, to: track, in: context)
             }
-            
+    
             // 4
             do {
                 try context.save()
             } catch let error as NSError {
                 print("Could not save. \(error), \(error.userInfo)")
             }
-            if let items = UserDefaults.standard.data(forKey: "DefaultVehicle") {
-                let decoder = JSONDecoder()
-                if let defaultVehicleID = try? decoder.decode(UUID.self, from: items) {
-                    let newVehicle = VGVehicle()
-                    newVehicle.id = defaultVehicleID
-                    self.add(vgVehicle: newVehicle, to: vgTrack)
-                }
+            
+            
+            if let defaultVehicleID = self.getDefaultVehicleID() {
+                let newVehicle = VGVehicle()
+                newVehicle.id = defaultVehicleID
+                self.add(vgVehicle: newVehicle, to: vgTrack)
             }
         }
     }
@@ -575,6 +574,23 @@ class VGDataStore {
         } catch let error {
             print(error)
         }
+    }
+    
+    func getDefaultVehicleID() -> UUID? {
+        if let items = UserDefaults.standard.data(forKey: "DefaultVehicle") {
+            let decoder = JSONDecoder()
+            if let defaultVehicleID = try? decoder.decode(UUID.self, from: items) {
+                return defaultVehicleID
+            }
+        }
+        return nil
+    }
+    
+    func setDefaultVehicleID(id:UUID) {
+         let encoder = JSONEncoder()
+         if let encoded = try? encoder.encode(id) {
+             UserDefaults.standard.set(encoded, forKey: "DefaultVehicle")
+         }
     }
     
     // MARK: Other
