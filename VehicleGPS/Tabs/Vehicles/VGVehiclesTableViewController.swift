@@ -139,40 +139,48 @@ class VGVehiclesTableViewController: UITableViewController {
 
     // MARK: - Table view data source
     
+    fileprivate func setVehicleAsDefault(at indexPath:IndexPath) {
+        let vehicle = self.vehicles[indexPath.row]
+        if let vehicleID = vehicle.id {
+            self.dataStore.setDefaultVehicleID(id: vehicleID)
+        }
+        
+        let visibleVehicles = tableView.indexPathsForVisibleRows
+        
+        for visVehicleIndexPath in visibleVehicles! {
+            let cell = tableView.cellForRow(at: visVehicleIndexPath) as! VGVehicleTableViewCell
+            if vehicle.id == self.vehicles[visVehicleIndexPath.row].id {
+                cell.defaultViewBackground.isHidden = false
+                cell.defaultStarView.isHidden = false
+            } else {
+                cell.defaultViewBackground.isHidden = true
+                cell.defaultStarView.isHidden = true
+            }
+        }
+    }
+    
+    fileprivate func deleteVehicle(at indexPath:IndexPath) {
+        let vehicle = self.vehicles[indexPath.row]
+        self.dataStore.delete(vgVehicle: vehicle) {
+            DispatchQueue.main.async {
+                self.vehicles.remove(at: indexPath.row)
+                self.tableView.deleteRows(at: [indexPath], with: .top)
+                self.reloadVehicles(shouldReloadTableView: false)
+            }
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         
         let setDefaultAction = UIContextualAction(style: .normal, title: "Setja sem sjálfgefið") { (action, view, completion) in
-            let vehicle = self.vehicles[indexPath.row]
-            if let vehicleID = vehicle.id {
-                self.dataStore.setDefaultVehicleID(id: vehicleID)
-            }
-            
-            let visibleVehicles = tableView.indexPathsForVisibleRows
-
-            for visVehicleIndexPath in visibleVehicles! {
-                let cell = tableView.cellForRow(at: visVehicleIndexPath) as! VGVehicleTableViewCell
-                if vehicle.id == self.vehicles[visVehicleIndexPath.row].id {
-                    cell.defaultViewBackground.isHidden = false
-                    cell.defaultStarView.isHidden = false
-                } else {
-                    cell.defaultViewBackground.isHidden = true
-                    cell.defaultStarView.isHidden = true
-                }
-            }
-            
+            self.setVehicleAsDefault(at: indexPath)
             completion(true)
         }
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Eyða") { (action, view, completion) in
-            let vehicle = self.vehicles[indexPath.row]
-            self.dataStore.delete(vgVehicle: vehicle) {
-                DispatchQueue.main.async {
-                    self.vehicles.remove(at: indexPath.row)
-                    tableView.deleteRows(at: [indexPath], with: .top)
-                    self.reloadVehicles(shouldReloadTableView: false)
-                }
-            }
+            self.deleteVehicle(at: indexPath)
+            completion(true)
         }
         
         let actionConfig = UISwipeActionsConfiguration(actions: [deleteAction, setDefaultAction])
@@ -244,4 +252,28 @@ class VGVehiclesTableViewController: UITableViewController {
         detailsVC.vehicle = vehicles[indexPath.row]
         navigationController?.pushViewController(detailsVC, animated: true)
     }
+    
+    override func tableView(_ tableView: UITableView,
+      contextMenuConfigurationForRowAt indexPath: IndexPath,
+      point: CGPoint) -> UIContextMenuConfiguration? {
+
+        let favorite = UIAction(title: "Setja sem sjálfgefið") { _ in
+            self.setVehicleAsDefault(at: indexPath)
+
+        }
+        
+        let delete = UIAction(title: "Eyða", image: UIImage(systemName: "trash"), identifier: .none, discoverabilityTitle: nil, attributes: .destructive, state: .off) {_ in
+            self.deleteVehicle(at: indexPath)
+
+        }
+        favorite.image = UIImage(systemName: "star.fill")
+        delete.image = UIImage(systemName: "trash")
+
+      return UIContextMenuConfiguration(identifier: nil,
+        previewProvider: nil) { _ in
+        UIMenu(title: "", children: [favorite, delete])
+      }
+    }
 }
+
+
