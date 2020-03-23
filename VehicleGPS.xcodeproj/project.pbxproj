@@ -154,8 +154,7 @@
 		F27DFBA724194E330089DFF1 /* VGGPXParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGPXParser.swift; sourceTree = "<group>"; };
 		F29BE69123FAC162006959C3 /* VGColorPickerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGColorPickerTableViewController.swift; sourceTree = "<group>"; };
 		F2AB175C2428F68B003240C1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/VGNewVehicleTableViewCell.xib; sourceTree = "<group>"; };
-		F2AB175F2428F6B1003240C1 /* is */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = is; path = is.lproj/VGNewVehicleTableViewCell.strings; sourceTree = "<group>"; };
-		F2AB17612428F6B3003240C1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/VGNewVehicleTableViewCell.strings; sourceTree = "<group>"; };
+		F2AB17662428FAEB003240C1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/VGNewVehicleTableViewCell.strings; sourceTree = "<group>"; };
 		F2AC16FD23EDAFA400516498 /* VGEditVehicleTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGEditVehicleTableViewController.swift; sourceTree = "<group>"; };
 		F2AC170123F0094C00516498 /* VGMapPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGMapPoint.swift; sourceTree = "<group>"; };
 		F2B50C2B24151C9D002ECCC6 /* VGShortCSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGShortCSVParser.swift; sourceTree = "<group>"; };
@@ -634,8 +633,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				F2AB175C2428F68B003240C1 /* Base */,
-				F2AB175F2428F6B1003240C1 /* is */,
-				F2AB17612428F6B3003240C1 /* en */,
+				F2AB17662428FAEB003240C1 /* en */,
 			);
 			name = VGNewVehicleTableViewCell.xib;
 			sourceTree = "<group>";
