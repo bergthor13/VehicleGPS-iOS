@@ -47,7 +47,9 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
     override func viewDidLoad() {
         super.viewDidLoad()
         title = NSLocalizedString("Nýtt farartæki", comment: "")
-        vehicle.mapColor = .red
+        if vehicle.mapColor == nil {
+            vehicle.mapColor = .red
+        }
         dataStore = VGDataStore()
         registerCells()
         tableView.allowsSelection = false
