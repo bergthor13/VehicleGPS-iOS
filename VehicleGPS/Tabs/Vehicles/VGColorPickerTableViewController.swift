@@ -9,7 +9,15 @@
 import UIKit
 
 class VGColorPickerTableViewController: UITableViewController {
-    let colors:[String: UIColor] = ["Rauður":.red, "Grænn":.green, "Svartur":.black, "Blár":.blue, "Brúnn":.brown, "Dökk grár":.darkGray, "Hvítur":.white]
+    let colors:[String: UIColor] = [
+        NSLocalizedString("Rauður", comment: ""):.red,
+        NSLocalizedString("Grænn", comment: ""):.green,
+        NSLocalizedString("Svartur", comment: ""):.black,
+        NSLocalizedString("Blár", comment: ""):.blue,
+        NSLocalizedString("Brúnn", comment: ""):.brown,
+        NSLocalizedString("Dökkgrár", comment: ""):.darkGray,
+        NSLocalizedString("Hvítur", comment: ""):.white,
+        NSLocalizedString("Appelsínugulur", comment: ""):.orange]
     var delegate: ColorPickerDelegate?
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,7 +25,7 @@ class VGColorPickerTableViewController: UITableViewController {
         self.tableView.register(colorCellNib, forCellReuseIdentifier: "colorCell")
 
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(didTapCancel))
-        title = "Velja lit"
+        title = NSLocalizedString("Velja lit", comment: "")
     }
     
     @objc func didTapCancel() {

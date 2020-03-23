@@ -12,7 +12,7 @@ class VGNewJourneyTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Nýtt ferðalag"
+        title = NSLocalizedString("Nýtt ferðalag", comment: "")
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 

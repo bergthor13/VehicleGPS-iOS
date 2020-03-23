@@ -1,0 +1,6 @@
+
+/* Class = "UITextField"; placeholder = "Heiti"; ObjectID = "CYu-A8-AOf"; */
+"CYu-A8-AOf.placeholder" = "Title";
+
+/* Class = "UILabel"; text = "Litur á korti"; ObjectID = "PaU-Td-7XX"; */
+"PaU-Td-7XX.text" = "Color on Map";
