@@ -51,6 +51,14 @@ class VGVehiclesSelectionTableViewController: VGVehiclesTableViewController {
         cell.lblDuration.text = durationFormatter.string(from: duration)
         cell.imgVehicle?.image = VGFileManager().getImage(for: vehicles[indexPath.row])
 
+        if dataStore.getDefaultVehicleID() == vehicles[indexPath.row].id {
+            cell.defaultViewBackground.isHidden = false
+            cell.defaultStarView.isHidden = false
+        } else {
+            cell.defaultViewBackground.isHidden = true
+            cell.defaultStarView.isHidden = true
+        }
+        
         return cell
     }
     

@@ -30,6 +30,9 @@
 "Vegalengd" = "Distance";
 "Tímalengd" = "Duration";
 "Gagnapunktar" = "Data Points";
+"Eyða" = "Delete";
+"Setja sem sjálfgefið" = "Set as Default";
+"Breyta" = "Edit";
 
 "Deila CSV skrá" = "Share CSV File";
 "Deila GPX skrá" = "Share GPX File";

@@ -173,12 +173,12 @@ class VGVehiclesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         
-        let setDefaultAction = UIContextualAction(style: .normal, title: "Setja sem sjálfgefið") { (action, view, completion) in
+        let setDefaultAction = UIContextualAction(style: .normal, title: NSLocalizedString("Setja sem sjálfgefið", comment: "")) { (action, view, completion) in
             self.setVehicleAsDefault(at: indexPath)
             completion(true)
         }
         
-        let deleteAction = UIContextualAction(style: .destructive, title: "Eyða") { (action, view, completion) in
+        let deleteAction = UIContextualAction(style: .destructive, title: NSLocalizedString("Eyða", comment: "")) { (action, view, completion) in
             self.deleteVehicle(at: indexPath)
             completion(true)
         }
@@ -219,26 +219,13 @@ class VGVehiclesTableViewController: UITableViewController {
         cell.lblDuration.text = durationFormatter.string(from: duration)
         cell.imgVehicle?.image = VGFileManager().getImage(for: vehicles[indexPath.row])
         
-        guard let items = UserDefaults.standard.data(forKey: "DefaultVehicle") else {
-            cell.defaultViewBackground.isHidden = true
-            cell.defaultStarView.isHidden = true
-            return cell
-        }
-        
-        let decoder = JSONDecoder()
-        guard let defaultVehicleID = try? decoder.decode(UUID.self, from: items) else {
-            return cell
-        }
-        
-        if defaultVehicleID == vehicles[indexPath.row].id {
+        if dataStore.getDefaultVehicleID() == vehicles[indexPath.row].id {
             cell.defaultViewBackground.isHidden = false
             cell.defaultStarView.isHidden = false
         } else {
             cell.defaultViewBackground.isHidden = true
             cell.defaultStarView.isHidden = true
         }
-
-
         
         return cell
     }
@@ -256,24 +243,41 @@ class VGVehiclesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView,
       contextMenuConfigurationForRowAt indexPath: IndexPath,
       point: CGPoint) -> UIContextMenuConfiguration? {
+        let edit = UIAction(title: NSLocalizedString("Breyta", comment: "")) { _ in
+            self.editVehicle(at: indexPath)
+        }
+        edit.image = UIImage(systemName: "square.and.pencil")
 
-        let favorite = UIAction(title: "Setja sem sjálfgefið") { _ in
+        
+        let favorite = UIAction(title: NSLocalizedString("Setja sem sjálfgefið", comment: "")) { _ in
             self.setVehicleAsDefault(at: indexPath)
 
         }
+        favorite.image = UIImage(systemName: "star.fill")
+
         
-        let delete = UIAction(title: "Eyða", image: UIImage(systemName: "trash"), identifier: .none, discoverabilityTitle: nil, attributes: .destructive, state: .off) {_ in
+        let delete = UIAction(title: NSLocalizedString("Eyða", comment: "")) {_ in
             self.deleteVehicle(at: indexPath)
 
         }
-        favorite.image = UIImage(systemName: "star.fill")
         delete.image = UIImage(systemName: "trash")
+        delete.attributes = .destructive
+        
+        let deleteMenu = UIMenu(title: NSLocalizedString("Eyða", comment: ""), image: UIImage(systemName: "trash"), identifier: .none, options: .destructive, children: [delete])
 
       return UIContextMenuConfiguration(identifier: nil,
         previewProvider: nil) { _ in
-        UIMenu(title: "", children: [favorite, delete])
+        UIMenu(title: "", children: [edit, favorite, deleteMenu])
       }
     }
+    
+    func editVehicle(at indexPath:IndexPath) {
+        let editVehicleVC = VGEditVehicleTableViewController(style: .grouped)
+        editVehicleVC.vehicle = vehicles[indexPath.row]
+        self.present(UINavigationController(rootViewController: editVehicleVC), animated: true, completion: nil)
+    }
+    
+
 }
 
 

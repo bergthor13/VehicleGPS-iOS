@@ -694,20 +694,38 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
-            guard let track = self.getTrackAt(indexPath: indexPath) else {
-                return
-            }
-            
-            self.tracksDict[self.sectionKeys[indexPath.section]]?.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-
-            if self.tracksDict[self.sectionKeys[indexPath.section]]?.count == 0 {
-                self.sectionKeys.remove(at: indexPath.section)
-                tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
-            }
-            self.vgFileManager?.deleteFileFor(track: track)
-            self.dataStore.delete(vgTrack: track)
+            self.deleteTrack(at: indexPath)
         }
+    }
+    func deleteTrack(at indexPath:IndexPath) {
+        // Delete the row from the data source
+        guard let track = self.getTrackAt(indexPath: indexPath) else {
+            return
+        }
+        
+        self.tracksDict[self.sectionKeys[indexPath.section]]?.remove(at: indexPath.row)
+        tableView.deleteRows(at: [indexPath], with: .fade)
+
+        if self.tracksDict[self.sectionKeys[indexPath.section]]?.count == 0 {
+            self.sectionKeys.remove(at: indexPath.section)
+            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
+        }
+        self.vgFileManager?.deleteFileFor(track: track)
+        self.dataStore.delete(vgTrack: track)
+    }
+    
+    override func tableView(_ tableView: UITableView,
+      contextMenuConfigurationForRowAt indexPath: IndexPath,
+      point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let delete = UIAction(title: NSLocalizedString("Eyða", comment: ""), image: UIImage(systemName: "trash"), identifier: .none, discoverabilityTitle: nil, attributes: .destructive, state: .off) {_ in
+            self.deleteTrack(at: indexPath)
+
+        }
+
+      return UIContextMenuConfiguration(identifier: nil,
+        previewProvider: nil) { _ in
+        UIMenu(title: "", children: [delete])
+      }
     }
 }
