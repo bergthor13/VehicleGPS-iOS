@@ -102,6 +102,10 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
     
     @objc func didTapImage() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = cell.imgProfile
+            popoverController.permittedArrowDirections = [.up]
+        }
         alert.addAction(UIAlertAction(title: "Taka mynd", style: .default, handler: { (action) in
             self.imagePicker =  UIImagePickerController()
             self.imagePicker.delegate = self
