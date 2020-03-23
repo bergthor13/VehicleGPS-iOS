@@ -62,3 +62,13 @@
 "Appelsínugulur" = "Orange";
 
 "Velja lit" = "Select Color";
+
+"Þátta. %i ferlar eftir." = "Parsing. %i logs left.";
+"%i nýr ferill í boði"="%i new log available";
+"%i nýjir ferlar í boði"="%i new logs available";
+
+
+"Hleður niður. %i ferlar eftir." = "Downloading. %i logs left.";
+"Tengt við %@" = "Connected to %@";
+
+"Ekkert farartæki" = "No Vehicle";

@@ -167,7 +167,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                 }
             }
         }
-        self.headerView.lblLogsAvailable.text = "Hleður niður. \(downloadCount) ferlar eftir."
+        self.headerView.lblLogsAvailable.text = String(format: NSLocalizedString("Hleður niður. %i ferlar eftir.", comment: ""), self.downloadCount)
         DispatchQueue.global(qos: .background).async {
             for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
                 guard let trackList = self.tracksDict[sectionKey] else {
@@ -201,10 +201,10 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                             DispatchQueue.main.async {
                                 if self.downloadCount == 0 {
                                     UIApplication.shared.isIdleTimerDisabled = false
-                                    self.headerView.lblLogsAvailable.text = "Niðurhali lokið."
+                                    self.headerView.lblLogsAvailable.text = NSLocalizedString("Niðurhali lokið.", comment: "")
 
                                 } else {
-                                    self.headerView.lblLogsAvailable.text = "Hleður niður. \(self.downloadCount) ferlar eftir."
+                                    self.headerView.lblLogsAvailable.text = String(format: NSLocalizedString("Hleður niður. %i ferlar eftir.", comment: ""), self.downloadCount)
                                 }
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
                                     return
@@ -218,7 +218,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             }
             DispatchQueue.main.async {
                 if self.downloadCount == 0 {
-                    self.headerView.lblLogsAvailable.text = "Engir nýjir ferlar í boði"
+                    self.headerView.lblLogsAvailable.text = NSLocalizedString("Engir nýir ferlar í boði", comment: "")
                 }
 //                self.navigationItem.rightBarButtonItem?.title = "Hlaða niður"
 //                self.navigationItem.rightBarButtonItem?.style = .plain
@@ -240,8 +240,8 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                 }
             }
         }
-        self.navigationItem.prompt = "Þátta. \(parseCount) ferlar eftir."
         
+        self.navigationItem.prompt = String(format: NSLocalizedString("Þátta. %i ferlar eftir.", comment: ""), self.parseCount)
         for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
             guard let trackList = self.tracksDict[sectionKey] else {
                 continue
@@ -273,7 +273,8 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                                     UIApplication.shared.isIdleTimerDisabled = false
                                     self.navigationItem.prompt = nil
                                 }
-                                self.navigationItem.prompt = "Þátta. \(self.parseCount) ferlar eftir."
+                                
+                                self.navigationItem.prompt = String(format: NSLocalizedString("Þátta. %i ferlar eftir.", comment: ""), self.parseCount)
                                 track.beingProcessed = true
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
                                     return
@@ -359,13 +360,14 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             DispatchQueue.main.async {
                 self.tableView.reloadData()
                 if newFileCount == 0 {
-                    self.headerView.lblLogsAvailable.text = "Engir nýir ferlar í boði"
+                    self.headerView.lblLogsAvailable.text = NSLocalizedString("Engir nýir ferlar í boði", comment: "")
                 } else if newFileCount == 1 {
-                    self.headerView.lblLogsAvailable.text = "\(newFileCount) nýr ferill í boði"
+                    
+                    self.headerView.lblLogsAvailable.text = String(format: NSLocalizedString("%i nýr ferill í boði", comment: ""), newFileCount)
                 } else if (newFileCount-1)%10 == 0 && newFileCount != 11 {
-                    self.headerView.lblLogsAvailable.text = "\(newFileCount) nýr ferill í boði"
+                    self.headerView.lblLogsAvailable.text = String(format: NSLocalizedString("%i nýr ferill í boði", comment: ""), newFileCount)
                 } else {
-                    self.headerView.lblLogsAvailable.text = "\(newFileCount) nýir ferlar í boði"
+                    self.headerView.lblLogsAvailable.text = String(format: NSLocalizedString("%i nýjir ferlar í boði", comment: ""), newFileCount)
                 }
                 if newFileCount == 0 {
                     self.headerView.greenButton.isHidden = true
@@ -402,7 +404,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                     self.headerView.lblLogsAvailable.isHidden = false
                     self.headerView.lblConnectedToGPS.isHidden = false
                     self.headerView.imgIcon.isHidden = false
-                    self.headerView.lblConnectedToGPS.text = "Tengt við \(self.session!.host)"
+                    self.headerView.lblConnectedToGPS.text = String(format: NSLocalizedString("Tengt við %@", comment: ""), self.session!.host)
 
                     self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
                     self.tableView.tableHeaderView = self.headerView

@@ -82,7 +82,7 @@ class VGLogsTableViewCell: UITableViewCell {
         if let vehicle = track.vehicle {
             lblVehicle.text = vehicle.name
         } else {
-            lblVehicle.text = "Ekkert farartæki"
+            lblVehicle.text = NSLocalizedString("Ekkert farartæki", comment: "")
         }
         lblVehicle.sizeToFit()
         
