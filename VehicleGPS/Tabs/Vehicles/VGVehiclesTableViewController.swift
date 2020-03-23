@@ -15,6 +15,7 @@ class VGVehiclesTableViewController: UITableViewController {
     
     var distanceFormatter = VGDistanceFormatter()
     var durationFormatter = VGDurationFormatter()
+    var fileManager = VGFileManager()
     
     var emptyLabel: UILabel!
     
@@ -40,6 +41,7 @@ class VGVehiclesTableViewController: UITableViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.tintColor = navigationController?.view.tintColor
         configureEmptyListLabel()
         registerCells()
@@ -61,6 +63,9 @@ class VGVehiclesTableViewController: UITableViewController {
         }
         if shouldReloadTableView {
             tableView.reloadData()
+        }
+        for vehicle in vehicles {
+            vehicle.image = self.fileManager.getImage(for: vehicle)
         }
     }
     
@@ -198,8 +203,9 @@ class VGVehiclesTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "VehicleCell", for: indexPath) as! VGVehicleTableViewCell
-        cell.lblName.text = vehicles[indexPath.row].name
-        guard let tracks = vehicles[indexPath.row].tracks else {
+        let vehicle = vehicles[indexPath.row]
+        cell.lblName.text = vehicle.name
+        guard let tracks = vehicle.tracks else {
             return cell
         }
         var distance = 0.0
@@ -209,7 +215,7 @@ class VGVehiclesTableViewController: UITableViewController {
             duration += track.duration
         }
         
-        if let color = vehicles[indexPath.row].mapColor {
+        if let color = vehicle.mapColor {
             cell.colorBanner.backgroundColor = color
         } else {
             cell.colorBanner.backgroundColor = .red
@@ -217,9 +223,10 @@ class VGVehiclesTableViewController: UITableViewController {
 
         cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
         cell.lblDuration.text = durationFormatter.string(from: duration)
-        cell.imgVehicle?.image = VGFileManager().getImage(for: vehicles[indexPath.row])
+        cell.imgVehicle?.image = vehicle.image
         
-        if dataStore.getDefaultVehicleID() == vehicles[indexPath.row].id {
+        
+        if dataStore.getDefaultVehicleID() == vehicle.id {
             cell.defaultViewBackground.isHidden = false
             cell.defaultStarView.isHidden = false
         } else {

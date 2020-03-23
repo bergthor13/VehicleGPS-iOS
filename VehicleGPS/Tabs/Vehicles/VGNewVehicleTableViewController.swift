@@ -18,7 +18,9 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         didSet {
             cell.txtName.text = vehicle.name
             cell.colorBox.backgroundColor = vehicle.mapColor
-
+            cell.imgProfile.image = vehicle.image
+            selectedImage = vehicle.image
+            
             self.cell.imgProfile.isUserInteractionEnabled = true
             let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapImage))
             self.cell.imgProfile?.addGestureRecognizer(imageTapGesture)
@@ -26,6 +28,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
             self.cell.colorContainer.addGestureRecognizer(colorTapGesture)
             
             self.cell.txtName.addTarget(self, action: #selector(nameDidChange(_:)), for: .editingChanged)
+            
             enableDisableSave(button: self.navigationItem.rightBarButtonItem!, string: self.cell.txtName.text!)
             
         }

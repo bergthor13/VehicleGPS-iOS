@@ -523,9 +523,7 @@ class VGDataStore {
         newVehicle.name = vgVehicle.name
         newVehicle.id = vgVehicle.id
         newVehicle.mapColor = vgVehicle.mapColor
-        if newVehicle.image != nil {
-            _ = vgFileManager.deleteImage(for: vgVehicle)
-        }
+        
         if let image = vgVehicle.image {
             newVehicle.image = vgFileManager.imageToFile(image: image, for: vgVehicle)
         }
