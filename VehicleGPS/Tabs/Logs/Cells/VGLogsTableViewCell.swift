@@ -44,8 +44,20 @@ class VGLogsTableViewCell: UITableViewCell {
             self.vgFileManager = appDelegate.fileManager
         }
         NotificationCenter.default.addObserver(self, selector: #selector(preferredContentSizeChanged(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated, object: nil)
+
 
     }
+    
+    @objc func onVehicleUpdated(_ notification:Notification) {
+        guard let updatedVehicle = notification.object as? VGVehicle else {
+            return
+        }
+        lblVehicle.text = updatedVehicle.name
+    }
+
+    
     
     @objc func preferredContentSizeChanged(_ sender:Any) {
         lblVehicle.sizeToFit()
