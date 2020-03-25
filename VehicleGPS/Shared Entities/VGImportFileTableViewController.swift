@@ -53,6 +53,7 @@ class VGImportFileTableViewController: UITableViewController {
         if let track = importedTrack {
             self.dataStore.update(vgTrack: track)
         }
+        dismiss(animated: true)
     }
     
     @objc func tappedCancel() {
