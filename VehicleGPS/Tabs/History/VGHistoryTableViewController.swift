@@ -302,7 +302,9 @@ class VGHistoryTableViewController: UITableViewController {
                                    range: NSMakeRange(unformattedDistance.count-3, 3))
         cell.lblDistance.attributedText = distanceText
         
-        unformattedDistance = String(summary.trackCount) + " ferlar"
+        let localizedText = NSLocalizedString("ferlar", comment: "")
+        let localizedSize = localizedText.count
+        unformattedDistance = String(summary.trackCount) + " " + localizedText
         distanceText = NSMutableAttributedString.init(string: unformattedDistance)
         
         let scaledTrackFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
@@ -310,7 +312,7 @@ class VGHistoryTableViewController: UITableViewController {
         
         distanceText.setAttributes([NSAttributedString.Key.font: fontTrackMetrics.scaledFont(for: scaledTrackFont),
                                   NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel],
-                                   range: NSMakeRange(unformattedDistance.count-7, 7))
+                                   range: NSMakeRange(unformattedDistance.count-localizedSize-0, localizedSize-0))
         cell.lblTripCount.attributedText = distanceText
         cell.lblDate.text = summary.dateDescription
         
