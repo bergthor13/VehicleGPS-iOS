@@ -54,7 +54,19 @@ class VGLogsTableViewCell: UITableViewCell {
         guard let updatedVehicle = notification.object as? VGVehicle else {
             return
         }
-        lblVehicle.text = updatedVehicle.name
+        
+        guard let currentTrack = currentTrack else {
+            return
+        }
+        
+        guard let vehicle = currentTrack.vehicle else {
+            return
+        }
+        
+        if vehicle.id == updatedVehicle.id {
+            lblVehicle.text = updatedVehicle.name
+        }
+        
     }
 
     
