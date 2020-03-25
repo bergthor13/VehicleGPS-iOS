@@ -312,7 +312,7 @@ class VGHistoryTableViewController: UITableViewController {
         
         distanceText.setAttributes([NSAttributedString.Key.font: fontTrackMetrics.scaledFont(for: scaledTrackFont),
                                   NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel],
-                                   range: NSMakeRange(unformattedDistance.count-localizedSize-0, localizedSize-0))
+                                   range: NSMakeRange(unformattedDistance.count-localizedSize, localizedSize))
         cell.lblTripCount.attributedText = distanceText
         cell.lblDate.text = summary.dateDescription
         
