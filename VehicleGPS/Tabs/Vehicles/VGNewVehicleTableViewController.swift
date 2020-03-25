@@ -18,8 +18,10 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         didSet {
             cell.txtName.text = vehicle.name
             cell.colorBox.backgroundColor = vehicle.mapColor
-            cell.imgProfile.image = vehicle.image
-            selectedImage = vehicle.image
+            if vehicle.image != nil {
+                cell.imgProfile.image = vehicle.image
+                selectedImage = vehicle.image
+            }
             
             self.cell.imgProfile.isUserInteractionEnabled = true
             let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapImage))
