@@ -208,13 +208,24 @@ class VGTrack {
     }
     
     static func getSpeedBetween(point1:VGDataPoint, point2:VGDataPoint) -> Double {
-        let duration = point2.timestamp?.timeIntervalSince(point1.timestamp!)
-        let lastCoord = CLLocation(latitude: point1.latitude!, longitude: point1.longitude!)
-        let coord = CLLocation(latitude: point2.latitude!, longitude: point2.longitude!)
+        guard let timestamp1 = point1.timestamp, let timestamp2 = point2.timestamp else {
+            return 0.0
+        }
         
+        guard let latitude1 = point1.latitude, let latitude2 = point2.latitude else {
+            return 0.0
+        }
+        
+        guard let longitude1 = point2.longitude, let longitude2 = point2.longitude else {
+            return 0.0
+        }
+        
+        let duration = timestamp2.timeIntervalSince(timestamp1)
+        let lastCoord = CLLocation(latitude: latitude1, longitude: longitude1)
+        let coord = CLLocation(latitude: latitude2, longitude: longitude2)
         let distance = coord.distance(from: lastCoord)
         
-        return (distance/duration!)*3.6
+        return (distance/duration)*3.6
 
     }
     
