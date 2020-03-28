@@ -20,7 +20,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     var downloadManager: VGSFTPManager?
     var vgFileManager: VGFileManager?
     var vgLogParser: IVGLogParser?
-    let host = "cargps.local"
+    let host = "vehicle-gps-dev.local"
     let username = "pi"
     let password = "easyprintsequence"
     var dataStore:VGDataStore!
@@ -33,6 +33,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     var headerView: VGDeviceConnectedHeaderView!
     let distanceFormatter = VGDistanceFormatter()
     let durationFormatter = VGDurationFormatter()
+    let vgGPXGenerator = VGGPXGenerator()
     var emptyLabel: UILabel!
     
     override init(style: UITableView.Style) {
@@ -747,14 +748,38 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
       contextMenuConfigurationForRowAt indexPath: IndexPath,
       point: CGPoint) -> UIContextMenuConfiguration? {
         
+        let track = getTrackAt(indexPath: indexPath)
+        
         let delete = UIAction(title: NSLocalizedString("Eyða", comment: ""), image: UIImage(systemName: "trash"), identifier: .none, discoverabilityTitle: nil, attributes: .destructive, state: .off) {_ in
             self.deleteTrack(at: indexPath)
-
         }
+        
+        let exportOriginal = UIAction(title: NSLocalizedString(NSLocalizedString("Deila CSV skrá", comment: ""), comment: ""), image: UIImage(systemName: "square.and.arrow.up"), identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+            let activityVC = UIActivityViewController(activityItems: [self.vgFileManager!.getAbsoluteFilePathFor(track: track!)!], applicationActivities: nil)
+            self.present(activityVC, animated: true, completion: nil)
+        }
+        
+        let exportGPX = UIAction(title: NSLocalizedString(NSLocalizedString("Deila GPX skrá", comment: ""), comment: ""), image: UIImage(systemName: "square.and.arrow.up"), identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+            
+            DispatchQueue.global(qos: .userInitiated).async {
+                let fileUrl = self.vgGPXGenerator.generateGPXFor(track: track!)!
+                let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
+                DispatchQueue.main.async {
+                    self.present(activityVC, animated: true, completion: nil)
+                }
+            }
+            
+        }
+        
+        let selectVehicle = UIAction(title: NSLocalizedString(NSLocalizedString("Velja farartæki", comment: ""), comment: ""), image: UIImage(systemName: "car"), identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+            self.didTapVehicle(track: track!)
+        }
+
+        let exportMenu = UIMenu(title: NSLocalizedString("Deila", comment: ""), image: UIImage(systemName: "square.and.arrow.up"), identifier: .none, options: .init(), children: [exportGPX, exportOriginal])
 
       return UIContextMenuConfiguration(identifier: nil,
         previewProvider: nil) { _ in
-        UIMenu(title: "", children: [delete])
+        UIMenu(title: "", children: [selectVehicle, exportMenu, delete])
       }
     }
 }
