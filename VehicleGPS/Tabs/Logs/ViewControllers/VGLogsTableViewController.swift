@@ -282,7 +282,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                                 cell.show(track: track)
                                 cell.update(progress: 0)
                                 if let header = self.tableView.headerView(forSection: sectionIndex) as? VGLogHeaderView {
-                                    self.getViewForHeader(view: header, section: sectionIndex)
+                                    _ = self.getViewForHeader(section: sectionIndex, view: header)
                                 }
                             }
                             
@@ -551,7 +551,17 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         return file
     }
     
-    func getViewForHeader(view:VGLogHeaderView, section:Int) {
+    func getViewForHeader(section:Int, view:VGLogHeaderView?) -> VGLogHeaderView {
+        var hdrView = view
+        
+        if hdrView == nil {
+            hdrView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as? VGLogHeaderView
+        }
+        
+        guard let view = hdrView else {
+            return VGLogHeaderView()
+        }
+        
         let day = sectionKeys[section]
         view.dateLabel.text = " "
         view.detailsLabel.text = " "
@@ -562,7 +572,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         var distanceString = ""
         var durationString = ""
         guard let trackSection = tracksDict[day] else {
-            return
+            return VGLogHeaderView()
         }
         for track in trackSection {
             totalDuration += track.duration
@@ -575,7 +585,19 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         
         view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
-        view.detailsLabel.sizeToFit()
+        
+        
+        var frame1 = view.dateLabel.frame
+        frame1.size.height = dateString.height(withConstrainedWidth: view.bounds.width-40, font: view.dateLabel.font)
+        view.dateLabel.frame = frame1
+        
+        var frame2 = view.detailsLabel.frame
+        frame2.origin.y = frame1.size.height+2+2
+        frame2.size.height = durationString.height(withConstrainedWidth: view.bounds.width-40, font: view.detailsLabel.font)
+        view.detailsLabel.frame = frame2
+        
+        
+        return view
     }
 
     // MARK: - Table View Data Source
@@ -583,6 +605,15 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return sectionKeys.count
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
+        let header = getViewForHeader(section: section, view:nil)
+        guard let dateLabel = header.dateLabel, let detailsLabel = header.detailsLabel else {
+            return 44
+        }
+        
+        return dateLabel.frame.height + detailsLabel.frame.height+2+2+2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -594,11 +625,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as? VGLogHeaderView else {
-            return UIView()
-        }
-        getViewForHeader(view: view, section: section)
-        return view
+        return getViewForHeader(section: section, view:nil)
     }
 
     
@@ -729,5 +756,21 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         previewProvider: nil) { _ in
         UIMenu(title: "", children: [delete])
       }
+    }
+}
+
+extension String {
+    func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = self.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: font], context: nil)
+
+        return boundingBox.height
+    }
+
+    func width(withConstrainedHeight height: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: .greatestFiniteMagnitude, height: height)
+        let boundingBox = self.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: font], context: nil)
+
+        return ceil(boundingBox.width)
     }
 }
