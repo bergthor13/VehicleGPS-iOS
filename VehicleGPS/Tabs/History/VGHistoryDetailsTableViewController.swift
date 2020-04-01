@@ -29,9 +29,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         if let tracksSummary = self.tracksSummary {
             title = tracksSummary.dateDescription
         }
-        
-        let logsTableViewCellNib = UINib(nibName: "VGLogsTableViewCell", bundle: nil)
-        self.tableView.register(logsTableViewCellNib, forCellReuseIdentifier: "LogsCell")
+        self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
         navigationController?.navigationBar.prefersLargeTitles = false
         
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
@@ -113,7 +111,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             return mapCell
         }
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: "LogsCell",
+            withIdentifier: VGLogsTableViewCell.identifier,
             for: indexPath
             ) as? VGLogsTableViewCell else {
             return UITableViewCell()

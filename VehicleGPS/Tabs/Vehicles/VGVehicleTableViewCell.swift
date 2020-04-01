@@ -18,6 +18,10 @@ class VGVehicleTableViewCell: UITableViewCell {
     @IBOutlet weak var defaultViewBackground: UIView!
     @IBOutlet weak var defaultStarView: UIImageView!
     
+    static let identifier = "VehicleCell"
+    static let nibName = "VGVehicleTableViewCell"
+    static let nib = UINib(nibName: VGVehicleTableViewCell.nibName, bundle: nil)
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()

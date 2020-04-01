@@ -23,7 +23,7 @@ class VGVehiclesSelectionTableViewController: VGVehiclesTableViewController {
 
     // MARK: - Table view data source    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "VehicleCell", for: indexPath) as! VGVehicleTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: VGVehicleTableViewCell.identifier, for: indexPath) as! VGVehicleTableViewCell
         cell.lblName.text = vehicles[indexPath.row].name
 
         cell.accessoryType = .none

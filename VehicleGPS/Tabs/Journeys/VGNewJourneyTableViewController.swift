@@ -17,7 +17,7 @@ class VGNewJourneyTableViewController: UITableViewController {
         // self.clearsSelectionOnViewWillAppear = false
 
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Vista", comment: ""), style: .done, target: self, action: #selector(tappedSave))
-            self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(tappedCancel))
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: LocalizedStrings.cancel, style: .plain, target: self, action: #selector(tappedCancel))
     }
 
     // MARK: - Table view data source

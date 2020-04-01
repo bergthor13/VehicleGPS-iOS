@@ -159,12 +159,11 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         return 1
     }
     fileprivate func registerCells() {
-        let newVehicleCell = UINib(nibName: "VGNewVehicleTableViewCell", bundle: nil)
-        self.tableView.register(newVehicleCell, forCellReuseIdentifier: "NewVehicleCell")
+        self.tableView.register(VGNewVehicleTableViewCell.nib, forCellReuseIdentifier: VGNewVehicleTableViewCell.identifier)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "NewVehicleCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: VGNewVehicleTableViewCell.identifier, for: indexPath)
         self.cell = cell as? VGNewVehicleTableViewCell
         return cell
     }

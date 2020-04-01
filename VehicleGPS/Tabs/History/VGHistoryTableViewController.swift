@@ -31,7 +31,7 @@ class VGHistoryTableViewController: UITableViewController {
 
     fileprivate func registerCells() {
         let historyTableViewCellNib = UINib(nibName: "VGHistoryTableViewCell", bundle: nil)
-        self.tableView.register(historyTableViewCellNib, forCellReuseIdentifier: "HistoryCell")
+        self.tableView.register(historyTableViewCellNib, forCellReuseIdentifier: VGHistoryTableViewCell.identifier)
     }
     
     fileprivate func configureFormatters() {

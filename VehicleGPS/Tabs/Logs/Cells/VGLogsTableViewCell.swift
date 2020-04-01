@@ -25,6 +25,9 @@ class VGLogsTableViewCell: UITableViewCell {
     @IBOutlet weak var imgVehicle: UIImageView!
     @IBOutlet weak var progressView: UIView!
     @IBOutlet weak var progressViewWidthConstraint: NSLayoutConstraint!
+    static let identifier = "LogsCell"
+    static let nibName = "VGLogsTableViewCell"
+    static let nib = UINib(nibName: VGLogsTableViewCell.nibName, bundle: nil)
     var delegate: DisplaySelectVehicleProtocol!
     var vgFileManager: VGFileManager!
     var currentTrack: VGTrack?

@@ -67,6 +67,7 @@
 		F2647BE52434F8B500283B38 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2647BE42434F8B500283B38 /* UIColor+Extensions.swift */; };
 		F2647BE72435024600283B38 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2647BE62435024600283B38 /* String+Extensions.swift */; };
 		F2647BE92435029900283B38 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2647BE82435029900283B38 /* UIView+Extensions.swift */; };
+		F2647BEB24352FBD00283B38 /* LocalizedStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2647BEA24352FBD00283B38 /* LocalizedStrings.swift */; };
 		F26CCB6B23DBB44600697EFA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F26CCB6D23DBB44600697EFA /* Localizable.strings */; };
 		F2797D5723CD1AC500207650 /* VGHistoryDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2797D5623CD1AC500207650 /* VGHistoryDetailsTableViewController.swift */; };
 		F27CB77C23D38A3D002BF28F /* VGDeviceConnectedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F27CB77B23D38A3D002BF28F /* VGDeviceConnectedHeaderView.xib */; };
@@ -153,6 +154,7 @@
 		F2647BE42434F8B500283B38 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		F2647BE62435024600283B38 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		F2647BE82435029900283B38 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
+		F2647BEA24352FBD00283B38 /* LocalizedStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedStrings.swift; sourceTree = "<group>"; };
 		F26CCB6C23DBB44600697EFA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F2797D5623CD1AC500207650 /* VGHistoryDetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGHistoryDetailsTableViewController.swift; sourceTree = "<group>"; };
 		F27CB77B23D38A3D002BF28F /* VGDeviceConnectedHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VGDeviceConnectedHeaderView.xib; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 				F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */,
 				F24754FD23DDAFA8007E0DF8 /* VGListEmptyLabel.swift */,
 				F2D8C30423FDD01500D77BF2 /* NotificationCenterNames.swift */,
+				F2647BEA24352FBD00283B38 /* LocalizedStrings.swift */,
 			);
 			path = "Shared Entities";
 			sourceTree = "<group>";
@@ -572,6 +575,7 @@
 				F25839E323AAD1E000E76B54 /* VGHistoryHeader.swift in Sources */,
 				F23BE8DD22A5E596008FD50C /* NewNetworkTableViewController.swift in Sources */,
 				F23BE8D422A5E566008FD50C /* VGTabBarController.swift in Sources */,
+				F2647BEB24352FBD00283B38 /* LocalizedStrings.swift in Sources */,
 				F23BE8F222A5E5BB008FD50C /* VGLogDetailsViewController.swift in Sources */,
 				F29BE69223FAC162006959C3 /* VGColorPickerTableViewController.swift in Sources */,
 				F257077A22F09AAA00F201B3 /* TrackGraphView.swift in Sources */,

@@ -21,8 +21,7 @@ class VGColorPickerTableViewController: UITableViewController {
     var delegate: ColorPickerDelegate?
     override func viewDidLoad() {
         super.viewDidLoad()
-        let colorCellNib = UINib(nibName: "VGColorTableViewCell", bundle: nil)
-        self.tableView.register(colorCellNib, forCellReuseIdentifier: "colorCell")
+        self.tableView.register(VGColorTableViewCell.nib, forCellReuseIdentifier: VGColorTableViewCell.identifier)
 
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(didTapCancel))
         title = NSLocalizedString("Velja lit", comment: "")

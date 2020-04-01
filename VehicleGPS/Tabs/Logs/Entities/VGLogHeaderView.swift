@@ -13,6 +13,11 @@ class VGLogHeaderView: UITableViewHeaderFooterView {
 
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var detailsLabel: UILabel!
+    
+    static let identifier = "LogsHeader"
+    static let nibName = "VGLogHeaderView"
+    static let nib = UINib(nibName: VGLogHeaderView.nibName, bundle: nil)
+
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)

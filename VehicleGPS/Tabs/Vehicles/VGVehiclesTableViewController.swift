@@ -50,8 +50,7 @@ class VGVehiclesTableViewController: UITableViewController {
         
     }
     fileprivate func registerCells() {
-        let newVehicleCell = UINib(nibName: "VGVehicleTableViewCell", bundle: nil)
-        self.tableView.register(newVehicleCell, forCellReuseIdentifier: "VehicleCell")
+        self.tableView.register(VGVehicleTableViewCell.nib, forCellReuseIdentifier: VGVehicleTableViewCell.identifier)
     }
     
     func reloadVehicles(shouldReloadTableView:Bool) {
@@ -202,7 +201,7 @@ class VGVehiclesTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "VehicleCell", for: indexPath) as! VGVehicleTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: VGVehicleTableViewCell.identifier, for: indexPath) as! VGVehicleTableViewCell
         let vehicle = vehicles[indexPath.row]
         cell.lblName.text = vehicle.name
         guard let tracks = vehicle.tracks else {

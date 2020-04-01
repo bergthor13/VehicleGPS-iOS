@@ -15,6 +15,11 @@ class VGNewVehicleTableViewCell: UITableViewCell {
     @IBOutlet weak var colorContainer: UIView!
     @IBOutlet weak var colorBox: UIView!
     
+    static let identifier = "NewVehicleCell"
+    static let nibName = "VGNewVehicleTableViewCell"
+    static let nib = UINib(nibName: VGNewVehicleTableViewCell.nibName, bundle: nil)
+
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         colorBox.layer.cornerRadius = colorBox.bounds.height/2

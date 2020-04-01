@@ -12,6 +12,10 @@ class VGColorTableViewCell: UITableViewCell {
 
     @IBOutlet weak var colorView: UIView!
     @IBOutlet weak var lblColorTitle: UILabel!
+    static let identifier = "colorCell"
+    static let nibName = "VGColorTableViewCell"
+    static let nib = UINib(nibName: VGColorTableViewCell.nibName, bundle: nil)
+
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -16,6 +16,11 @@ class VGAvailableLogsTableViewCell: UITableViewCell {
     @IBOutlet weak var progressViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var onDeviceIndicator: UIImageView!
     
+    static let identifier = "AvailableLogsCell"
+    static let nibName = "VGAvailableLogsTableViewCell"
+    static let nib = UINib(nibName: VGAvailableLogsTableViewCell.nibName, bundle: nil)
+
+    
     var vgFileManager: VGFileManager!
     var currentTrack: VGTrack?
     let formatter = DateFormatter()

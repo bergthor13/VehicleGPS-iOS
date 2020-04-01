@@ -28,8 +28,7 @@ class VGAvailableDownloadTableViewController: UITableViewController {
     }
     
     fileprivate func registerCells() {
-        let availableLogsTableViewCellNib = UINib(nibName: "VGAvailableLogsTableViewCell", bundle: nil)
-        self.tableView.register(availableLogsTableViewCellNib, forCellReuseIdentifier: "AvailableLogsCell")
+        self.tableView.register(VGAvailableLogsTableViewCell.nib, forCellReuseIdentifier: VGAvailableLogsTableViewCell.identifier)
     }
     
     override func viewDidLoad() {
@@ -52,7 +51,7 @@ class VGAvailableDownloadTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "AvailableLogsCell", for: indexPath) as? VGAvailableLogsTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: VGAvailableLogsTableViewCell.identifier, for: indexPath) as? VGAvailableLogsTableViewCell else {
             return UITableViewCell()
         }
         

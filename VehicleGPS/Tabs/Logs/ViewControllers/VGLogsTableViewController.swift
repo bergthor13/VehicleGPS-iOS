@@ -119,11 +119,8 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
     
     fileprivate func registerCells() {
-        let logsTableViewCellNib = UINib(nibName: "VGLogsTableViewCell", bundle: nil)
-        let logHeaderViewNib = UINib(nibName: "VGLogHeaderView", bundle: nil)
-        
-        self.tableView.register(logsTableViewCellNib, forCellReuseIdentifier: "LogsCell")
-        self.tableView.register(logHeaderViewNib, forHeaderFooterViewReuseIdentifier: "LogsHeader")
+        self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
+        self.tableView.register(VGLogHeaderView.nib, forHeaderFooterViewReuseIdentifier: VGLogHeaderView.identifier)
     }
 
     fileprivate func startConnectionToVGPS() {
@@ -632,7 +629,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: "LogsCell",
+            withIdentifier: VGLogsTableViewCell.identifier,
             for: indexPath
             ) as? VGLogsTableViewCell else {
             return UITableViewCell()

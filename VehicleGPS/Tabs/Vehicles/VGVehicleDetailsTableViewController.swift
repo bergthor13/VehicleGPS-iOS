@@ -11,8 +11,7 @@ class VGVehicleDetailsTableViewController: UITableViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated, object: nil)
         
-        let logsTableViewCellNib = UINib(nibName: "VGLogsTableViewCell", bundle: nil)
-        self.tableView.register(logsTableViewCellNib, forCellReuseIdentifier: "LogsCell")
+        self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEdit))
     }
@@ -53,7 +52,7 @@ class VGVehicleDetailsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: "LogsCell",
+            withIdentifier: VGLogsTableViewCell.identifier,
             for: indexPath
             ) as? VGLogsTableViewCell else {
             return UITableViewCell()
