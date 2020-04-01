@@ -74,6 +74,9 @@ class VGCSVParser: IVGLogParser {
     }
     
     func rowToDataPoint(row: [String]) -> VGDataPoint {
+        // TIME,LATITUDE,LONGITUDE,ELEVATION,SATELLITES,HORIZONTAL_ACCURACY,VERTICAL_ACCURACY,PDOP,FIX_TYPE,GNSS_FIX_OK,FULLY_RESOLVED,RPM,ENGINE_LOAD,COOLANT_TEMPERATURE,AMBIENT_TEMPERATURE,THROTTLE_POSITION
+        // 2019-04-24T17:46:17.599829,63.995643,-22.634326,41.482,7,0.994,1.484,3.48,3,True,False,1103.5,34.509803921568626,14,5,14.509803921568627
+
         let dataPoint = VGDataPoint()
         dataPoint.timestamp = ISO8601DateParser.parse(String(row[0]))
         dataPoint.latitude = Double(row[1])

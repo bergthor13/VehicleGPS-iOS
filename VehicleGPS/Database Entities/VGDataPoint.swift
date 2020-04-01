@@ -10,8 +10,6 @@ import Foundation
 import CoreData
 
 class VGDataPoint {
-    // TIME,LATITUDE,LONGITUDE,ELEVATION,SATELLITES,HORIZONTAL_ACCURACY,VERTICAL_ACCURACY,PDOP,FIX_TYPE,GNSS_FIX_OK,FULLY_RESOLVED,RPM,ENGINE_LOAD,COOLANT_TEMPERATURE,AMBIENT_TEMPERATURE,THROTTLE_POSITION
-    // 2019-04-24T17:46:17.599829,63.995643,-22.634326,41.482,7,0.994,1.484,3.48,3,True,False,1103.5,34.509803921568626,14,5,14.509803921568627
     var timestamp:Date?
     var latitude:Double?
     var longitude:Double?
@@ -144,9 +142,3 @@ extension VGDataPoint: Comparable {
         return lhs.timestamp! < rhs.timestamp!
     }
 }
-
-//extension VGDataPoint: CustomStringConvertible {
-//    var description: String {
-//        return "timestamp: \(String(describing: timestamp)) latitude: \(String(describing: latitude)) longitude: \(String(describing: longitude)) elevation: \(String(describing: elevation)) satellites: \(String(describing: satellites)) horizontalAccuracy: \(horizontalAccuracy) verticalAccuracy: \(verticalAccuracy) pdop: \(pdop) fixType: \(fixType) gnssFixOk: \(gnssFixOk) fullyResolved: \(fullyResolved) rpm: \(String(describing: rpm)) engineLoad: \(String(describing: engineLoad)) coolantTemperature: \(String(describing: coolantTemperature)) ambientTemperature: \(String(describing: ambientTemperature)) throttlePosition: \(String(describing: throttlePosition))"
-//    }
-//}

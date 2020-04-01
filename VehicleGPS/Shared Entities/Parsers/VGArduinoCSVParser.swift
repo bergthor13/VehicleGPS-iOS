@@ -80,6 +80,9 @@ class VGArduinoCSVParser: IVGLogParser {
     }
     
     func rowToDataPoint(row: [String]) -> VGDataPoint {
+        // TIME,LATITUDE,LONGITUDE,ELEVATION,AMBIENT_TEMPERATURE
+        // 2015-07-26T21:10:00.0Z;64.04261779785156;-21.96710968017578;76.10;NULL
+        
         let dataPoint = VGDataPoint()
         dataPoint.timestamp = ISO8601DateParser.parse(String(row[0]))
         dataPoint.latitude = Double(row[1])
