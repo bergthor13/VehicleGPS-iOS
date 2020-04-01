@@ -238,6 +238,9 @@ class VGTrack {
         maxLon = 200.0
         for dataPoint in trackPoints {
             var typeOfFix = dataPoint.fixType
+            
+            // If we don't know the fixType,
+            // assume that all points are good.
             if typeOfFix == nil {
                 typeOfFix = 2
             }
