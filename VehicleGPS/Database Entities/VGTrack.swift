@@ -242,7 +242,7 @@ class VGTrack {
                 typeOfFix = 2
             }
             
-            if typeOfFix! > 1 && self.timeStart == nil && dataPoint.timestamp! > Date(timeIntervalSince1970: 1388534400) {
+            if typeOfFix! > 1 && self.timeStart == nil {
                 self.timeStart = dataPoint.timestamp
             }
             
