@@ -30,8 +30,7 @@ class VGHistoryTableViewController: UITableViewController {
     }
 
     fileprivate func registerCells() {
-        let historyTableViewCellNib = UINib(nibName: "VGHistoryTableViewCell", bundle: nil)
-        self.tableView.register(historyTableViewCellNib, forCellReuseIdentifier: VGHistoryTableViewCell.identifier)
+        self.tableView.register(VGHistoryTableViewCell.nib, forCellReuseIdentifier: VGHistoryTableViewCell.identifier)
     }
     
     fileprivate func configureFormatters() {
@@ -284,7 +283,7 @@ class VGHistoryTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "HistoryCell", for: indexPath) as? VGHistoryTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: VGHistoryTableViewCell.identifier, for: indexPath) as? VGHistoryTableViewCell else {
             return UITableViewCell()
         }
         let section = historySections[indexPath.section]

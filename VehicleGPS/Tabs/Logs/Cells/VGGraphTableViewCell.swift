@@ -9,7 +9,7 @@
 import UIKit
 
 class VGGraphTableViewCell: UITableViewCell {
-
+    static let identifier = "GraphCell"
     var graphView: TrackGraphView!
     var tableView: UITableView? {
         didSet {

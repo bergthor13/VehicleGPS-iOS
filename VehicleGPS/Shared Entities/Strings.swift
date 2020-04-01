@@ -9,5 +9,6 @@
 import Foundation
 
 struct Strings {
+    static let save = NSLocalizedString("Vista", comment: "Used when saving something")
     static let cancel = NSLocalizedString("Hætta við", comment: "Used when canceling something")
 }

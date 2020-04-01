@@ -124,7 +124,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
 
         }))
         
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Hætta við", comment: ""), style: .cancel, handler: { (action) in
+        alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel, handler: { (action) in
             
         }))
         self.present(alert, animated: true, completion: nil)

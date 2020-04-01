@@ -553,7 +553,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         var hdrView = view
         
         if hdrView == nil {
-            hdrView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LogsHeader") as? VGLogHeaderView
+            hdrView = tableView.dequeueReusableHeaderFooterView(withIdentifier: VGLogHeaderView.identifier) as? VGLogHeaderView
         }
         
         guard let view = hdrView else {

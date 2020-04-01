@@ -56,7 +56,7 @@ class VGColorPickerTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "colorCell", for: indexPath) as? VGColorTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: VGColorTableViewCell.identifier, for: indexPath) as? VGColorTableViewCell else {
             return UITableViewCell()
         }
         cell.lblColorTitle.text = Array(colors.keys)[indexPath.row]

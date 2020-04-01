@@ -27,7 +27,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.register(VGGraphTableViewCell.self, forCellReuseIdentifier: "GraphCell")
+        self.tableView.register(VGGraphTableViewCell.self, forCellReuseIdentifier: VGGraphTableViewCell.identifier)
         self.tableView.allowsSelection = false
     }
 
@@ -56,10 +56,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: VGGraphTableViewCell?
         if indexPath.section > 0 {
-            cell = tableView.dequeueReusableCell(withIdentifier: "GraphCell", for: indexPath) as? VGGraphTableViewCell
+            cell = tableView.dequeueReusableCell(withIdentifier: VGGraphTableViewCell.identifier, for: indexPath) as? VGGraphTableViewCell
 
             if cell == nil {
-                cell = VGGraphTableViewCell(style: .default, reuseIdentifier: "GraphCell", tableView: self.tableView)
+                cell = VGGraphTableViewCell(style: .default, reuseIdentifier: VGGraphTableViewCell.identifier, tableView: self.tableView)
             }
             
             cell?.tableView = self.tableView

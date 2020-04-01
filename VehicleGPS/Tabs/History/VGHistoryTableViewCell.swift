@@ -13,7 +13,10 @@ class VGHistoryTableViewCell: UITableViewCell {
     @IBOutlet weak var lblDistance: UILabel!
     @IBOutlet weak var lblDate: UILabel!
     @IBOutlet weak var lblTripCount: UILabel!
+    
     static let identifier = "HistoryCell"
+    static let nibName = "VGHistoryTableViewCell"
+    static let nib = UINib(nibName: VGHistoryTableViewCell.nibName, bundle: nil)
     
     override func awakeFromNib() {
         super.awakeFromNib()
