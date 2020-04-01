@@ -9,15 +9,18 @@
 import UIKit
 
 class VGTabBarController: UITabBarController {
-
+    let controllers = [
+        VGLogsTableViewController(style: .plain),
+        VGHistoryTableViewController(style: .insetGrouped),
+        VGJourneyTableViewController(style: .insetGrouped),
+        VGVehiclesTableViewController(style: .insetGrouped),
+        VGSettingsTableViewController(style: .grouped)
+    ]
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addChild(UINavigationController(rootViewController: VGLogsTableViewController(style: .plain)))
-        self.addChild(UINavigationController(rootViewController: VGHistoryTableViewController(style: .insetGrouped)))
-        self.addChild(UINavigationController(rootViewController: VGJourneyTableViewController(style: .insetGrouped)))
-        self.addChild(UINavigationController(rootViewController: VGVehiclesTableViewController(style: .insetGrouped)))
-        self.addChild(UINavigationController(rootViewController: VGSettingsTableViewController(style: .grouped)))
-
+        for controller in controllers {
+            self.addChild(UINavigationController(rootViewController: controller))
+        }
         self.selectedIndex = 0
     }
 }
