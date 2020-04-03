@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		09DD9ED3104045D6742E2711 /* Pods_VehicleGPS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */; };
+		F20574B524379A1F0044282B /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20574B424379A1F0044282B /* Icons.swift */; };
+		F20574B724379C720044282B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20574B624379C720044282B /* Constants.swift */; };
 		F206FA7723D09366009A37F6 /* VGNewJourneyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F206FA7623D09366009A37F6 /* VGNewJourneyTableViewController.swift */; };
 		F215AC6423DB1AA40001AF24 /* VGVehicle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC6323DB1AA40001AF24 /* VGVehicle.swift */; };
 		F215AC6623DB1AAC0001AF24 /* VGJourney.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC6523DB1AAC0001AF24 /* VGJourney.swift */; };
@@ -92,6 +94,8 @@
 		18EB1CD0499873B64661B1E0 /* Pods-VehicleGPS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.release.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.release.xcconfig"; sourceTree = "<group>"; };
 		91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VehicleGPS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB23282698EF0E65FC3BED1 /* Pods-VehicleGPS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.debug.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.debug.xcconfig"; sourceTree = "<group>"; };
+		F20574B424379A1F0044282B /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
+		F20574B624379C720044282B /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F206FA7623D09366009A37F6 /* VGNewJourneyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGNewJourneyTableViewController.swift; sourceTree = "<group>"; };
 		F215AC6323DB1AA40001AF24 /* VGVehicle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGVehicle.swift; sourceTree = "<group>"; };
 		F215AC6523DB1AAC0001AF24 /* VGJourney.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGJourney.swift; sourceTree = "<group>"; };
@@ -269,7 +273,9 @@
 				F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */,
 				F24754FD23DDAFA8007E0DF8 /* VGListEmptyLabel.swift */,
 				F2D8C30423FDD01500D77BF2 /* NotificationCenterNames.swift */,
+				F20574B624379C720044282B /* Constants.swift */,
 				F2647BEA24352FBD00283B38 /* Strings.swift */,
+				F20574B424379A1F0044282B /* Icons.swift */,
 			);
 			path = "Shared Entities";
 			sourceTree = "<group>";
@@ -574,6 +580,7 @@
 				F2647BE92435029900283B38 /* UIView+Extensions.swift in Sources */,
 				F25839E323AAD1E000E76B54 /* VGHistoryHeader.swift in Sources */,
 				F23BE8DD22A5E596008FD50C /* NewNetworkTableViewController.swift in Sources */,
+				F20574B724379C720044282B /* Constants.swift in Sources */,
 				F23BE8D422A5E566008FD50C /* VGTabBarController.swift in Sources */,
 				F2647BEB24352FBD00283B38 /* Strings.swift in Sources */,
 				F23BE8F222A5E5BB008FD50C /* VGLogDetailsViewController.swift in Sources */,
@@ -603,6 +610,7 @@
 				F22235FF23E21216008EF8E5 /* VGVehicleDetailsTableViewController.swift in Sources */,
 				F247550223DDBC43007E0DF8 /* VGAvailableLogsTableViewCell.swift in Sources */,
 				F215AC8723DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift in Sources */,
+				F20574B524379A1F0044282B /* Icons.swift in Sources */,
 				F23D787323B7C16700DBC64F /* DisplayLineProtocol.swift in Sources */,
 				F23BE8F822A5E5BB008FD50C /* VGLogsTableViewCell.swift in Sources */,
 				F22235FD23E1D9D5008EF8E5 /* VGVehiclesSelectionTableViewController.swift in Sources */,

@@ -41,7 +41,7 @@ class VGLogDetailsViewController: UIViewController {
                                           target: self,
                                           action: #selector(displayShareSelection))
         self.navigationItem.rightBarButtonItem = shareButton
-        let detailSegment = UISegmentedControl(items: [NSLocalizedString("Kort", comment: ""), NSLocalizedString("Tölfræði", comment: "")])
+        let detailSegment = UISegmentedControl(items: [Strings.map, Strings.statistics])
         detailSegment.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
         detailSegment.selectedSegmentIndex = 0
         self.navigationItem.titleView = detailSegment
@@ -112,13 +112,13 @@ class VGLogDetailsViewController: UIViewController {
     
     func process(track: VGTrack) {
         let hud = MBProgressHUD.showAdded(to: self.parent!.view, animated: true)
-        hud.label.text = "Les skrá..."
+        hud.label.text = Strings.readingFile
         vgLogParser = vgFileManager?.getParser(for: track)
         vgLogParser.fileToTrack(fileUrl: self.vgFileManager.getAbsoluteFilePathFor(track: track)!, progress: { (index, count) in
             DispatchQueue.main.async {
                 hud.mode = .annularDeterminate
                 hud.progress = Float(index)/Float(count)
-                hud.label.text = "Þáttar línur"
+                hud.label.text = Strings.parsingLines
             }
         }, callback: { (track) in
             // TODO: Check for main in debugger
@@ -142,31 +142,31 @@ class VGLogDetailsViewController: UIViewController {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.popoverPresentationController?.barButtonItem = self.navigationItem.rightBarButtonItem
         
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Hætta við", comment: ""), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel, handler: nil))
 
         if vgFileManager.fileForTrackExists(track: track) {
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Deila CSV skrá", comment: ""), style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: Strings.shareCSV, style: .default, handler: { (_) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Deila GPX skrá", comment: ""), style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: Strings.shareGPX, style: .default, handler: { (_) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Vinna úr skránni aftur", comment: ""), style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: Strings.processAgain, style: .default, handler: { (_) in
                 self.process(track: self.track)
             }))
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Velja farartæki", comment: ""), style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: Strings.selectVehicle, style: .default, handler: { (_) in
                 let vehCont = VGVehiclesSelectionTableViewController(style: .insetGrouped)
                 vehCont.track = self.track
                 let navCont = UINavigationController(rootViewController: vehCont)
                 self.present(navCont, animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Skipta ferli í tvennt", comment: ""), style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: Strings.splitLog, style: .default, handler: { (_) in
                 guard let selectedTime = self.trackDataTableViewController?.dlpTime else {
                     return
                 }

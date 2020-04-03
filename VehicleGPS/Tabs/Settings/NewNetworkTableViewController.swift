@@ -35,11 +35,11 @@ class NewNetworkTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell = UITableViewCell()
         if indexPath.section == 0 {
-            cell = UITableViewCell.init(style: .default, reuseIdentifier: "wifiCell")
+            cell = UITableViewCell.init(style: .default, reuseIdentifier: Strings.dummyIdentifier)
             cell.accessoryType = .detailButton
             //cell.textLabel?.text = networks[indexPath.row]
         } else {
-            cell = UITableViewCell.init(style: .default, reuseIdentifier: "wifiCell")
+            cell = UITableViewCell.init(style: .default, reuseIdentifier: Strings.dummyIdentifier)
             cell.textLabel?.text = "Add Wi-Fi Network"
             cell.textLabel?.textColor = self.view.tintColor
         }

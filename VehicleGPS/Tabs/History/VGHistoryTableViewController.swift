@@ -43,7 +43,7 @@ class VGHistoryTableViewController: UITableViewController {
     
     fileprivate func configureEmptyListLabel() {
         if let delegate = UIApplication.shared.delegate as? AppDelegate {
-            emptyLabel = VGListEmptyLabel(text: NSLocalizedString("Engin saga", comment: ""),
+            emptyLabel = VGListEmptyLabel(text: Strings.noHistory,
                                           containerView: self.view,
                                           navigationBar: navigationController!.navigationBar,
                                           tabBar: delegate.tabController.tabBar)
@@ -63,10 +63,10 @@ class VGHistoryTableViewController: UITableViewController {
     }
 
     func initializeTableViewController() {
-        title = NSLocalizedString("Saga", comment: "Vehicles Title")
+        title = Strings.titles.history
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        tabBarItem = UITabBarItem(title: NSLocalizedString("Saga", comment: "Vehicles Title"),
-                                  image: UIImage(systemName: "memories"),
+        tabBarItem = UITabBarItem(title: Strings.titles.history,
+                                  image: Icons.history,
                                   tag: 0)
         
     }
@@ -301,7 +301,7 @@ class VGHistoryTableViewController: UITableViewController {
                                    range: NSMakeRange(unformattedDistance.count-3, 3))
         cell.lblDistance.attributedText = distanceText
         
-        let localizedText = NSLocalizedString("ferlar", comment: "")
+        let localizedText = Strings.logs
         let localizedSize = localizedText.count
         unformattedDistance = String(summary.trackCount) + " " + localizedText
         distanceText = NSMutableAttributedString.init(string: unformattedDistance)

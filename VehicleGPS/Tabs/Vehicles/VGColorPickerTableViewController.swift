@@ -9,22 +9,24 @@
 import UIKit
 
 class VGColorPickerTableViewController: UITableViewController {
-    let colors:[String: UIColor] = [
-        NSLocalizedString("Rauður", comment: ""):.red,
-        NSLocalizedString("Grænn", comment: ""):.green,
-        NSLocalizedString("Svartur", comment: ""):.black,
-        NSLocalizedString("Blár", comment: ""):.blue,
-        NSLocalizedString("Brúnn", comment: ""):.brown,
-        NSLocalizedString("Dökkgrár", comment: ""):.darkGray,
-        NSLocalizedString("Hvítur", comment: ""):.white,
-        NSLocalizedString("Appelsínugulur", comment: ""):.orange]
+    let colors: [String: UIColor] = [
+        Strings.colors.red:.red,
+        Strings.colors.green:.green,
+        Strings.colors.black:.black,
+        Strings.colors.blue:.blue,
+        Strings.colors.brown:.brown,
+        Strings.colors.darkGray:.darkGray,
+        Strings.colors.white:.white,
+        Strings.colors.orange:.orange
+    ]
+    
     var delegate: ColorPickerDelegate?
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(VGColorTableViewCell.nib, forCellReuseIdentifier: VGColorTableViewCell.identifier)
 
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(didTapCancel))
-        title = NSLocalizedString("Velja lit", comment: "")
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.cancel, style: .plain, target: self, action: #selector(didTapCancel))
+        title = Strings.selectColor
     }
     
     @objc func didTapCancel() {

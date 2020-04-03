@@ -3,14 +3,24 @@
 "Saga" = "History";
 "Ferlar" = "Logs";
 "Stillingar" = "Settings";
+"Gagnagrunnur" = "Database";
+"Nýtt farartæki" = "New Vehicle";
+"Nýtt ferðalag" = "New Journey";
+"Breyta farartæki" = "Edit Vehicle";
+
+"Vista" = "Save";
+"Hætta við" = "Cancel";
+
+
 "Dagur" = "Day";
 "Mánuður" = "Month";
 "Ár" = "Year";
+
 "Engir ferlar" = "No Logs";
 "Engin saga" = "No History";
 "Engin ferðalög" = "No Journeys";
 "Engin farartæki" = "No Vehicles";
-"Gagnagrunnur" = "Database";
+
 "Almennt" = "General";
 "Tengjast við VehicleGPS" = "Connect to VehicleGPS";
 "Hlutir" = "Objects";
@@ -18,10 +28,6 @@
 "Ferlaskrár" = "Log Files";
 "Yfirlitsmyndir" = "Map Preview Images";
 "Framkvæma gagnagrunnsviðhald" = "Perform Database Maintenance";
-"Nýtt farartæki" = "New Vehicle";
-"Vista" = "Save";
-"Hætta við" = "Cancel";
-"Nýtt ferðalag" = "New Journey";
 "Kort" = "Map";
 "Tölfræði" = "Statistics";
 "Samantekt" = "Summary";
@@ -33,7 +39,6 @@
 "Eyða" = "Delete";
 "Setja sem sjálfgefið" = "Set as Default";
 "Breyta" = "Edit";
-"Breyta farartæki" = "Edit Vehicle";
 
 "Deila CSV skrá" = "Share CSV File";
 "Deila GPX skrá" = "Share GPX File";
@@ -57,8 +62,8 @@
 "Svartur" = "Black";
 "Blár" = "Blue";
 "Brúnn" = "Brown";
-"Dökkgrár" = "Dark gray";
-"Hvítur" = "Hvítur";
+"Dökkgrár" = "Dark Gray";
+"Hvítur" = "White";
 "Appelsínugulur" = "Orange";
 
 "Velja lit" = "Select Color";
@@ -73,7 +78,16 @@
 
 "Ekkert farartæki" = "No Vehicle";
 
-
 "ferlar" = "logs";
 "Velja farartæki" = "Select Vehicle";
 "Deila" = "Share";
+
+"Flytja inn" = "Import";
+
+"Í lagi" = "OK";
+
+"Villa í auðkenningu" = "Authorization Error";
+"Villa í tengingu við SFTP vefþjón" = "SFTP Connection Error";
+
+"Enginn ferill" = "No Log";
+"Enginn byrjunartími" = "No Start Time";

@@ -18,9 +18,9 @@ class VGImportFileTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Flytja inn skrá"
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Flytja inn", comment: ""), style: .done, target: self, action: #selector(tappedImport))
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(tappedCancel))
+        title = Strings.titles.importFile
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: Strings.importFile, style: .done, target: self, action: #selector(tappedImport))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.cancel, style: .plain, target: self, action: #selector(tappedCancel))
         
         let asdf = VGGPXParser(snapshotter: VGSnapshotMaker(fileManager: VGFileManager()))
         guard let fileUrl = fileUrl else {
@@ -86,10 +86,10 @@ class VGImportFileTableViewController: UITableViewController {
             cell.textLabel?.text = "Skráarheiti"
         } else if indexPath.row == 1 {
             cell.detailTextLabel?.text = VGDistanceFormatter().string(fromMeters: currTrack.distance*1000)
-            cell.textLabel?.text = NSLocalizedString("Vegalengd", comment: "")
+            cell.textLabel?.text = Strings.distance
         } else if indexPath.row == 2 {
             cell.detailTextLabel?.text = String(VGDurationFormatter().string(from: currTrack.duration)!)
-            cell.textLabel?.text = NSLocalizedString("Tímalengd", comment: "")
+            cell.textLabel?.text = Strings.duration
         }
         cell.detailTextLabel?.numberOfLines = 0
 

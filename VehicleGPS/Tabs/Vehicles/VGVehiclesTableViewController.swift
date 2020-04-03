@@ -31,12 +31,12 @@ class VGVehiclesTableViewController: UITableViewController {
     }
 
     func initializeTableViewController() {
-        title = NSLocalizedString("Farartæki", comment: "Vehicles Title")
-        tabBarItem = UITabBarItem(title: NSLocalizedString("Farartæki", comment: "Vehicles Title"),
-                                                     image: UIImage(systemName: "car"),
-                                                     tag: 0)
+        title = Strings.titles.vehicles
+        tabBarItem = UITabBarItem(title: Strings.titles.vehicles,
+                                  image: Icons.vehicle,
+                                  tag: 0)
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.circle.fill"), style: .plain, target: self, action: #selector(didTapAddVehicle))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.add, style: .plain, target: self, action: #selector(didTapAddVehicle))
 
     }
     override func viewDidLoad() {
@@ -100,7 +100,7 @@ class VGVehiclesTableViewController: UITableViewController {
     
     fileprivate func configureEmptyListLabel() {
         if let delegate = UIApplication.shared.delegate as? AppDelegate {
-              emptyLabel = VGListEmptyLabel(text: NSLocalizedString("Engin farartæki", comment: ""),
+            emptyLabel = VGListEmptyLabel(text: Strings.noVehicles,
                                             containerView: self.view,
                                             navigationBar: navigationController!.navigationBar,
                                             tabBar: delegate.tabController.tabBar)
@@ -177,12 +177,12 @@ class VGVehiclesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         
-        let setDefaultAction = UIContextualAction(style: .normal, title: NSLocalizedString("Setja sem sjálfgefið", comment: "")) { (action, view, completion) in
+        let setDefaultAction = UIContextualAction(style: .normal, title: Strings.setAsDefault) { (action, view, completion) in
             self.setVehicleAsDefault(at: indexPath)
             completion(true)
         }
         
-        let deleteAction = UIContextualAction(style: .destructive, title: NSLocalizedString("Eyða", comment: "")) { (action, view, completion) in
+        let deleteAction = UIContextualAction(style: .destructive, title: Strings.delete) { (action, view, completion) in
             self.deleteVehicle(at: indexPath)
             completion(true)
         }
@@ -249,27 +249,27 @@ class VGVehiclesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView,
       contextMenuConfigurationForRowAt indexPath: IndexPath,
       point: CGPoint) -> UIContextMenuConfiguration? {
-        let edit = UIAction(title: NSLocalizedString("Breyta", comment: "")) { _ in
+        let edit = UIAction(title: Strings.edit) { _ in
             self.editVehicle(at: indexPath)
         }
-        edit.image = UIImage(systemName: "square.and.pencil")
+        edit.image = Icons.edit
 
         
-        let favorite = UIAction(title: NSLocalizedString("Setja sem sjálfgefið", comment: "")) { _ in
+        let favorite = UIAction(title: Strings.setAsDefault) { _ in
             self.setVehicleAsDefault(at: indexPath)
 
         }
         favorite.image = UIImage(systemName: "star.fill")
 
         
-        let delete = UIAction(title: NSLocalizedString("Eyða", comment: "")) {_ in
+        let delete = UIAction(title: Strings.delete) {_ in
             self.deleteVehicle(at: indexPath)
 
         }
-        delete.image = UIImage(systemName: "trash")
+        delete.image = Icons.delete
         delete.attributes = .destructive
         
-        let deleteMenu = UIMenu(title: NSLocalizedString("Eyða", comment: ""), image: UIImage(systemName: "trash"), identifier: .none, options: .destructive, children: [delete])
+        let deleteMenu = UIMenu(title: Strings.delete, image: Icons.delete, identifier: .none, options: .destructive, children: [delete])
 
       return UIContextMenuConfiguration(identifier: nil,
         previewProvider: nil) { _ in

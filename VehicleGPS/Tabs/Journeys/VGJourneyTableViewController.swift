@@ -12,7 +12,7 @@ class VGJourneyTableViewController: UITableViewController {
     var emptyLabel: UILabel!
     fileprivate func configureEmptyListLabel() {
         if let delegate = UIApplication.shared.delegate as? AppDelegate {
-              emptyLabel = VGListEmptyLabel(text: NSLocalizedString("Engin ferðalög", comment: ""),
+            emptyLabel = VGListEmptyLabel(text: Strings.noJourneys,
                                             containerView: self.view,
                                             navigationBar: navigationController!.navigationBar,
                                             tabBar: delegate.tabController.tabBar)
@@ -45,12 +45,12 @@ class VGJourneyTableViewController: UITableViewController {
     }
 
     func initializeTableViewController() {
-        title = NSLocalizedString("Ferðalög", comment: "Vehicles Title")
+        title = Strings.titles.journeys
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        tabBarItem = UITabBarItem(title: NSLocalizedString("Ferðalög", comment: "Vehicles Title"),
-                                                     image: UIImage(systemName: "globe"),
+        tabBarItem = UITabBarItem(title: Strings.titles.journeys,
+                                  image: Icons.journeys,
                                                      tag: 0)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.circle.fill"), style: .plain, target: self, action: #selector(self.didTapAddJourney))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.add, style: .plain, target: self, action: #selector(self.didTapAddJourney))
     }
     
     override func viewDidLoad() {

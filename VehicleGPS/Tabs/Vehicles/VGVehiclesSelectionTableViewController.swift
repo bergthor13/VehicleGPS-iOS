@@ -14,7 +14,7 @@ class VGVehiclesSelectionTableViewController: VGVehiclesTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(didTapCancel))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.cancel, style: .plain, target: self, action: #selector(didTapCancel))
     }
     
     @objc func didTapCancel() {

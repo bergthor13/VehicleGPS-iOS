@@ -17,9 +17,9 @@ class VGDatabaseTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = NSLocalizedString("Gagnagrunnur", comment: "")
+        title = Strings.titles.database
         dataTypes = ["Track", "DataPoint", "MapPoint", "Vehicle"]
-        fileTypes = [NSLocalizedString("Ferlaskrár", comment: ""), NSLocalizedString("Yfirlitsmyndir", comment: "")]
+        fileTypes = [Strings.settings.logFiles, Strings.settings.previewImages]
         
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
@@ -31,9 +31,9 @@ class VGDatabaseTableViewController: UITableViewController {
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-            return NSLocalizedString("Hlutir", comment: "")
+            return Strings.settings.objects
         } else if section == 1 {
-            return NSLocalizedString("Skrár", comment: "")
+            return Strings.settings.files
         } else {
             return nil
         }
@@ -56,7 +56,7 @@ class VGDatabaseTableViewController: UITableViewController {
         var cell = UITableViewCell()
 
         if indexPath.section == 0 {
-            cell = UITableViewCell.init(style: .value1, reuseIdentifier: "wifiCell")
+            cell = UITableViewCell.init(style: .value1, reuseIdentifier: Strings.dummyIdentifier)
             cell.textLabel?.text = dataTypes[indexPath.row]
 
             DispatchQueue.global(qos: .userInitiated).async {
@@ -73,7 +73,7 @@ class VGDatabaseTableViewController: UITableViewController {
                 return cell
             }
             
-            cell = UITableViewCell.init(style: .value1, reuseIdentifier: "wifiCell")
+            cell = UITableViewCell.init(style: .value1, reuseIdentifier: Strings.dummyIdentifier)
             cell.textLabel?.text = fileTypes[indexPath.row]
             
             if indexPath.row == 0 {
@@ -83,8 +83,8 @@ class VGDatabaseTableViewController: UITableViewController {
             }
 
         } else if indexPath.section == 2 {
-            cell = UITableViewCell.init(style: .default, reuseIdentifier: "wifiCell")
-            cell.textLabel?.text = NSLocalizedString("Framkvæma gagnagrunnsviðhald", comment: "")
+            cell = UITableViewCell.init(style: .default, reuseIdentifier: Strings.dummyIdentifier)
+            cell.textLabel?.text = Strings.settings.databaseMaintenance
             cell.textLabel?.textColor = view.tintColor
         }
         return cell
@@ -98,11 +98,11 @@ class VGDatabaseTableViewController: UITableViewController {
                 preferredStyle: .actionSheet
             )
             
-            alert.addAction(UIAlertAction(title: "Eyða", style: .destructive, handler: { (_) in
+            alert.addAction(UIAlertAction(title: Strings.delete, style: .destructive, handler: { (_) in
                 self.dataStore.deleteAllData(entity: self.dataTypes[indexPath.row])
             }))
             
-            alert.addAction(UIAlertAction(title: "Hætta við", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel, handler: nil))
             present(alert, animated: true, completion: nil)
         }
         if indexPath.section == 2 {

@@ -48,7 +48,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = NSLocalizedString("Nýtt farartæki", comment: "")
+        title = Strings.titles.newVehicle
         if vehicle.mapColor == nil {
             vehicle.mapColor = .red
         }
@@ -56,8 +56,8 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         registerCells()
         tableView.allowsSelection = false
         tableView.tintColor = navigationController?.view.tintColor
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Vista", comment: ""), style: .done, target: self, action: #selector(tappedSave))
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Hætta við", comment: ""), style: .plain, target: self, action: #selector(tappedCancel))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: Strings.save, style: .done, target: self, action: #selector(tappedSave))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.cancel, style: .plain, target: self, action: #selector(tappedCancel))
     }
     
     func enableDisableSave(button:UIBarButtonItem, string:String) {

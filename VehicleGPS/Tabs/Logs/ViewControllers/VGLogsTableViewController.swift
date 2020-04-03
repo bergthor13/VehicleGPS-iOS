@@ -20,9 +20,6 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     var downloadManager: VGSFTPManager?
     var vgFileManager: VGFileManager?
     var vgLogParser: IVGLogParser?
-    let host = "vehicle-gps-dev.local"
-    let username = "pi"
-    let password = "easyprintsequence"
     var dataStore:VGDataStore!
     var isDownloadingFile = false
     var isInDownloadingState = false
@@ -49,9 +46,9 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
 
     func initializeTableViewController() {
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        title = NSLocalizedString("Ferlar", comment: "Vehicles Title")
-        tabBarItem = UITabBarItem(title: NSLocalizedString("Ferlar", comment: "Vehicles Title"),
-                                  image: UIImage(imageLiteralResourceName: "LogIcon"),
+        title = Strings.titles.logs
+        tabBarItem = UITabBarItem(title: Strings.titles.logs,
+                                  image: Icons.log,
                                   tag: 0)
     }
     
@@ -77,7 +74,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     
     fileprivate func configureEmptyListLabel() {
         if let delegate = UIApplication.shared.delegate as? AppDelegate {
-            emptyLabel = VGListEmptyLabel(text: NSLocalizedString("Engir ferlar", comment: ""),
+            emptyLabel = VGListEmptyLabel(text: Strings.noLogs,
                                           containerView: self.view,
                                           navigationBar: navigationController!.navigationBar,
                                           tabBar: delegate.tabController.tabBar)
@@ -87,7 +84,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
     
     fileprivate func configureNavigationBar() {
-        let button1 = UIBarButtonItem(title: NSLocalizedString("Þátta", comment: ""), style: .plain, target: self, action: #selector(self.processFiles))
+        let button1 = UIBarButtonItem(title: Strings.parse, style: .plain, target: self, action: #selector(self.processFiles))
         self.navigationItem.leftBarButtonItem = button1
         self.navigationItem.rightBarButtonItem = editButtonItem
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -102,7 +99,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
     
     fileprivate func setUpDeviceConnectedBanner() {
-        self.headerView = VGDeviceConnectedHeaderView.loadFromNibNamed(nibNamed: "VGDeviceConnectedHeaderView")
+        self.headerView = VGDeviceConnectedHeaderView.loadFromNibNamed(nibNamed: VGDeviceConnectedHeaderView.nibName)
         self.headerView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 0)
         self.tableView.tableHeaderView = self.headerView
         self.headerView.lblLogsAvailable.isHidden = true
@@ -125,7 +122,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
 
     fileprivate func startConnectionToVGPS() {
         DispatchQueue.global(qos: .background).async {
-            self.session = NMSSHSession.init(host: self.host, andUsername: self.username)
+            self.session = NMSSHSession.init(host: Constants.sftp.host, andUsername: Constants.sftp.username)
             if self.session != nil {
                 self.fetchLogList()
             }
@@ -143,8 +140,6 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     @objc func downloadFiles() {
         if self.isInDownloadingState {
             shouldStopDownloading = true
-//            self.navigationItem.rightBarButtonItem?.title = "Hlaða niður"
-//            self.navigationItem.rightBarButtonItem?.style = .plain
             self.isInDownloadingState = false
             UIApplication.shared.isIdleTimerDisabled = true
 
@@ -152,8 +147,6 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         }
         self.isInDownloadingState = true
         UIApplication.shared.isIdleTimerDisabled = false
-//        self.navigationItem.rightBarButtonItem?.title = "Stöðva"
-//        self.navigationItem.rightBarButtonItem?.style = .done
         
         for key in self.sectionKeys {
             guard let trackList = self.tracksDict[key] else {
@@ -165,7 +158,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                 }
             }
         }
-        self.headerView.lblLogsAvailable.text = String(format: NSLocalizedString("Hleður niður. %i ferlar eftir.", comment: ""), self.downloadCount)
+        self.headerView.lblLogsAvailable.text = String(format: Strings.downloadingLeft, self.downloadCount)
         DispatchQueue.global(qos: .background).async {
             for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
                 guard let trackList = self.tracksDict[sectionKey] else {
@@ -199,10 +192,10 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                             DispatchQueue.main.async {
                                 if self.downloadCount == 0 {
                                     UIApplication.shared.isIdleTimerDisabled = false
-                                    self.headerView.lblLogsAvailable.text = NSLocalizedString("Niðurhali lokið.", comment: "")
+                                    self.headerView.lblLogsAvailable.text = Strings.downloadComplete
 
                                 } else {
-                                    self.headerView.lblLogsAvailable.text = String(format: NSLocalizedString("Hleður niður. %i ferlar eftir.", comment: ""), self.downloadCount)
+                                    self.headerView.lblLogsAvailable.text = String(format: Strings.downloadingLeft, self.downloadCount)
                                 }
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
                                     return
@@ -216,10 +209,8 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             }
             DispatchQueue.main.async {
                 if self.downloadCount == 0 {
-                    self.headerView.lblLogsAvailable.text = NSLocalizedString("Engir nýir ferlar í boði", comment: "")
+                    self.headerView.lblLogsAvailable.text = Strings.noNewLogs
                 }
-//                self.navigationItem.rightBarButtonItem?.title = "Hlaða niður"
-//                self.navigationItem.rightBarButtonItem?.style = .plain
                 self.isInDownloadingState = false
                 UIApplication.shared.isIdleTimerDisabled = true
             }
@@ -239,7 +230,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             }
         }
         
-        self.navigationItem.prompt = String(format: NSLocalizedString("Þátta. %i ferlar eftir.", comment: ""), self.parseCount)
+        self.navigationItem.prompt = String(format: Strings.parsingLeftPlural, self.parseCount)
         for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
             guard let trackList = self.tracksDict[sectionKey] else {
                 continue
@@ -272,7 +263,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                                     self.navigationItem.prompt = nil
                                 }
                                 
-                                self.navigationItem.prompt = String(format: NSLocalizedString("Þátta. %i ferlar eftir.", comment: ""), self.parseCount)
+                                self.navigationItem.prompt = String(format: Strings.parsingLeftPlural, self.parseCount)
                                 track.beingProcessed = true
                                 guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
                                     return
@@ -358,14 +349,14 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             DispatchQueue.main.async {
                 self.tableView.reloadData()
                 if newFileCount == 0 {
-                    self.headerView.lblLogsAvailable.text = NSLocalizedString("Engir nýir ferlar í boði", comment: "")
+                    self.headerView.lblLogsAvailable.text = Strings.noNewLogs
                 } else if newFileCount == 1 {
                     
-                    self.headerView.lblLogsAvailable.text = String(format: NSLocalizedString("%i nýr ferill í boði", comment: ""), newFileCount)
+                    self.headerView.lblLogsAvailable.text = String(format: Strings.newLogSingular, newFileCount)
                 } else if (newFileCount-1)%10 == 0 && newFileCount != 11 {
-                    self.headerView.lblLogsAvailable.text = String(format: NSLocalizedString("%i nýr ferill í boði", comment: ""), newFileCount)
+                    self.headerView.lblLogsAvailable.text = String(format: Strings.newLogSingular, newFileCount)
                 } else {
-                    self.headerView.lblLogsAvailable.text = String(format: NSLocalizedString("%i nýjir ferlar í boði", comment: ""), newFileCount)
+                    self.headerView.lblLogsAvailable.text = String(format: Strings.newLogPlural, newFileCount)
                 }
                 if newFileCount == 0 {
                     self.headerView.greenButton.isHidden = true
@@ -390,7 +381,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     // MARK: - GPS Connection Related Functions
     func displayErrorAlert(title: String?, message: String?) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: Strings.ok, style: .default, handler: nil))
         self.present(alert, animated: true)
     }
     
@@ -402,7 +393,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
                     self.headerView.lblLogsAvailable.isHidden = false
                     self.headerView.lblConnectedToGPS.isHidden = false
                     self.headerView.imgIcon.isHidden = false
-                    self.headerView.lblConnectedToGPS.text = String(format: NSLocalizedString("Tengt við %@", comment: ""), self.session!.host)
+                    self.headerView.lblConnectedToGPS.text = String(format: Strings.connectedTo, self.session!.host)
 
                     self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
                     self.tableView.tableHeaderView = self.headerView
@@ -432,9 +423,9 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
     
     func tryToAuthenticate(session: NMSSHSession) -> Bool {
-        if !session.authenticate(byPassword: self.password) {
+        if !session.authenticate(byPassword: Constants.sftp.password) {
             DispatchQueue.main.async {
-                self.displayErrorAlert(title: "Authorization Error", message: self.session?.lastError?.localizedDescription)
+                self.displayErrorAlert(title: Strings.authorizationError, message: self.session?.lastError?.localizedDescription)
             }
             return false
         }
@@ -452,7 +443,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         
         if !sftpSession.isConnected {
             DispatchQueue.main.async {
-                self.displayErrorAlert(title: "SFTP Connection Error", message: self.session?.lastError?.localizedDescription)
+                self.displayErrorAlert(title: Strings.sftpConnError, message: self.session?.lastError?.localizedDescription)
             }
             return false
         }
@@ -709,7 +700,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
 
     
     override func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-        return "Eyða"
+        return Strings.delete
     }
     
     // Override to support conditional editing of the table view.
@@ -747,16 +738,16 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         
         let track = getTrackAt(indexPath: indexPath)
         
-        let delete = UIAction(title: NSLocalizedString("Eyða", comment: ""), image: UIImage(systemName: "trash"), identifier: .none, discoverabilityTitle: nil, attributes: .destructive, state: .off) {_ in
+        let delete = UIAction(title: Strings.delete, image: Icons.delete, identifier: .none, discoverabilityTitle: nil, attributes: .destructive, state: .off) {_ in
             self.deleteTrack(at: indexPath)
         }
         
-        let exportOriginal = UIAction(title: NSLocalizedString(NSLocalizedString("Deila CSV skrá", comment: ""), comment: ""), image: UIImage(systemName: "square.and.arrow.up"), identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+        let exportOriginal = UIAction(title: Strings.shareCSV, image: Icons.share, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             let activityVC = UIActivityViewController(activityItems: [self.vgFileManager!.getAbsoluteFilePathFor(track: track!)!], applicationActivities: nil)
             self.present(activityVC, animated: true, completion: nil)
         }
         
-        let exportGPX = UIAction(title: NSLocalizedString(NSLocalizedString("Deila GPX skrá", comment: ""), comment: ""), image: UIImage(systemName: "square.and.arrow.up"), identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+        let exportGPX = UIAction(title: Strings.shareGPX, image: Icons.share, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             
             DispatchQueue.global(qos: .userInitiated).async {
                 let fileUrl = self.vgGPXGenerator.generateGPXFor(track: track!)!
@@ -768,11 +759,11 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             
         }
         
-        let selectVehicle = UIAction(title: NSLocalizedString(NSLocalizedString("Velja farartæki", comment: ""), comment: ""), image: UIImage(systemName: "car"), identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+        let selectVehicle = UIAction(title: Strings.selectVehicle, image: Icons.vehicle, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             self.didTapVehicle(track: track!)
         }
 
-        let exportMenu = UIMenu(title: NSLocalizedString("Deila", comment: ""), image: UIImage(systemName: "square.and.arrow.up"), identifier: .none, options: .init(), children: [exportGPX, exportOriginal])
+        let exportMenu = UIMenu(title: Strings.share, image: Icons.share, identifier: .none, options: .init(), children: [exportGPX, exportOriginal])
 
       return UIContextMenuConfiguration(identifier: nil,
         previewProvider: nil) { _ in

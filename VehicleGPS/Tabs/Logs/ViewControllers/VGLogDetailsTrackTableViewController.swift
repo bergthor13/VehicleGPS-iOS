@@ -41,7 +41,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         }
     }
     
-    let sections = [NSLocalizedString("Samantekt", comment: ""), NSLocalizedString("Hraði", comment: ""), NSLocalizedString("Hæð yfir sjávarmáli", comment: ""), "PDOP", NSLocalizedString("Lárétt nákvæmni", comment: ""), NSLocalizedString("Snúningar á mínútu", comment: ""), NSLocalizedString("Álag vélar", comment: ""), NSLocalizedString("Eldsneytisgjöf", comment: ""), NSLocalizedString("Hiti á kælivökva", comment: ""), NSLocalizedString("Útihiti", comment: "")]
+    let sections = [Strings.summary, Strings.speed, Strings.elevation, Strings.pdop, Strings.hAcc, Strings.rpm, Strings.engineLoad, Strings.throttlePos, Strings.coolTemp, Strings.ambTemp]
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
@@ -70,30 +70,30 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         }
         if indexPath.section == 0 {
             guard let track = track else {
-                let cell1 = UITableViewCell(style: .value1, reuseIdentifier: "asdf")
-                cell1.textLabel?.text = "No Track"
+                let cell1 = UITableViewCell(style: .value1, reuseIdentifier: Strings.dummyIdentifier)
+                cell1.textLabel?.text = Strings.noTrack
                 return cell1
             }
             guard let timeStart = track.timeStart else {
-                let cell1 = UITableViewCell(style: .value1, reuseIdentifier: "asdf")
-                cell1.textLabel?.text = "No Start Time"
+                let cell1 = UITableViewCell(style: .value1, reuseIdentifier: Strings.dummyIdentifier)
+                cell1.textLabel?.text = Strings.noStartTime
                 return cell1
             }
-            let cell1 = UITableViewCell(style: .value2, reuseIdentifier: "asdf")
+            let cell1 = UITableViewCell(style: .value2, reuseIdentifier: Strings.dummyIdentifier)
             cell1.tintColor = UIApplication.shared.delegate?.window!!.tintColor
             let dateFormatter = DateFormatter()
             dateFormatter.locale = Locale.current
             dateFormatter.dateStyle = .long
             dateFormatter.timeStyle = .medium
-            cell1.textLabel?.text = NSLocalizedString("Byrjunartími", comment: "")
+            cell1.textLabel?.text = Strings.startTime
             cell1.detailTextLabel?.text = dateFormatter.string(from: timeStart)
             
             if indexPath.row == 1 {
-                cell1.textLabel?.text = NSLocalizedString("Endatími", comment: "")
+                cell1.textLabel?.text = Strings.endtime
                 cell1.detailTextLabel?.text = dateFormatter.string(from: timeStart.addingTimeInterval(track.duration))
             }
             if indexPath.row == 2 {
-                cell1.textLabel?.text = NSLocalizedString("Vegalengd", comment: "")
+                cell1.textLabel?.text = Strings.distance
                 let lengthFormatter = VGDistanceFormatter()
                 
                 lengthFormatter.unitStyle = .medium
@@ -101,14 +101,14 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
 
             }
             if indexPath.row == 3 {
-                cell1.textLabel?.text = NSLocalizedString("Tímalengd", comment: "")
+                cell1.textLabel?.text = Strings.duration
                 let dcFormatter = DateComponentsFormatter()
                 dcFormatter.allowedUnits = [.hour, .minute, .second]
                 dcFormatter.unitsStyle = .short
                 cell1.detailTextLabel?.text = dcFormatter.string(from: track.duration)
             }
             if indexPath.row == 4 {
-                cell1.textLabel?.text = NSLocalizedString("Gagnapunktar", comment: "")
+                cell1.textLabel?.text = Strings.datapoints
                 cell1.detailTextLabel?.text = String(track.trackPoints.count)
             }
             

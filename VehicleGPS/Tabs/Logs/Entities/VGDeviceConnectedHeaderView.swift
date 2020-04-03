@@ -16,6 +16,8 @@ class VGDeviceConnectedHeaderView: UIView {
     @IBOutlet weak var lblLogsAvailable: UILabel!
     @IBOutlet weak var imgIcon: UIImageView!
     
+    static let nibName = "VGDeviceConnectedHeaderView"
+    
     class func loadFromNibNamed(nibNamed: String, bundle: Bundle? = nil) -> VGDeviceConnectedHeaderView? {
         return UINib(
             nibName: nibNamed,

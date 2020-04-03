@@ -12,8 +12,7 @@ class VGEditVehicleTableViewController: VGNewVehicleTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = NSLocalizedString("Breyta farartæki", comment: "")
-
+        title = Strings.editVehicle
     }
     
     @objc override func tappedSave() {
