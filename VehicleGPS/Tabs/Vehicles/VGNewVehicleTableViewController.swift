@@ -112,6 +112,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
             self.imagePicker =  UIImagePickerController()
             self.imagePicker.delegate = self
             self.imagePicker.sourceType = .camera
+            self.imagePicker.allowsEditing = true
             self.present(self.imagePicker, animated: true, completion: nil)
         }))
         
