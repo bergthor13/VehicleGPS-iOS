@@ -108,26 +108,28 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
             popoverController.sourceView = cell.imgProfile
             popoverController.permittedArrowDirections = [.up]
         }
-        alert.addAction(UIAlertAction(title: "Taka mynd", style: .default, handler: { (action) in
-            self.imagePicker =  UIImagePickerController()
-            self.imagePicker.delegate = self
-            self.imagePicker.sourceType = .camera
-            self.imagePicker.allowsEditing = true
-            self.present(self.imagePicker, animated: true, completion: nil)
-        }))
-        
-        alert.addAction(UIAlertAction(title: "Myndasafn", style: .default, handler: { (action) in
-            self.imagePicker =  UIImagePickerController()
-            self.imagePicker.delegate = self
-            self.imagePicker.sourceType = .photoLibrary
-            self.imagePicker.allowsEditing = true
-            self.present(self.imagePicker, animated: true, completion: nil)
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            alert.addAction(UIAlertAction(title: "Taka mynd", style: .default, handler: { (action) in
+                self.imagePicker =  UIImagePickerController()
+                self.imagePicker.delegate = self
+                self.imagePicker.sourceType = .camera
+                self.imagePicker.allowsEditing = true
+                self.present(self.imagePicker, animated: true, completion: nil)
+            }))
+        }
 
-        }))
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+            alert.addAction(UIAlertAction(title: "Myndasafn", style: .default, handler: { (action) in
+                self.imagePicker =  UIImagePickerController()
+                self.imagePicker.delegate = self
+                self.imagePicker.sourceType = .photoLibrary
+                self.imagePicker.allowsEditing = true
+                self.present(self.imagePicker, animated: true, completion: nil)
+
+            }))
+        }
         
-        alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel, handler: { (action) in
-            
-        }))
+        alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
     
