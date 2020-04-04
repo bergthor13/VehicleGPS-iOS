@@ -109,7 +109,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
             popoverController.permittedArrowDirections = [.up]
         }
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            alert.addAction(UIAlertAction(title: "Taka mynd", style: .default, handler: { (action) in
+            alert.addAction(UIAlertAction(title: Strings.takePicture, style: .default, handler: { (action) in
                 self.imagePicker =  UIImagePickerController()
                 self.imagePicker.delegate = self
                 self.imagePicker.sourceType = .camera
@@ -119,7 +119,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         }
 
         if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-            alert.addAction(UIAlertAction(title: "Myndasafn", style: .default, handler: { (action) in
+            alert.addAction(UIAlertAction(title: Strings.photoLibrary, style: .default, handler: { (action) in
                 self.imagePicker =  UIImagePickerController()
                 self.imagePicker.delegate = self
                 self.imagePicker.sourceType = .photoLibrary

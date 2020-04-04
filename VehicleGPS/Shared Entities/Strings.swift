@@ -124,6 +124,8 @@ struct Strings {
     static let noStartTime = NSLocalizedString("Enginn byrjunartími", comment: "")
 
     
+    static let takePicture = NSLocalizedString("Taka mynd", comment: "")
+    static let photoLibrary = NSLocalizedString("Myndasafn", comment: "")
     
     static let dummyIdentifier = "dummy"
 }
