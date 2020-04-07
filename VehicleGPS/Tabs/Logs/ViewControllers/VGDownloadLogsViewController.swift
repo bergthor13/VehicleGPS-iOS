@@ -17,21 +17,11 @@ class VGDownloadLogsViewController: UIViewController {
     var allLogs = [String: [VGTrack]]()
     var vgFileManager = VGFileManager()
     var safeArea: UILayoutGuide!
-    var downloadManager:VGSFTPManager?
     var availableLogsTVC: VGAvailableDownloadTableViewController!
-    init(downloadManager:VGSFTPManager?) {
-        super.init(nibName: nil, bundle: nil)
-        self.downloadManager = downloadManager
-        
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        availableLogsTVC = VGAvailableDownloadTableViewController(style: .plain, downloadManager: downloadManager)
+        //availableLogsTVC = VGAvailableDownloadTableViewController(style: .plain, downloadManager: downloadManager)
         view.backgroundColor = .systemBackground
         self.navigationController?.navigationBar.prefersLargeTitles = false
         let segmentedControl = UISegmentedControl(items: ["Nýjir", "Allir ferlar", "Stillingar"])

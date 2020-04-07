@@ -64,6 +64,7 @@ class VGVehiclesSelectionTableViewController: VGVehiclesTableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         dataStore.add(vgVehicle: vehicles[indexPath.row], to: track!)
+        self.track?.vehicle = vehicles[indexPath.row]
         dismiss(animated: true, completion: nil)
     }
 }

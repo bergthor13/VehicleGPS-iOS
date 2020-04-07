@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 class VGHeaderDateFormatter: DateFormatter {
-    let parsingFormatter = DateFormatter()
+    let parsingFormatter = VGDateParsingFormatter()
     override init() {
         super.init()
         configure()
@@ -25,9 +25,6 @@ class VGHeaderDateFormatter: DateFormatter {
         self.dateStyle = .full
         self.locale = Locale.current
         self.doesRelativeDateFormatting = true
-        
-        parsingFormatter.dateFormat = "yyyy-MM-dd"
-        parsingFormatter.locale = Locale(identifier: "en_US_POSIX")
     }
     
     func sectionKeyToDateString(sectionKey:String) -> String {

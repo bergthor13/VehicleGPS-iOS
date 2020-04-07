@@ -10,15 +10,63 @@ import Foundation
 import UIKit
 import MapKit
 
+struct ImageUpdatedNotification {
+    var image: UIImage
+    var style: UIUserInterfaceStyle
+    var track: VGTrack
+}
 
 class VGSnapshotMaker {
     let vgFileManager:VGFileManager
-    init(fileManager:VGFileManager) {
+    let vgDataStore:VGDataStore
+    init(fileManager:VGFileManager, dataStore:VGDataStore) {
         vgFileManager = fileManager
+        vgDataStore = dataStore
+        NotificationCenter.default.addObserver(self, selector: #selector(addedToTrack(_:)), name: .vehicleAddedToTrack , object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(shouldGenerateImage(_:)), name: .logsAdded, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(shouldGenerateImage(_:)), name: .logUpdated, object: nil)
     }
     
+    @objc func shouldGenerateImage(_ notification:Notification) {
+        guard let newTracks = notification.object as? [VGTrack] else {
+            return
+        }
+        
+        for newTrack in newTracks {
+                    if newTrack.mapPoints.count == 0 {
+                newTrack.mapPoints = vgDataStore.getMapPointsForTrack(vgTrack: newTrack)
+            }
+            
+            NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
+            self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
+                NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
+                self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
+                return nil
+            }
+        }
+    }
+    
+    @objc func addedToTrack(_ notification:Notification) {
+        guard let newTrack = notification.object as? VGTrack else {
+            return
+        }
+        if newTrack.mapPoints.count == 0 {
+            newTrack.mapPoints = vgDataStore.getMapPointsForTrack(vgTrack: newTrack)
+        }
+        
+        NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
+        self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
+            NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
+            self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
+            return nil
+        }
+        
+    }
+    
+    
+    
     func drawTrack(vgTrack:VGTrack, imageCallback:(@escaping(UIImage?,UIUserInterfaceStyle?)->Void?) = {_,_ in }) {
-        let coordinateList = vgTrack.getCoordinateList()
+        let coordinateList = vgTrack.getMapPoints()
         var snapshotter:MKMapSnapshotter?
         
         for style in [UIUserInterfaceStyle.light, UIUserInterfaceStyle.dark] {

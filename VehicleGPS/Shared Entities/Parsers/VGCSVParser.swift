@@ -5,17 +5,12 @@ import fastCSV
 class VGCSVParser: IVGLogParser {
     let progress_update_delay = TimeInterval(0.1)
     let PNG_PADDING:CGFloat = 0.9
-    var vgSnapshotMaker:VGSnapshotMaker
 
     func isValid(row:[String]) -> Bool {
         if row.count < 16 {
             return false
         }
         return true
-    }
-    
-    init(snapshotter:VGSnapshotMaker) {
-        self.vgSnapshotMaker = snapshotter
     }
     
     func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, callback: @escaping (VGTrack) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)?) {
@@ -61,13 +56,6 @@ class VGCSVParser: IVGLogParser {
             }
             track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
             
-            self.vgSnapshotMaker.drawTrack(vgTrack: track) { (image, style) in
-                guard let imageCallback = imageCallback else {
-                    return nil
-                }
-                imageCallback(track, style)
-                return nil
-            }
             callback(track)
         }
 

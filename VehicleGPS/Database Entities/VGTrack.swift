@@ -11,6 +11,9 @@ import CoreLocation
 import CoreData
 
 class VGTrack {
+    var id:UUID?
+    var name:String?
+    var comment:String?
     var duration:Double // In seconds
     var distance:Double // In kilometers
     var fileName:String
@@ -105,7 +108,18 @@ class VGTrack {
         return nil
     }
     
+    func getMapPoints() -> [CLLocationCoordinate2D] {
+        if mapPoints.count > 0 {
+            return mapPoints.map { (point) -> CLLocationCoordinate2D in
+                return CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude)
+            }
+        }
+        return [CLLocationCoordinate2D]()
+    }
+    
     func getCoordinateList() -> [CLLocationCoordinate2D] {
+        
+        
         guard let firstPoint = trackPoints.first else {
             return []
         }
@@ -182,7 +196,10 @@ class VGTrack {
             }
         }
         if let last = list.last {
-            let newPoint = VGMapPoint(point: CLLocationCoordinate2D(latitude: last.latitude!, longitude: last.longitude!), timestamp: last.timestamp!)
+            guard let lastLat = last.latitude, let lastLong = last.longitude, let lastTime = last.timestamp else {
+                return mapPoints
+            }
+            let newPoint = VGMapPoint(point: CLLocationCoordinate2D(latitude: lastLat, longitude: lastLong), timestamp: lastTime)
             mapPoints.append(newPoint)
         }
         return mapPoints
@@ -281,16 +298,39 @@ class VGTrack {
             lastDataPoint = dataPoint
         }
         
-        if self.timeStart != nil {
-            self.duration = Double(self.trackPoints.last!.timestamp!.timeIntervalSince(self.timeStart!))
+        guard let start = self.timeStart else {
+            self.processed = true
+            return
         }
+        
+        guard let lastTrackPoint = self.trackPoints.last else {
+            self.processed = true
+            return
+        }
+        
+        guard let timestampForLastPoint = lastTrackPoint.timestamp else {
+            self.processed = true
+            return
+        }
+        self.duration = Double(timestampForLastPoint.timeIntervalSince(start))
         self.processed = true
     }
 }
 
 extension VGTrack: Equatable {
     static func == (lhs: VGTrack, rhs: VGTrack) -> Bool {
-        return lhs.fileName == rhs.fileName
+        if rhs.id == nil || lhs.id == nil{
+            return false
+        }
+        return lhs.id == rhs.id
+    }
+}
+extension VGTrack: Comparable {
+    static func < (first: VGTrack, second: VGTrack) -> Bool {
+        guard let start1 = first.timeStart, let start2 = second.timeStart else {
+            return false
+        }
+        return start1 > start2
     }
 }
 

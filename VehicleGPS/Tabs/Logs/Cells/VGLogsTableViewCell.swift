@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DisplaySelectVehicleProtocol {
-    func didTapVehicle(track:VGTrack)
+    func didTapVehicle(track:VGTrack, tappedView:UIView?)
 }
 
 class VGLogsTableViewCell: UITableViewCell {
@@ -122,7 +122,14 @@ class VGLogsTableViewCell: UITableViewCell {
     }
     
     @IBAction func didTapVehicle(_ sender: Any) {
-        delegate.didTapVehicle(track: currentTrack!)
+        guard let track = currentTrack else {
+            return
+        }
+        
+        guard let delegate = delegate else {
+            return
+        }
+        delegate.didTapVehicle(track: track, tappedView: self.btnVehicle)
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

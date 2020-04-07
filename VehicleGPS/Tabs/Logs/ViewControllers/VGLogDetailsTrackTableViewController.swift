@@ -132,9 +132,12 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 let lastCoord = CLLocation(latitude: latitude1, longitude: longitude1)
                 
                 let distance = coord.distance(from: lastCoord)
-                let speed = (distance/duration!)*3.6
+                guard let dur = duration else {
+                    continue
+                }
+                let speed = (distance/dur)*3.6
                 if speed < 1200 {
-                    list.append((point1.timestamp!, (distance/duration!)*3.6))
+                    list.append((point1.timestamp!, (distance/dur)*3.6))
                 }
             }
             cell?.graphView.showMinMaxValue = false

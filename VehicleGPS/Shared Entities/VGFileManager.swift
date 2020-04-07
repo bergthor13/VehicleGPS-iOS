@@ -125,7 +125,7 @@ class VGFileManager {
         let fileExtension = track.fileName.split(separator: ".").last?.lowercased()
         
         if fileExtension == "gpx" {
-            return VGGPXParser(snapshotter: VGSnapshotMaker(fileManager: self))
+            return VGGPXParser()
         }
         if let aStreamReader = StreamReader(path: getAbsoluteFilePathFor(track: track)!) {
             defer {
@@ -141,18 +141,18 @@ class VGFileManager {
             }
             
             if colCount == 16 {
-                return VGCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
+                return VGCSVParser()
             }
             
             if colCount == 15 {
-                return VGShortCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
+                return VGShortCSVParser()
             }
             
             if colCount == 5 {
-                return VGArduinoCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
+                return VGArduinoCSVParser()
             }
         }
-        return VGCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
+        return VGCSVParser()
     }
     
     func split(track:VGTrack, at time:Date) {
@@ -325,11 +325,15 @@ class VGFileManager {
     }
     
     func getPNGPathFor(track: VGTrack, style: UIUserInterfaceStyle) -> URL? {
+        let imageFolder = self.getImageFolder(style: style)
+
         if track.fileName == "" {
+            if track.id != nil {
+                return (imageFolder?.appendingPathComponent(track.id!.uuidString).appendingPathExtension("png"))!
+            }
             return nil
         }
         
-        let imageFolder = self.getImageFolder(style: style)
         
         let fileNameWithoutExt = track.fileName.split(separator: ".")[0]
         

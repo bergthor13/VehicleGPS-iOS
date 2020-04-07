@@ -111,7 +111,11 @@ class VGVehiclesTableViewController: UITableViewController {
     @objc func didTapAddVehicle() {
         let newVehicleVC = VGNewVehicleTableViewController(style: .grouped)
         newVehicleVC.vehiclesController = self
-        self.present(UINavigationController(rootViewController: newVehicleVC), animated: true, completion: nil)
+        let navController = UINavigationController(rootViewController: newVehicleVC)
+        if self.popoverPresentationController != nil {
+            navController.modalPresentationStyle = .currentContext
+        }
+        self.present(navController, animated: true, completion: nil)
     }
 
     override func viewDidLayoutSubviews() {
@@ -280,7 +284,11 @@ class VGVehiclesTableViewController: UITableViewController {
     func editVehicle(at indexPath:IndexPath) {
         let editVehicleVC = VGEditVehicleTableViewController(style: .grouped)
         editVehicleVC.vehicle = vehicles[indexPath.row]
-        self.present(UINavigationController(rootViewController: editVehicleVC), animated: true, completion: nil)
+        let navController = UINavigationController(rootViewController: editVehicleVC)
+        if self.popoverPresentationController != nil {
+            navController.modalPresentationStyle = .currentContext
+        }
+        self.present(navController, animated: true, completion: nil)
     }
     
 

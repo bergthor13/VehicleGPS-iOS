@@ -78,17 +78,20 @@ class VGDataStore {
     }
     
     fileprivate func getTrack(for track: VGTrack, in context:NSManagedObjectContext) -> NSManagedObject? {
-        let trackFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Track")
-        trackFetchRequest.predicate = NSPredicate(format: "fileName = %@", track.fileName)
-        do {
-            guard let fetchedTrack = try context.fetch(trackFetchRequest).first else {
-                print("Fetching track failed")
+        if let id = track.id {
+            let trackFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Track")
+            trackFetchRequest.predicate = NSPredicate(format: "id = %@", argumentArray: [track.id])
+            do {
+                guard let fetchedTrack = try context.fetch(trackFetchRequest).first else {
+                    print("Fetching track failed")
+                    return nil
+                }
+                return fetchedTrack
+            } catch {
                 return nil
             }
-            return fetchedTrack
-        } catch {
-            return nil
         }
+        return nil
     }
     
     fileprivate func getVehicle(for vgVehicle: VGVehicle, in context:NSManagedObjectContext) -> Vehicle? {
@@ -314,6 +317,10 @@ class VGDataStore {
                     vgTrack.vehicle = VGVehicle(vehicle: vehicle)
                 }
                 
+                if let id = track.value(forKey: "id") as? UUID {
+                    vgTrack.id = id
+                }
+                
                 result.append(vgTrack)
             }
             
@@ -323,52 +330,51 @@ class VGDataStore {
         return result
     }
     
-    func add(vgTrack: VGTrack) {
+    func add(vgTrack: VGTrack, callback: @escaping(_ id:UUID?)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-        
         context.perform {
-            // 2
-            let entity =
-                NSEntityDescription.entity(forEntityName: "Track",
-                                           in: context)!
-            
-            let track = Track.init(entity: entity, insertInto: context)
-            
-            // 3
-            track.setValue(vgTrack.fileName, forKey: "fileName")
-            track.setValue(vgTrack.fileSize, forKey: "fileSize")
-            track.setValue(vgTrack.duration, forKey: "duration")
-            track.setValue(vgTrack.distance, forKey: "distance")
-            track.setValue(vgTrack.minLat, forKey: "minLat")
-            track.setValue(vgTrack.maxLat, forKey: "maxLat")
-            track.setValue(vgTrack.minLon, forKey: "minLon")
-            track.setValue(vgTrack.maxLon, forKey: "maxLon")
-            track.setValue(vgTrack.processed, forKey: "processed")
-            track.setValue(vgTrack.timeStart, forKey: "timeStart")
+            let entityDescription = NSEntityDescription.entity(forEntityName: "Track", in: context)!
+            let newTrack = Track.init(entity: entityDescription, insertInto: context)
+            newTrack.id = UUID()
+            newTrack.fileName = vgTrack.fileName
+            newTrack.fileSize = Int64(vgTrack.fileSize)
+            newTrack.duration = vgTrack.duration
+            newTrack.distance = vgTrack.distance
+            newTrack.minLat = vgTrack.minLat
+            newTrack.maxLat = vgTrack.maxLat
+            newTrack.minLon = vgTrack.minLon
+            newTrack.maxLon = vgTrack.maxLon
+            newTrack.processed = vgTrack.processed
+            newTrack.timeStart = vgTrack.timeStart
             
             for point in vgTrack.trackPoints {
-                                    self.add(vgDataPoint: point, to: track, in: context)
-
+                self.add(vgDataPoint: point, to: newTrack, in: context)
             }
             
             for point in vgTrack.mapPoints {
-                self.add(vgMapPoint: point, to: track, in: context)
+                self.add(vgMapPoint: point, to: newTrack, in: context)
             }
-    
-            // 4
+            
             do {
-                try context.save()
+               try context.save()
             } catch let error as NSError {
                 print("Could not save. \(error), \(error.userInfo)")
+                callback(nil)
             }
-            
-            
+ 
             if let defaultVehicleID = self.getDefaultVehicleID() {
                 let newVehicle = VGVehicle()
                 newVehicle.id = defaultVehicleID
-                self.add(vgVehicle: newVehicle, to: vgTrack)
+                let vehicleObj = self.getVehicle(for: newVehicle, in: context)
+                vgTrack.id = newTrack.id
+                guard let veh = vehicleObj else {
+                    callback(newTrack.id)
+                    return
+                }
+                self.add(vgVehicle: VGVehicle(vehicle: veh), to: vgTrack)
             }
+            callback(newTrack.id)
         }
     }
     
@@ -376,7 +382,10 @@ class VGDataStore {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Track")
-        fetchRequest.predicate = NSPredicate(format: "fileName = %@", vgTrack.fileName)
+        guard let id = vgTrack.id else {
+            return
+        }
+        fetchRequest.predicate = NSPredicate(format: "id = %@", argumentArray: [id])
         context.perform {
             do {
                 let test = try context.fetch(fetchRequest)
@@ -404,7 +413,7 @@ class VGDataStore {
                         try context.save()
                     }
                 } else {
-                    self.add(vgTrack: vgTrack)
+                    //self.add(vgTrack: vgTrack)
                 }
                 
                 
@@ -421,7 +430,7 @@ class VGDataStore {
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Track")
-            fetchRequest.predicate = NSPredicate(format: "fileName = %@", vgTrack.fileName)
+            fetchRequest.predicate = NSPredicate(format: "id = %@", argumentArray: [vgTrack.id!])
             do {
                 let test = try context.fetch(fetchRequest)
                 if test.count > 0 {
@@ -569,6 +578,8 @@ class VGDataStore {
         fetchedTrack?.setValue(fetchedVehicle, forKey: "vehicle")
         do {
             try context.save()
+            vgTrack.vehicle = vgVehicle
+            NotificationCenter.default.post(name: .vehicleAddedToTrack, object: vgTrack)
         } catch let error {
             print(error)
         }

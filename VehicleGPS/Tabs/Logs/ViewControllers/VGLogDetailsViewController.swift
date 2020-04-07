@@ -24,7 +24,7 @@ class VGLogDetailsViewController: UIViewController {
     var vgFileManager: VGFileManager!
     var vgLogParser: IVGLogParser!
     var vgGPXGenerator = VGGPXGenerator()
-    var vgSnapshotMaker:VGSnapshotMaker!
+
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = false
     }
@@ -61,20 +61,18 @@ class VGLogDetailsViewController: UIViewController {
                 }
             }
             
-
-            let fullList = self.dataStore.getPointsForTrack(vgTrack: self.track)
-            self.track.trackPoints = fullList
-            self.vgSnapshotMaker = VGSnapshotMaker(fileManager: self.vgFileManager)
+            if self.track.trackPoints.count == 0 {
+                self.track.trackPoints = self.dataStore.getPointsForTrack(vgTrack: self.track)
+            }
 
             DispatchQueue.main.async {
-                if fullList.count > 0 {
+                if self.track.trackPoints.count > 0 {
                     self.display(track: self.track, list: self.track.getCoordinateList(), on: self.mapView)
                 } else {
                     self.process(track: self.track)
                 }
             }
 
-            self.vgSnapshotMaker.drawTrack(vgTrack: self.track)
         }
     }
     
@@ -131,7 +129,7 @@ class VGLogDetailsViewController: UIViewController {
                 return point.hasGoodFix()
             }
             track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
-            self.dataStore.update(vgTrack: track)
+            //self.dataStore.update(vgTrack: track)
             
             let points = track.getCoordinateList()
             self.display(track: track, list: points, on: self.mapView)
@@ -174,12 +172,12 @@ class VGLogDetailsViewController: UIViewController {
                 self.vgFileManager.split(track: self.track, at: selectedTime)
                 let (oldTrack, newTrack) = self.dataStore.split(track: self.track, at: selectedTime)
                 self.dataStore.delete(vgTrack: self.track)
-                oldTrack.process()
-                self.vgSnapshotMaker.drawTrack(vgTrack: oldTrack)
-                self.dataStore.update(vgTrack: oldTrack)
-                newTrack.process()
-                self.vgSnapshotMaker.drawTrack(vgTrack: newTrack)
-                self.dataStore.update(vgTrack: newTrack)
+                //oldTrack.process()
+                //self.vgSnapshotMaker.drawTrack(vgTrack: oldTrack)
+                //self.dataStore.update(vgTrack: oldTrack)
+                //newTrack.process()
+                //self.vgSnapshotMaker.drawTrack(vgTrack: newTrack)
+                //self.dataStore.update(vgTrack: newTrack)
             }))
         }
         self.present(alert, animated: true, completion: nil)
