@@ -40,6 +40,10 @@ class VGListEmptyLabel: UILabel {
         self.configure()
     }
     @objc func preferredContentSizeChanged(_ notification: Notification) {
+        let height = containerView.frame.height - navigationBar.frame.height - tabBar.frame.height
+        let width = containerView.frame.width
+        let newFrame = CGRect(x: 0.0, y: 0.0, width: width, height: height)
+        self.frame = newFrame
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

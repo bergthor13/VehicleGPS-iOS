@@ -165,6 +165,12 @@ class VGDataStore {
                     vgTrack.vehicle = VGVehicle(vehicle: vehicle)
                 }
                 
+                if let id = track.value(forKey: "id") as? UUID {
+                    vgTrack.id = id
+                }
+                
+                
+                
                 result.append(vgTrack)
             }
             
