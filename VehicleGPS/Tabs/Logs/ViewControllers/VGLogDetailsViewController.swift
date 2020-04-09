@@ -151,6 +151,7 @@ class VGLogDetailsViewController: UIViewController {
             }))
             
             alert.addAction(UIAlertAction(title: Strings.shareGPX, style: .default, handler: { (_) in
+                self.track.trackPoints = self.dataStore.getPointsForTrack(vgTrack: self.track)
                 let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
