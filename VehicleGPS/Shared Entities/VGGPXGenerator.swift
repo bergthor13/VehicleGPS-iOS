@@ -16,9 +16,10 @@ class VGGPXGenerator {
         dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            self.vgFileManager = appDelegate.fileManager
-        }
+//        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+//            self.vgFileManager = appDelegate.fileManager
+//        }
+        self.vgFileManager = VGFileManager()
     }
     
     func getGPXBegin() -> String {
@@ -51,9 +52,12 @@ class VGGPXGenerator {
             result += getTrackPointGPX(point: point)
         }
         result += getGPXEnd()
-        let tmpFile = vgFileManager.getTemporaryGPXPathFor(track: track)
+        guard let tmpFile = vgFileManager.getTemporaryGPXPathFor(track: track) else {
+            return nil
+        }
+        
         do {
-            try result.write(to: tmpFile!, atomically: true, encoding: String.Encoding.utf8)
+            try result.write(to: tmpFile, atomically: true, encoding: String.Encoding.utf8)
             return tmpFile
 
         } catch let error {

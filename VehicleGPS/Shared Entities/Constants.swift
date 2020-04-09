@@ -15,7 +15,7 @@ struct Constants {
     }
     
     struct sftp {
-        static let host = "vehicle-gps-dev.local"
+        static let host = "cargps.local"
         static let username = "pi"
         static let password = "easyprintsequence"
     }

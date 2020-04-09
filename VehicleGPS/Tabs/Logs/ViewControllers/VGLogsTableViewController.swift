@@ -438,6 +438,7 @@ class VGLogsTableViewController: UITableViewController {
         let exportGPX = UIAction(title: Strings.shareGPX, image: Icons.share, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             
             DispatchQueue.global(qos: .userInitiated).async {
+                track!.trackPoints = self.dataStore.getPointsForTrack(vgTrack: track!)
                 let fileUrl = self.vgGPXGenerator.generateGPXFor(track: track!)!
                 let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
                 DispatchQueue.main.async {
