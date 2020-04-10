@@ -289,6 +289,7 @@
 				F2647BEA24352FBD00283B38 /* Strings.swift */,
 				F20574B424379A1F0044282B /* Icons.swift */,
 				F26245E8243F7C8E001CB3E4 /* LaunchScreen.storyboard */,
+				F228B30E243CED3A00D79D5E /* VGMapView.swift */,
 			);
 			path = "Shared Entities";
 			sourceTree = "<group>";
@@ -448,7 +449,6 @@
 				F23D786E23B1551300DBC64F /* VGHistorySection.swift */,
 				F25839DC23A6BE8600E76B54 /* VGTracksSummary.swift */,
 				F2797D5623CD1AC500207650 /* VGHistoryDetailsTableViewController.swift */,
-				F228B30E243CED3A00D79D5E /* VGMapView.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";

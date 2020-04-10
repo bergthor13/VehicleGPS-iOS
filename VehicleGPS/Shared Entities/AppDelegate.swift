@@ -22,7 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         snapshotter = VGSnapshotMaker(fileManager: self.fileManager, dataStore: self.dataStore)
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        print(UIScreen.main.bounds)
         self.window?.tintColor = UIColor.init(named: "appColor")
         self.window?.rootViewController = tabController
         self.window?.makeKeyAndVisible()

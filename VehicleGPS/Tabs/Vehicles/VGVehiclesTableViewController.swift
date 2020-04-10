@@ -45,40 +45,52 @@ class VGVehiclesTableViewController: UITableViewController {
         tableView.tintColor = navigationController?.view.tintColor
         configureEmptyListLabel()
         registerCells()
-        reloadVehicles(shouldReloadTableView: true)
         NotificationCenter.default.addObserver(self, selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated, object: nil)
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        reloadVehicles(shouldReloadTableView: true)
     }
     fileprivate func registerCells() {
         self.tableView.register(VGVehicleTableViewCell.nib, forCellReuseIdentifier: VGVehicleTableViewCell.identifier)
     }
     
     func reloadVehicles(shouldReloadTableView:Bool) {
-        self.vehicles = dataStore.getAllVehicles()
-        if self.vehicles.count > 0 {
-            self.emptyLabel.isHidden = true
-        } else {
-            self.emptyLabel.isHidden = false
-        }
-        if shouldReloadTableView {
-            tableView.reloadData()
-        }
-        for vehicle in vehicles {
-            vehicle.image = self.fileManager.getImage(for: vehicle)
-        }
+        dataStore.getAllVehicles(
+            onSuccess: { (vehicles) in
+                self.vehicles = vehicles
+                if self.vehicles.count > 0 {
+                    self.emptyLabel.isHidden = true
+                } else {
+                    self.emptyLabel.isHidden = false
+                }
+                if shouldReloadTableView {
+                    self.tableView.reloadData()
+                }
+                for vehicle in vehicles {
+                    vehicle.image = self.fileManager.getImage(for: vehicle)
+                }
+            },
+            onFailure:  { (error) in
+                print(error)
+            }
+        )
+        
     }
     
     func addVehicle(_ vehicle:VGVehicle) {
-        tableView.beginUpdates()
-        if vehicles.count == 0 {
-            tableView.insertRows(at: [IndexPath(row: vehicles.count, section: 0)], with: .automatic)
+        self.tableView.beginUpdates()
+        if self.vehicles.count == 0 {
+            self.tableView.insertRows(at: [IndexPath(row: self.vehicles.count, section: 0)], with: .automatic)
         } else {
-             tableView.insertRows(at: [IndexPath(row: vehicles.count, section: 0)], with: .top)
+            self.tableView.insertRows(at: [IndexPath(row: self.vehicles.count, section: 0)], with: .top)
         }
         
-        vehicles.append(vehicle)
-        reloadVehicles(shouldReloadTableView: false)
-        tableView.endUpdates()
+        self.vehicles.append(vehicle)
+        self.reloadVehicles(shouldReloadTableView: false)
+        self.tableView.endUpdates()
     }
     
     func editVehicle(_ editedVehicle:VGVehicle) {
@@ -169,13 +181,14 @@ class VGVehiclesTableViewController: UITableViewController {
     
     fileprivate func deleteVehicle(at indexPath:IndexPath) {
         let vehicle = self.vehicles[indexPath.row]
-        self.dataStore.delete(vgVehicle: vehicle) {
-            DispatchQueue.main.async {
-                self.vehicles.remove(at: indexPath.row)
-                self.tableView.deleteRows(at: [indexPath], with: .top)
-                self.reloadVehicles(shouldReloadTableView: false)
-            }
+        self.dataStore.delete(vehicleWith: vehicle.id!, onSuccess: {
+            self.vehicles.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .top)
+            self.reloadVehicles(shouldReloadTableView: false)
+        }) { (error) in
+            print(error)
         }
+
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

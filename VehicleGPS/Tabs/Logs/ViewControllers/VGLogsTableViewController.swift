@@ -110,6 +110,9 @@ class VGLogsTableViewController: UITableViewController {
         guard let newTrack = notification.object as? VGTrack else {
             return
         }
+        guard let vehicle = newTrack.vehicle else {
+            return
+        }
         guard let indexPath = getIndexPath(for: newTrack) else {
             return
         }
@@ -117,7 +120,8 @@ class VGLogsTableViewController: UITableViewController {
             return
         }
         getTrackAt(indexPath: indexPath)?.vehicle = newTrack.vehicle
-        cell.lblVehicle.text = newTrack.vehicle!.name
+        
+        cell.lblVehicle.text = vehicle.name
         
     }
     
@@ -148,6 +152,13 @@ class VGLogsTableViewController: UITableViewController {
             self.tracksDictionary = self.tracksToDictionary(trackList: self.combineLists(localList: list, remoteList: newTracks))
 
             self.tableView.reloadData()
+            if self.tracksDictionary.count > 0 {
+                self.emptyLabel.isHidden = true
+                self.tableView.separatorStyle = .singleLine
+            } else {
+                self.emptyLabel.isHidden = false
+                self.tableView.separatorStyle = .none
+            }
         }
         
         
@@ -223,8 +234,16 @@ class VGLogsTableViewController: UITableViewController {
     // MARK: - Interface Action Functions
     @objc func headerViewTapped(_:Any?) {
         let dlViewController = VGDownloadLogsViewController()
-        dlViewController.tracks = self.dataStore.getAllTracks()
-        navigationController?.pushViewController(dlViewController, animated: true)
+        self.dataStore.getAllTracks(
+            onSuccess: { (tracks) in
+                dlViewController.tracks = tracks
+                self.navigationController?.pushViewController(dlViewController, animated: true)
+            },
+            onFailure: { (error) in
+                print(error)
+            }
+        )
+
     }
             
     func displayErrorAlert(title: String?, message: String?) {
@@ -236,15 +255,22 @@ class VGLogsTableViewController: UITableViewController {
     
     //MARK: - List Manipulation
     func updateData() {
-        self.tracksDictionary = self.tracksToDictionary(trackList: self.dataStore.getAllTracks())
-        tableView.reloadData()
-        if self.tracksDictionary.count > 0 {
-            self.emptyLabel.isHidden = true
-            self.tableView.separatorStyle = .singleLine
-        } else {
-            self.emptyLabel.isHidden = false
-            self.tableView.separatorStyle = .none
-        }
+        self.dataStore.getAllTracks(
+            onSuccess: { (tracks) in
+                self.tracksDictionary = self.tracksToDictionary(trackList: tracks)
+                self.tableView.reloadData()
+                if self.tracksDictionary.count > 0 {
+                    self.emptyLabel.isHidden = true
+                    self.tableView.separatorStyle = .singleLine
+                } else {
+                    self.emptyLabel.isHidden = false
+                    self.tableView.separatorStyle = .none
+                }
+            },
+            onFailure: { (error) in
+                print(error)
+            }
+        )
     }
     
     func tracksToDictionary(trackList:[VGTrack]) -> Dictionary<String, [VGTrack]>{
@@ -370,17 +396,10 @@ class VGLogsTableViewController: UITableViewController {
             return
         }
         
-        if track.trackPoints.count == 0 {
-            track.trackPoints = dataStore.getPointsForTrack(vgTrack: track)
-        }
-        
-        if track.trackPoints.count > 0 {
-            let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
-            logDetailsView.dataStore = self.dataStore
-            logDetailsView.track = track
-            self.navigationController?.pushViewController(logDetailsView, animated: true)
-            return
-        }
+        let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
+        logDetailsView.dataStore = self.dataStore
+        logDetailsView.track = track
+        self.navigationController?.pushViewController(logDetailsView, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -413,11 +432,24 @@ class VGLogsTableViewController: UITableViewController {
         tableView.deleteRows(at: [indexPath], with: .fade)
 
         if self.tracksDictionary[self.sections[indexPath.section]]?.count == 0 {
+            self.tracksDictionary.removeValue(forKey: self.sections[indexPath.section])
             self.sections.remove(at: indexPath.section)
             tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
         }
         self.vgFileManager?.deleteFileFor(track: track)
-        self.dataStore.delete(vgTrack: track)
+        if self.tracksDictionary.count > 0 {
+            self.emptyLabel.isHidden = true
+            self.tableView.separatorStyle = .singleLine
+        } else {
+            self.emptyLabel.isHidden = false
+            self.tableView.separatorStyle = .none
+        }
+
+        self.dataStore.delete(trackWith: track.id!, onSuccess: {
+            
+        }) { (error) in
+            print(error)
+        }
     }
     
     override func tableView(_ tableView: UITableView,
@@ -438,12 +470,15 @@ class VGLogsTableViewController: UITableViewController {
         let exportGPX = UIAction(title: Strings.shareGPX, image: Icons.share, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             
             DispatchQueue.global(qos: .userInitiated).async {
-                track!.trackPoints = self.dataStore.getPointsForTrack(vgTrack: track!)
-                let fileUrl = self.vgGPXGenerator.generateGPXFor(track: track!)!
-                let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
-                DispatchQueue.main.async {
+                self.dataStore.getDataPointsForTrack(with: track!.id!, onSuccess: { (dataPoints) in
+                    track!.trackPoints = dataPoints
+                    let fileUrl = self.vgGPXGenerator.generateGPXFor(track: track!)!
+                    let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
                     self.present(activityVC, animated: true, completion: nil)
+                }) { (error) in
+                    print(error)
                 }
+                 
             }
             
         }

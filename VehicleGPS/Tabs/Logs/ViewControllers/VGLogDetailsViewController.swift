@@ -49,16 +49,19 @@ class VGLogDetailsViewController: UIViewController {
         self.view.addSubview(mapSegmentView)
 
         self.mapView.mapType = .hybrid
-        DispatchQueue.global(qos: .userInitiated).async {
-            if self.track.mapPoints.count == 0 {
-                self.track.mapPoints = self.dataStore.getMapPointsForTrack(vgTrack: self.track)
+        if self.track.mapPoints.count == 0 {
+            self.dataStore.getMapPointsForTrack(with: self.track.id!, onSuccess: { (mapPoints) in
+                self.track.mapPoints = mapPoints
                 if self.track.mapPoints.count != 0 {
-                    DispatchQueue.main.async {
-                        self.mapView.tracks = [self.track]
-                    }
+                    self.mapView.tracks = [self.track]
                 }
+            }) { (error) in
+                print(error)
             }
+        } else {
+            self.mapView.tracks = [self.track]
         }
+        
     }
     
     @objc func displayShareSelection() {
@@ -74,7 +77,7 @@ class VGLogDetailsViewController: UIViewController {
             }))
             
             alert.addAction(UIAlertAction(title: Strings.shareGPX, style: .default, handler: { (_) in
-                self.track.trackPoints = self.dataStore.getPointsForTrack(vgTrack: self.track)
+                //self.track.trackPoints = self.dataStore.getDataPointsForTrack(vgTrack: self.track)
                 let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
@@ -93,7 +96,7 @@ class VGLogDetailsViewController: UIViewController {
 
                 self.vgFileManager.split(track: self.track, at: selectedTime)
                 let (oldTrack, newTrack) = self.dataStore.split(track: self.track, at: selectedTime)
-                self.dataStore.delete(vgTrack: self.track)
+                //self.dataStore.delete(vgTrack: self.track)
                 //oldTrack.process()
                 //self.vgSnapshotMaker.drawTrack(vgTrack: oldTrack)
                 //self.dataStore.update(vgTrack: oldTrack)
@@ -112,51 +115,10 @@ class VGLogDetailsViewController: UIViewController {
         switch sender!.selectedSegmentIndex {
         case 0:
             view.addSubview(mapSegmentView)
-            let layoutLeft = NSLayoutConstraint(item: mapSegmentView, attribute: .leading, relatedBy: .equal, toItem: self.view, attribute: .leading, multiplier: 1, constant: 0)
-            let layoutRight = NSLayoutConstraint(item: mapSegmentView, attribute: .trailing, relatedBy: .equal, toItem: self.view, attribute: .trailing, multiplier: 1, constant: 0)
-            let layoutTop = NSLayoutConstraint(item: mapSegmentView, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1, constant: 0)
-            let layoutBottom = NSLayoutConstraint(item: mapSegmentView, attribute: .bottom, relatedBy: .equal, toItem: self.view, attribute: .bottom, multiplier: 1, constant: 0)
-            self.view.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
 
         case 1:
             trackSegmentView.backgroundColor = .red
             view.addSubview(trackSegmentView)
-            let layoutLeft = NSLayoutConstraint(item: trackSegmentView, attribute: .leading, relatedBy: .equal, toItem: self.view, attribute: .leading, multiplier: 1, constant: 0)
-            let layoutRight = NSLayoutConstraint(item: trackSegmentView, attribute: .trailing, relatedBy: .equal, toItem: self.view, attribute: .trailing, multiplier: 1, constant: 0)
-            let layoutTop = NSLayoutConstraint(item: trackSegmentView, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1, constant: 0)
-            let layoutBottom = NSLayoutConstraint(item: trackSegmentView, attribute: .bottom, relatedBy: .equal, toItem: self.view, attribute: .bottom, multiplier: 1, constant: 0)
-            self.view.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
-
-        default:
-            break
-        }
-    }
-    
-    @objc func preferredContentSizeChanged(_ notification: Notification) {
-        guard let segment = detailSegment else {
-            return
-        }
-        switch segment.selectedSegmentIndex {
-        case 0:
-            let layoutLeft = NSLayoutConstraint(item: mapSegmentView, attribute: .leading, relatedBy: .equal, toItem: self.view, attribute: .leading, multiplier: 1, constant: 0)
-            let layoutRight = NSLayoutConstraint(item: mapSegmentView, attribute: .trailing, relatedBy: .equal, toItem: self.view, attribute: .trailing, multiplier: 1, constant: 0)
-            let layoutTop = NSLayoutConstraint(item: mapSegmentView, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1, constant: 0)
-            let layoutBottom = NSLayoutConstraint(item: mapSegmentView, attribute: .bottom, relatedBy: .equal, toItem: self.view, attribute: .bottom, multiplier: 1, constant: 0)
-            self.view.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
-
-        case 1:
-            trackSegmentView.backgroundColor = .red
-            let layoutLeft = NSLayoutConstraint(item: trackSegmentView, attribute: .leading, relatedBy: .equal, toItem: self.view, attribute: .leading, multiplier: 1, constant: 0)
-            let layoutRight = NSLayoutConstraint(item: trackSegmentView, attribute: .trailing, relatedBy: .equal, toItem: self.view, attribute: .trailing, multiplier: 1, constant: 0)
-            let layoutTop = NSLayoutConstraint(item: trackSegmentView, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1, constant: 0)
-            let layoutBottom = NSLayoutConstraint(item: trackSegmentView, attribute: .bottom, relatedBy: .equal, toItem: self.view, attribute: .bottom, multiplier: 1, constant: 0)
-            
-            let layoutLeft1 = NSLayoutConstraint(item: trackDataTableViewController!.tableView, attribute: .leading, relatedBy: .equal, toItem: self.view, attribute: .leading, multiplier: 1, constant: 0)
-            let layoutRight1 = NSLayoutConstraint(item: trackDataTableViewController!.tableView, attribute: .trailing, relatedBy: .equal, toItem: self.view, attribute: .trailing, multiplier: 1, constant: 0)
-            let layoutTop1 = NSLayoutConstraint(item: trackDataTableViewController!.tableView, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1, constant: 0)
-            let layoutBottom1 = NSLayoutConstraint(item: trackDataTableViewController!.tableView, attribute: .bottom, relatedBy: .equal, toItem: self.view, attribute: .bottom, multiplier: 1, constant: 0)
-
-            self.view.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom, layoutLeft1, layoutRight1, layoutTop1, layoutBottom1])
 
         default:
             break

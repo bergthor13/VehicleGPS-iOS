@@ -33,15 +33,21 @@ class VGSnapshotMaker {
         }
         
         for newTrack in newTracks {
-                    if newTrack.mapPoints.count == 0 {
-                newTrack.mapPoints = vgDataStore.getMapPointsForTrack(vgTrack: newTrack)
-            }
-            
-            NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
-            self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
-                NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
-                self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
-                return nil
+            if newTrack.mapPoints.count == 0 {
+                vgDataStore.getMapPointsForTrack(
+                    with: newTrack.id!,
+                    onSuccess: { (mapPoints) in
+                        newTrack.mapPoints = mapPoints
+                        NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
+                        self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
+                            NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
+                            self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
+                            return nil
+                        }
+                    }, onFailure: { (error) in
+                        print(error)
+                    }
+                )
             }
         }
     }
@@ -51,15 +57,19 @@ class VGSnapshotMaker {
             return
         }
         if newTrack.mapPoints.count == 0 {
-            newTrack.mapPoints = vgDataStore.getMapPointsForTrack(vgTrack: newTrack)
+            vgDataStore.getMapPointsForTrack(with: newTrack.id!, onSuccess: { (mapPoints) in
+                newTrack.mapPoints = mapPoints
+                NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
+                self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
+                    NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
+                    self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
+                    return nil
+                }
+            }) { (error) in
+                print(error)
+            }
         }
         
-        NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
-        self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
-            NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
-            self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
-            return nil
-        }
         
     }
     

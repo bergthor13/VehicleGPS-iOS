@@ -26,6 +26,14 @@ class VGMapPoint {
         self.longitude = point.longitude
         self.timestamp = timestamp
     }
+    
+    func setEntity(mapPoint:MapPoint, track:Track) -> MapPoint{
+        mapPoint.latitude = latitude
+        mapPoint.longitude = longitude
+        mapPoint.timeStamp = timestamp
+        mapPoint.track = track
+        return mapPoint
+    }
 }
 
 extension VGMapPoint: Equatable {

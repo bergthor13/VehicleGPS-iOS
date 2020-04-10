@@ -42,10 +42,15 @@ class VGImportFileTableViewController: UITableViewController {
     
     @objc func tappedImport() {
         for track in importedTracks {
-            self.dataStore.add(vgTrack: track, callback: { (id) in
-                track.id = id
-                NotificationCenter.default.post(name: .logsAdded, object: [track])
-            })
+            self.dataStore.add(
+                vgTrack: track,
+                onSuccess: { (id) in
+                    track.id = id
+                },
+                onFailure:  { (error) in
+                    print(error)
+                }
+            )
         }
         dismiss(animated: true)
     }

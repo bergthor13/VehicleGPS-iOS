@@ -37,84 +37,91 @@ class VGDataPoint {
         
     }
     
-    init(managedPoint:NSManagedObject) {
-        if let timestamp = managedPoint.value(forKey: "timeStamp") as? Date? {
-            self.timestamp = timestamp
-        } else {
-            self.timestamp = Date(timeIntervalSince1970: 0.0)
+    init(dataPoint:DataPoint) {
+        self.timestamp = dataPoint.value(forKey: "timeStamp") as? Date
+        self.latitude = dataPoint.value(forKey: "latitude") as? Double
+        self.longitude = dataPoint.value(forKey: "longitude") as? Double
+        self.elevation = dataPoint.value(forKey: "elevation") as? Double
+        self.satellites = dataPoint.value(forKey: "satellites") as? Int
+        self.horizontalAccuracy = dataPoint.value(forKey: "horizontalAccuracy") as? Double
+        self.verticalAccuracy = dataPoint.value(forKey: "verticalAccuracy") as? Double
+        self.pdop = dataPoint.value(forKey: "pdop") as? Double
+        self.fixType = dataPoint.value(forKey: "fixType") as? Int
+        self.gnssFixOk = dataPoint.value(forKey: "gnssFixOK") as? Bool
+        self.fullyResolved = dataPoint.value(forKey: "fullyResolved") as? Bool
+        self.rpm = dataPoint.value(forKey: "rpm") as? Double
+        self.engineLoad = dataPoint.value(forKey: "engineLoad") as? Double
+        self.coolantTemperature = dataPoint.value(forKey: "coolantTemperature") as? Double
+        self.ambientTemperature = dataPoint.value(forKey: "ambientTemperature") as? Double
+        self.throttlePosition = dataPoint.value(forKey: "throttlePosition") as? Double
+    }
+    
+    func setEntity(dataPoint:DataPoint, track:Track) -> DataPoint{
+        if let timestamp = self.timestamp {
+            dataPoint.timeStamp = timestamp
         }
         
-        if let latitude = managedPoint.value(forKey: "latitude") as? Double {
-            self.latitude = latitude
+        if let latitude = self.latitude {
+            dataPoint.latitude = latitude
         }
         
-        if let longitude = managedPoint.value(forKey: "longitude") as? Double {
-            self.longitude = longitude
+        if let longitude = self.longitude {
+            dataPoint.longitude = longitude
         }
         
-        if let elevation = managedPoint.value(forKey: "elevation") as? Double {
-            self.elevation = elevation
+        if let elevation = self.elevation {
+            dataPoint.elevation = elevation
         }
         
-        if let satellites = managedPoint.value(forKey: "satellites") as? Int {
-            self.satellites = satellites
-        } else {
-            self.satellites = 0
-        }
-        if let horizontalAccuracy = managedPoint.value(forKey: "horizontalAccuracy") as? Double {
-            self.horizontalAccuracy = horizontalAccuracy
-        } else {
-            self.horizontalAccuracy = Double.infinity
-        }
-        if let verticalAccuracy = managedPoint.value(forKey: "verticalAccuracy") as? Double {
-            self.verticalAccuracy = verticalAccuracy
-        } else {
-            self.verticalAccuracy = Double.infinity
-        }
-        if let pdop = managedPoint.value(forKey: "pdop") as? Double {
-            self.pdop = pdop
-        } else {
-            self.pdop = Double.infinity
-        }
-        if let fixType = managedPoint.value(forKey: "fixType") as? Int {
-            self.fixType = fixType
+        if let satellites = self.satellites {
+            dataPoint.satellites = Int16(satellites)
         }
         
-        if let gnssFixOk = managedPoint.value(forKey: "gnssFixOK") as? Bool {
-            self.gnssFixOk = gnssFixOk
-        } else {
-            self.gnssFixOk = false
+        if let horizontalAccuracy = self.horizontalAccuracy {
+            dataPoint.horizontalAccuracy = horizontalAccuracy
         }
-        if let fullyResolved = managedPoint.value(forKey: "fullyResolved") as? Bool {
-            self.fullyResolved = fullyResolved
-        } else {
-            self.fullyResolved = false
+        
+        if let verticalAccuracy = self.verticalAccuracy {
+            dataPoint.verticalAccuracy = verticalAccuracy
         }
-        if let rpm = managedPoint.value(forKey: "rpm") as? Double? {
-            self.rpm = rpm
-        } else {
-            self.rpm = 0.0
+        
+        if let pdop = self.pdop {
+            dataPoint.pdop = pdop
         }
-        if let engineLoad = managedPoint.value(forKey: "engineLoad") as? Double? {
-            self.engineLoad = engineLoad
-        } else {
-            self.engineLoad = 0.0
+        
+        if let fixType = self.fixType {
+            dataPoint.fixType = Int16(fixType)
         }
-        if let coolantTemperature = managedPoint.value(forKey: "coolantTemperature") as? Double? {
-            self.coolantTemperature = coolantTemperature
-        } else {
-            self.coolantTemperature = 0.0
+        
+        if let gnssFixOk = self.gnssFixOk {
+            dataPoint.gnssFixOK = gnssFixOk
         }
-        if let ambientTemperature = managedPoint.value(forKey: "ambientTemperature") as? Double? {
-            self.ambientTemperature = ambientTemperature
-        } else {
-            self.ambientTemperature = 0.0
+        
+        if let fullyResolved = self.fullyResolved {
+            dataPoint.fullyResolved = fullyResolved
         }
-        if let throttlePosition = managedPoint.value(forKey: "throttlePosition") as? Double? {
-            self.throttlePosition = throttlePosition
-        } else {
-            self.throttlePosition = 0.0
+        
+        if let rpm = self.rpm {
+            dataPoint.rpm = rpm
         }
+        
+        if let engineLoad = self.engineLoad {
+            dataPoint.engineLoad = engineLoad
+        }
+        
+        if let coolantTemperature = self.coolantTemperature {
+            dataPoint.coolantTemperature = coolantTemperature
+        }
+        
+        if let ambientTemperature = self.ambientTemperature {
+            dataPoint.ambientTemperature = ambientTemperature
+        }
+        if let throttlePosition = self.throttlePosition {
+            dataPoint.throttlePosition = throttlePosition
+        }
+        
+        dataPoint.track = track
+        return dataPoint
     }
     
     func hasGoodFix() -> Bool {

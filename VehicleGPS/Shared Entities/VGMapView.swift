@@ -19,21 +19,31 @@ class VGMapView: MKMapView {
     var tracks = [VGTrack]() {
         didSet {
             activity.startAnimating()
-            DispatchQueue.global(qos: .userInitiated).async {
-                let region = self.getRegion(for:self.tracks)
-                if region.span.latitudeDelta != 400 {
-                    DispatchQueue.main.async {
-                        self.setRegion(region, animated: false)
-                    }
-                }
-                for track in self.tracks {
-                    track.mapPoints = self.dataStore.getMapPointsForTrack(vgTrack: track)
+            guard let region = self.getRegion(for:self.tracks) else {
+                self.activity.stopAnimating()
+                return
+            }
+            if region.span.latitudeDelta != 400 {
+                self.setRegion(region, animated: false)
+
+            }
+            let dpGroup = DispatchGroup()
+            for track in self.tracks {
+                dpGroup.enter()
+                self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
+                    track.mapPoints = mapPoints
                     self.display(track: track, on: self)
-                }
-                DispatchQueue.main.async {
-                    self.activity.stopAnimating()
+                    dpGroup.leave()
+                }) { (error) in
+                    print(error)
+                    dpGroup.leave()
                 }
             }
+            
+            dpGroup.notify(queue: .main) {
+                self.activity.stopAnimating()
+            }
+            
 
         }
     }
@@ -58,7 +68,10 @@ class VGMapView: MKMapView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func getRegion(for tracks: [VGTrack]) -> MKCoordinateRegion {
+    func getRegion(for tracks: [VGTrack]) -> MKCoordinateRegion? {
+        if tracks.count == 0 {
+            return nil
+        }
         var maxLat = -Double.infinity
         var minLat = Double.infinity
         var maxLon = -Double.infinity

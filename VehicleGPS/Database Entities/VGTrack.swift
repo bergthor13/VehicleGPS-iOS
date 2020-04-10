@@ -30,6 +30,7 @@ class VGTrack {
     var isLocal:Bool
     var beingProcessed = false
     var vehicle:VGVehicle?
+    var vehicleID:UUID?
     var averageSpeed:Double {
         get {
             return distance/duration/60/60
@@ -38,6 +39,7 @@ class VGTrack {
     
     init(track:Track) {
         // Database stored values
+        self.id = track.id
         self.duration = track.duration
         self.distance = track.distance
         if let fileName = track.fileName {
@@ -52,10 +54,7 @@ class VGTrack {
         self.minLon = track.minLon
         self.maxLon = track.maxLon
         self.processed = track.processed
-        
-        if let vehicle = track.vehicle {
-            self.vehicle = VGVehicle(vehicle:vehicle)
-        }
+        self.vehicleID = track.vehicleID
 
         trackPoints = [VGDataPoint]()
         mapPoints = [VGMapPoint]()
@@ -80,6 +79,21 @@ class VGTrack {
         
         trackPoints = [VGDataPoint]()
         mapPoints = [VGMapPoint]()
+    }
+    
+    func setEntity(track:Track) -> Track {
+        track.id = UUID()
+        track.fileName = self.fileName
+        track.fileSize = Int64(self.fileSize)
+        track.duration = self.duration
+        track.distance = self.distance
+        track.minLat = self.minLat
+        track.maxLat = self.maxLat
+        track.minLon = self.minLon
+        track.maxLon = self.maxLon
+        track.processed = self.processed
+        track.timeStart = self.timeStart
+        return track
     }
     
     var hasOBDData: Bool {
