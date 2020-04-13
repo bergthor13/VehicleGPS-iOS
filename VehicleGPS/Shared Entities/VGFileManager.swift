@@ -121,13 +121,13 @@ class VGFileManager {
         
     }
     
-    func getParser(for track:VGTrack) -> IVGLogParser? {
-        let fileExtension = track.fileName.split(separator: ".").last?.lowercased()
+    func getParser(for url:URL) -> IVGLogParser? {
+        let fileExtension = url.lastPathComponent.split(separator: ".").last?.lowercased()
         
         if fileExtension == "gpx" {
             return VGGPXParser()
         }
-        if let aStreamReader = StreamReader(path: getAbsoluteFilePathFor(track: track)!) {
+        if let aStreamReader = StreamReader(path: url) {
             defer {
                 aStreamReader.close()
             }

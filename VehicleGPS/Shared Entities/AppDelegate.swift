@@ -17,10 +17,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var fileManager = VGFileManager()
     var tabController = VGTabBarController()
     var snapshotter: VGSnapshotMaker!
+    var deviceCommunicator: DeviceCommunicator!
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         snapshotter = VGSnapshotMaker(fileManager: self.fileManager, dataStore: self.dataStore)
+        deviceCommunicator = DeviceCommunicator()
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.tintColor = UIColor.init(named: "appColor")
         self.window?.rootViewController = tabController

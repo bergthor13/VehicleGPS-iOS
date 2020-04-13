@@ -13,6 +13,7 @@ class VGDataStore {
     // MARK: - Initialization
     let storeCoordinator: NSPersistentStoreCoordinator
     let vgFileManager = VGFileManager()
+    let semaphore = DispatchSemaphore(value: 1)
     
     
     func initializeContainer() {
@@ -107,7 +108,7 @@ class VGDataStore {
     }
     
     fileprivate func getAllTracks(in context: NSManagedObjectContext, forVehicleWith id:UUID, onSuccess:@escaping([VGTrack])->(), onFailure:@escaping(Error)->()) {
-        let predicate = NSPredicate(format: "vehicleID = %@", argumentArray: [id])
+        let predicate = NSPredicate(format: "vehicle.id = %@", argumentArray: [id])
         getTracks(in: context, with: predicate, onSuccess: { (tracks) in
             onSuccess(tracks)
         }) { (error) in
@@ -121,16 +122,7 @@ class VGDataStore {
         fetchRequest.predicate = predicate
             do {
                 for track in try context.fetch(fetchRequest) {
-                    let vgTrack = VGTrack(track: track)
-                    guard let vehicleID = track.vehicleID else {
-                        continue
-                    }
-                    guard let vehicle = getVehicle(in: context, with: vehicleID) else {
-                        continue
-                    }
-                    
-                    vgTrack.vehicle = VGVehicle(vehicle: vehicle)
-                    result.append(vgTrack)
+                    result.append(VGTrack(track: track))
                 }
             } catch let error {
                 onFailure(error)
@@ -237,7 +229,6 @@ class VGDataStore {
     }
     
     func add(vgTrack: VGTrack, onSuccess: @escaping(UUID)->(), onFailure:@escaping(Error)->()) {
-        print("ADDING")
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -252,25 +243,29 @@ class VGDataStore {
             for point in vgTrack.mapPoints {
                 self.add(vgMapPoint: point, to: newTrack, in: context)
             }
-            
+            self.semaphore.wait()
             if let defaultVehicleID = self.getDefaultVehicleID() {
-                // Get the track in question
+                // Get the vehicle in question
                 guard let vehicle = self.getVehicle(in: context, with: defaultVehicleID) else {
                     return
                 }
-                newTrack.setValue(defaultVehicleID, forKey: "vehicleID")
+                newTrack.vehicle = vehicle
                 vgTrack.id = newID
                 vgTrack.vehicle = VGVehicle(vehicle: vehicle)
             }
-            
+            vgTrack.id = newID
             do {
+                
                 try context.save()
+                NotificationCenter.default.post(name: .logsAdded, object: [vgTrack])
+                self.semaphore.signal()
                 DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: .logsAdded, object: [vgTrack])
+                    vgTrack.id = newID
                     onSuccess(newID)
                     return
                 }
             } catch let error {
+                self.semaphore.signal()
                 DispatchQueue.main.async {
                     onFailure(error)
                 }
@@ -469,7 +464,7 @@ class VGDataStore {
                 return
             }
             
-            track.setValue(vehicle.id, forKey: "vehicleID")
+            track.setValue(vehicle, forKey: "vehicle")
             do {
                 try context.save()
                 let vgVehicle = VGVehicle(vehicle:vehicle)
@@ -488,7 +483,46 @@ class VGDataStore {
             }
         }
     }
-
+    
+    func getDownloadedFiles(onSuccess:@escaping([DownloadedFile])->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let fetchRequest = DownloadedFile.fetchRequest() as NSFetchRequest<DownloadedFile>
+            do {
+                let result = try context.fetch(fetchRequest) as [DownloadedFile]
+                onSuccess(result)
+                
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+    
+    func add(file:VGDownloadedFile, onSuccess:@escaping()->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let entityDescription = NSEntityDescription.entity(forEntityName: "DownloadedFile", in: context)!
+            let downloadedFile = DownloadedFile.init(entity: entityDescription, insertInto: context)
+            downloadedFile.name = file.name
+            downloadedFile.size = Int64(file.size!)
+            context.insert(downloadedFile)
+            do {
+                try context.save()
+                DispatchQueue.main.async {
+                    onSuccess()
+                }
+                
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
     
     func getDefaultVehicleID() -> UUID? {
         if let items = UserDefaults.standard.data(forKey: "DefaultVehicle") {

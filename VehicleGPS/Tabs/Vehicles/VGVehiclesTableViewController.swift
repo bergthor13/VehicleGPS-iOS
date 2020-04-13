@@ -221,26 +221,13 @@ class VGVehiclesTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: VGVehicleTableViewCell.identifier, for: indexPath) as! VGVehicleTableViewCell
         let vehicle = vehicles[indexPath.row]
         cell.lblName.text = vehicle.name
-        guard let tracks = vehicle.tracks else {
-            return cell
-        }
-        var distance = 0.0
-        var duration = 0.0
-        for track in tracks {
-            distance += track.distance
-            duration += track.duration
-        }
-        
+        cell.imgVehicle?.image = vehicle.image
+
         if let color = vehicle.mapColor {
             cell.colorBanner.backgroundColor = color
         } else {
             cell.colorBanner.backgroundColor = .red
         }
-
-        cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
-        cell.lblDuration.text = durationFormatter.string(from: duration)
-        cell.imgVehicle?.image = vehicle.image
-        
         
         if dataStore.getDefaultVehicleID() == vehicle.id {
             cell.defaultViewBackground.isHidden = false
@@ -250,6 +237,21 @@ class VGVehiclesTableViewController: UITableViewController {
             cell.defaultStarView.isHidden = true
         }
         
+        guard let tracks = vehicle.tracks else {
+            cell.lblDistance.text = distanceFormatter.string(for: 0)
+            cell.lblDuration.text = durationFormatter.string(from: 0)
+            return cell
+        }
+        var distance = 0.0
+        var duration = 0.0
+        for track in tracks {
+            distance += track.distance
+            duration += track.duration
+        }
+        
+        cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
+        cell.lblDuration.text = durationFormatter.string(from: duration)
+
         return cell
     }
     

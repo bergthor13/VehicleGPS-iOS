@@ -23,7 +23,7 @@ class VGMapView: MKMapView {
                 self.activity.stopAnimating()
                 return
             }
-            if region.span.latitudeDelta != 400 {
+            if region.span.latitudeDelta != Double.infinity {
                 self.setRegion(region, animated: false)
 
             }

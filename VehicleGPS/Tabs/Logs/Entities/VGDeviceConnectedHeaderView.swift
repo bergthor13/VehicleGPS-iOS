@@ -39,4 +39,44 @@ class VGDeviceConnectedHeaderView: UIView {
         self.greenBackground.layer.borderWidth = 0.5
         self.greenButton.layer.borderWidth = 0.5
     }
+    
+    func deviceConnected(hostname:String) {
+        self.lblLogsAvailable.isHidden = false
+        self.lblConnectedToGPS.isHidden = false
+        self.imgIcon.isHidden = false
+        self.lblConnectedToGPS.text = String(format: Strings.connectedTo, hostname)
+
+    }
+    
+    func newLogsAvailable(count:Int) {
+        if count == 0 {
+            self.lblLogsAvailable.text = Strings.noNewLogs
+        } else if count == 1 {
+
+            self.lblLogsAvailable.text = String(format: Strings.newLogSingular, count)
+        } else if (count-1)%10 == 0 && count != 11 {
+            self.lblLogsAvailable.text = String(format: Strings.newLogSingular, count)
+        } else {
+            self.lblLogsAvailable.text = String(format: Strings.newLogPlural, count)
+        }
+        if count == 0 {
+            self.greenButton.isHidden = true
+        } else {
+            self.greenButton.isHidden = false
+        }
+    }
+    
+    func searchingForLogs() {
+        self.lblLogsAvailable.text = Strings.searchForLogs
+    }
+    
+    func downloadingLogs(download:Int, parse:Int) {
+        if download == 0 && parse == 0 {
+            self.lblLogsAvailable.text = Strings.downloadComplete
+            return
+        }
+        self.lblLogsAvailable.text = "Down: \(download), Parse: \(parse)"
+
+        
+    }
 }

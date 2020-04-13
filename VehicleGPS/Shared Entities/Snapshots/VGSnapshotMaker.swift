@@ -48,6 +48,14 @@ class VGSnapshotMaker {
                         print(error)
                     }
                 )
+            } else {
+                NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
+                self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
+                    NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
+                    self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
+                    return nil
+                }
+
             }
         }
     }
@@ -68,6 +76,14 @@ class VGSnapshotMaker {
             }) { (error) in
                 print(error)
             }
+        } else {
+            NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
+            self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
+                NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
+                self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
+                return nil
+            }
+
         }
         
         
@@ -87,7 +103,7 @@ class VGSnapshotMaker {
             }
             
             snapshotter?.start(completionHandler: { (snapshot, error) in
-                DispatchQueue.global(qos: .userInitiated).async {
+                DispatchQueue.global(qos: .utility).async {
                     guard let snapshot = snapshot else {
                         imageCallback(nil,style)
                         return

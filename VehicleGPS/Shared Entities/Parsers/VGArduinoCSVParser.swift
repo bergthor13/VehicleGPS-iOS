@@ -22,7 +22,7 @@ class VGArduinoCSVParser: IVGLogParser {
         return true
     }
     
-    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, callback: @escaping (VGTrack) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)?) {
+    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, onSuccess: @escaping (VGTrack) -> (), onFailure:@escaping(Error)->()) {
         var lastProgressUpdate = Date()
         
         let track = VGTrack()
@@ -33,7 +33,7 @@ class VGArduinoCSVParser: IVGLogParser {
                 track.fileSize = fileSize
             }
         } catch {
-            print("Error: \(error)")
+            onFailure(error)
         }
         
         var fileString = String()
@@ -63,7 +63,7 @@ class VGArduinoCSVParser: IVGLogParser {
             return point.hasGoodFix()
         }
         track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
-        callback(track)
+        onSuccess(track)
     }
     
     func rowToDataPoint(row: [String]) -> VGDataPoint {

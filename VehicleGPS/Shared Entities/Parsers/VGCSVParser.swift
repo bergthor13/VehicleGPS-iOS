@@ -13,8 +13,7 @@ class VGCSVParser: IVGLogParser {
         return true
     }
     
-    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, callback: @escaping (VGTrack) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)?) {
-        DispatchQueue.global(qos: .background).async {
+    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, onSuccess: @escaping (VGTrack) -> (), onFailure:@escaping(Error)->()) {
             var lastProgressUpdate = Date()
 
             let track = VGTrack()
@@ -25,7 +24,7 @@ class VGCSVParser: IVGLogParser {
                     track.fileSize = fileSize
                 }
             } catch {
-                print("Error: \(error)")
+                onFailure(error)
             }
             
             var fileString = String()
@@ -56,9 +55,7 @@ class VGCSVParser: IVGLogParser {
             }
             track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
             
-            callback(track)
-        }
-
+            onSuccess(track)
     }
     
     func rowToDataPoint(row: [String]) -> VGDataPoint {

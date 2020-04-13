@@ -36,6 +36,7 @@ struct Strings {
         static let vehicles = NSLocalizedString("Farartæki", comment: "Vehicles Title")
         static let settings = NSLocalizedString("Stillingar", comment: "Settings Title")
         static let database = NSLocalizedString("Gagnagrunnur", comment: "Database Title")
+        static let vgpsDevice = NSLocalizedString("VehicleGPS tæki", comment: "")
 
         static let importFile = NSLocalizedString("Flytja inn skrá", comment: "")
         
@@ -126,6 +127,7 @@ struct Strings {
     
     static let takePicture = NSLocalizedString("Taka mynd", comment: "")
     static let photoLibrary = NSLocalizedString("Myndasafn", comment: "")
+    static let searchForLogs = NSLocalizedString("Leita að nýjum ferlum", comment: "")
     
     static let dummyIdentifier = "dummy"
 }

@@ -19,7 +19,7 @@ class VGDatabaseTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = Strings.titles.database
-        dataTypes = ["Track", "DataPoint", "MapPoint", "Vehicle"]
+        dataTypes = ["Track", "DataPoint", "MapPoint", "Vehicle", "DownloadedFile"]
         fileTypes = [Strings.settings.logFiles, Strings.settings.previewImages]
         
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
@@ -65,19 +65,18 @@ class VGDatabaseTableViewController: UITableViewController {
             cell = UITableViewCell.init(style: .value1, reuseIdentifier: Strings.dummyIdentifier)
             cell.textLabel?.text = dataTypes[indexPath.row]
 
-            DispatchQueue.global(qos: .userInitiated).async {
-                self.dataStore.countAllData(
-                    entity: self.dataTypes[indexPath.row],
-                    onSuccess: { (count) in
-                        let nf = NumberFormatter()
-                        nf.numberStyle = .decimal
-                        cell.detailTextLabel!.text = nf.string(from: NSNumber(value: count))
-                    },
-                    onFailure: { (error) in
-                        print(error)
-                    }
-                )
-            }
+            self.dataStore.countAllData(
+                entity: self.dataTypes[indexPath.row],
+                onSuccess: { (count) in
+                    let nf = NumberFormatter()
+                    nf.numberStyle = .decimal
+                    cell.detailTextLabel!.text = nf.string(from: NSNumber(value: count))
+                },
+                onFailure: { (error) in
+                    print(error)
+                }
+            )
+        
         } else if indexPath.section == 1 {
             guard let fileManager = self.fileManager else {
                 return cell

@@ -23,6 +23,10 @@
         <attribute name="verticalAccuracy" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
         <relationship name="track" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Track" inverseName="trackPoints" inverseEntity="Track"/>
     </entity>
+    <entity name="DownloadedFile" representedClassName="DownloadedFile" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="size" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <entity name="MapPoint" representedClassName="MapPoint" syncable="YES" codeGenerationType="class">
         <attribute name="latitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="longitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -47,6 +51,7 @@
         <attribute name="vehicleID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="mapPoints" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MapPoint" inverseName="track" inverseEntity="MapPoint"/>
         <relationship name="trackPoints" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DataPoint" inverseName="track" inverseEntity="DataPoint"/>
+        <relationship name="vehicle" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Vehicle" inverseName="tracks" inverseEntity="Vehicle"/>
     </entity>
     <entity name="Vehicle" representedClassName="Vehicle" syncable="YES" codeGenerationType="class">
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
@@ -54,7 +59,7 @@
         <attribute name="mapColor" optional="YES" attributeType="Transformable" valueTransformerName="NSKeyedUnarchiveFromDataTransformerName"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="tracks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Track"/>
+        <relationship name="tracks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Track" inverseName="vehicle" inverseEntity="Track"/>
         <relationship name="vehicleType" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="VehicleType" inverseName="vehicles" inverseEntity="VehicleType"/>
     </entity>
     <entity name="VehicleType" representedClassName="VehicleType" syncable="YES" codeGenerationType="class">
@@ -65,8 +70,9 @@
     <elements>
         <element name="DataPoint" positionX="196.8671875" positionY="-25.84765625" width="128" height="358"/>
         <element name="MapPoint" positionX="144" positionY="126" width="128" height="103"/>
-        <element name="Track" positionX="-63" positionY="-18" width="128" height="298"/>
+        <element name="Track" positionX="-63" positionY="-18" width="128" height="313"/>
         <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="148"/>
         <element name="VehicleType" positionX="144" positionY="126" width="128" height="88"/>
+        <element name="DownloadedFile" positionX="144" positionY="126" width="128" height="73"/>
     </elements>
 </model>

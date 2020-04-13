@@ -28,9 +28,9 @@ class VGTrack {
     var processed:Bool
     var isRemote:Bool
     var isLocal:Bool
+    var isRecording:Bool
     var beingProcessed = false
     var vehicle:VGVehicle?
-    var vehicleID:UUID?
     var averageSpeed:Double {
         get {
             return distance/duration/60/60
@@ -39,7 +39,6 @@ class VGTrack {
     
     init(track:Track) {
         // Database stored values
-        self.id = track.id
         self.duration = track.duration
         self.distance = track.distance
         if let fileName = track.fileName {
@@ -54,7 +53,10 @@ class VGTrack {
         self.minLon = track.minLon
         self.maxLon = track.maxLon
         self.processed = track.processed
-        self.vehicleID = track.vehicleID
+        
+        if let vehicle = track.vehicle {
+            self.vehicle = VGVehicle(vehicle:vehicle)
+        }
 
         trackPoints = [VGDataPoint]()
         mapPoints = [VGMapPoint]()
@@ -62,6 +64,8 @@ class VGTrack {
         // Memory stored values
         self.isRemote = false
         self.isLocal = false
+        self.id = track.id
+        self.isRecording = false
     }
     
     init() {
@@ -76,7 +80,8 @@ class VGTrack {
         processed = false
         isRemote = false
         isLocal = false
-        
+        isRecording = false
+
         trackPoints = [VGDataPoint]()
         mapPoints = [VGMapPoint]()
     }

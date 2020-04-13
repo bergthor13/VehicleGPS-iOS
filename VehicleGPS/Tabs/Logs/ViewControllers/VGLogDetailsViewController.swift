@@ -62,6 +62,14 @@ class VGLogDetailsViewController: UIViewController {
             self.mapView.tracks = [self.track]
         }
         
+        if self.track.trackPoints.count == 0 {
+            self.dataStore.getDataPointsForTrack(with: self.track.id!, onSuccess: { (dataPoints) in
+                self.track.trackPoints = dataPoints
+            }) { (error) in
+                print(error)
+            }
+        }
+        
     }
     
     @objc func displayShareSelection() {

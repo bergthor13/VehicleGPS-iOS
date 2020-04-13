@@ -15,4 +15,5 @@ extension Notification.Name {
     static let vehicleAddedToTrack = Notification.Name("vehiceAddedToTrack")
     static let previewImageStartingUpdate = Notification.Name("previewImageStartingUpdate")
     static let previewImageFinishingUpdate = Notification.Name("previewImageFinishingUpdate")
+    static let deviceConnected = Notification.Name("deviceConnected")
 }
