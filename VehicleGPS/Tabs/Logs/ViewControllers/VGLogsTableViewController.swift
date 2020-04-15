@@ -172,67 +172,92 @@ class VGLogsTableViewController: UITableViewController {
         guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
             return
         }
+        let totalCount = self.undownloadedFiles.count
+        var downloadProgress = [Double]() {
+            didSet {
+                
+                DispatchQueue.main.async {
+                    self.headerView.downloadingLogs(download: downloadProgress.reduce(0, +), parse: parseProgress.reduce(0, +), total: Double(totalCount))
+
+                }
+            }
+        }
+        var parseProgress = [Double]() {
+            didSet {
+                DispatchQueue.main.async {
+                    self.headerView.downloadingLogs(download: downloadProgress.reduce(0, +), parse: parseProgress.reduce(0, +), total: Double(totalCount))
+
+                }
+            }
+        }
+        for _ in 0 ..< totalCount {
+            downloadProgress.append(0)
+            parseProgress.append(0)
+        }
         
-        var downloadFilesLeft = self.undownloadedFiles.count {
-            didSet {
-                DispatchQueue.main.async {
-                    self.headerView.downloadingLogs(download: downloadFilesLeft, parse: parseFilesLeft)
-                }
-            }
-        }
-        var parseFilesLeft = self.undownloadedFiles.count {
-            didSet {
-                DispatchQueue.main.async {
-                    self.headerView.downloadingLogs(download: downloadFilesLeft, parse: parseFilesLeft)
-                }
-            }
-        }
-        self.headerView.downloadingLogs(download: downloadFilesLeft, parse: parseFilesLeft)
+        self.headerView.downloadingLogs(download: 0, parse: 0, total: Double(totalCount))
         let group1 = DispatchGroup()
         let group2 = DispatchGroup()
         group1.enter()
         DispatchQueue.global(qos: .utility).async {
-            for file in self.undownloadedFiles {
+            for (index, file) in self.undownloadedFiles.enumerated() {
                 group2.enter()
                 delegate.deviceCommunicator.downloadTrackFile(file: file, progress: { (current, total) in
+                    downloadProgress[index] = Double(current)/Double(total)
                 }, onSuccess: { (fileUrl) in
-                    downloadFilesLeft -= 1
+                    downloadProgress[index] = 1
                     DispatchQueue.global(qos: .utility).async {
                         guard let fileManager = self.vgFileManager else {
-                            parseFilesLeft -= 1
+                            parseProgress[index] = 1
                             group2.leave()
                             return
                         }
                         guard let fileUrl = fileUrl else {
-                            parseFilesLeft -= 1
+                            parseProgress[index] = 1
                             group2.leave()
                             return
                         }
                         guard let parser = fileManager.getParser(for: fileUrl) else {
-                            parseFilesLeft -= 1
+                            parseProgress[index] = 1
                             group2.leave()
                             return
                         }
                         parser.fileToTrack(fileUrl: fileUrl, progress: { (current, total) in
+                            parseProgress[index] = Double(current)/Double(total)
                         }, onSuccess: { (track) in
                             let existingIndexPath = self.getIndexPath(for: file.filename)
                             if existingIndexPath != nil {
                                 let existingTrack = self.getTrackAt(indexPath: existingIndexPath!)!
                                 track.id = existingTrack.id
                                 self.dataStore.update(vgTrack: track, onSuccess: { (id) in
-                                    parseFilesLeft -= 1
+                                    let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
+                                    self.dataStore.add(file: downlFile, onSuccess: {
+                                        parseProgress[index] = 1
+                                        group2.leave()
+                                    }) { (error) in
+                                        parseProgress[index] = 1
+                                        group2.leave()
+                                    }
+                                    parseProgress[index] = 1
                                     group2.leave()
                                 }) { (error) in
-                                    parseFilesLeft -= 1
+                                    parseProgress[index] = 1
                                     self.display(error: error)
                                     group2.leave()
                                 }
                             } else {
                                 self.dataStore.add(vgTrack: track, onSuccess: { (id) in
-                                    parseFilesLeft -= 1
-                                    group2.leave()
+                                    let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
+                                    self.dataStore.add(file: downlFile, onSuccess: {
+                                        parseProgress[index] = 1
+                                        group2.leave()
+                                    }) { (error) in
+                                        parseProgress[index] = 1
+                                        group2.leave()
+                                    }
+                                    
                                 }) { (error) in
-                                    parseFilesLeft -= 1
+                                    parseProgress[index] = 1
                                     self.display(error: error)
                                     group2.leave()
                                 }
@@ -241,7 +266,7 @@ class VGLogsTableViewController: UITableViewController {
                             
                             
                         }, onFailure: {error in
-                            parseFilesLeft -= 1
+                            parseProgress[index] = 1
                             self.display(error: error)
                             group2.leave()
                             
@@ -249,7 +274,7 @@ class VGLogsTableViewController: UITableViewController {
                         
                     }
                 }, onFailure: { error in
-                    downloadFilesLeft -= 1
+                    downloadProgress[index] = 1
                     self.display(error: error)
                     group2.leave()
                 })
@@ -301,25 +326,25 @@ class VGLogsTableViewController: UITableViewController {
                     }
                     DispatchQueue.main.async {
                         self.headerView.newLogsAvailable(count: self.undownloadedFiles.count)
-                    }
-                    
-                    guard let recordingFileName = self.getRecordingFile()?.filename else {
-                        return
-                    }
-                    guard let recordingIndexPath = self.getIndexPath(for: recordingFileName) else {
-                        return
-                    }
-                    self.tracksDictionary[self.sections[recordingIndexPath.section]]![recordingIndexPath.row].isRecording = true
-                    
-                    DispatchQueue.main.async {
                         if shouldDownloadFiles {
                             self.downloadFiles()
                         }
-                        
-                        guard let cell = self.tableView.cellForRow(at: recordingIndexPath) as? VGLogsTableViewCell else {
+                    }
+                    
+                                        
+                    let recordingFileNames = self.getRecordingFile()
+                    for recordingFileName in recordingFileNames {
+                        guard let recordingIndexPath = self.getIndexPath(for: recordingFileName.filename) else {
                             return
                         }
-                        cell.animateRecording()
+                        self.tracksDictionary[self.sections[recordingIndexPath.section]]![recordingIndexPath.row].isRecording = true
+                        
+                        DispatchQueue.main.async {
+                            guard let cell = self.tableView.cellForRow(at: recordingIndexPath) as? VGLogsTableViewCell else {
+                                return
+                            }
+                            cell.animateRecording()
+                        }
                     }
 
                 }) { (error) in
@@ -331,14 +356,18 @@ class VGLogsTableViewController: UITableViewController {
         }
     }
     
-    func getRecordingFile() -> NMSFTPFile? {
+    func getRecordingFile() -> [NMSFTPFile] {
         var files = [NMSFTPFile]()
         for deviceFile in self.filesOnDevice {
-            if !downloadedFiles.contains(where: { (downfile) -> Bool in return Int(downfile.size) == Int(truncating: deviceFile.fileSize!)}) {
-                files.append(deviceFile)
+            for downFile in self.downloadedFiles {
+                if downFile.name == deviceFile.filename &&
+                    Int(downFile.size) != Int(truncating: deviceFile.fileSize!) {
+                    print(Int(downFile.size), Int(truncating: deviceFile.fileSize!))
+                    files.append(deviceFile)
+                }
             }
         }
-        return files.first
+        return files
     }
     
     

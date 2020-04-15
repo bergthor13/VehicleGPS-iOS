@@ -10,6 +10,11 @@ import UIKit
 
 class VGDeviceConnectedHeaderView: UIView {
 
+    @IBOutlet weak var downloadProgress: UIView!
+    @IBOutlet weak var parseProgress: UIView!
+    @IBOutlet weak var progressBar: UIView!
+    @IBOutlet weak var downloadWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var parseWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var greenBackground: UIView!
     @IBOutlet weak var greenButton: UIView!
     @IBOutlet weak var lblConnectedToGPS: UILabel!
@@ -38,6 +43,15 @@ class VGDeviceConnectedHeaderView: UIView {
         self.greenButton.layer.borderColor = UIColor.init(named: "appColor")?.cgColor
         self.greenBackground.layer.borderWidth = 0.5
         self.greenButton.layer.borderWidth = 0.5
+        
+        self.progressBar.layer.cornerRadius = self.progressBar.frame.height/2
+        self.downloadProgress.layer.cornerRadius = self.progressBar.frame.height/2
+        self.parseProgress.layer.cornerRadius = self.progressBar.frame.height/2
+        
+        self.progressBar.backgroundColor = UIColor.label.withAlphaComponent(0.25)
+        self.downloadProgress.backgroundColor = UIColor.label.withAlphaComponent(0.35)
+        self.parseProgress.backgroundColor = UIColor.label
+        
     }
     
     func deviceConnected(hostname:String) {
@@ -70,13 +84,17 @@ class VGDeviceConnectedHeaderView: UIView {
         self.lblLogsAvailable.text = Strings.searchForLogs
     }
     
-    func downloadingLogs(download:Int, parse:Int) {
-        if download == 0 && parse == 0 {
+    func downloadingLogs(download:Double, parse:Double, total:Double) {
+        if download == total && parse == total {
             self.lblLogsAvailable.text = Strings.downloadComplete
+            self.progressBar.isHidden = true
             return
         }
-        self.lblLogsAvailable.text = "Down: \(download), Parse: \(parse)"
-
-        
+        self.progressBar.isHidden = false
+        self.lblLogsAvailable.text = " "
+    
+        self.parseWidthConstraint.constant = progressBar.frame.width*(CGFloat(parse)/CGFloat(total))
+        self.downloadWidthConstraint.constant = progressBar.frame.width*(CGFloat(download)/CGFloat(total))
     }
+    
 }

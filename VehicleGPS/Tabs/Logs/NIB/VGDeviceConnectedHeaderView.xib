@@ -40,25 +40,25 @@
                                 <constraint firstAttribute="height" constant="34" id="bta-SN-Jos"/>
                             </constraints>
                         </imageView>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dwT-iJ-z9X">
+                        <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dwT-iJ-z9X">
                             <rect key="frame" x="61" y="28" width="250" height="5"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EW3-Au-5AF">
                                     <rect key="frame" x="0.0" y="0.0" width="50" height="5"/>
-                                    <color key="backgroundColor" white="1" alpha="0.5" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="50" id="Krb-Ua-ciP"/>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xA9-wo-tsx">
                                     <rect key="frame" x="0.0" y="0.0" width="25" height="5"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="25" id="Z4A-8b-EDs"/>
                                     </constraints>
                                 </view>
                             </subviews>
-                            <color key="backgroundColor" white="1" alpha="0.24842144691780821" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                             <constraints>
                                 <constraint firstItem="xA9-wo-tsx" firstAttribute="top" secondItem="dwT-iJ-z9X" secondAttribute="top" id="8eH-F5-whc"/>
                                 <constraint firstItem="EW3-Au-5AF" firstAttribute="leading" secondItem="dwT-iJ-z9X" secondAttribute="leading" id="AhP-MR-qkx"/>
@@ -114,11 +114,16 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="k3N-I5-IQG"/>
             <connections>
+                <outlet property="downloadProgress" destination="EW3-Au-5AF" id="dci-yb-lS5"/>
+                <outlet property="downloadWidthConstraint" destination="Krb-Ua-ciP" id="HgU-za-Cyi"/>
                 <outlet property="greenBackground" destination="esp-ek-sNn" id="3mj-Pq-oZI"/>
                 <outlet property="greenButton" destination="gSF-8B-8Qw" id="OSo-na-qRo"/>
                 <outlet property="imgIcon" destination="YCL-Yj-9CJ" id="0QV-B2-zIf"/>
                 <outlet property="lblConnectedToGPS" destination="8pn-NV-c4E" id="ZvE-2X-rjI"/>
                 <outlet property="lblLogsAvailable" destination="lvg-q4-UWn" id="mcJ-TW-TSa"/>
+                <outlet property="parseProgress" destination="xA9-wo-tsx" id="teu-LT-Glo"/>
+                <outlet property="parseWidthConstraint" destination="Z4A-8b-EDs" id="IfX-F8-9EE"/>
+                <outlet property="progressBar" destination="dwT-iJ-z9X" id="U6N-sm-XyZ"/>
             </connections>
             <point key="canvasLocation" x="-68.115942028985515" y="-336.49553571428572"/>
         </view>

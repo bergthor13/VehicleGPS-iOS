@@ -132,12 +132,7 @@ class DeviceCommunicator {
             return true
         }, callback: { (data) in
             if let data = data {
-                let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)    
-                self.dataStore.add(file: downlFile, onSuccess: {
-                    onSuccess(self.fileManager.dataToFile(data: data, filename: file.filename))
-                }) { (error) in
-                    onFailure("Could not save DownloadedFile object")
-                }
+                onSuccess(self.fileManager.dataToFile(data: data, filename: file.filename))
             } else {
                 onFailure("No data to write.")
             }
