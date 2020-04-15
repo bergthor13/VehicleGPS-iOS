@@ -97,7 +97,7 @@ class VGLogsTableViewController: UITableViewController {
         
         // Add tap gesture recognizers to the views
         let headerTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.headerViewTapped(_:)))
-        let downloadTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.downloadFiles))
+        let downloadTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.searchForNewLogsAndDownload))
 
         self.headerView.greenBackground.addGestureRecognizer(headerTapRecognizer)
         self.headerView.greenButton.addGestureRecognizer(downloadTapRecognizer)
@@ -107,11 +107,72 @@ class VGLogsTableViewController: UITableViewController {
         self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
         self.tableView.register(VGLogHeaderView.nib, forHeaderFooterViewReuseIdentifier: VGLogHeaderView.identifier)
     }
+        
+    // MARK: - View Did Load Functions
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        initializeClasses()
+        configureEmptyListLabel()
+        configureNavigationBar()
+        configureRefreshControl()
+        setUpDeviceConnectedBanner()
+        registerCells()
+        updateData()
+        addObservers()
+        tableView.allowsMultipleSelection = true
+        tableView.allowsMultipleSelectionDuringEditing = true
+    }
+    
+    func addObservers() {
+        addObserver(selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack)
+        addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
+        addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
+        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
+        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
+        addObserver(selector: #selector(deviceConnected(_:)), name: .deviceConnected)
+        addObserver(selector: #selector(deviceDisconnected(_:)), name: .deviceDisconnected)
+    }
+    
+    func addObserver(selector:Selector, name:Notification.Name) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
+    }
+    
+    @objc func deviceConnected(_ notification:Notification) {
+        guard let session = notification.object as? NMSSHSession else {
+            return
+        }
+        DispatchQueue.main.async {
+            self.headerView.deviceConnected(hostname: session.host)
+            self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
+            self.tableView.tableHeaderView = self.headerView
+
+            self.searchForNewLogs(shouldDownloadFiles: false)
+        }
+
+    }
+    
+    @objc func deviceDisconnected(_ notification:Notification) {
+        DispatchQueue.main.async {
+            self.tableView.tableHeaderView = nil
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        for cell in tableView!.visibleCells as! [VGLogsTableViewCell] {
+            if cell.currentTrack!.isRecording {
+                cell.animateRecording()
+            }
+            
+        }
+    }
     
     @objc func downloadFiles() {
         guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
             return
         }
+        
         var downloadFilesLeft = self.undownloadedFiles.count {
             didSet {
                 DispatchQueue.main.async {
@@ -197,8 +258,10 @@ class VGLogsTableViewController: UITableViewController {
             group1.leave()
         }
         
-        group1.notify(queue: .main) {
-            self.searchForNewLogs()
+        group1.notify(queue: .global()) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+               self.searchForNewLogs(shouldDownloadFiles: false)
+            }
         }
         
     }
@@ -216,67 +279,10 @@ class VGLogsTableViewController: UITableViewController {
         
     }
     
-    // MARK: - View Did Load Functions
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        initializeClasses()
-        configureEmptyListLabel()
-        configureNavigationBar()
-        configureRefreshControl()
-        setUpDeviceConnectedBanner()
-        registerCells()
-        updateData()
-        addObservers()
-        tableView.allowsMultipleSelection = true
-        tableView.allowsMultipleSelectionDuringEditing = true
+    @objc func searchForNewLogsAndDownload() {
+        searchForNewLogs(shouldDownloadFiles: true)
     }
-    
-    func addObservers() {
-        addObserver(selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack)
-        addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
-        addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
-        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
-        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
-        addObserver(selector: #selector(deviceConnected(_:)), name: .deviceConnected)
-        addObserver(selector: #selector(deviceDisconnected(_:)), name: .deviceDisconnected)
-    }
-    
-    func addObserver(selector:Selector, name:Notification.Name) {
-        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
-    }
-    
-    @objc func deviceConnected(_ notification:Notification) {
-        guard let session = notification.object as? NMSSHSession else {
-            return
-        }
-        DispatchQueue.main.async {
-            self.headerView.deviceConnected(hostname: session.host)
-            self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
-            self.tableView.tableHeaderView = self.headerView
-
-            self.searchForNewLogs()
-        }
-
-    }
-    
-    @objc func deviceDisconnected(_ notification:Notification) {
-        DispatchQueue.main.async {
-            self.tableView.tableHeaderView = nil
-        }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        for cell in tableView!.visibleCells as! [VGLogsTableViewCell] {
-            if cell.currentTrack!.isRecording {
-                cell.animateRecording()
-            }
-            
-        }
-    }
-    
-    func searchForNewLogs() {
+    func searchForNewLogs(shouldDownloadFiles:Bool) {
         guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
              return
         }
@@ -306,11 +312,16 @@ class VGLogsTableViewController: UITableViewController {
                     self.tracksDictionary[self.sections[recordingIndexPath.section]]![recordingIndexPath.row].isRecording = true
                     
                     DispatchQueue.main.async {
+                        if shouldDownloadFiles {
+                            self.downloadFiles()
+                        }
+                        
                         guard let cell = self.tableView.cellForRow(at: recordingIndexPath) as? VGLogsTableViewCell else {
                             return
                         }
                         cell.animateRecording()
                     }
+
                 }) { (error) in
                     self.display(error: error)
                 }
@@ -318,7 +329,6 @@ class VGLogsTableViewController: UITableViewController {
                 self.display(error: error)
             }
         }
-        
     }
     
     func getRecordingFile() -> NMSFTPFile? {
