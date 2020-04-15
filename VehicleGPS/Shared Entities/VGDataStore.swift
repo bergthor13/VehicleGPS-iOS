@@ -137,11 +137,25 @@ class VGDataStore {
         dataPoint = vgDataPoint.setEntity(dataPoint: dataPoint, track: track)
     }
     
-    func add(vgMapPoint:VGMapPoint, to track: Track, in context:NSManagedObjectContext) {
+    fileprivate func add(vgMapPoint:VGMapPoint, to track: Track, in context:NSManagedObjectContext) {
         let entity = NSEntityDescription.entity(forEntityName: "MapPoint", in: context)!
         var mapPoint = MapPoint(entity:entity, insertInto: context)
         mapPoint = vgMapPoint.setEntity(mapPoint: mapPoint, track: track)
         
+    }
+    
+    fileprivate func removeAllDataPoints(from track: Track, in context:NSManagedObjectContext) {
+        let dataPoints = getDataPoints(in: context, forTrackWith: track.id!)
+        for dataPoint in dataPoints {
+            context.delete(dataPoint)
+        }
+    }
+    
+    fileprivate func removeAllMapPoints(from track: Track, in context:NSManagedObjectContext) {
+        let mapPoints = getMapPoints(in: context, forTrackWith: track.id!)
+        for mapPoint in mapPoints {
+            context.delete(mapPoint)
+        }
     }
     
     fileprivate func getPredicate(for id:UUID) -> NSPredicate {
@@ -234,7 +248,9 @@ class VGDataStore {
         context.perform {
             let entity = NSEntityDescription.entity(forEntityName: "Track", in: context)!
             var newTrack = Track(entity: entity, insertInto: context)
+            
             newTrack = vgTrack.setEntity(track:newTrack)
+            newTrack.id = UUID()
             let newID = newTrack.id!
             for point in vgTrack.trackPoints {
                 self.add(vgDataPoint: point, to: newTrack, in: context)
@@ -266,6 +282,48 @@ class VGDataStore {
                 }
             } catch let error {
                 self.semaphore.signal()
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+                return
+            }
+        }
+    }
+    
+    func update(vgTrack: VGTrack, onSuccess: @escaping(UUID)->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            guard var oldTrack = self.getTrack(in: context, with: vgTrack.id!) else {
+                var error = NSError(domain: "", code: 123, userInfo: ["NSLocalizedDescriptionKey":"Can't find old track"])
+                onFailure(error)
+                return
+            }
+            // Update the track with new information.
+            oldTrack = vgTrack.setEntity(track:oldTrack)
+            
+            // Remove all map and data points from the track.
+            self.removeAllDataPoints(from: oldTrack, in: context)
+            self.removeAllMapPoints(from: oldTrack, in: context)
+            
+            // And then add the new ones.
+            for point in vgTrack.trackPoints {
+                self.add(vgDataPoint: point, to: oldTrack, in: context)
+            }
+            
+            for point in vgTrack.mapPoints {
+                self.add(vgMapPoint: point, to: oldTrack, in: context)
+            }
+
+            // Then try to save.
+            do {
+                try context.save()
+                NotificationCenter.default.post(name: .logUpdated, object: vgTrack)
+                DispatchQueue.main.async {
+                    onSuccess(vgTrack.id!)
+                    return
+                }
+            } catch let error {
                 DispatchQueue.main.async {
                     onFailure(error)
                 }

@@ -87,7 +87,6 @@ class VGTrack {
     }
     
     func setEntity(track:Track) -> Track {
-        track.id = UUID()
         track.fileName = self.fileName
         track.fileSize = Int64(self.fileSize)
         track.duration = self.duration

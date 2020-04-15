@@ -39,6 +39,11 @@ class VGLogsTableViewController: UITableViewController {
         initializeTableViewController()
 
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+    }
 
     func initializeTableViewController() {
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -84,8 +89,7 @@ class VGLogsTableViewController: UITableViewController {
     
     fileprivate func setUpDeviceConnectedBanner() {
         self.headerView = VGDeviceConnectedHeaderView.loadFromNibNamed(nibNamed: VGDeviceConnectedHeaderView.nibName)
-        self.headerView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 0)
-        self.tableView.tableHeaderView = self.headerView
+        self.headerView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 51)
         self.headerView.lblLogsAvailable.isHidden = true
         self.headerView.lblConnectedToGPS.isHidden = true
         self.headerView.imgIcon.isHidden = true
@@ -123,70 +127,91 @@ class VGLogsTableViewController: UITableViewController {
             }
         }
         self.headerView.downloadingLogs(download: downloadFilesLeft, parse: parseFilesLeft)
-        let group = DispatchGroup()
-        group.enter()
+        let group1 = DispatchGroup()
+        let group2 = DispatchGroup()
+        group1.enter()
         DispatchQueue.global(qos: .utility).async {
-            print("ENTER")
-            for (index, file) in self.undownloadedFiles.enumerated() {
-                print(downloadFilesLeft, parseFilesLeft)
+            for file in self.undownloadedFiles {
+                group2.enter()
                 delegate.deviceCommunicator.downloadTrackFile(file: file, progress: { (current, total) in
                 }, onSuccess: { (fileUrl) in
                     downloadFilesLeft -= 1
-                    print("ENTER")
-                    group.enter()
                     DispatchQueue.global(qos: .utility).async {
                         guard let fileManager = self.vgFileManager else {
                             parseFilesLeft -= 1
-                            print("LEAVE")
-                            group.leave()
+                            group2.leave()
                             return
                         }
                         guard let fileUrl = fileUrl else {
                             parseFilesLeft -= 1
-                            print("LEAVE")
-                            group.leave()
+                            group2.leave()
                             return
                         }
                         guard let parser = fileManager.getParser(for: fileUrl) else {
                             parseFilesLeft -= 1
-                            print("LEAVE")
-                            group.leave()
+                            group2.leave()
                             return
                         }
                         parser.fileToTrack(fileUrl: fileUrl, progress: { (current, total) in
                         }, onSuccess: { (track) in
-                            self.dataStore.add(vgTrack: track, onSuccess: { (id) in
-                                parseFilesLeft -= 1
-                                print("LEAVE")
-                                group.leave()
-                            }) { (error) in
-                                parseFilesLeft -= 1
-                                print(error)
-                                print("LEAVE")
-                                group.leave()
+                            let existingIndexPath = self.getIndexPath(for: file.filename)
+                            if existingIndexPath != nil {
+                                let existingTrack = self.getTrackAt(indexPath: existingIndexPath!)!
+                                track.id = existingTrack.id
+                                self.dataStore.update(vgTrack: track, onSuccess: { (id) in
+                                    parseFilesLeft -= 1
+                                    group2.leave()
+                                }) { (error) in
+                                    parseFilesLeft -= 1
+                                    self.display(error: error)
+                                    group2.leave()
+                                }
+                            } else {
+                                self.dataStore.add(vgTrack: track, onSuccess: { (id) in
+                                    parseFilesLeft -= 1
+                                    group2.leave()
+                                }) { (error) in
+                                    parseFilesLeft -= 1
+                                    self.display(error: error)
+                                    group2.leave()
+                                }
+
                             }
+                            
                             
                         }, onFailure: {error in
                             parseFilesLeft -= 1
-                            print(error)
-                            print("LEAVE")
-                            group.leave()
+                            self.display(error: error)
+                            group2.leave()
                             
                         })
                         
                     }
                 }, onFailure: { error in
                     downloadFilesLeft -= 1
-                    print(error)
-                    print("LEAVE")
-                    group.leave()
+                    self.display(error: error)
+                    group2.leave()
                 })
             }
-            group.leave()
+            group2.wait()
+            group1.leave()
         }
         
-        group.notify(queue: .main) {
+        group1.notify(queue: .main) {
             self.searchForNewLogs()
+        }
+        
+    }
+    
+    func display(error:Error) {
+        display(error: error.localizedDescription)
+    }
+    
+    func display(error:String) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: Strings.ok, style: .default))
+            self.present(alert, animated: true)
         }
         
     }
@@ -201,26 +226,54 @@ class VGLogsTableViewController: UITableViewController {
         setUpDeviceConnectedBanner()
         registerCells()
         updateData()
+        addObservers()
         tableView.allowsMultipleSelection = true
         tableView.allowsMultipleSelectionDuringEditing = true
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack , object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(onLogsAdded(_:)), name: .logsAdded, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(deviceConnected(_:)), name: .deviceConnected, object: nil)
+    }
+    
+    func addObservers() {
+        addObserver(selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack)
+        addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
+        addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
+        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
+        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
+        addObserver(selector: #selector(deviceConnected(_:)), name: .deviceConnected)
+        addObserver(selector: #selector(deviceDisconnected(_:)), name: .deviceDisconnected)
+    }
+    
+    func addObserver(selector:Selector, name:Notification.Name) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
     }
     
     @objc func deviceConnected(_ notification:Notification) {
         guard let session = notification.object as? NMSSHSession else {
             return
         }
-        
-        headerView.deviceConnected(hostname: session.host)
-        self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
-        self.tableView.tableHeaderView = self.headerView
+        DispatchQueue.main.async {
+            self.headerView.deviceConnected(hostname: session.host)
+            self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
+            self.tableView.tableHeaderView = self.headerView
 
-        searchForNewLogs()
+            self.searchForNewLogs()
+        }
+
+    }
+    
+    @objc func deviceDisconnected(_ notification:Notification) {
+        DispatchQueue.main.async {
+            self.tableView.tableHeaderView = nil
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        for cell in tableView!.visibleCells as! [VGLogsTableViewCell] {
+            if cell.currentTrack!.isRecording {
+                cell.animateRecording()
+            }
+            
+        }
     }
     
     func searchForNewLogs() {
@@ -259,10 +312,10 @@ class VGLogsTableViewController: UITableViewController {
                         cell.animateRecording()
                     }
                 }) { (error) in
-                    print(error)
+                    self.display(error: error)
                 }
             }) { (error) in
-                print(error)
+                self.display(error: error)
             }
         }
         
@@ -365,6 +418,32 @@ class VGLogsTableViewController: UITableViewController {
         
     }
     
+    @objc func onLogUpdated(_ notification:Notification) {
+        guard let updatedTrack = notification.object as? VGTrack else {
+            return
+        }
+
+        DispatchQueue.main.async {
+            
+            guard let indexPath = self.getIndexPath(for: updatedTrack) else {
+                return
+            }
+            
+            guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+                return
+            }
+            
+            if self.tracksDictionary[self.sections[indexPath.section]] == nil {
+                return
+            }
+            
+            self.tracksDictionary[self.sections[indexPath.section]]![indexPath.row] = updatedTrack
+            cell.show(track: updatedTrack)
+        }
+        
+        
+    }
+    
     func getIndexPath(for track:VGTrack) -> IndexPath? {
         for (sectionIndex, section) in sections.enumerated() {
             guard let sectionList = tracksDictionary[section] else {
@@ -413,7 +492,7 @@ class VGLogsTableViewController: UITableViewController {
                 self.navigationController?.pushViewController(dlViewController, animated: true)
             },
             onFailure: { (error) in
-                print(error)
+                self.display(error: error)
             }
         )
 
@@ -441,7 +520,7 @@ class VGLogsTableViewController: UITableViewController {
                 }
             },
             onFailure: { (error) in
-                print(error)
+                self.display(error: error)
             }
         )
     }
@@ -638,7 +717,7 @@ class VGLogsTableViewController: UITableViewController {
         self.dataStore.delete(trackWith: track.id!, onSuccess: {
             
         }) { (error) in
-            print(error)
+            self.display(error: error)
         }
     }
     
@@ -666,7 +745,7 @@ class VGLogsTableViewController: UITableViewController {
                     let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
                     self.present(activityVC, animated: true, completion: nil)
                 }) { (error) in
-                    print(error)
+                    self.display(error: error)
                 }
             }
         }

@@ -35,9 +35,7 @@ class VGLogsTableViewCell: UITableViewCell {
     let formatter = DateFormatter()
     let distanceFormatter = VGDistanceFormatter()
     let form = VGDurationFormatter()
-    
-
-    
+        
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

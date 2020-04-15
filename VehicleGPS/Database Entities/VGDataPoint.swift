@@ -149,3 +149,10 @@ extension VGDataPoint: Comparable {
         return lhs.timestamp! < rhs.timestamp!
     }
 }
+
+
+extension VGDataPoint: CustomStringConvertible {
+    var description: String {
+        return "timestamp: \(String(describing: self.timestamp)), ele:\(String(describing: self.elevation))"
+    }
+}

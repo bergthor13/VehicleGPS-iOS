@@ -23,41 +23,53 @@ class VGSnapshotMaker {
         vgFileManager = fileManager
         vgDataStore = dataStore
         NotificationCenter.default.addObserver(self, selector: #selector(addedToTrack(_:)), name: .vehicleAddedToTrack , object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(shouldGenerateImage(_:)), name: .logsAdded, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(shouldGenerateImage(_:)), name: .logUpdated, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(generateImagesForTracks(_:)), name: .logsAdded, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(generateImagesForTrack(_:)), name: .logUpdated, object: nil)
     }
     
-    @objc func shouldGenerateImage(_ notification:Notification) {
+    func generateImageFor(track:VGTrack) {
+        if track.mapPoints.count == 0 {
+            vgDataStore.getMapPointsForTrack(
+                with: track.id!,
+                onSuccess: { (mapPoints) in
+                    track.mapPoints = mapPoints
+                    NotificationCenter.default.post(name: .previewImageStartingUpdate, object: track)
+                    self.drawTrack(vgTrack: track) { (image, style) -> Void? in
+                        NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: track))
+                        self.vgFileManager.savePNG(image: image!, for: track, style: style!)
+                        return nil
+                    }
+                }, onFailure: { (error) in
+                    print(error)
+                }
+            )
+        } else {
+            NotificationCenter.default.post(name: .previewImageStartingUpdate, object: track)
+            self.drawTrack(vgTrack: track) { (image, style) -> Void? in
+                NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: track))
+                self.vgFileManager.savePNG(image: image!, for: track, style: style!)
+                return nil
+            }
+
+        }
+    }
+    
+    @objc func generateImagesForTracks(_ notification:Notification) {
         guard let newTracks = notification.object as? [VGTrack] else {
             return
         }
         
         for newTrack in newTracks {
-            if newTrack.mapPoints.count == 0 {
-                vgDataStore.getMapPointsForTrack(
-                    with: newTrack.id!,
-                    onSuccess: { (mapPoints) in
-                        newTrack.mapPoints = mapPoints
-                        NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
-                        self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
-                            NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
-                            self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
-                            return nil
-                        }
-                    }, onFailure: { (error) in
-                        print(error)
-                    }
-                )
-            } else {
-                NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
-                self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
-                    NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
-                    self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
-                    return nil
-                }
-
-            }
+            generateImageFor(track: newTrack)
         }
+    }
+    
+    @objc func generateImagesForTrack(_ notification:Notification) {
+        guard let newTrack = notification.object as? VGTrack else {
+            return
+        }
+        
+        generateImageFor(track: newTrack)
     }
     
     @objc func addedToTrack(_ notification:Notification) {

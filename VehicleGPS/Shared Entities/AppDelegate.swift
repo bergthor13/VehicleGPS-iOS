@@ -34,20 +34,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
+        DispatchQueue.global(qos: .utility).async {
+            self.deviceCommunicator.disconnectFromVehicleGPS()
+        }
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
+        DispatchQueue.global(qos: .utility).async {
+            self.deviceCommunicator.reconnectToVehicleGPS()
+        }
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-    }
-    
-    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-        print(url)
-        return true
     }
     
     func application(_ app: UIApplication,
@@ -59,9 +60,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabController.present(navController, animated: true)
         return true
         
-    }
-    
-    func application(_ application: UIApplication, handleOpen url: URL) -> Bool {
-        return true
     }
 }

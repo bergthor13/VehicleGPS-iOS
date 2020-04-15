@@ -16,4 +16,6 @@ extension Notification.Name {
     static let previewImageStartingUpdate = Notification.Name("previewImageStartingUpdate")
     static let previewImageFinishingUpdate = Notification.Name("previewImageFinishingUpdate")
     static let deviceConnected = Notification.Name("deviceConnected")
+    static let deviceDisconnected = Notification.Name("deviceDisconnected")
+
 }

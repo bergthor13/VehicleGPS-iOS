@@ -52,7 +52,6 @@ class VGFileManager {
             try data.write(to: destFileName)
             return destFileName
         } catch let error {
-            print("ERROR")
             print(error)
             return nil
         }
@@ -263,7 +262,6 @@ class VGFileManager {
                 }
                 result.append(track)
             }
-            print(fileList)
             return result
         } catch let error {
             print(error)

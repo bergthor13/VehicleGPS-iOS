@@ -11,7 +11,8 @@ class DeviceCommunicator {
     
     init() {
         DispatchQueue.global(qos: .userInitiated).async {
-            self.reconnectToVehicleGPS(session: NMSSHSession.init(host: Constants.sftp.host, andUsername: Constants.sftp.username))
+            self.session = NMSSHSession.init(host: Constants.sftp.host, andUsername: Constants.sftp.username)
+            self.reconnectToVehicleGPS(session: self.session!)
         }
     }
     
@@ -32,7 +33,16 @@ class DeviceCommunicator {
         return true
     }
     
-    func reconnectToVehicleGPS(session: NMSSHSession) {
+    func disconnectFromVehicleGPS() {
+        sftpSession?.disconnect()
+        session?.disconnect()
+        NotificationCenter.default.post(name: .deviceDisconnected, object: nil)
+    }
+    
+    func reconnectToVehicleGPS() {
+        reconnectToVehicleGPS(session: self.session!)
+    }
+    fileprivate func reconnectToVehicleGPS(session: NMSSHSession) {
         if !session.isConnected || !session.isAuthorized || !sftpSession!.isConnected {
             if connectToVehicleGPS(session: session) {
                 DispatchQueue.main.async {
@@ -44,13 +54,12 @@ class DeviceCommunicator {
         }
         
         DispatchQueue.main.async {
-            // TODO: Device is not connected
-            //self.tableView.tableHeaderView = nil
+            NotificationCenter.default.post(name: .deviceDisconnected, object: nil)
         }
     }
     
     func tryToConnectSSH(session: NMSSHSession) -> Bool {
-        if !session.connect() {
+        if !session.connect(withTimeout: 5) {
             DispatchQueue.main.async {
                 //self.displayErrorAlert(title: "SSH Connection Error", message: self.session?.lastError?.localizedDescription)
             }
@@ -118,19 +127,16 @@ class DeviceCommunicator {
     }
     
     func downloadTrackFile(file:NMSFTPFile, progress:@escaping(UInt,UInt)->(), onSuccess:@escaping(URL?)->(), onFailure:@escaping(String)->()) {
-        
         self.downloadManager?.downloadFile(filename: file.filename, progress: { (received, total) -> Bool in
             progress(received, total)
             return true
         }, callback: { (data) in
             if let data = data {
-                onSuccess(self.fileManager.dataToFile(data: data, filename: file.filename))
-                
                 let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)    
                 self.dataStore.add(file: downlFile, onSuccess: {
-                    
+                    onSuccess(self.fileManager.dataToFile(data: data, filename: file.filename))
                 }) { (error) in
-                    print(error)
+                    onFailure("Could not save DownloadedFile object")
                 }
             } else {
                 onFailure("No data to write.")
