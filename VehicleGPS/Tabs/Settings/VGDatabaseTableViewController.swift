@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MBProgressHUD
 
 class VGDatabaseTableViewController: UITableViewController {
 
@@ -18,7 +19,7 @@ class VGDatabaseTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = Strings.titles.database
-        dataTypes = ["Track", "DataPoint", "MapPoint", "Vehicle"]
+        dataTypes = ["Track", "DataPoint", "MapPoint", "Vehicle", "DownloadedFile"]
         fileTypes = [Strings.settings.logFiles, Strings.settings.previewImages]
         
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
@@ -26,6 +27,11 @@ class VGDatabaseTableViewController: UITableViewController {
             self.fileManager = appDelegate.fileManager
         }
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
     }
 
     // MARK: - Table view data source
@@ -59,15 +65,18 @@ class VGDatabaseTableViewController: UITableViewController {
             cell = UITableViewCell.init(style: .value1, reuseIdentifier: Strings.dummyIdentifier)
             cell.textLabel?.text = dataTypes[indexPath.row]
 
-            DispatchQueue.global(qos: .userInitiated).async {
-                self.dataStore.countAllData(entity: self.dataTypes[indexPath.row]) { (count) in
-                    DispatchQueue.main.async {
-                        let nf = NumberFormatter()
-                        nf.numberStyle = .decimal
-                        cell.detailTextLabel!.text = nf.string(from: NSNumber(value: count))
-                    }
+            self.dataStore.countAllData(
+                entity: self.dataTypes[indexPath.row],
+                onSuccess: { (count) in
+                    let nf = NumberFormatter()
+                    nf.numberStyle = .decimal
+                    cell.detailTextLabel!.text = nf.string(from: NSNumber(value: count))
+                },
+                onFailure: { (error) in
+                    print(error)
                 }
-            }
+            )
+        
         } else if indexPath.section == 1 {
             guard let fileManager = self.fileManager else {
                 return cell
@@ -91,6 +100,7 @@ class VGDatabaseTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 0 {
             let alert = UIAlertController(
                 title: "Eyða öllum \(dataTypes[indexPath.row]) hlutum",
@@ -99,7 +109,21 @@ class VGDatabaseTableViewController: UITableViewController {
             )
             
             alert.addAction(UIAlertAction(title: Strings.delete, style: .destructive, handler: { (_) in
-                self.dataStore.deleteAllData(entity: self.dataTypes[indexPath.row])
+                
+                let hud = MBProgressHUD.showAdded(to: self.parent!.view, animated: true)
+                hud.mode = .indeterminate
+                hud.label.text = "Deleting..."
+                self.dataStore.deleteAllData(
+                    entity: self.dataTypes[indexPath.row],
+                    onSuccess: {
+                        hud.hide(animated: true)
+                        tableView.reloadData()
+                    },
+                    onFailure:  { (error) in
+                        hud.hide(animated: true)
+                        print(error)
+                    }
+                )
             }))
             
             alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel, handler: nil))

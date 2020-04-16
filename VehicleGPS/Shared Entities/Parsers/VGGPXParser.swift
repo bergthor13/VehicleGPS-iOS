@@ -14,25 +14,12 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
     
     let progress_update_delay = TimeInterval(0.1)
     let PNG_PADDING:CGFloat = 0.9
-    var vgSnapshotMaker:VGSnapshotMaker
     
-    var track = VGTrack()
+    var tracks = [VGTrack]()
     
-    init(snapshotter:VGSnapshotMaker) {
-        self.vgSnapshotMaker = snapshotter
-    }
+    var currTrack:VGTrack?
     
-    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, callback: @escaping (VGTrack) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)?) {
-        
-        track.fileName = fileUrl.lastPathComponent
-        do {
-            let resources = try fileUrl.resourceValues(forKeys: [.fileSizeKey])
-            if let fileSize = resources.fileSize {
-                track.fileSize = fileSize
-            }
-        } catch {
-            print("Error: \(error)")
-        }
+    func fileToTracks(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, callback: @escaping ([VGTrack]) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)?) {
         
         //Setup the parser and initialize it with the filepath's data
         let data = NSData(contentsOf: fileUrl)
@@ -42,26 +29,24 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
         //Parse the data, here the file will be read
         let success = parser.parse()
         if success {
-            track.process()
-            
-            let mapPoints = track.trackPoints.filter { (point) -> Bool in
-                return point.hasGoodFix()
-            }
-            track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
-            
-            self.vgSnapshotMaker.drawTrack(vgTrack: track) { (image, style) in
-                guard let imageCallback = imageCallback else {
-                    return nil
+            for track in tracks {
+                track.process()
+                let mapPoints = track.trackPoints.filter { (point) -> Bool in
+                    return point.hasGoodFix()
                 }
-                imageCallback(self.track, style)
-                return nil
+                track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
+                
+                callback(tracks)
             }
-            callback(track)
+            
             return
 
         }
         // TODO: Allow nil.
-        callback(VGTrack())
+        callback([VGTrack()])
+    }
+    
+    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, onSuccess: @escaping (VGTrack) -> (), onFailure:@escaping(Error)->()) {
     }
     
     var currPoint = VGDataPoint()
@@ -73,6 +58,9 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
             currPoint = VGDataPoint()
             currPoint.latitude = Double(attributeDict["lat"]!)!
             currPoint.longitude = Double(attributeDict["lon"]!)!
+        }
+        if elementName == "trk" {
+            currTrack = VGTrack()
         }
     }
 
@@ -89,7 +77,11 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
         }
 
         if elementName == "trkpt" || elementName == "wpt" {
-            track.trackPoints.append(currPoint)
+            currTrack!.trackPoints.append(currPoint)
+        }
+        
+        if elementName == "trk" {
+            tracks.append(currTrack!)
         }
 
         foundCharacters = ""

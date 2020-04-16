@@ -9,11 +9,13 @@
 import UIKit
 
 protocol DisplaySelectVehicleProtocol {
-    func didTapVehicle(track:VGTrack)
+    func didTapVehicle(track:VGTrack, tappedView:UIView?)
 }
 
 class VGLogsTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var recDotView: UIView!
+    @IBOutlet weak var recView: UIView!
     @IBOutlet weak var btnVehicle: UIButton!
     @IBOutlet weak var trackView: UIImageView!
     @IBOutlet weak var activityView: UIActivityIndicatorView!
@@ -23,8 +25,7 @@ class VGLogsTableViewCell: UITableViewCell {
     @IBOutlet weak var lblFileSize: UILabel!
     @IBOutlet weak var lblVehicle: UILabel!
     @IBOutlet weak var imgVehicle: UIImageView!
-    @IBOutlet weak var progressView: UIView!
-    @IBOutlet weak var progressViewWidthConstraint: NSLayoutConstraint!
+
     static let identifier = "LogsCell"
     static let nibName = "VGLogsTableViewCell"
     static let nib = UINib(nibName: VGLogsTableViewCell.nibName, bundle: nil)
@@ -34,18 +35,16 @@ class VGLogsTableViewCell: UITableViewCell {
     let formatter = DateFormatter()
     let distanceFormatter = VGDistanceFormatter()
     let form = VGDurationFormatter()
-    
-    func update(progress: Double) {
-        let viewWidth = self.frame.width
-        progressViewWidthConstraint.constant = viewWidth*CGFloat(progress)
-    }
-    
+        
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.vgFileManager = appDelegate.fileManager
         }
+        recView.layer.cornerRadius = recView.frame.width/2.0
+        recDotView.layer.cornerRadius = recView.frame.width/2.0
+    
         NotificationCenter.default.addObserver(self, selector: #selector(preferredContentSizeChanged(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated, object: nil)
@@ -118,11 +117,38 @@ class VGLogsTableViewCell: UITableViewCell {
         } else {
             activityView.stopAnimating()
         }
+        if track.isRecording {
+            animateRecording()
+        } else {
+            self.recView.isHidden = true
+            self.recDotView.isHidden = true
+        }
+    }
+    
+    func animateRecording() {
+        self.recView.isHidden = false
+        self.recDotView.isHidden = false
+        self.recView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+        self.recView.alpha = 1
+        
+        
+
+        UIView.animate(withDuration: 3.0, delay: 0.0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.curveEaseOut, .repeat], animations: {
+            self.recView.transform = CGAffineTransform(scaleX: 3.5, y: 3.5)
+            self.recView.alpha = 0
+        }, completion: nil)
 
     }
     
     @IBAction func didTapVehicle(_ sender: Any) {
-        delegate.didTapVehicle(track: currentTrack!)
+        guard let track = currentTrack else {
+            return
+        }
+        
+        guard let delegate = delegate else {
+            return
+        }
+        delegate.didTapVehicle(track: track, tappedView: self.btnVehicle)
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -167,9 +193,5 @@ class VGLogsTableViewCell: UITableViewCell {
             return date
         }
         return nil
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
     }
 }

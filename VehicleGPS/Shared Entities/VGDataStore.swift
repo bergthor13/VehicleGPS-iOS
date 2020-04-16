@@ -13,9 +13,11 @@ class VGDataStore {
     // MARK: - Initialization
     let storeCoordinator: NSPersistentStoreCoordinator
     let vgFileManager = VGFileManager()
+    let semaphore = DispatchSemaphore(value: 1)
+    
     
     func initializeContainer() {
-        let container = NSPersistentContainer(name: "VehicleGPS")
+        let container = NSPersistentContainer(name: Constants.persistentContainer.name)
         
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             self.storeCoordinator.addPersistentStore(with: storeDescription, completionHandler: { (storedescr, error) in
@@ -44,16 +46,16 @@ class VGDataStore {
         initializeContainer()
     }
     
-
-    // MARK: - Private Functions
-    fileprivate func getPoints(for track:VGTrack, in context:NSManagedObjectContext) -> [NSManagedObject] {
-        guard let fetchedTrack = getTrack(for: track, in: context) else {
-            return [NSManagedObject]()
-        }
-
-        let dataPointFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "DataPoint")
-        dataPointFetchRequest.predicate = NSPredicate(format: "track = %@", fetchedTrack)
     
+    // MARK: - Private Functions
+    fileprivate func getDataPoints(in context:NSManagedObjectContext, forTrackWith id:UUID) -> [DataPoint] {
+        guard let fetchedTrack = getTrack(in: context, with: id) else {
+            return [DataPoint]()
+        }
+        
+        let dataPointFetchRequest = DataPoint.fetchRequest() as NSFetchRequest<DataPoint>
+        dataPointFetchRequest.predicate = NSPredicate(format: "track = %@", fetchedTrack)
+        
         do {
             return try context.fetch(dataPointFetchRequest)
         } catch {
@@ -61,15 +63,14 @@ class VGDataStore {
         }
     }
     
-    fileprivate func getMapPoints(for track:VGTrack, in context:NSManagedObjectContext) -> [MapPoint] {
-        guard let fetchedTrack = getTrack(for: track, in: context) else {
+    fileprivate func getMapPoints(in context:NSManagedObjectContext, forTrackWith id:UUID) -> [MapPoint] {
+        guard let fetchedTrack = getTrack(in: context, with: id) else {
             return [MapPoint]()
         }
-
+        
         do {
-            let dataPointFetchRequest = NSFetchRequest<MapPoint>(entityName: "MapPoint")
+            let dataPointFetchRequest = MapPoint.fetchRequest() as NSFetchRequest<MapPoint>
             dataPointFetchRequest.predicate = NSPredicate(format: "track = %@", fetchedTrack)
-            
             return try context.fetch(dataPointFetchRequest)
             
         } catch {
@@ -77,9 +78,9 @@ class VGDataStore {
         }
     }
     
-    fileprivate func getTrack(for track: VGTrack, in context:NSManagedObjectContext) -> NSManagedObject? {
-        let trackFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Track")
-        trackFetchRequest.predicate = NSPredicate(format: "fileName = %@", track.fileName)
+    fileprivate func getTrack(in context:NSManagedObjectContext, with id: UUID) -> Track? {
+        let trackFetchRequest = Track.fetchRequest() as NSFetchRequest<Track>
+        trackFetchRequest.predicate = self.getPredicate(for: id)
         do {
             guard let fetchedTrack = try context.fetch(trackFetchRequest).first else {
                 print("Fetching track failed")
@@ -87,13 +88,14 @@ class VGDataStore {
             }
             return fetchedTrack
         } catch {
+            print("Fetching track failed")
             return nil
         }
     }
     
-    fileprivate func getVehicle(for vgVehicle: VGVehicle, in context:NSManagedObjectContext) -> Vehicle? {
+    fileprivate func getVehicle(in context:NSManagedObjectContext, with id: UUID) -> Vehicle? {
         let vehicleFetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
-        vehicleFetchRequest.predicate = NSPredicate(format: "id = %@", argumentArray: [vgVehicle.id!])
+        vehicleFetchRequest.predicate = self.getPredicate(for: id)
         do {
             guard let fetchedVehicle = try context.fetch(vehicleFetchRequest).first else {
                 print("Fetching vehicle failed")
@@ -105,113 +107,64 @@ class VGDataStore {
         }
     }
     
-    fileprivate func getAllTracks(for vgVehicle:VGVehicle, in context: NSManagedObjectContext) -> [VGTrack] {
+    fileprivate func getAllTracks(in context: NSManagedObjectContext, forVehicleWith id:UUID, onSuccess:@escaping([VGTrack])->(), onFailure:@escaping(Error)->()) {
+        let predicate = NSPredicate(format: "vehicle.id = %@", argumentArray: [id])
+        getTracks(in: context, with: predicate, onSuccess: { (tracks) in
+            onSuccess(tracks)
+        }) { (error) in
+            onFailure(error)
+        }
+    }
+    
+    func getTracks(in context: NSManagedObjectContext, with predicate:NSPredicate?, onSuccess:@escaping([VGTrack])->(), onFailure:@escaping(Error)->()) {
         var result = [VGTrack]()
-        //2
-        let fetchRequest =
-            NSFetchRequest<NSManagedObject>(entityName: "Track")
-        fetchRequest.predicate = NSPredicate(format: "vehicle.id = %@", argumentArray: [vgVehicle.id!])
-        
-        //3
-        do {
-            let cdTracks = try context.fetch(fetchRequest)
-            for track in cdTracks  {
-                let vgTrack = VGTrack()
-                
-                if let distance = track.value(forKey: "distance") as? Double {
-                    vgTrack.distance = distance
+        let fetchRequest = Track.fetchRequest() as NSFetchRequest<Track>
+        fetchRequest.predicate = predicate
+            do {
+                for track in try context.fetch(fetchRequest) {
+                    result.append(VGTrack(track: track))
                 }
-                
-                if let duration = track.value(forKey: "duration") as? Double {
-                    vgTrack.duration = duration
-                }
-                
-                if let fileName = track.value(forKey: "fileName") as? String {
-                    vgTrack.fileName = fileName
-                }
-                
-                if let fileSize = track.value(forKey: "fileSize") as? Int {
-                    vgTrack.fileSize = fileSize
-                }
-                
-                if let minLat = track.value(forKey: "minLat") as? Double {
-                    vgTrack.minLat = minLat
-                }
-                
-                if let maxLat = track.value(forKey: "maxLat") as? Double {
-                    vgTrack.maxLat = maxLat
-                }
-                
-                if let minLon = track.value(forKey: "minLon") as? Double {
-                    vgTrack.minLon = minLon
-                }
-                
-                if let maxLon = track.value(forKey: "maxLon") as? Double {
-                    vgTrack.maxLon = maxLon
-                }
-                
-                if let processed = track.value(forKey: "processed") as? Bool {
-                    vgTrack.processed = processed
-                }
-                
-                if let timeStart = track.value(forKey: "timeStart") as? Date {
-                    vgTrack.timeStart = timeStart
-                }
-                
-                if let vehicle = track.value(forKey: "vehicle") as? Vehicle {
-                    vgTrack.vehicle = VGVehicle(vehicle: vehicle)
-                }
-                
-                result.append(vgTrack)
+            } catch let error {
+                onFailure(error)
+                return
             }
-            
-        } catch {
-            return []
-        }
-        return result
-
+            onSuccess(result)
     }
     
-    fileprivate func add(vgDataPoint:VGDataPoint, to vgTrack: Track, in context:NSManagedObjectContext) {
+    fileprivate func add(vgDataPoint:VGDataPoint, to track: Track, in context:NSManagedObjectContext) {
         let entity = NSEntityDescription.entity(forEntityName: "DataPoint", in: context)!
-        
-        let dataPoint = NSManagedObject(entity: entity, insertInto: context)
-        if vgDataPoint.timestamp != nil {
-            dataPoint.setValue(vgDataPoint.timestamp, forKey: "timeStamp")
-        }
-        
-        dataPoint.setValue(vgDataPoint.latitude, forKey: "latitude")
-        dataPoint.setValue(vgDataPoint.longitude, forKey: "longitude")
-        dataPoint.setValue(vgDataPoint.elevation, forKey: "elevation")
-        dataPoint.setValue(vgDataPoint.satellites, forKey: "satellites")
-        dataPoint.setValue(vgDataPoint.horizontalAccuracy, forKey: "horizontalAccuracy")
-        dataPoint.setValue(vgDataPoint.verticalAccuracy, forKey: "verticalAccuracy")
-        dataPoint.setValue(vgDataPoint.pdop, forKey: "pdop")
-        dataPoint.setValue(vgDataPoint.fixType, forKey: "fixType")
-        dataPoint.setValue(vgDataPoint.gnssFixOk, forKey: "gnssFixOK")
-        dataPoint.setValue(vgDataPoint.fullyResolved, forKey: "fullyResolved")
-        dataPoint.setValue(vgDataPoint.rpm, forKey: "rpm")
-        dataPoint.setValue(vgDataPoint.engineLoad, forKey: "engineLoad")
-        dataPoint.setValue(vgDataPoint.coolantTemperature, forKey: "coolantTemperature")
-        dataPoint.setValue(vgDataPoint.ambientTemperature, forKey: "ambientTemperature")
-        dataPoint.setValue(vgDataPoint.throttlePosition, forKey: "throttlePosition")
-        dataPoint.setValue(vgTrack, forKey: "track")
+        var dataPoint = DataPoint(entity:entity, insertInto: context)
+        dataPoint = vgDataPoint.setEntity(dataPoint: dataPoint, track: track)
     }
     
-    func add(vgMapPoint:VGMapPoint, to vgTrack: Track, in context:NSManagedObjectContext) {
+    fileprivate func add(vgMapPoint:VGMapPoint, to track: Track, in context:NSManagedObjectContext) {
         let entity = NSEntityDescription.entity(forEntityName: "MapPoint", in: context)!
-        let mapPoint = NSManagedObject(entity: entity, insertInto: context)
-        mapPoint.setValue(vgMapPoint.timestamp, forKey: "timeStamp")
-        mapPoint.setValue(vgMapPoint.latitude, forKey: "latitude")
-        mapPoint.setValue(vgMapPoint.longitude, forKey: "longitude")
-        mapPoint.setValue(vgTrack, forKey: "track")
+        var mapPoint = MapPoint(entity:entity, insertInto: context)
+        mapPoint = vgMapPoint.setEntity(mapPoint: mapPoint, track: track)
+        
     }
     
-
+    fileprivate func removeAllDataPoints(from track: Track, in context:NSManagedObjectContext) {
+        let dataPoints = getDataPoints(in: context, forTrackWith: track.id!)
+        for dataPoint in dataPoints {
+            context.delete(dataPoint)
+        }
+    }
+    
+    fileprivate func removeAllMapPoints(from track: Track, in context:NSManagedObjectContext) {
+        let mapPoints = getMapPoints(in: context, forTrackWith: track.id!)
+        for mapPoint in mapPoints {
+            context.delete(mapPoint)
+        }
+    }
+    
+    fileprivate func getPredicate(for id:UUID) -> NSPredicate {
+        return NSPredicate(format: "id = %@", argumentArray: [id])
+    }
     
     // MARK: - Public Functions
     // MARK: Database Functions
-    func deleteAllData(entity:String) {
+    func deleteAllData(entity:String, onSuccess: @escaping()->(), onFailure: @escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         
@@ -228,295 +181,288 @@ class VGDataStore {
                 do {
                     try context.save()
                 } catch let error {
-                    print(error)
+                    DispatchQueue.main.async {
+                        onFailure(error)
+                    }
+                    return
                 }
             } catch let error {
-                print("Delete all data in \(entity) error :", error)
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+                return
             }
+            DispatchQueue.main.async {
+                onSuccess()
+            }
+            
         }
     }
     
-    func countAllData(entity:String, callback:(Int)->()) {
-        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+    func countAllData(entity:String, onSuccess:@escaping(Int)->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
-        var result = 0
-        
-        fetchRequest.includesPropertyValues = false
-        fetchRequest.includesSubentities    = false
-        fetchRequest.resultType = NSFetchRequestResultType.countResultType
-        do {
-            result = try context.count(for: fetchRequest)
-        } catch let error {
-            print(error)
+        context.perform {
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
+            var result = 0
+            
+            fetchRequest.includesPropertyValues = false
+            fetchRequest.includesSubentities    = false
+            fetchRequest.resultType = NSFetchRequestResultType.countResultType
+            do {
+                result = try context.count(for: fetchRequest)
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+            
+            DispatchQueue.main.async {
+                onSuccess(result)
+            }
         }
-        
-        callback(result)
     }
     
     // MARK: Track
-    func getAllTracks() -> [VGTrack] {
+    func getAllTracks(onSuccess: @escaping([VGTrack])->(), onFailure:@escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-        
-        var result = [VGTrack]()
-        //2
-        let fetchRequest =
-            NSFetchRequest<NSManagedObject>(entityName: "Track")
-        
-        //3
-        do {
-            let cdTracks = try context.fetch(fetchRequest)
-            for track in cdTracks  {
-                let vgTrack = VGTrack()
-                
-                if let distance = track.value(forKey: "distance") as? Double {
-                    vgTrack.distance = distance
+        context.perform {
+            self.getTracks(in: context, with: nil, onSuccess: { (tracks) in
+                DispatchQueue.main.async {
+                    onSuccess(tracks)
                 }
                 
-                if let duration = track.value(forKey: "duration") as? Double {
-                    vgTrack.duration = duration
+            }) { (error) in
+                DispatchQueue.main.async {
+                    onFailure(error)
                 }
-                
-                if let fileName = track.value(forKey: "fileName") as? String {
-                    vgTrack.fileName = fileName
-                }
-                
-                if let fileSize = track.value(forKey: "fileSize") as? Int {
-                    vgTrack.fileSize = fileSize
-                }
-                
-                if let minLat = track.value(forKey: "minLat") as? Double {
-                    vgTrack.minLat = minLat
-                }
-                
-                if let maxLat = track.value(forKey: "maxLat") as? Double {
-                    vgTrack.maxLat = maxLat
-                }
-                
-                if let minLon = track.value(forKey: "minLon") as? Double {
-                    vgTrack.minLon = minLon
-                }
-                
-                if let maxLon = track.value(forKey: "maxLon") as? Double {
-                    vgTrack.maxLon = maxLon
-                }
-                
-                if let processed = track.value(forKey: "processed") as? Bool {
-                    vgTrack.processed = processed
-                }
-                
-                if let timeStart = track.value(forKey: "timeStart") as? Date {
-                    vgTrack.timeStart = timeStart
-                }
-                
-                if let vehicle = track.value(forKey: "vehicle") as? Vehicle {
-                    vgTrack.vehicle = VGVehicle(vehicle: vehicle)
-                }
-                
-                result.append(vgTrack)
             }
-            
-        } catch {
-            return []
         }
-        return result
+
     }
     
-    func add(vgTrack: VGTrack) {
+    func add(vgTrack: VGTrack, onSuccess: @escaping(UUID)->(), onFailure:@escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-        
         context.perform {
-            // 2
-            let entity =
-                NSEntityDescription.entity(forEntityName: "Track",
-                                           in: context)!
+            let entity = NSEntityDescription.entity(forEntityName: "Track", in: context)!
+            var newTrack = Track(entity: entity, insertInto: context)
             
-            let track = Track.init(entity: entity, insertInto: context)
-            
-            // 3
-            track.setValue(vgTrack.fileName, forKey: "fileName")
-            track.setValue(vgTrack.fileSize, forKey: "fileSize")
-            track.setValue(vgTrack.duration, forKey: "duration")
-            track.setValue(vgTrack.distance, forKey: "distance")
-            track.setValue(vgTrack.minLat, forKey: "minLat")
-            track.setValue(vgTrack.maxLat, forKey: "maxLat")
-            track.setValue(vgTrack.minLon, forKey: "minLon")
-            track.setValue(vgTrack.maxLon, forKey: "maxLon")
-            track.setValue(vgTrack.processed, forKey: "processed")
-            track.setValue(vgTrack.timeStart, forKey: "timeStart")
-            
+            newTrack = vgTrack.setEntity(track:newTrack)
+            newTrack.id = UUID()
+            let newID = newTrack.id!
             for point in vgTrack.trackPoints {
-                                    self.add(vgDataPoint: point, to: track, in: context)
-
+                self.add(vgDataPoint: point, to: newTrack, in: context)
             }
             
             for point in vgTrack.mapPoints {
-                self.add(vgMapPoint: point, to: track, in: context)
+                self.add(vgMapPoint: point, to: newTrack, in: context)
             }
-    
-            // 4
-            do {
-                try context.save()
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-            }
-            
-            
+            self.semaphore.wait()
             if let defaultVehicleID = self.getDefaultVehicleID() {
-                let newVehicle = VGVehicle()
-                newVehicle.id = defaultVehicleID
-                self.add(vgVehicle: newVehicle, to: vgTrack)
+                // Get the vehicle in question
+                guard let vehicle = self.getVehicle(in: context, with: defaultVehicleID) else {
+                    return
+                }
+                newTrack.vehicle = vehicle
+                vgTrack.id = newID
+                vgTrack.vehicle = VGVehicle(vehicle: vehicle)
+            }
+            vgTrack.id = newID
+            do {
+                
+                try context.save()
+                NotificationCenter.default.post(name: .logsAdded, object: [vgTrack])
+                self.semaphore.signal()
+                DispatchQueue.main.async {
+                    vgTrack.id = newID
+                    onSuccess(newID)
+                    return
+                }
+            } catch let error {
+                self.semaphore.signal()
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+                return
             }
         }
     }
     
-    func update(vgTrack: VGTrack) {
+    func update(vgTrack: VGTrack, onSuccess: @escaping(UUID)->(), onFailure:@escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Track")
-        fetchRequest.predicate = NSPredicate(format: "fileName = %@", vgTrack.fileName)
         context.perform {
-            do {
-                let test = try context.fetch(fetchRequest)
-                if test.count > 0 {
-                    if let trackUpdate = test[0] as? Track {
-                        trackUpdate.setValue(vgTrack.fileName, forKey: "fileName")
-                        trackUpdate.setValue(vgTrack.fileSize, forKey: "fileSize")
-                        trackUpdate.setValue(vgTrack.duration, forKey: "duration")
-                        trackUpdate.setValue(vgTrack.distance, forKey: "distance")
-                        trackUpdate.setValue(vgTrack.minLat, forKey: "minLat")
-                        trackUpdate.setValue(vgTrack.maxLat, forKey: "maxLat")
-                        trackUpdate.setValue(vgTrack.minLon, forKey: "minLon")
-                        trackUpdate.setValue(vgTrack.maxLon, forKey: "maxLon")
-                        trackUpdate.setValue(vgTrack.processed, forKey: "processed")
-                        trackUpdate.setValue(vgTrack.timeStart, forKey: "timeStart")
-                        
-                        for point in vgTrack.trackPoints {
-                            self.add(vgDataPoint: point, to: trackUpdate, in: context)
-                        }
-                        
-                        for point in vgTrack.mapPoints {
-                            self.add(vgMapPoint: point, to: trackUpdate, in: context)
-                        }
-                        
-                        try context.save()
-                    }
-                } else {
-                    self.add(vgTrack: vgTrack)
-                }
-                
-                
-            } catch let error {
-                print(error)
+            guard var oldTrack = self.getTrack(in: context, with: vgTrack.id!) else {
+                var error = NSError(domain: "", code: 123, userInfo: ["NSLocalizedDescriptionKey":"Can't find old track"])
+                onFailure(error)
+                return
+            }
+            // Update the track with new information.
+            oldTrack = vgTrack.setEntity(track:oldTrack)
+            
+            // Remove all map and data points from the track.
+            self.removeAllDataPoints(from: oldTrack, in: context)
+            self.removeAllMapPoints(from: oldTrack, in: context)
+            
+            // And then add the new ones.
+            for point in vgTrack.trackPoints {
+                self.add(vgDataPoint: point, to: oldTrack, in: context)
             }
             
+            for point in vgTrack.mapPoints {
+                self.add(vgMapPoint: point, to: oldTrack, in: context)
+            }
+
+            // Then try to save.
+            do {
+                try context.save()
+                NotificationCenter.default.post(name: .logUpdated, object: vgTrack)
+                DispatchQueue.main.async {
+                    onSuccess(vgTrack.id!)
+                    return
+                }
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+                return
+            }
         }
-        
     }
     
-    func delete(vgTrack: VGTrack) {
+    func delete(trackWith id: UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Track")
-            fetchRequest.predicate = NSPredicate(format: "fileName = %@", vgTrack.fileName)
+            fetchRequest.predicate = self.getPredicate(for: id)
             do {
                 let test = try context.fetch(fetchRequest)
                 if test.count > 0 {
                     if let trackUpdate = test[0] as? NSManagedObject {
                         context.delete(trackUpdate)
                         try context.save()
+                        DispatchQueue.main.async {
+                            onSuccess()
+                        }
                     }
                 }
             } catch let error {
-                print(error)
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
             }
         }
         
     }
     
     
-    func getPointsForTrack(vgTrack:VGTrack) -> [VGDataPoint] {
-        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        context.persistentStoreCoordinator = self.storeCoordinator
-        
-        var result = [VGDataPoint]()
-        
-        var fetchedDataPoints = getPoints(for: vgTrack, in: context)
-        
-        for point in fetchedDataPoints {
-            let vgPoint = VGDataPoint(managedPoint: point)
-            result.append(vgPoint)
-        }
-        fetchedDataPoints = []
-        return result.sorted()
-    }
-    
-    func getMapPointsForTrack(vgTrack:VGTrack) -> [VGMapPoint] {
+    func getDataPointsForTrack(with id:UUID, onSuccess: @escaping([VGDataPoint])->(), onFailure:@escaping(Error)->())  {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-        
-        var result = [VGMapPoint]()
-        
-        var fetchedDataPoints = getMapPoints(for: vgTrack, in: context)
-        
-        for point in fetchedDataPoints {
-            let vgPoint = VGMapPoint(point: point)
-            result.append(vgPoint)
+        context.perform {
+            var fetchedDataPoints = self.getDataPoints(in: context, forTrackWith: id)
+            var result = [VGDataPoint]()
+            for point in fetchedDataPoints {
+                let vgPoint = VGDataPoint(dataPoint: point)
+                result.append(vgPoint)
+            }
+            fetchedDataPoints = []
+            DispatchQueue.main.async {
+                onSuccess(result.sorted())
+            }
         }
-        fetchedDataPoints = []
-        return result.sorted()
     }
-
+    
+    func getMapPointsForTrack(with id:UUID, onSuccess: @escaping([VGMapPoint])->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            var fetchedMapPoints = self.getMapPoints(in: context, forTrackWith: id)
+            var result = [VGMapPoint]()
+            for point in fetchedMapPoints {
+                let vgPoint = VGMapPoint(point: point)
+                result.append(vgPoint)
+            }
+            fetchedMapPoints = []
+            DispatchQueue.main.async {
+                onSuccess(result.sorted())
+            }
+        }
+    }
+    
     // MARK: Vehicle
-    func getAllVehicles() -> [VGVehicle] {
-        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        context.persistentStoreCoordinator = self.storeCoordinator
-
-        let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
-        do {
-            var returnList = [VGVehicle]()
-            let result =  try context.fetch(fetchRequest)
-            for item in result {
-                let newVehicle = VGVehicle(vehicle: item)
-                newVehicle.tracks = getAllTracks(for: newVehicle, in: context)
-                returnList.append(newVehicle)
-            }
-            return returnList
-        } catch let error {
-            print(error)
-        }
-        return []
-    }
-    func add(vgVehicle:VGVehicle) {
+    func getAllVehicles(onSuccess: @escaping([VGVehicle])->(), onFailure: @escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-        let entityDescription = NSEntityDescription.entity(forEntityName: "Vehicle", in: context)!
-        let newVehicle = Vehicle.init(entity: entityDescription, insertInto: context)
-        newVehicle.name = vgVehicle.name
-        newVehicle.id = UUID()
-        newVehicle.mapColor = vgVehicle.mapColor
-        vgVehicle.id = newVehicle.id
-        if let image = vgVehicle.image {
-            newVehicle.image = vgFileManager.imageToFile(image: image, for: vgVehicle)
-        }
-        
+        context.perform {
+            let tracksForVehicleRequests = DispatchGroup()
+            let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
+            do {
+                var returnList = [VGVehicle]()
+                let result =  try context.fetch(fetchRequest)
+                for item in result {
+                    let newVehicle = VGVehicle(vehicle: item)
+                    tracksForVehicleRequests.enter()
+                    self.getAllTracks(in: context, forVehicleWith: newVehicle.id!, onSuccess: { (tracks) in
+                        newVehicle.tracks = tracks
+                        returnList.append(newVehicle)
+                        tracksForVehicleRequests.leave()
 
-        context.insert(newVehicle)
-        do {
-            try context.save()
-        } catch let error {
-            print(error)
+                    }) { (error) in
+                        print(error)
+                        tracksForVehicleRequests.leave()
+                    }
+                }
+                tracksForVehicleRequests.notify(queue: .main) {
+                    onSuccess(returnList)
+                }
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+
         }
     }
     
-    func update(vgVehicle:VGVehicle) {
+    func add(vgVehicle:VGVehicle, onSuccess: @escaping(UUID)->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let newID = UUID()
+            let entityDescription = NSEntityDescription.entity(forEntityName: "Vehicle", in: context)!
+            let newVehicle = Vehicle.init(entity: entityDescription, insertInto: context)
+            newVehicle.name = vgVehicle.name
+            newVehicle.id = newID
+            newVehicle.mapColor = vgVehicle.mapColor
+            vgVehicle.id = newVehicle.id
+            if let image = vgVehicle.image {
+                newVehicle.image = self.vgFileManager.imageToFile(image: image, for: vgVehicle)
+            }
+            
+            
+            context.insert(newVehicle)
+            do {
+                try context.save()
+                DispatchQueue.main.async {
+                    onSuccess(newID)
+                }
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+    
+    func update(vgVehicle:VGVehicle, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         
-        guard let newVehicle = getVehicle(for: vgVehicle, in: context) else {
+        guard let newVehicle = getVehicle(in: context, with: vgVehicle.id!) else {
             return
         }
         
@@ -527,50 +473,112 @@ class VGDataStore {
         if let image = vgVehicle.image {
             newVehicle.image = vgFileManager.imageToFile(image: image, for: vgVehicle)
         }
-
+        
         do {
             try context.save()
+            DispatchQueue.main.async {
+                onSuccess()
+            }
         } catch let error {
-            print(error)
+            DispatchQueue.main.async {
+                onFailure(error)
+            }
         }
     }
-
-    func delete(vgVehicle: VGVehicle, callback:@escaping()->()) {
+    
+    func delete(vehicleWith id:UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
             let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
-            fetchRequest.predicate = NSPredicate(format: "id = %@", argumentArray: [vgVehicle.id!])
+            fetchRequest.predicate = self.getPredicate(for: id)
             do {
                 let test = try context.fetch(fetchRequest)
                 if test.count > 0 {
                     context.delete(test[0])
                     try context.save()
-                    callback()
+                    DispatchQueue.main.async {
+                        onSuccess()
+                    }
                 }
             } catch let error {
-                print(error)
-                callback()
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
             }
         }
     }
     
-
-    
-    func add(vgVehicle:VGVehicle, to vgTrack:VGTrack) {
+    func add(vehicleWith vehicleId:UUID, toTrackWith trackId:UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-        
-        // Get the track in question
-        let fetchedTrack = getTrack(for: vgTrack, in: context)
-        
-        let fetchedVehicle = getVehicle(for: vgVehicle, in: context)
-        
-        fetchedTrack?.setValue(fetchedVehicle, forKey: "vehicle")
-        do {
-            try context.save()
-        } catch let error {
-            print(error)
+        context.perform {
+            // Get the track in question
+            guard let vehicle = self.getVehicle(in: context, with: vehicleId) else {
+                return
+            }
+            
+            guard let track = self.getTrack(in: context, with: trackId) else {
+                return
+            }
+            
+            track.setValue(vehicle, forKey: "vehicle")
+            do {
+                try context.save()
+                let vgVehicle = VGVehicle(vehicle:vehicle)
+                let vgTrack = VGTrack(track: track)
+                vgTrack.vehicle = vgVehicle
+
+                DispatchQueue.main.async {
+                    onSuccess()
+                    NotificationCenter.default.post(name: .vehicleAddedToTrack, object: vgTrack)
+                }
+                
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+    
+    func getDownloadedFiles(onSuccess:@escaping([DownloadedFile])->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let fetchRequest = DownloadedFile.fetchRequest() as NSFetchRequest<DownloadedFile>
+            do {
+                let result = try context.fetch(fetchRequest) as [DownloadedFile]
+                onSuccess(result)
+                
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+    
+    func add(file:VGDownloadedFile, onSuccess:@escaping()->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let entityDescription = NSEntityDescription.entity(forEntityName: "DownloadedFile", in: context)!
+            let downloadedFile = DownloadedFile.init(entity: entityDescription, insertInto: context)
+            downloadedFile.name = file.name
+            downloadedFile.size = Int64(file.size!)
+            context.insert(downloadedFile)
+            do {
+                try context.save()
+                DispatchQueue.main.async {
+                    onSuccess()
+                }
+                
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
         }
     }
     
@@ -579,16 +587,18 @@ class VGDataStore {
             let decoder = JSONDecoder()
             if let defaultVehicleID = try? decoder.decode(UUID.self, from: items) {
                 return defaultVehicleID
+            } else {
+                return nil
             }
         }
         return nil
     }
     
     func setDefaultVehicleID(id:UUID) {
-         let encoder = JSONEncoder()
-         if let encoded = try? encoder.encode(id) {
-             UserDefaults.standard.set(encoded, forKey: "DefaultVehicle")
-         }
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(id) {
+            UserDefaults.standard.set(encoded, forKey: "DefaultVehicle")
+        }
     }
     
     // MARK: Other
@@ -603,50 +613,50 @@ class VGDataStore {
         
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-            let fetchedDataPoints = self.getPoints(for: track, in: context)
+        let fetchedDataPoints = self.getDataPoints(in: context, forTrackWith: track.id!)
+        
+        let lines = fetchedDataPoints.sorted(by: { (first, second) -> Bool in
             
-            let lines = fetchedDataPoints.sorted(by: { (first, second) -> Bool in
-                
-                guard let firstDate = first.value(forKey: "timeStamp") as?  Date else {
-                    return false
-                }
-                guard let secondDate = second.value(forKey: "timeStamp") as? Date else {
-                    return false
-                }
-                
-                return  firstDate < secondDate
-            })
-            
-            let leftSplit = lines[0 ... pointIndex]
-            let rightSplit = lines[pointIndex ..< lines.count]
-            
-            if rightSplit.count != 0 {
-                let entity = NSEntityDescription.entity(forEntityName: "Track",
-                                       
-                                                        in: context)!
-                
-                let trackMo = NSManagedObject(entity: entity,
-                                              insertInto: context)
-                let fileName = String(describing: time).prefix(19).replacingOccurrences(of: ":", with: "") + ".csv"
-                trackMo.setValue(fileName, forKey: "fileName")
-                
-                track.trackPoints = []
-                for item in leftSplit {
-                    let dp = VGDataPoint(managedPoint: item)
-                    track.trackPoints.append(dp)
-                }
-                newTrack = VGTrack(track: trackMo as! Track)
-                for item in rightSplit {
-                    let dp = VGDataPoint(managedPoint: item)
-                    newTrack.trackPoints.append(dp)
-                    item.setValue(trackMo, forKey: "track")
-                }
+            guard let firstDate = first.value(forKey: "timeStamp") as?  Date else {
+                return false
             }
-            do {
-                try context.save()
-            } catch let error {
-                print(error)
+            guard let secondDate = second.value(forKey: "timeStamp") as? Date else {
+                return false
             }
+            
+            return  firstDate < secondDate
+        })
+        
+        let leftSplit = lines[0 ... pointIndex]
+        let rightSplit = lines[pointIndex ..< lines.count]
+        
+        if rightSplit.count != 0 {
+            let entity = NSEntityDescription.entity(forEntityName: "Track",
+                                                    
+                                                    in: context)!
+            
+            let trackMo = NSManagedObject(entity: entity,
+                                          insertInto: context)
+            let fileName = String(describing: time).prefix(19).replacingOccurrences(of: ":", with: "") + ".csv"
+            trackMo.setValue(fileName, forKey: "fileName")
+            
+            track.trackPoints = []
+            for item in leftSplit {
+                let dp = VGDataPoint(dataPoint: item)
+                track.trackPoints.append(dp)
+            }
+            newTrack = VGTrack(track: trackMo as! Track)
+            for item in rightSplit {
+                let dp = VGDataPoint(dataPoint: item)
+                newTrack.trackPoints.append(dp)
+                item.setValue(trackMo, forKey: "track")
+            }
+        }
+        do {
+            try context.save()
+        } catch let error {
+            print(error)
+        }
         
         return (track, newTrack)
     }

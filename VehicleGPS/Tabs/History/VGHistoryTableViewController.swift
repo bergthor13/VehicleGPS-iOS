@@ -95,23 +95,22 @@ class VGHistoryTableViewController: UITableViewController {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
         }
-        
-        tracks = dataStore.getAllTracks()
-        historySections = getMonthDictionary(tracks: tracks)
-        if historySections.count > 0 {
-            emptyLabel.isHidden = true
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        dataStore.getAllTracks(
+            onSuccess: { (tracks) in
+                self.tracks = tracks
+                self.segmentChanged(id: self.historyHeader.sortingSegment.selectedSegmentIndex)
+                if self.historySections.count > 0 {
+                    self.emptyLabel.isHidden = true
+                }
+            },
+            onFailure: { (error) in
+                print(error)
+            }
+        )
         super.viewWillAppear(animated)
-        tracks = dataStore.getAllTracks()
-        historySections = getMonthDictionary(tracks: tracks)
-        segmentChanged(id: historyHeader.sortingSegment.selectedSegmentIndex)
-        if historySections.count > 0 {
-            emptyLabel.isHidden = true
-        }
-
     }
     
     override func viewDidLayoutSubviews() {

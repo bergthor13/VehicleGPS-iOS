@@ -10,6 +10,11 @@ import UIKit
 
 class VGDeviceConnectedHeaderView: UIView {
 
+    @IBOutlet weak var downloadProgress: UIView!
+    @IBOutlet weak var parseProgress: UIView!
+    @IBOutlet weak var progressBar: UIView!
+    @IBOutlet weak var downloadWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var parseWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var greenBackground: UIView!
     @IBOutlet weak var greenButton: UIView!
     @IBOutlet weak var lblConnectedToGPS: UILabel!
@@ -38,5 +43,58 @@ class VGDeviceConnectedHeaderView: UIView {
         self.greenButton.layer.borderColor = UIColor.init(named: "appColor")?.cgColor
         self.greenBackground.layer.borderWidth = 0.5
         self.greenButton.layer.borderWidth = 0.5
+        
+        self.progressBar.layer.cornerRadius = self.progressBar.frame.height/2
+        self.downloadProgress.layer.cornerRadius = self.progressBar.frame.height/2
+        self.parseProgress.layer.cornerRadius = self.progressBar.frame.height/2
+        
+        self.progressBar.backgroundColor = UIColor.label.withAlphaComponent(0.25)
+        self.downloadProgress.backgroundColor = UIColor.label.withAlphaComponent(0.35)
+        self.parseProgress.backgroundColor = UIColor.label
+        
     }
+    
+    func deviceConnected(hostname:String) {
+        self.lblLogsAvailable.isHidden = false
+        self.lblConnectedToGPS.isHidden = false
+        self.imgIcon.isHidden = false
+        self.lblConnectedToGPS.text = String(format: Strings.connectedTo, hostname)
+
+    }
+    
+    func newLogsAvailable(count:Int) {
+        if count == 0 {
+            self.lblLogsAvailable.text = Strings.noNewLogs
+        } else if count == 1 {
+
+            self.lblLogsAvailable.text = String(format: Strings.newLogSingular, count)
+        } else if (count-1)%10 == 0 && count != 11 {
+            self.lblLogsAvailable.text = String(format: Strings.newLogSingular, count)
+        } else {
+            self.lblLogsAvailable.text = String(format: Strings.newLogPlural, count)
+        }
+        if count == 0 {
+            self.greenButton.isHidden = true
+        } else {
+            self.greenButton.isHidden = false
+        }
+    }
+    
+    func searchingForLogs() {
+        self.lblLogsAvailable.text = Strings.searchForLogs
+    }
+    
+    func downloadingLogs(download:Double, parse:Double, total:Double) {
+        if download == total && parse == total {
+            self.lblLogsAvailable.text = Strings.downloadComplete
+            self.progressBar.isHidden = true
+            return
+        }
+        self.progressBar.isHidden = false
+        self.lblLogsAvailable.text = " "
+    
+        self.parseWidthConstraint.constant = progressBar.frame.width*(CGFloat(parse)/CGFloat(total))
+        self.downloadWidthConstraint.constant = progressBar.frame.width*(CGFloat(download)/CGFloat(total))
+    }
+    
 }

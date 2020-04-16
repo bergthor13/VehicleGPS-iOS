@@ -2,37 +2,33 @@ import UIKit
 import NMSSH
 import CoreData
 
-class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProtocol {
-    func didTapVehicle(track: VGTrack) {
-        let selectionVC = VGVehiclesSelectionTableViewController(style: .insetGrouped)
-        selectionVC.track = track
-        present(UINavigationController(rootViewController: selectionVC), animated: true, completion: nil)
-    }
+class VGLogsTableViewController: UITableViewController {
     
-    
-    // MARK: - Class Variables
-    var tracksDict = [String: [VGTrack]]()
-    var remoteList = [VGTrack]()
-    var sectionKeys = [String]()
-    var cdTracks: [NSManagedObject] = []
-    var session: NMSSHSession?
-    var sftpSession: NMSFTP?
-    var downloadManager: VGSFTPManager?
+    // MARK: Variables
+    var tracksDictionary = [String: [VGTrack]]()
+    var sections = [String]()
+
+    // MARK: Classes
     var vgFileManager: VGFileManager?
     var vgLogParser: IVGLogParser?
     var dataStore:VGDataStore!
-    var isDownloadingFile = false
-    var isInDownloadingState = false
-    var shouldStopDownloading = false
-    var downloadCount = 0
-    var parseCount = 0
-    let headerDateFormatter = VGHeaderDateFormatter()
-    var headerView: VGDeviceConnectedHeaderView!
-    let distanceFormatter = VGDistanceFormatter()
-    let durationFormatter = VGDurationFormatter()
     let vgGPXGenerator = VGGPXGenerator()
+    
+    // MARK: Views
+    var headerView: VGDeviceConnectedHeaderView!
     var emptyLabel: UILabel!
     
+    // MARK: Formatters
+    let distanceFormatter = VGDistanceFormatter()
+    let durationFormatter = VGDurationFormatter()
+    let headerDateFormatter = VGHeaderDateFormatter()
+    let dateParsingFormatter = VGDateParsingFormatter()
+    
+    var filesOnDevice = [NMSFTPFile]()
+    var downloadedFiles = [DownloadedFile]()
+    var undownloadedFiles = [NMSFTPFile]()
+    
+    // MARK: - Initializers
     override init(style: UITableView.Style) {
         super.init(style: style)
         initializeTableViewController()
@@ -43,6 +39,11 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         initializeTableViewController()
 
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+    }
 
     func initializeTableViewController() {
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -50,19 +51,6 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         tabBarItem = UITabBarItem(title: Strings.titles.logs,
                                   image: Icons.log,
                                   tag: 0)
-    }
-    
-    // MARK: - View Did Load Functions
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        initializeClasses()
-        configureEmptyListLabel()
-        configureNavigationBar()
-        configureRefreshControl()
-        setUpDeviceConnectedBanner()
-        registerCells()
-        startConnectionToVGPS()
-        updateData()
     }
     
     fileprivate func initializeClasses() {
@@ -84,24 +72,24 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
     
     fileprivate func configureNavigationBar() {
-        let button1 = UIBarButtonItem(title: Strings.parse, style: .plain, target: self, action: #selector(self.processFiles))
-        self.navigationItem.leftBarButtonItem = button1
-        self.navigationItem.rightBarButtonItem = editButtonItem
+        //let button1 = UIBarButtonItem(title: Strings.parse, style: .plain, target: self, action: #selector(self.processFiles))
+        //self.navigationItem.leftBarButtonItem = button1
+        self.navigationItem.leftBarButtonItem = editButtonItem
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic
     }
     
     fileprivate func configureRefreshControl() {
+        // TODO: Reconnect RefreshControl
         // Add Refresh Control to Table View
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(fetchLogList), for: UIControl.Event.valueChanged)
-        tableView.refreshControl = refreshControl
+        //let refreshControl = UIRefreshControl()
+        //refreshControl.addTarget(self, action: #selector(fetchLogList), for: UIControl.Event.valueChanged)
+        //tableView.refreshControl = refreshControl
     }
     
     fileprivate func setUpDeviceConnectedBanner() {
         self.headerView = VGDeviceConnectedHeaderView.loadFromNibNamed(nibNamed: VGDeviceConnectedHeaderView.nibName)
-        self.headerView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 0)
-        self.tableView.tableHeaderView = self.headerView
+        self.headerView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 51)
         self.headerView.lblLogsAvailable.isHidden = true
         self.headerView.lblConnectedToGPS.isHidden = true
         self.headerView.imgIcon.isHidden = true
@@ -109,7 +97,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         
         // Add tap gesture recognizers to the views
         let headerTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.headerViewTapped(_:)))
-        let downloadTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.downloadFiles))
+        let downloadTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.searchForNewLogsAndDownload))
 
         self.headerView.greenBackground.addGestureRecognizer(headerTapRecognizer)
         self.headerView.greenButton.addGestureRecognizer(downloadTapRecognizer)
@@ -119,378 +107,414 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
         self.tableView.register(VGLogHeaderView.nib, forHeaderFooterViewReuseIdentifier: VGLogHeaderView.identifier)
     }
+        
+    // MARK: - View Did Load Functions
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        initializeClasses()
+        configureEmptyListLabel()
+        configureNavigationBar()
+        configureRefreshControl()
+        setUpDeviceConnectedBanner()
+        registerCells()
+        updateData()
+        addObservers()
+        tableView.allowsMultipleSelection = true
+        tableView.allowsMultipleSelectionDuringEditing = true
+    }
+    
+    func addObservers() {
+        addObserver(selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack)
+        addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
+        addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
+        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
+        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
+        addObserver(selector: #selector(deviceConnected(_:)), name: .deviceConnected)
+        addObserver(selector: #selector(deviceDisconnected(_:)), name: .deviceDisconnected)
+    }
+    
+    func addObserver(selector:Selector, name:Notification.Name) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
+    }
+    
+    @objc func deviceConnected(_ notification:Notification) {
+        guard let session = notification.object as? NMSSHSession else {
+            return
+        }
+        DispatchQueue.main.async {
+            self.headerView.deviceConnected(hostname: session.host)
+            self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
+            self.tableView.tableHeaderView = self.headerView
 
-    fileprivate func startConnectionToVGPS() {
-        DispatchQueue.global(qos: .background).async {
-            self.session = NMSSHSession.init(host: Constants.sftp.host, andUsername: Constants.sftp.username)
-            if self.session != nil {
-                self.fetchLogList()
-            }
+            self.searchForNewLogs(shouldDownloadFiles: false)
+        }
+
+    }
+    
+    @objc func deviceDisconnected(_ notification:Notification) {
+        DispatchQueue.main.async {
+            self.tableView.tableHeaderView = nil
         }
     }
     
-
-    // MARK: - Interface Action Functions
-    @objc func headerViewTapped(_:Any?) {
-        let dlViewController = VGDownloadLogsViewController(downloadManager: self.downloadManager)
-        dlViewController.tracks = self.combineLists(localList: self.dataStore.getAllTracks(), remoteList: remoteList)
-        navigationController?.pushViewController(dlViewController, animated: true)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        for cell in tableView!.visibleCells as! [VGLogsTableViewCell] {
+            if cell.currentTrack!.isRecording {
+                cell.animateRecording()
+            }
+            
+        }
     }
     
     @objc func downloadFiles() {
-        if self.isInDownloadingState {
-            shouldStopDownloading = true
-            self.isInDownloadingState = false
-            UIApplication.shared.isIdleTimerDisabled = true
-
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
             return
         }
-        self.isInDownloadingState = true
-        UIApplication.shared.isIdleTimerDisabled = false
-        
-        for key in self.sectionKeys {
-            guard let trackList = self.tracksDict[key] else {
-                continue
-            }
-            for track in trackList {
-                if self.vgFileManager?.getAbsoluteFilePathFor(track: track) == nil {
-                    self.downloadCount += 1
-                }
-            }
-        }
-        self.headerView.lblLogsAvailable.text = String(format: Strings.downloadingLeft, self.downloadCount)
-        DispatchQueue.global(qos: .background).async {
-            for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
-                guard let trackList = self.tracksDict[sectionKey] else {
-                    continue
-                }
-                for (rowIndex, track) in trackList.enumerated() {
-                    if self.vgFileManager?.getAbsoluteFilePathFor(track: track) == nil {
-                    while self.isDownloadingFile {}
-                    self.isDownloadingFile = true
-
-                        self.downloadFileFor(track: track, progress: { (received, total) in
-                            DispatchQueue.main.async {
-                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
-                                    return
-                                }
-                                cell.progressView.backgroundColor = UIColor(rgb: 0x007F00).withAlphaComponent(0.2)
-                                cell.update(progress: Double(received)/(Double(total)))
-                                if self.shouldStopDownloading {
-                                    cell.update(progress: 0.0)
-                                }
-                            }
-                            return !self.shouldStopDownloading
-                        }) { (data) in
-                            self.isDownloadingFile = false
-                            self.downloadCount -= 1
-                            guard let data = data else {
-                                return
-                            }
-                            _ = self.vgFileManager!.dataToFile(data: data, filename: track.fileName)
-                            self.dataStore.update(vgTrack: track)
-                            DispatchQueue.main.async {
-                                if self.downloadCount == 0 {
-                                    UIApplication.shared.isIdleTimerDisabled = false
-                                    self.headerView.lblLogsAvailable.text = Strings.downloadComplete
-
-                                } else {
-                                    self.headerView.lblLogsAvailable.text = String(format: Strings.downloadingLeft, self.downloadCount)
-                                }
-                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
-                                    return
-                                }
-                                cell.update(progress: 0)
-                            }
-                            
-                        }
-                    }
-                }
-            }
-            DispatchQueue.main.async {
-                if self.downloadCount == 0 {
-                    self.headerView.lblLogsAvailable.text = Strings.noNewLogs
-                }
-                self.isInDownloadingState = false
-                UIApplication.shared.isIdleTimerDisabled = true
-            }
-        }
-    }
-    
-    @objc func processFiles() {
-        UIApplication.shared.isIdleTimerDisabled = true
-        for key in self.sectionKeys {
-            guard let trackList = self.tracksDict[key] else {
-                continue
-            }
-            for track in trackList {
-                if !track.processed && self.vgFileManager?.getAbsoluteFilePathFor(track: track) != nil {
-                    self.parseCount += 1
-                }
-            }
-        }
-        
-        self.navigationItem.prompt = String(format: Strings.parsingLeftPlural, self.parseCount)
-        for (sectionIndex, sectionKey) in self.sectionKeys.enumerated() {
-            guard let trackList = self.tracksDict[sectionKey] else {
-                continue
-            }
-            for (rowIndex, track) in trackList.enumerated() {
-                DispatchQueue.global(qos: .background).async {
-                    if !track.processed && self.vgFileManager?.getAbsoluteFilePathFor(track: track) != nil {
-                        track.beingProcessed = true
-                        DispatchQueue.main.async {
-                            guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
-                                return
-                            }
-                            cell.activityView.startAnimating()
-                        }
-                        self.vgLogParser = self.vgFileManager?.getParser(for: track)
-                        self.vgLogParser?.fileToTrack(fileUrl: (self.vgFileManager?.getAbsoluteFilePathFor(track: track))!, progress: { (current, total) in
-                            DispatchQueue.main.async {
-                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
-                                    return
-                                }
-                                cell.update(progress: Double(current)/Double(total))
-                            }
-                        }, callback: { (track) in
-                            self.dataStore.update(vgTrack: track)
-                            self.tracksDict[sectionKey]![rowIndex] = track
-                            DispatchQueue.main.async {
-                                self.parseCount -= 1
-                                if self.parseCount == 0 {
-                                    UIApplication.shared.isIdleTimerDisabled = false
-                                    self.navigationItem.prompt = nil
-                                }
-                                
-                                self.navigationItem.prompt = String(format: Strings.parsingLeftPlural, self.parseCount)
-                                track.beingProcessed = true
-                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
-                                    return
-                                }
-                                cell.show(track: track)
-                                cell.update(progress: 0)
-                                if let header = self.tableView.headerView(forSection: sectionIndex) as? VGLogHeaderView {
-                                    _ = self.getViewForHeader(section: sectionIndex, view: header)
-                                }
-                            }
-                            
-                        }, imageCallback: { (track, style) in
-                            track.beingProcessed = false
-                            DispatchQueue.main.async {
-                                guard let cell = self.tableView.cellForRow(at: IndexPath(row: rowIndex, section: sectionIndex)) as? VGLogsTableViewCell else {
-                                    return
-                                }
-                                cell.show(track: track)
-                                if style == self.traitCollection.userInterfaceStyle {
-                                    cell.activityView.stopAnimating()
-                                }
-                            }
-                        })
-                    }
-                }
-            }
-        }
-        UIApplication.shared.isIdleTimerDisabled = false
-        self.navigationItem.prompt = nil
-        
-    }
-    
-    @objc func fetchLogList() {
-        var trackList = [VGTrack]()
-        
-        DispatchQueue.global(qos: .background).async {
-            if self.downloadManager == nil {
-                self.reconnectToVehicleGPS(session: self.session!)
-                if self.downloadManager == nil {
-                    DispatchQueue.main.async {
-                        self.tableView.refreshControl?.endRefreshing()
-                    }
-                    return
-                }
-            }
-            DispatchQueue.main.async {
-                self.tableView.refreshControl?.beginRefreshing()
-            }
-            guard let fileList = self.downloadManager!.getRemoteFiles() else {
-                // TODO: Show Error Message
+        let totalCount = self.undownloadedFiles.count
+        var downloadProgress = [Double]() {
+            didSet {
+                
                 DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    if self.tracksDict.count > 0 {
-                        self.emptyLabel.isHidden = true
-                        self.tableView.separatorStyle = .singleLine
-                    } else {
-                        self.emptyLabel.isHidden = false
-                        self.tableView.separatorStyle = .none
-                    }
-                    self.tableView.refreshControl?.endRefreshing()
+                    self.headerView.downloadingLogs(download: downloadProgress.reduce(0, +), parse: parseProgress.reduce(0, +), total: Double(totalCount))
+
                 }
+            }
+        }
+        var parseProgress = [Double]() {
+            didSet {
+                DispatchQueue.main.async {
+                    self.headerView.downloadingLogs(download: downloadProgress.reduce(0, +), parse: parseProgress.reduce(0, +), total: Double(totalCount))
+
+                }
+            }
+        }
+        for _ in 0 ..< totalCount {
+            downloadProgress.append(0)
+            parseProgress.append(0)
+        }
+        
+        self.headerView.downloadingLogs(download: 0, parse: 0, total: Double(totalCount))
+        let group1 = DispatchGroup()
+        let group2 = DispatchGroup()
+        group1.enter()
+        DispatchQueue.global(qos: .utility).async {
+            for (index, file) in self.undownloadedFiles.enumerated() {
+                group2.enter()
+                delegate.deviceCommunicator.downloadTrackFile(file: file, progress: { (current, total) in
+                    downloadProgress[index] = Double(current)/Double(total)
+                }, onSuccess: { (fileUrl) in
+                    downloadProgress[index] = 1
+                    DispatchQueue.global(qos: .utility).async {
+                        guard let fileManager = self.vgFileManager else {
+                            parseProgress[index] = 1
+                            group2.leave()
+                            return
+                        }
+                        guard let fileUrl = fileUrl else {
+                            parseProgress[index] = 1
+                            group2.leave()
+                            return
+                        }
+                        guard let parser = fileManager.getParser(for: fileUrl) else {
+                            parseProgress[index] = 1
+                            group2.leave()
+                            return
+                        }
+                        parser.fileToTrack(fileUrl: fileUrl, progress: { (current, total) in
+                            parseProgress[index] = Double(current)/Double(total)
+                        }, onSuccess: { (track) in
+                            let existingIndexPath = self.getIndexPath(for: file.filename)
+                            if existingIndexPath != nil {
+                                let existingTrack = self.getTrackAt(indexPath: existingIndexPath!)!
+                                track.id = existingTrack.id
+                                self.dataStore.update(vgTrack: track, onSuccess: { (id) in
+                                    let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
+                                    self.dataStore.add(file: downlFile, onSuccess: {
+                                        parseProgress[index] = 1
+                                        group2.leave()
+                                    }) { (error) in
+                                        parseProgress[index] = 1
+                                        group2.leave()
+                                    }
+                                    parseProgress[index] = 1
+                                    group2.leave()
+                                }) { (error) in
+                                    parseProgress[index] = 1
+                                    self.display(error: error)
+                                    group2.leave()
+                                }
+                            } else {
+                                self.dataStore.add(vgTrack: track, onSuccess: { (id) in
+                                    let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
+                                    self.dataStore.add(file: downlFile, onSuccess: {
+                                        parseProgress[index] = 1
+                                        group2.leave()
+                                    }) { (error) in
+                                        parseProgress[index] = 1
+                                        group2.leave()
+                                    }
+                                    
+                                }) { (error) in
+                                    parseProgress[index] = 1
+                                    self.display(error: error)
+                                    group2.leave()
+                                }
+
+                            }
+                            
+                            
+                        }, onFailure: {error in
+                            parseProgress[index] = 1
+                            self.display(error: error)
+                            group2.leave()
+                            
+                        })
+                        
+                    }
+                }, onFailure: { error in
+                    downloadProgress[index] = 1
+                    self.display(error: error)
+                    group2.leave()
+                })
+            }
+            group2.wait()
+            group1.leave()
+        }
+        
+        group1.notify(queue: .global()) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+               self.searchForNewLogs(shouldDownloadFiles: false)
+            }
+        }
+        
+    }
+    
+    func display(error:Error) {
+        display(error: error.localizedDescription)
+    }
+    
+    func display(error:String) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: Strings.ok, style: .default))
+            self.present(alert, animated: true)
+        }
+        
+    }
+    
+    @objc func searchForNewLogsAndDownload() {
+        searchForNewLogs(shouldDownloadFiles: true)
+    }
+    func searchForNewLogs(shouldDownloadFiles:Bool) {
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+             return
+        }
+        
+        self.headerView.searchingForLogs()
+        DispatchQueue.global(qos: .utility).async {
+            delegate.deviceCommunicator.getAvailableFiles(onSuccess: { (filesOnDevice) in
+                self.undownloadedFiles.removeAll()
+                self.filesOnDevice = filesOnDevice
+                self.dataStore.getDownloadedFiles(onSuccess: { (downloadedFiles) in
+                    self.downloadedFiles = downloadedFiles
+                    for deviceFile in filesOnDevice {
+                        if !downloadedFiles.contains(where: { (downfile) -> Bool in return downfile.name == deviceFile.filename && Int(downfile.size) == Int(truncating: deviceFile.fileSize!)}) {
+                            self.undownloadedFiles.append(deviceFile)
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        self.headerView.newLogsAvailable(count: self.undownloadedFiles.count)
+                        if shouldDownloadFiles {
+                            self.downloadFiles()
+                        }
+                    }
+                    
+                                        
+                    let recordingFileNames = self.getRecordingFile()
+                    for recordingFileName in recordingFileNames {
+                        guard let recordingIndexPath = self.getIndexPath(for: recordingFileName.filename) else {
+                            return
+                        }
+                        self.tracksDictionary[self.sections[recordingIndexPath.section]]![recordingIndexPath.row].isRecording = true
+                        
+                        DispatchQueue.main.async {
+                            guard let cell = self.tableView.cellForRow(at: recordingIndexPath) as? VGLogsTableViewCell else {
+                                return
+                            }
+                            cell.animateRecording()
+                        }
+                    }
+
+                }) { (error) in
+                    self.display(error: error)
+                }
+            }) { (error) in
+                self.display(error: error)
+            }
+        }
+    }
+    
+    func getRecordingFile() -> [NMSFTPFile] {
+        var files = [NMSFTPFile]()
+        for deviceFile in self.filesOnDevice {
+            for downFile in self.downloadedFiles {
+                if downFile.name == deviceFile.filename &&
+                    Int(downFile.size) != Int(truncating: deviceFile.fileSize!) {
+                    print(Int(downFile.size), Int(truncating: deviceFile.fileSize!))
+                    files.append(deviceFile)
+                }
+            }
+        }
+        return files
+    }
+    
+    
+    
+    @objc func previewImageStarting(_ notification:Notification) {
+        guard let newTrack = notification.object as? VGTrack else {
+            return
+        }
+        DispatchQueue.main.async {
+            guard let indexPath = self.getIndexPath(for: newTrack) else {
                 return
             }
-            var newFileCount = 0
-            
-            for file in fileList {
-                let track = VGTrack()
-                track.fileName = file.filename
-                if let fileSize = file.fileSize as? Int {
-                    track.fileSize = fileSize
-                }
-                if !self.vgFileManager!.fileForTrackExists(track: track) {
-                    newFileCount += 1
-                }
-                self.remoteList.append(track)
-                track.isRemote = true
-                trackList.append(track)
+            guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+                return
             }
-            
-            let combinedList = self.combineLists(localList: self.dataStore.getAllTracks(), remoteList: trackList)
-            self.tracksDict = self.tracksToDictionary(trackList: combinedList)
-            
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-                if newFileCount == 0 {
-                    self.headerView.lblLogsAvailable.text = Strings.noNewLogs
-                } else if newFileCount == 1 {
-                    
-                    self.headerView.lblLogsAvailable.text = String(format: Strings.newLogSingular, newFileCount)
-                } else if (newFileCount-1)%10 == 0 && newFileCount != 11 {
-                    self.headerView.lblLogsAvailable.text = String(format: Strings.newLogSingular, newFileCount)
-                } else {
-                    self.headerView.lblLogsAvailable.text = String(format: Strings.newLogPlural, newFileCount)
-                }
-                if newFileCount == 0 {
-                    self.headerView.greenButton.isHidden = true
-                } else {
-                    self.headerView.greenButton.isHidden = false
-                }
-                
-                if self.tracksDict.count > 0 {
-                    self.emptyLabel.isHidden = true
-                    self.tableView.separatorStyle = .singleLine
-                } else {
-                    self.emptyLabel.isHidden = false
-                    self.tableView.separatorStyle = .none
-                }
-                self.tableView.refreshControl?.endRefreshing()
-            }
+            let track = self.getTrackAt(indexPath: indexPath)
+            track?.beingProcessed = true
+            cell.activityView.startAnimating()
         }
 
     }
     
-    
-    // MARK: - GPS Connection Related Functions
-    func displayErrorAlert(title: String?, message: String?) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: Strings.ok, style: .default, handler: nil))
-        self.present(alert, animated: true)
+    @objc func previewImageStopping(_ notification:Notification) {
+        guard let updatedNotification = notification.object as? ImageUpdatedNotification else {
+            return
+        }
+        DispatchQueue.main.async {
+            if self.traitCollection.userInterfaceStyle == updatedNotification.style {
+                guard let indexPath = self.getIndexPath(for: updatedNotification.track) else {
+                    return
+                }
+                guard let cell = self.tableView.cellForRow(at: self.getIndexPath(for: updatedNotification.track)!) as? VGLogsTableViewCell else {
+                    return
+                }
+                let track = self.getTrackAt(indexPath: indexPath)
+                track?.beingProcessed = false
+                cell.activityView.stopAnimating()
+                cell.trackView.image = updatedNotification.image
+            }
+        }
+
+
     }
     
-    func reconnectToVehicleGPS(session: NMSSHSession) {
-        if !session.isConnected || !session.isAuthorized || !sftpSession!.isConnected {
-            if connectToVehicleGPS(session: session) {
-                DispatchQueue.main.async {
+    @objc func onVehicleAddedToLog(_ notification:Notification) {
+        guard let newTrack = notification.object as? VGTrack else {
+            return
+        }
+        guard let vehicle = newTrack.vehicle else {
+            return
+        }
+        guard let indexPath = getIndexPath(for: newTrack) else {
+            return
+        }
+        guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+            return
+        }
+        getTrackAt(indexPath: indexPath)?.vehicle = newTrack.vehicle
+        
+        cell.lblVehicle.text = vehicle.name
+    }
+    
+    @objc func onLogsAdded(_ notification:Notification) {
+        guard let newTracks = notification.object as? [VGTrack] else {
+            return
+        }
 
-                    self.headerView.lblLogsAvailable.isHidden = false
-                    self.headerView.lblConnectedToGPS.isHidden = false
-                    self.headerView.imgIcon.isHidden = false
-                    self.headerView.lblConnectedToGPS.text = String(format: Strings.connectedTo, self.session!.host)
-
-                    self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
-                    self.tableView.tableHeaderView = self.headerView
+        DispatchQueue.main.async {
+            var list = [VGTrack]()
+            _ = self.tracksDictionary.map {
+                for item in $1 {
+                    list.append(item)
                 }
-                
+            }
+            self.tracksDictionary = self.tracksToDictionary(trackList: self.combineLists(localList: list, remoteList: newTracks))
+
+            self.tableView.reloadData()
+            if self.tracksDictionary.count > 0 {
+                self.emptyLabel.isHidden = true
+                self.tableView.separatorStyle = .singleLine
             } else {
-                DispatchQueue.main.async {
-                    self.tableView.tableHeaderView = nil
-                }
+                self.emptyLabel.isHidden = false
+                self.tableView.separatorStyle = .none
+            }
+        }
+        
+        
+    }
+    
+    @objc func onLogUpdated(_ notification:Notification) {
+        guard let updatedTrack = notification.object as? VGTrack else {
+            return
+        }
+
+        DispatchQueue.main.async {
+            
+            guard let indexPath = self.getIndexPath(for: updatedTrack) else {
+                return
             }
             
-        } else {
-            DispatchQueue.main.async {
-                self.tableView.tableHeaderView = nil
+            guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+                return
+            }
+            
+            if self.tracksDictionary[self.sections[indexPath.section]] == nil {
+                return
+            }
+            
+            self.tracksDictionary[self.sections[indexPath.section]]![indexPath.row] = updatedTrack
+            cell.show(track: updatedTrack)
+        }
+        
+        
+    }
+    
+    func getIndexPath(for track:VGTrack) -> IndexPath? {
+        for (sectionIndex, section) in sections.enumerated() {
+            guard let sectionList = tracksDictionary[section] else {
+                continue
+            }
+            for (rowIndex, trk) in sectionList.enumerated() {
+                if track.id == trk.id {
+                    return IndexPath(row: rowIndex, section: sectionIndex)
+                }
             }
         }
+        return nil
     }
     
-    func tryToConnectSSH(session: NMSSHSession) -> Bool {
-        if !session.connect() {
-            DispatchQueue.main.async {
-                //self.displayErrorAlert(title: "SSH Connection Error", message: self.session?.lastError?.localizedDescription)
+    func getIndexPath(for fileName:String) -> IndexPath? {
+        for (sectionIndex, section) in sections.enumerated() {
+            guard let sectionList = tracksDictionary[section] else {
+                continue
             }
-            return false
-        }
-        return true
-    }
-    
-    func tryToAuthenticate(session: NMSSHSession) -> Bool {
-        if !session.authenticate(byPassword: Constants.sftp.password) {
-            DispatchQueue.main.async {
-                self.displayErrorAlert(title: Strings.authorizationError, message: self.session?.lastError?.localizedDescription)
+            for (rowIndex, trk) in sectionList.enumerated() {
+                if fileName == trk.fileName {
+                    return IndexPath(row: rowIndex, section: sectionIndex)
+                }
             }
-            return false
         }
-        return true
-    }
-    
-    func tryToConnectSFTP(session: NMSSHSession) -> Bool {
-        sftpSession = NMSFTP(session: session)
-        guard let sftpSession = sftpSession else {
-            return false
-        }
-        self.sftpSession = sftpSession
-        
-        sftpSession.connect()
-        
-        if !sftpSession.isConnected {
-            DispatchQueue.main.async {
-                self.displayErrorAlert(title: Strings.sftpConnError, message: self.session?.lastError?.localizedDescription)
-            }
-            return false
-        }
-        return true
-    }
-    
-    func connectToVehicleGPS(session:NMSSHSession) -> Bool {
-        if tryToConnectSSH(session: session) != true {
-            return false
-        }
-        
-        if tryToAuthenticate(session: session) != true {
-            return false
-        }
-        
-        if tryToConnectSFTP(session: session) != true {
-            return false
-        }
-        
-        self.downloadManager = VGSFTPManager(session: self.sftpSession!)
-        return true
-    }
-    
-    //MARK: - List Manipulation
-    func updateData() {
-        self.tracksDict = self.tracksToDictionary(trackList: self.dataStore.getAllTracks())
-        tableView.reloadData()
-        if self.tracksDict.count > 0 {
-            self.emptyLabel.isHidden = true
-            self.tableView.separatorStyle = .singleLine
-        } else {
-            self.emptyLabel.isHidden = false
-            self.tableView.separatorStyle = .none
-        }
+        return nil
     }
     
     func combineLists(localList: [VGTrack], remoteList: [VGTrack]) -> [VGTrack] {
         var result = localList
-        
-        for track in result {
-            if remoteList.contains(track) {
-                track.isRemote = true
-            }
-        }
-        
+
         for track in remoteList {
-            track.isRemote = true
             if !(result.contains(track)) {
                 result.append(track)
             }
@@ -498,42 +522,78 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         return result
     }
     
+    // MARK: - Interface Action Functions
+    @objc func headerViewTapped(_:Any?) {
+        let dlViewController = VGDownloadLogsViewController()
+        self.dataStore.getAllTracks(
+            onSuccess: { (tracks) in
+                dlViewController.tracks = tracks
+                self.navigationController?.pushViewController(dlViewController, animated: true)
+            },
+            onFailure: { (error) in
+                self.display(error: error)
+            }
+        )
+
+    }
+            
+    func displayErrorAlert(title: String?, message: String?) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Strings.ok, style: .default, handler: nil))
+        self.present(alert, animated: true)
+    }
+    
+    
+    //MARK: - List Manipulation
+    func updateData() {
+        self.dataStore.getAllTracks(
+            onSuccess: { (tracks) in
+                self.tracksDictionary = self.tracksToDictionary(trackList: tracks)
+                self.tableView.reloadData()
+                if self.tracksDictionary.count > 0 {
+                    self.emptyLabel.isHidden = true
+                    self.tableView.separatorStyle = .singleLine
+                } else {
+                    self.emptyLabel.isHidden = false
+                    self.tableView.separatorStyle = .none
+                }
+            },
+            onFailure: { (error) in
+                self.display(error: error)
+            }
+        )
+    }
+    
     func tracksToDictionary(trackList:[VGTrack]) -> Dictionary<String, [VGTrack]>{
         var result = Dictionary<String, [VGTrack]>()
         for track in trackList {
             var day = ""
+            
             if let timeStart = track.timeStart {
-                day = String(String(describing: timeStart).prefix(10))
-            } else {
-                day = String(track.fileName.prefix(10))
+                day = dateParsingFormatter.string(from: timeStart)
             }
             
             if result[day] == nil {
                 result[day] = [VGTrack]()
             }
-            if !sectionKeys.contains(day) {
-                sectionKeys.append(day)
+            
+            if !sections.contains(day) {
+                sections.append(day)
             }
             result[day]!.append(track)
         }
         
         // Reorder the sections and lists to display the newest log first.
-        self.sectionKeys = self.sectionKeys.sorted().reversed()
-        
+        self.sections = self.sections.sorted().reversed()
         for (day, list) in result {
-            result[day] = list.sorted { (first, second) -> Bool in
-                if first.timeStart != nil && second.timeStart != nil {
-                    return first.timeStart! > second.timeStart!
-                }
-                return first.fileName > second.fileName
-            }
+            result[day] = list.sorted()
         }
         
         return result
     }
     
     func getTrackAt(indexPath:IndexPath) -> VGTrack? {
-        guard let dayFileList = tracksDict[sectionKeys[indexPath.section]] else {
+        guard let dayFileList = tracksDictionary[sections[indexPath.section]] else {
             return nil
         }
         let file = dayFileList[indexPath.row]
@@ -551,7 +611,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             return VGLogHeaderView()
         }
         
-        let day = sectionKeys[section]
+        let day = sections[section]
         view.dateLabel.text = " "
         view.detailsLabel.text = " "
 
@@ -560,7 +620,7 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         var totalDistance = 0.0
         var distanceString = ""
         var durationString = ""
-        guard let trackSection = tracksDict[day] else {
+        guard let trackSection = tracksDictionary[day] else {
             return VGLogHeaderView()
         }
         for track in trackSection {
@@ -590,24 +650,12 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
 
     // MARK: - Table View Data Source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return sectionKeys.count
-    }
-    
-    override func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
-        let header = getViewForHeader(section: section, view:nil)
-        guard let dateLabel = header.dateLabel, let detailsLabel = header.detailsLabel else {
-            return 44
-        }
-        
-        return dateLabel.frame.height + detailsLabel.frame.height+2+2+2
+        return sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        guard let tracksForSection = tracksDict[sectionKeys[section]] else {
+        guard let tracksForSection = tracksDictionary[sections[section]] else {
             return 0
         }
         return tracksForSection.count
@@ -625,7 +673,6 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             ) as? VGLogsTableViewCell else {
             return UITableViewCell()
         }
-        cell.update(progress: 0.0)
         cell.delegate = self
         if let track = getTrackAt(indexPath: indexPath) {
             cell.show(track:track)
@@ -635,62 +682,32 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
-            return
-        }
         guard let track = getTrackAt(indexPath: indexPath) else {
             return
         }
-        track.trackPoints = dataStore.getPointsForTrack(vgTrack: track)
-        if track.trackPoints.count > 0 {
-            let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
-            logDetailsView.dataStore = self.dataStore
-            logDetailsView.track = track
-            self.navigationController?.pushViewController(logDetailsView, animated: true)
-            return
-        }
         
-        
-        if vgFileManager!.getAbsoluteFilePathFor(track:track) == nil {
-            self.downloadFileFor(track: track, progress: { (received, total) in
-                DispatchQueue.main.async {
-                    cell.update(progress: Double(received)/Double(total))
-                    cell.layoutSubviews()
-                }
-                return true
-            }) { (data) in
-                guard let data = data else {
-                    return
-                }
-                
-                _ = self.vgFileManager!.dataToFile(data: data, filename: track.fileName)
-                self.dataStore.update(vgTrack: track)
-                
-                DispatchQueue.main.async {
-                    let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
-                    logDetailsView.dataStore = self.dataStore
-                    logDetailsView.track = track
-                    
-                    cell.update(progress: 0.0)
-                    self.navigationController?.pushViewController(logDetailsView, animated: true)
-                }
+        if tableView.isEditing {
+            guard let selectedIndexPaths = tableView.indexPathsForSelectedRows else {
+                return
             }
         } else {
+            tableView.deselectRow(at: indexPath, animated: true)
             let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
             logDetailsView.dataStore = self.dataStore
             logDetailsView.track = track
             self.navigationController?.pushViewController(logDetailsView, animated: true)
         }
         
-        
     }
-    
-    func downloadFileFor(track: VGTrack, progress:@escaping (UInt, UInt)->Bool, callback:@escaping (Data?)->Void) {
-        self.downloadManager?.downloadFile(filename: track.fileName, progress: { (received, total) in
-            progress(received, total)
-        }, callback: { (data) in
-            callback(data)
-        })
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        guard let track = getTrackAt(indexPath: indexPath) else {
+            return
+        }
+        if tableView.isEditing {
+            guard let selectedIndexPaths = tableView.indexPathsForSelectedRows else {
+                return
+            }
+        }
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -703,13 +720,11 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         return Strings.delete
     }
     
-    // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
     
-    // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             self.deleteTrack(at: indexPath)
@@ -721,15 +736,28 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
             return
         }
         
-        self.tracksDict[self.sectionKeys[indexPath.section]]?.remove(at: indexPath.row)
+        self.tracksDictionary[self.sections[indexPath.section]]?.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: .fade)
 
-        if self.tracksDict[self.sectionKeys[indexPath.section]]?.count == 0 {
-            self.sectionKeys.remove(at: indexPath.section)
+        if self.tracksDictionary[self.sections[indexPath.section]]?.count == 0 {
+            self.tracksDictionary.removeValue(forKey: self.sections[indexPath.section])
+            self.sections.remove(at: indexPath.section)
             tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
         }
         self.vgFileManager?.deleteFileFor(track: track)
-        self.dataStore.delete(vgTrack: track)
+        if self.tracksDictionary.count > 0 {
+            self.emptyLabel.isHidden = true
+            self.tableView.separatorStyle = .singleLine
+        } else {
+            self.emptyLabel.isHidden = false
+            self.tableView.separatorStyle = .none
+        }
+
+        self.dataStore.delete(trackWith: track.id!, onSuccess: {
+            
+        }) { (error) in
+            self.display(error: error)
+        }
     }
     
     override func tableView(_ tableView: UITableView,
@@ -750,18 +778,20 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         let exportGPX = UIAction(title: Strings.shareGPX, image: Icons.share, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             
             DispatchQueue.global(qos: .userInitiated).async {
-                track!.trackPoints = self.dataStore.getPointsForTrack(vgTrack: track!)
-                let fileUrl = self.vgGPXGenerator.generateGPXFor(track: track!)!
-                let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
-                DispatchQueue.main.async {
+                self.dataStore.getDataPointsForTrack(with: track!.id!, onSuccess: { (dataPoints) in
+                    track!.trackPoints = dataPoints
+                    let fileUrl = self.vgGPXGenerator.generateGPXFor(track: track!)!
+                    let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
                     self.present(activityVC, animated: true, completion: nil)
+                }) { (error) in
+                    self.display(error: error)
                 }
             }
-            
         }
         
         let selectVehicle = UIAction(title: Strings.selectVehicle, image: Icons.vehicle, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
-            self.didTapVehicle(track: track!)
+            let cell = tableView.cellForRow(at: indexPath) as! VGLogsTableViewCell
+            self.didTapVehicle(track: track!, tappedView: cell.btnVehicle)
         }
 
         let exportMenu = UIMenu(title: Strings.share, image: Icons.share, identifier: .none, options: .init(), children: [exportGPX, exportOriginal])
@@ -770,5 +800,21 @@ class VGLogsTableViewController: UITableViewController, DisplaySelectVehicleProt
         previewProvider: nil) { _ in
         UIMenu(title: "", children: [selectVehicle, exportMenu, delete])
       }
+    }
+}
+
+extension VGLogsTableViewController: DisplaySelectVehicleProtocol {
+    func didTapVehicle(track: VGTrack, tappedView:UIView?) {
+        let selectionVC = VGVehiclesSelectionTableViewController(style: .insetGrouped)
+        selectionVC.track = track
+        
+        let navController = UINavigationController(rootViewController: selectionVC)
+        navController.modalPresentationStyle = .popover
+        navController.preferredContentSize = CGSize(width: 414, height: 600)
+        
+        let popover: UIPopoverPresentationController = navController.popoverPresentationController!
+        popover.sourceView = tappedView
+
+        present(navController, animated: true, completion: nil)
     }
 }

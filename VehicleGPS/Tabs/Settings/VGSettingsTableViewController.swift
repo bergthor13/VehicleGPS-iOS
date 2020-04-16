@@ -47,7 +47,7 @@ class VGSettingsTableViewController: UITableViewController {
         return ""
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 { return 1 }
+        if section == 0 { return 2 }
         if section == 1 { return 1 }
         return 0
     }
@@ -61,6 +61,9 @@ class VGSettingsTableViewController: UITableViewController {
                 cell.textLabel?.text = Strings.titles.database
             }
             if indexPath.row == 1 {
+                cell = UITableViewCell.init(style: .default, reuseIdentifier: Strings.dummyIdentifier)
+                cell.accessoryType = .disclosureIndicator
+                cell.textLabel?.text = Strings.titles.vgpsDevice
             }
 
         }
@@ -82,6 +85,9 @@ class VGSettingsTableViewController: UITableViewController {
                 let databaseController = VGDatabaseTableViewController.init(style: .grouped)
                 navigationController?.pushViewController(databaseController, animated: true)
 
+            } else if indexPath.row == 1 {
+                let deviceSettings = VGVGPSDeviceSettingsTableViewController.init(style: .grouped)
+                navigationController?.pushViewController(deviceSettings, animated: true)
             }
         }
         if indexPath.section == 1 {

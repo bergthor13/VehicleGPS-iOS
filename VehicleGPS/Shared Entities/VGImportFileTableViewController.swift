@@ -1,37 +1,37 @@
-//
-//  ImportFileTableViewController.swift
-//  VehicleGPS
-//
-//  Created by Bergþór Þrastarson on 21/03/2020.
-//  Copyright © 2020 Bergþór Þrastarson. All rights reserved.
-//
-
 import UIKit
+import CoreData
+import MBProgressHUD
 
 class VGImportFileTableViewController: UITableViewController {
     
     var fileUrl:URL?
-    
     var dataStore = VGDataStore()
-    
-    var importedTrack:VGTrack!
+    var importedTracks = [VGTrack]()
+    var importBarButton = UIBarButtonItem()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = Strings.titles.importFile
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: Strings.importFile, style: .done, target: self, action: #selector(tappedImport))
+        tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
+        importBarButton = UIBarButtonItem(title: Strings.importFile, style: .done, target: self, action: #selector(tappedImport))
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.cancel, style: .plain, target: self, action: #selector(tappedCancel))
         
-        let asdf = VGGPXParser(snapshotter: VGSnapshotMaker(fileManager: VGFileManager()))
+        let asdf = VGGPXParser()
         guard let fileUrl = fileUrl else {
             return
         }
-        DispatchQueue.global(qos: .userInitiated).async {
-            asdf.fileToTrack(fileUrl: fileUrl, progress: { (curr, count) in
-                  
-            }, callback: { (parsedTrack) in
-                self.importedTrack = parsedTrack
+        let activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        let barButton = UIBarButtonItem(customView: activityIndicator)
+        self.navigationItem.rightBarButtonItem = barButton
+        activityIndicator.startAnimating()
+        
+        DispatchQueue.global(qos: .utility).async {
+            asdf.fileToTracks(fileUrl: fileUrl, progress: { (curr, count) in
+            }, callback: { (parsedTracks) in
+                self.importedTracks = parsedTracks
                 DispatchQueue.main.async {
+                    activityIndicator.stopAnimating()
+                    self.navigationItem.rightBarButtonItem = self.importBarButton
                     self.tableView.reloadData()
                 }
             }) { (track, style) in
@@ -50,8 +50,31 @@ class VGImportFileTableViewController: UITableViewController {
     }
     
     @objc func tappedImport() {
-        if let track = importedTrack {
-            self.dataStore.update(vgTrack: track)
+        var finishedTracks = Float(0.0)
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
+        }
+        
+        
+        let hud = MBProgressHUD.showAdded(to: appDelegate.window!, animated: true)
+        hud.mode = .determinateHorizontalBar
+        hud.label.text = "Adding Logs..."
+        hud.progress = finishedTracks/Float(self.importedTracks.count)
+        for track in self.importedTracks {
+            self.dataStore.add(
+                vgTrack: track,
+                onSuccess: { (id) in
+                    finishedTracks += 1
+                    hud.progress = finishedTracks/Float(self.importedTracks.count)
+                    if Int(finishedTracks) == self.importedTracks.count {
+                        hud.hide(animated: true)
+                    }
+                    track.id = id
+                },
+                onFailure:  { (error) in
+                    print(error)
+                }
+            )
         }
         dismiss(animated: true)
     }
@@ -63,87 +86,29 @@ class VGImportFileTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 3
+        return importedTracks.count
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .value2, reuseIdentifier: "asdf")
         
-        guard let currTrack = self.importedTrack else {
-            return cell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: VGLogsTableViewCell.identifier, for: indexPath) as? VGLogsTableViewCell else {
+            return VGLogsTableViewCell(style: .default, reuseIdentifier: VGLogsTableViewCell.identifier)
         }
-        cell.tintColor = UIApplication.shared.delegate?.window!!.tintColor
         
-        if indexPath.row == 0 {
-            cell.detailTextLabel?.text = String(fileUrl!.lastPathComponent)
-            cell.textLabel?.text = "Skráarheiti"
-        } else if indexPath.row == 1 {
-            cell.detailTextLabel?.text = VGDistanceFormatter().string(fromMeters: currTrack.distance*1000)
-            cell.textLabel?.text = Strings.distance
-        } else if indexPath.row == 2 {
-            cell.detailTextLabel?.text = String(VGDurationFormatter().string(from: currTrack.duration)!)
-            cell.textLabel?.text = Strings.duration
-        }
-        cell.detailTextLabel?.numberOfLines = 0
-
-        
-
-        // Configure the cell...
+        cell.show(track: self.importedTracks[indexPath.row])
 
         return cell
     }
-    
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 {
+            return String(fileUrl!.lastPathComponent)
+        }
+        
+        return nil
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

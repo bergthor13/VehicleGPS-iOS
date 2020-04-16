@@ -19,4 +19,8 @@ struct Constants {
         static let username = "pi"
         static let password = "easyprintsequence"
     }
+    
+    struct persistentContainer {
+        static let name = "VehicleGPS"
+    }
 }

@@ -52,7 +52,6 @@ class VGFileManager {
             try data.write(to: destFileName)
             return destFileName
         } catch let error {
-            print("ERROR")
             print(error)
             return nil
         }
@@ -121,13 +120,13 @@ class VGFileManager {
         
     }
     
-    func getParser(for track:VGTrack) -> IVGLogParser? {
-        let fileExtension = track.fileName.split(separator: ".").last?.lowercased()
+    func getParser(for url:URL) -> IVGLogParser? {
+        let fileExtension = url.lastPathComponent.split(separator: ".").last?.lowercased()
         
         if fileExtension == "gpx" {
-            return VGGPXParser(snapshotter: VGSnapshotMaker(fileManager: self))
+            return VGGPXParser()
         }
-        if let aStreamReader = StreamReader(path: getAbsoluteFilePathFor(track: track)!) {
+        if let aStreamReader = StreamReader(path: url) {
             defer {
                 aStreamReader.close()
             }
@@ -141,18 +140,18 @@ class VGFileManager {
             }
             
             if colCount == 16 {
-                return VGCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
+                return VGCSVParser()
             }
             
             if colCount == 15 {
-                return VGShortCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
+                return VGShortCSVParser()
             }
             
             if colCount == 5 {
-                return VGArduinoCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
+                return VGArduinoCSVParser()
             }
         }
-        return VGCSVParser(snapshotter: VGSnapshotMaker(fileManager: self))
+        return VGCSVParser()
     }
     
     func split(track:VGTrack, at time:Date) {
@@ -263,7 +262,6 @@ class VGFileManager {
                 }
                 result.append(track)
             }
-            print(fileList)
             return result
         } catch let error {
             print(error)
@@ -325,11 +323,15 @@ class VGFileManager {
     }
     
     func getPNGPathFor(track: VGTrack, style: UIUserInterfaceStyle) -> URL? {
+        let imageFolder = self.getImageFolder(style: style)
+
         if track.fileName == "" {
+            if track.id != nil {
+                return (imageFolder?.appendingPathComponent(track.id!.uuidString).appendingPathExtension("png"))!
+            }
             return nil
         }
         
-        let imageFolder = self.getImageFolder(style: style)
         
         let fileNameWithoutExt = track.fileName.split(separator: ".")[0]
         

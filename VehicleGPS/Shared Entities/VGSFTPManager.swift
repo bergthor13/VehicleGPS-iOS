@@ -17,14 +17,15 @@ class VGSFTPManager {
         self.session = session
         self.session.connect()
     }
+    let semaphore = DispatchSemaphore(value: 1)
     
     func downloadFile(filename: String, progress: @escaping (UInt, UInt) -> Bool, callback:@escaping (Data?) -> Void) {
-        DispatchQueue.global(qos: .background).async {
-            let data = self.session.contents(atPath: self.remoteFolder+filename, progress: { (got, totalBytes) -> Bool in
-                return progress(got, totalBytes)
-            })
-            callback(data)
-        }
+        self.semaphore.wait()
+        let data = self.session.contents(atPath: self.remoteFolder+filename, progress: { (got, totalBytes) -> Bool in
+            return progress(got, totalBytes)
+        })
+        self.semaphore.signal()
+        callback(data)
     }
     
     func getRemoteFiles() -> [NMSFTPFile]? {
@@ -54,33 +55,32 @@ class VGSFTPManager {
     }
     
     func deleteFile(filename: String, callback: @escaping (Bool) -> Void) {
-        DispatchQueue.global(qos: .background).async {
-            self.downloadFile(filename: filename, progress: { (_, _) in
-                return true
-            }, callback: { (data) in
-                guard let data = data else {
-                    if !self.session.fileExists(atPath: filename) {
-                        callback(true)
-                        return
-                    }
-                    callback(false)
+        self.downloadFile(filename: filename, progress: { (_, _) in
+            return true
+        }, callback: { (data) in
+            guard let data = data else {
+                if !self.session.fileExists(atPath: filename) {
+                    callback(true)
                     return
                 }
-                
-                var isCopySuccess = self.session.writeContents(data, toFileAtPath: self.deleteFolder + filename)
-                if data.count == 0 {
-                    isCopySuccess = true
-                }
-                
-                if isCopySuccess {
-                    let isRemoveSuccess = self.session.removeFile(atPath: self.remoteFolder + filename)
-                    callback(isRemoveSuccess)
-                } else {
-
-                    callback(isCopySuccess)
-                }
-            })
+                callback(false)
+                return
+            }
             
-        }
+            var isCopySuccess = self.session.writeContents(data, toFileAtPath: self.deleteFolder + filename)
+            if data.count == 0 {
+                isCopySuccess = true
+            }
+            
+            if isCopySuccess {
+                let isRemoveSuccess = self.session.removeFile(atPath: self.remoteFolder + filename)
+                callback(isRemoveSuccess)
+            } else {
+
+                callback(isCopySuccess)
+            }
+        })
+            
+        
     }
 }

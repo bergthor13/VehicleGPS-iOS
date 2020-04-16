@@ -45,40 +45,52 @@ class VGVehiclesTableViewController: UITableViewController {
         tableView.tintColor = navigationController?.view.tintColor
         configureEmptyListLabel()
         registerCells()
-        reloadVehicles(shouldReloadTableView: true)
         NotificationCenter.default.addObserver(self, selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated, object: nil)
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        reloadVehicles(shouldReloadTableView: true)
     }
     fileprivate func registerCells() {
         self.tableView.register(VGVehicleTableViewCell.nib, forCellReuseIdentifier: VGVehicleTableViewCell.identifier)
     }
     
     func reloadVehicles(shouldReloadTableView:Bool) {
-        self.vehicles = dataStore.getAllVehicles()
-        if self.vehicles.count > 0 {
-            self.emptyLabel.isHidden = true
-        } else {
-            self.emptyLabel.isHidden = false
-        }
-        if shouldReloadTableView {
-            tableView.reloadData()
-        }
-        for vehicle in vehicles {
-            vehicle.image = self.fileManager.getImage(for: vehicle)
-        }
+        dataStore.getAllVehicles(
+            onSuccess: { (vehicles) in
+                self.vehicles = vehicles
+                if self.vehicles.count > 0 {
+                    self.emptyLabel.isHidden = true
+                } else {
+                    self.emptyLabel.isHidden = false
+                }
+                if shouldReloadTableView {
+                    self.tableView.reloadData()
+                }
+                for vehicle in vehicles {
+                    vehicle.image = self.fileManager.getImage(for: vehicle)
+                }
+            },
+            onFailure:  { (error) in
+                print(error)
+            }
+        )
+        
     }
     
     func addVehicle(_ vehicle:VGVehicle) {
-        tableView.beginUpdates()
-        if vehicles.count == 0 {
-            tableView.insertRows(at: [IndexPath(row: vehicles.count, section: 0)], with: .automatic)
+        self.tableView.beginUpdates()
+        if self.vehicles.count == 0 {
+            self.tableView.insertRows(at: [IndexPath(row: self.vehicles.count, section: 0)], with: .automatic)
         } else {
-             tableView.insertRows(at: [IndexPath(row: vehicles.count, section: 0)], with: .top)
+            self.tableView.insertRows(at: [IndexPath(row: self.vehicles.count, section: 0)], with: .top)
         }
         
-        vehicles.append(vehicle)
-        reloadVehicles(shouldReloadTableView: false)
-        tableView.endUpdates()
+        self.vehicles.append(vehicle)
+        self.reloadVehicles(shouldReloadTableView: false)
+        self.tableView.endUpdates()
     }
     
     func editVehicle(_ editedVehicle:VGVehicle) {
@@ -111,7 +123,11 @@ class VGVehiclesTableViewController: UITableViewController {
     @objc func didTapAddVehicle() {
         let newVehicleVC = VGNewVehicleTableViewController(style: .grouped)
         newVehicleVC.vehiclesController = self
-        self.present(UINavigationController(rootViewController: newVehicleVC), animated: true, completion: nil)
+        let navController = UINavigationController(rootViewController: newVehicleVC)
+        if self.popoverPresentationController != nil {
+            navController.modalPresentationStyle = .currentContext
+        }
+        self.present(navController, animated: true, completion: nil)
     }
 
     override func viewDidLayoutSubviews() {
@@ -165,13 +181,14 @@ class VGVehiclesTableViewController: UITableViewController {
     
     fileprivate func deleteVehicle(at indexPath:IndexPath) {
         let vehicle = self.vehicles[indexPath.row]
-        self.dataStore.delete(vgVehicle: vehicle) {
-            DispatchQueue.main.async {
-                self.vehicles.remove(at: indexPath.row)
-                self.tableView.deleteRows(at: [indexPath], with: .top)
-                self.reloadVehicles(shouldReloadTableView: false)
-            }
+        self.dataStore.delete(vehicleWith: vehicle.id!, onSuccess: {
+            self.vehicles.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .top)
+            self.reloadVehicles(shouldReloadTableView: false)
+        }) { (error) in
+            print(error)
         }
+
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -204,26 +221,13 @@ class VGVehiclesTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: VGVehicleTableViewCell.identifier, for: indexPath) as! VGVehicleTableViewCell
         let vehicle = vehicles[indexPath.row]
         cell.lblName.text = vehicle.name
-        guard let tracks = vehicle.tracks else {
-            return cell
-        }
-        var distance = 0.0
-        var duration = 0.0
-        for track in tracks {
-            distance += track.distance
-            duration += track.duration
-        }
-        
+        cell.imgVehicle?.image = vehicle.image
+
         if let color = vehicle.mapColor {
             cell.colorBanner.backgroundColor = color
         } else {
             cell.colorBanner.backgroundColor = .red
         }
-
-        cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
-        cell.lblDuration.text = durationFormatter.string(from: duration)
-        cell.imgVehicle?.image = vehicle.image
-        
         
         if dataStore.getDefaultVehicleID() == vehicle.id {
             cell.defaultViewBackground.isHidden = false
@@ -233,6 +237,21 @@ class VGVehiclesTableViewController: UITableViewController {
             cell.defaultStarView.isHidden = true
         }
         
+        guard let tracks = vehicle.tracks else {
+            cell.lblDistance.text = distanceFormatter.string(for: 0)
+            cell.lblDuration.text = durationFormatter.string(from: 0)
+            return cell
+        }
+        var distance = 0.0
+        var duration = 0.0
+        for track in tracks {
+            distance += track.distance
+            duration += track.duration
+        }
+        
+        cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
+        cell.lblDuration.text = durationFormatter.string(from: duration)
+
         return cell
     }
     
@@ -243,6 +262,8 @@ class VGVehiclesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detailsVC = VGVehicleDetailsTableViewController(style: .insetGrouped)
         detailsVC.vehicle = vehicles[indexPath.row]
+        detailsVC.tracksSummary = VGTracksSummary(title: "")
+        detailsVC.tracksSummary?.tracks = detailsVC.vehicle?.tracks as! [VGTrack]
         navigationController?.pushViewController(detailsVC, animated: true)
     }
     
@@ -280,7 +301,11 @@ class VGVehiclesTableViewController: UITableViewController {
     func editVehicle(at indexPath:IndexPath) {
         let editVehicleVC = VGEditVehicleTableViewController(style: .grouped)
         editVehicleVC.vehicle = vehicles[indexPath.row]
-        self.present(UINavigationController(rootViewController: editVehicleVC), animated: true, completion: nil)
+        let navController = UINavigationController(rootViewController: editVehicleVC)
+        if self.popoverPresentationController != nil {
+            navController.modalPresentationStyle = .currentContext
+        }
+        self.present(navController, animated: true, completion: nil)
     }
     
 

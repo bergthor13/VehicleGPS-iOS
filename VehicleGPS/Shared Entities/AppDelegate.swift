@@ -16,9 +16,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var dataStore = VGDataStore()
     var fileManager = VGFileManager()
     var tabController = VGTabBarController()
-
+    var snapshotter: VGSnapshotMaker!
+    var deviceCommunicator: DeviceCommunicator!
+    
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        snapshotter = VGSnapshotMaker(fileManager: self.fileManager, dataStore: self.dataStore)
+        deviceCommunicator = DeviceCommunicator()
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.tintColor = UIColor.init(named: "appColor")
         self.window?.rootViewController = tabController
@@ -30,9 +34,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
+        DispatchQueue.global(qos: .utility).async {
+            self.deviceCommunicator.disconnectFromVehicleGPS()
+        }
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
+        DispatchQueue.global(qos: .utility).async {
+            self.deviceCommunicator.reconnectToVehicleGPS()
+        }
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -47,7 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let importController = VGImportFileTableViewController(style: .insetGrouped, fileUrl: url)
         let navController = UINavigationController(rootViewController: importController)
-        window?.rootViewController?.present(navController, animated: true)
+        tabController.present(navController, animated: true)
         return true
         
     }

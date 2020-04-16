@@ -17,6 +17,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
     var cell: VGNewVehicleTableViewCell! {
         didSet {
             cell.txtName.text = vehicle.name
+            cell.txtName.becomeFirstResponder()
             cell.colorBox.backgroundColor = vehicle.mapColor
             if vehicle.image != nil {
                 cell.imgProfile.image = vehicle.image
@@ -146,10 +147,17 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
             self.vehicle.name = self.cell.txtName.text
             self.vehicle.id = self.vehicle.id
             self.vehicle.image = self.selectedImage
-            self.dataStore.add(vgVehicle: self.vehicle)
-            if let vehiclesController = self.vehiclesController {
-                vehiclesController.addVehicle(self.vehicle)
-            }
+            self.dataStore.add(
+                vgVehicle: self.vehicle,
+                onSuccess: { (id) in
+                    if let vehiclesController = self.vehiclesController {
+                        vehiclesController.addVehicle(self.vehicle)
+                    }
+                }, onFailure: { (error) in
+                    print(error)
+                }
+            )
+
         }
     }
     override func numberOfSections(in tableView: UITableView) -> Int {

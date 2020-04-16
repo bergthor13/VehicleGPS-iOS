@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="dark"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -39,12 +40,44 @@
                                 <constraint firstAttribute="height" constant="34" id="bta-SN-Jos"/>
                             </constraints>
                         </imageView>
+                        <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dwT-iJ-z9X">
+                            <rect key="frame" x="61" y="28" width="250" height="5"/>
+                            <subviews>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EW3-Au-5AF">
+                                    <rect key="frame" x="0.0" y="0.0" width="50" height="5"/>
+                                    <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="50" id="Krb-Ua-ciP"/>
+                                    </constraints>
+                                </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xA9-wo-tsx">
+                                    <rect key="frame" x="0.0" y="0.0" width="25" height="5"/>
+                                    <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="25" id="Z4A-8b-EDs"/>
+                                    </constraints>
+                                </view>
+                            </subviews>
+                            <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <constraints>
+                                <constraint firstItem="xA9-wo-tsx" firstAttribute="top" secondItem="dwT-iJ-z9X" secondAttribute="top" id="8eH-F5-whc"/>
+                                <constraint firstItem="EW3-Au-5AF" firstAttribute="leading" secondItem="dwT-iJ-z9X" secondAttribute="leading" id="AhP-MR-qkx"/>
+                                <constraint firstAttribute="bottom" secondItem="EW3-Au-5AF" secondAttribute="bottom" id="IdP-z9-fXt"/>
+                                <constraint firstAttribute="bottom" secondItem="xA9-wo-tsx" secondAttribute="bottom" id="L0S-NC-pzE"/>
+                                <constraint firstItem="EW3-Au-5AF" firstAttribute="top" secondItem="dwT-iJ-z9X" secondAttribute="top" id="TgE-r6-YeY"/>
+                                <constraint firstItem="xA9-wo-tsx" firstAttribute="leading" secondItem="dwT-iJ-z9X" secondAttribute="leading" id="a62-Xo-fu2"/>
+                                <constraint firstAttribute="height" constant="5" id="cMr-cJ-tpr"/>
+                            </constraints>
+                        </view>
                     </subviews>
                     <color key="backgroundColor" red="0.10199999809265137" green="0.74500000476837158" blue="0.11299999803304672" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstItem="oKw-zu-jzV" firstAttribute="centerY" secondItem="esp-ek-sNn" secondAttribute="centerY" id="83j-Sd-AZi"/>
+                        <constraint firstAttribute="bottom" secondItem="dwT-iJ-z9X" secondAttribute="bottom" constant="8" id="UO5-Qh-tHG"/>
+                        <constraint firstItem="dwT-iJ-z9X" firstAttribute="leading" secondItem="oKw-zu-jzV" secondAttribute="leading" id="UaE-lO-LUq"/>
                         <constraint firstItem="oKw-zu-jzV" firstAttribute="leading" secondItem="YCL-Yj-9CJ" secondAttribute="trailing" constant="11" id="aSo-vG-Rrm"/>
                         <constraint firstItem="YCL-Yj-9CJ" firstAttribute="centerY" secondItem="esp-ek-sNn" secondAttribute="centerY" id="sVj-H5-hzr"/>
+                        <constraint firstAttribute="trailing" secondItem="dwT-iJ-z9X" secondAttribute="trailing" constant="8" id="ucn-ZZ-3F9"/>
                         <constraint firstItem="YCL-Yj-9CJ" firstAttribute="leading" secondItem="esp-ek-sNn" secondAttribute="leading" constant="5" id="z1K-FQ-Vgp"/>
                     </constraints>
                 </view>
@@ -81,13 +114,18 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="k3N-I5-IQG"/>
             <connections>
+                <outlet property="downloadProgress" destination="EW3-Au-5AF" id="dci-yb-lS5"/>
+                <outlet property="downloadWidthConstraint" destination="Krb-Ua-ciP" id="HgU-za-Cyi"/>
                 <outlet property="greenBackground" destination="esp-ek-sNn" id="3mj-Pq-oZI"/>
                 <outlet property="greenButton" destination="gSF-8B-8Qw" id="OSo-na-qRo"/>
                 <outlet property="imgIcon" destination="YCL-Yj-9CJ" id="0QV-B2-zIf"/>
                 <outlet property="lblConnectedToGPS" destination="8pn-NV-c4E" id="ZvE-2X-rjI"/>
                 <outlet property="lblLogsAvailable" destination="lvg-q4-UWn" id="mcJ-TW-TSa"/>
+                <outlet property="parseProgress" destination="xA9-wo-tsx" id="teu-LT-Glo"/>
+                <outlet property="parseWidthConstraint" destination="Z4A-8b-EDs" id="IfX-F8-9EE"/>
+                <outlet property="progressBar" destination="dwT-iJ-z9X" id="U6N-sm-XyZ"/>
             </connections>
-            <point key="canvasLocation" x="-67" y="-336"/>
+            <point key="canvasLocation" x="-68.115942028985515" y="-336.49553571428572"/>
         </view>
     </objects>
     <resources>

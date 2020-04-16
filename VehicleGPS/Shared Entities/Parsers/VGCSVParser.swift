@@ -5,7 +5,6 @@ import fastCSV
 class VGCSVParser: IVGLogParser {
     let progress_update_delay = TimeInterval(0.1)
     let PNG_PADDING:CGFloat = 0.9
-    var vgSnapshotMaker:VGSnapshotMaker
 
     func isValid(row:[String]) -> Bool {
         if row.count < 16 {
@@ -14,12 +13,7 @@ class VGCSVParser: IVGLogParser {
         return true
     }
     
-    init(snapshotter:VGSnapshotMaker) {
-        self.vgSnapshotMaker = snapshotter
-    }
-    
-    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, callback: @escaping (VGTrack) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)?) {
-        DispatchQueue.global(qos: .background).async {
+    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, onSuccess: @escaping (VGTrack) -> (), onFailure:@escaping(Error)->()) {
             var lastProgressUpdate = Date()
 
             let track = VGTrack()
@@ -30,7 +24,7 @@ class VGCSVParser: IVGLogParser {
                     track.fileSize = fileSize
                 }
             } catch {
-                print("Error: \(error)")
+                onFailure(error)
             }
             
             var fileString = String()
@@ -61,16 +55,7 @@ class VGCSVParser: IVGLogParser {
             }
             track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
             
-            self.vgSnapshotMaker.drawTrack(vgTrack: track) { (image, style) in
-                guard let imageCallback = imageCallback else {
-                    return nil
-                }
-                imageCallback(track, style)
-                return nil
-            }
-            callback(track)
-        }
-
+            onSuccess(track)
     }
     
     func rowToDataPoint(row: [String]) -> VGDataPoint {

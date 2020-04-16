@@ -23,13 +23,16 @@ class VGEditVehicleTableViewController: VGNewVehicleTableViewController {
         self.vehicle.name = self.cell.txtName.text
         self.vehicle.id = self.vehicle.id
         self.vehicle.image = self.selectedImage
-        self.dataStore.update(vgVehicle: self.vehicle)
-        if let vehiclesController = self.vehiclesController {
-            vehiclesController.editVehicle(self.vehicle)
-        }
-        NotificationCenter.default.post(name: .vehicleUpdated, object: self.vehicle)
+        self.dataStore.update(vgVehicle: self.vehicle, onSuccess: {
+            if let vehiclesController = self.vehiclesController {
+                vehiclesController.editVehicle(self.vehicle)
+            }
+            NotificationCenter.default.post(name: .vehicleUpdated, object: self.vehicle)
 
-        dismiss(animated: true)
+            self.dismiss(animated: true)
+        }) { (error) in
+            print(error)
+        }
 
     }
 }
