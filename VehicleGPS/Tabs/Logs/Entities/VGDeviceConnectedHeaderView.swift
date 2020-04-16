@@ -84,17 +84,24 @@ class VGDeviceConnectedHeaderView: UIView {
         self.lblLogsAvailable.text = Strings.searchForLogs
     }
     
-    func downloadingLogs(download:Double, parse:Double, total:Double) {
-        if download == total && parse == total {
-            self.lblLogsAvailable.text = Strings.downloadComplete
-            self.progressBar.isHidden = true
-            return
-        }
-        self.progressBar.isHidden = false
-        self.lblLogsAvailable.text = " "
-    
-        self.parseWidthConstraint.constant = progressBar.frame.width*(CGFloat(parse)/CGFloat(total))
-        self.downloadWidthConstraint.constant = progressBar.frame.width*(CGFloat(download)/CGFloat(total))
+    func setDownloadProgress(percentage:Double) {
+        self.downloadWidthConstraint.constant = progressBar.frame.width*(CGFloat(percentage))
     }
     
+    func setParseProgress(percentage:Double) {
+        self.parseWidthConstraint.constant = progressBar.frame.width*(CGFloat(percentage))
+    }
+    
+    func displayProgressBar() {
+        self.progressBar.isHidden = false
+        self.lblLogsAvailable.text = " "
+        self.downloadWidthConstraint.constant = 0
+        self.parseWidthConstraint.constant = 0
+
+    }
+    
+    func downloadComplete() {
+        self.lblLogsAvailable.text = Strings.downloadComplete
+        self.progressBar.isHidden = true
+    }
 }

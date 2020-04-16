@@ -259,6 +259,8 @@ class VGDataStore {
             for point in vgTrack.mapPoints {
                 self.add(vgMapPoint: point, to: newTrack, in: context)
             }
+            vgTrack.trackPoints = []
+            vgTrack.mapPoints = []
             self.semaphore.wait()
             if let defaultVehicleID = self.getDefaultVehicleID() {
                 // Get the vehicle in question
@@ -314,7 +316,8 @@ class VGDataStore {
             for point in vgTrack.mapPoints {
                 self.add(vgMapPoint: point, to: oldTrack, in: context)
             }
-
+            vgTrack.trackPoints = []
+            vgTrack.mapPoints = []
             // Then try to save.
             do {
                 try context.save()
@@ -569,6 +572,31 @@ class VGDataStore {
             downloadedFile.size = Int64(file.size!)
             context.insert(downloadedFile)
             do {
+                try context.save()
+                DispatchQueue.main.async {
+                    onSuccess()
+                }
+                
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+    
+    func update(file:VGDownloadedFile, onSuccess:@escaping()->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let fetchRequest = DownloadedFile.fetchRequest() as NSFetchRequest<DownloadedFile>
+            fetchRequest.predicate = NSPredicate(format: "name = %@", file.name)
+            
+            do {
+                if let bla = try context.fetch(fetchRequest).first {
+                    bla.name = file.name
+                    bla.size = Int64(file.size!)
+                }
                 try context.save()
                 DispatchQueue.main.async {
                     onSuccess()

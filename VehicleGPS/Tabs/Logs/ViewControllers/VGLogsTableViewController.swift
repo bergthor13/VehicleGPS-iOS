@@ -175,18 +175,15 @@ class VGLogsTableViewController: UITableViewController {
         let totalCount = self.undownloadedFiles.count
         var downloadProgress = [Double]() {
             didSet {
-                
                 DispatchQueue.main.async {
-                    self.headerView.downloadingLogs(download: downloadProgress.reduce(0, +), parse: parseProgress.reduce(0, +), total: Double(totalCount))
-
+                    self.headerView.setDownloadProgress(percentage: downloadProgress.reduce(0, +)/Double(totalCount))
                 }
             }
         }
         var parseProgress = [Double]() {
             didSet {
                 DispatchQueue.main.async {
-                    self.headerView.downloadingLogs(download: downloadProgress.reduce(0, +), parse: parseProgress.reduce(0, +), total: Double(totalCount))
-
+                    self.headerView.setParseProgress(percentage: parseProgress.reduce(0, +)/Double(totalCount))
                 }
             }
         }
@@ -194,8 +191,7 @@ class VGLogsTableViewController: UITableViewController {
             downloadProgress.append(0)
             parseProgress.append(0)
         }
-        
-        self.headerView.downloadingLogs(download: 0, parse: 0, total: Double(totalCount))
+        self.headerView.displayProgressBar()
         let group1 = DispatchGroup()
         let group2 = DispatchGroup()
         group1.enter()
@@ -208,18 +204,36 @@ class VGLogsTableViewController: UITableViewController {
                     downloadProgress[index] = 1
                     DispatchQueue.global(qos: .utility).async {
                         guard let fileManager = self.vgFileManager else {
-                            parseProgress[index] = 1
-                            group2.leave()
+                            let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
+                            self.dataStore.add(file: downlFile, onSuccess: {
+                                parseProgress[index] = 1
+                                group2.leave()
+                            }) { (error) in
+                                parseProgress[index] = 1
+                                group2.leave()
+                            }
                             return
                         }
                         guard let fileUrl = fileUrl else {
-                            parseProgress[index] = 1
-                            group2.leave()
+                            let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
+                            self.dataStore.add(file: downlFile, onSuccess: {
+                                parseProgress[index] = 1
+                                group2.leave()
+                            }) { (error) in
+                                parseProgress[index] = 1
+                                group2.leave()
+                            }
                             return
                         }
                         guard let parser = fileManager.getParser(for: fileUrl) else {
-                            parseProgress[index] = 1
-                            group2.leave()
+                            let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
+                            self.dataStore.add(file: downlFile, onSuccess: {
+                                parseProgress[index] = 1
+                                group2.leave()
+                            }) { (error) in
+                                parseProgress[index] = 1
+                                group2.leave()
+                            }
                             return
                         }
                         parser.fileToTrack(fileUrl: fileUrl, progress: { (current, total) in
@@ -229,24 +243,22 @@ class VGLogsTableViewController: UITableViewController {
                             if existingIndexPath != nil {
                                 let existingTrack = self.getTrackAt(indexPath: existingIndexPath!)!
                                 track.id = existingTrack.id
-                                self.dataStore.update(vgTrack: track, onSuccess: { (id) in
+                                self.dataStore.update(vgTrack: track, onSuccess: {  [unowned self] (id) in
                                     let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
-                                    self.dataStore.add(file: downlFile, onSuccess: {
+                                    self.dataStore.update(file: downlFile, onSuccess: {
                                         parseProgress[index] = 1
                                         group2.leave()
                                     }) { (error) in
                                         parseProgress[index] = 1
                                         group2.leave()
                                     }
-                                    parseProgress[index] = 1
-                                    group2.leave()
                                 }) { (error) in
                                     parseProgress[index] = 1
                                     self.display(error: error)
                                     group2.leave()
                                 }
                             } else {
-                                self.dataStore.add(vgTrack: track, onSuccess: { (id) in
+                                self.dataStore.add(vgTrack: track, onSuccess: { [unowned self] (id) in
                                     let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
                                     self.dataStore.add(file: downlFile, onSuccess: {
                                         parseProgress[index] = 1
@@ -284,6 +296,9 @@ class VGLogsTableViewController: UITableViewController {
         }
         
         group1.notify(queue: .global()) {
+            DispatchQueue.main.async {
+                self.headerView.downloadComplete()
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                self.searchForNewLogs(shouldDownloadFiles: false)
             }
@@ -324,6 +339,13 @@ class VGLogsTableViewController: UITableViewController {
                             self.undownloadedFiles.append(deviceFile)
                         }
                     }
+                    for df in self.downloadedFiles {
+                        print(df)
+                    }
+                    for f in self.undownloadedFiles {
+                        print(f.filename, f.fileSize)
+                    }
+                    
                     DispatchQueue.main.async {
                         self.headerView.newLogsAvailable(count: self.undownloadedFiles.count)
                         if shouldDownloadFiles {
@@ -362,7 +384,7 @@ class VGLogsTableViewController: UITableViewController {
             for downFile in self.downloadedFiles {
                 if downFile.name == deviceFile.filename &&
                     Int(downFile.size) != Int(truncating: deviceFile.fileSize!) {
-                    print(Int(downFile.size), Int(truncating: deviceFile.fileSize!))
+                    print(downFile.name!, Int(downFile.size), "-------" ,deviceFile.filename, Int(truncating: deviceFile.fileSize!))
                     files.append(deviceFile)
                 }
             }
