@@ -243,7 +243,7 @@ class VGLogsTableViewController: UITableViewController {
                             if existingIndexPath != nil {
                                 let existingTrack = self.getTrackAt(indexPath: existingIndexPath!)!
                                 track.id = existingTrack.id
-                                self.dataStore.update(vgTrack: track, onSuccess: {  [unowned self] (id) in
+                                self.dataStore.update(vgTrack: track, onSuccess: { (id) in
                                     let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
                                     self.dataStore.update(file: downlFile, onSuccess: {
                                         parseProgress[index] = 1
@@ -258,7 +258,7 @@ class VGLogsTableViewController: UITableViewController {
                                     group2.leave()
                                 }
                             } else {
-                                self.dataStore.add(vgTrack: track, onSuccess: { [unowned self] (id) in
+                                self.dataStore.add(vgTrack: track, onSuccess: { (id) in
                                     let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
                                     self.dataStore.add(file: downlFile, onSuccess: {
                                         parseProgress[index] = 1
@@ -339,12 +339,6 @@ class VGLogsTableViewController: UITableViewController {
                             self.undownloadedFiles.append(deviceFile)
                         }
                     }
-                    for df in self.downloadedFiles {
-                        print(df)
-                    }
-                    for f in self.undownloadedFiles {
-                        print(f.filename, f.fileSize)
-                    }
                     
                     DispatchQueue.main.async {
                         self.headerView.newLogsAvailable(count: self.undownloadedFiles.count)
@@ -357,7 +351,7 @@ class VGLogsTableViewController: UITableViewController {
                     let recordingFileNames = self.getRecordingFile()
                     for recordingFileName in recordingFileNames {
                         guard let recordingIndexPath = self.getIndexPath(for: recordingFileName.filename) else {
-                            return
+                            continue
                         }
                         self.tracksDictionary[self.sections[recordingIndexPath.section]]![recordingIndexPath.row].isRecording = true
                         
@@ -525,6 +519,7 @@ class VGLogsTableViewController: UITableViewController {
                 continue
             }
             for (rowIndex, trk) in sectionList.enumerated() {
+                print(fileName, trk.fileName)
                 if fileName == trk.fileName {
                     return IndexPath(row: rowIndex, section: sectionIndex)
                 }
