@@ -133,8 +133,8 @@ class VGLogsTableViewCell: UITableViewCell {
         
         
 
-        UIView.animate(withDuration: 3.0, delay: 0.0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.curveEaseOut, .repeat], animations: {
-            self.recView.transform = CGAffineTransform(scaleX: 3.5, y: 3.5)
+        UIView.animate(withDuration: 2.0, delay: 0.0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.curveEaseOut, .repeat], animations: {
+            self.recView.transform = CGAffineTransform(scaleX: 3, y: 3)
             self.recView.alpha = 0
         }, completion: nil)
 

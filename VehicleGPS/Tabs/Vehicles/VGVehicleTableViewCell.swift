@@ -22,12 +22,6 @@ class VGVehicleTableViewCell: UITableViewCell {
     static let nibName = "VGVehicleTableViewCell"
     static let nib = UINib(nibName: VGVehicleTableViewCell.nibName, bundle: nil)
     
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         colorBanner.layer.borderColor = UIColor.tertiaryLabel.cgColor
@@ -36,6 +30,13 @@ class VGVehicleTableViewCell: UITableViewCell {
         colorBanner.roundCorners(corners: [.bottomRight, .topRight], radius: 3.0)
         
         defaultViewBackground.layer.cornerRadius = defaultViewBackground.bounds.height/2
+        
+        imgVehicle.layer.borderWidth = 0.5
+        imgVehicle.layer.borderColor = UIColor.secondaryLabel.cgColor
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        imgVehicle.layer.borderColor = UIColor.secondaryLabel.cgColor
     }
 }
 

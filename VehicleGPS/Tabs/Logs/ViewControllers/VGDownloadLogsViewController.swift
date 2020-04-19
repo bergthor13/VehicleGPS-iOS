@@ -21,7 +21,7 @@ class VGDownloadLogsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //availableLogsTVC = VGAvailableDownloadTableViewController(style: .plain, downloadManager: downloadManager)
+        availableLogsTVC = VGAvailableDownloadTableViewController(style: .plain)
         view.backgroundColor = .systemBackground
         self.navigationController?.navigationBar.prefersLargeTitles = false
         let segmentedControl = UISegmentedControl(items: ["Nýjir", "Allir ferlar", "Stillingar"])

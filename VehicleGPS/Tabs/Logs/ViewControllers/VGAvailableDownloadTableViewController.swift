@@ -17,16 +17,6 @@ class VGAvailableDownloadTableViewController: UITableViewController {
     var sectionKeys = [String]()
     let headerDateFormatter = VGHeaderDateFormatter()
     
-    var downloadManager:VGSFTPManager?
-    init(style: UITableView.Style, downloadManager:VGSFTPManager?) {
-        super.init(style: style)
-        self.downloadManager = downloadManager
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
     fileprivate func registerCells() {
         self.tableView.register(VGAvailableLogsTableViewCell.nib, forCellReuseIdentifier: VGAvailableLogsTableViewCell.identifier)
     }
@@ -79,21 +69,21 @@ class VGAvailableDownloadTableViewController: UITableViewController {
             // Delete the row from the data source
             let track = self.getTrackAt(indexPath: indexPath)
             
-            self.downloadManager?.deleteFile(filename: track.fileName, callback: { (success) in
-                if success {
-                    DispatchQueue.main.async {
-                        tableView.beginUpdates()
-                        self.tracksDict[self.sectionKeys[indexPath.section]]?.remove(at: indexPath.row)
-                        tableView.deleteRows(at: [indexPath], with: .fade)
-
-                        if self.tracksDict[self.sectionKeys[indexPath.section]]?.count == 0 {
-                            self.sectionKeys.remove(at: indexPath.section)
-                            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .top)
-                        }
-                        tableView.endUpdates()
-                    }
-                }
-            })
+//            self.downloadManager?.deleteFile(filename: track.fileName, callback: { (success) in
+//                if success {
+//                    DispatchQueue.main.async {
+//                        tableView.beginUpdates()
+//                        self.tracksDict[self.sectionKeys[indexPath.section]]?.remove(at: indexPath.row)
+//                        tableView.deleteRows(at: [indexPath], with: .fade)
+//
+//                        if self.tracksDict[self.sectionKeys[indexPath.section]]?.count == 0 {
+//                            self.sectionKeys.remove(at: indexPath.section)
+//                            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .top)
+//                        }
+//                        tableView.endUpdates()
+//                    }
+//                }
+//            })
         }
     }
 

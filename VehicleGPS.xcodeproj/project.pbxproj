@@ -44,6 +44,8 @@
 		F23BE8FB22A5E5BB008FD50C /* VGLogsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23BE8F022A5E5BB008FD50C /* VGLogsTableViewController.swift */; };
 		F23D786F23B1551300DBC64F /* VGHistorySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23D786E23B1551300DBC64F /* VGHistorySection.swift */; };
 		F23D787323B7C16700DBC64F /* DisplayLineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23D787223B7C16700DBC64F /* DisplayLineProtocol.swift */; };
+		F23F60C1244C87C100A97CF8 /* VGImportTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23F60C0244C87C100A97CF8 /* VGImportTableViewCell.swift */; };
+		F23F60C3244C8A5400A97CF8 /* VGFullDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23F60C2244C8A5400A97CF8 /* VGFullDateFormatter.swift */; };
 		F24754F523DD9219007E0DF8 /* VGHeaderDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24754F423DD9219007E0DF8 /* VGHeaderDateFormatter.swift */; };
 		F24754F723DDAAD8007E0DF8 /* VGDistanceFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24754F623DDAAD8007E0DF8 /* VGDistanceFormatter.swift */; };
 		F24754FC23DDAE26007E0DF8 /* VGDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24754FB23DDAE26007E0DF8 /* VGDurationFormatter.swift */; };
@@ -139,6 +141,8 @@
 		F23BE8F022A5E5BB008FD50C /* VGLogsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGLogsTableViewController.swift; sourceTree = "<group>"; };
 		F23D786E23B1551300DBC64F /* VGHistorySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGHistorySection.swift; sourceTree = "<group>"; };
 		F23D787223B7C16700DBC64F /* DisplayLineProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayLineProtocol.swift; sourceTree = "<group>"; };
+		F23F60C0244C87C100A97CF8 /* VGImportTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGImportTableViewCell.swift; sourceTree = "<group>"; };
+		F23F60C2244C8A5400A97CF8 /* VGFullDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFullDateFormatter.swift; sourceTree = "<group>"; };
 		F24754F423DD9219007E0DF8 /* VGHeaderDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGHeaderDateFormatter.swift; sourceTree = "<group>"; };
 		F24754F623DDAAD8007E0DF8 /* VGDistanceFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDistanceFormatter.swift; sourceTree = "<group>"; };
 		F24754FB23DDAE26007E0DF8 /* VGDurationFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDurationFormatter.swift; sourceTree = "<group>"; };
@@ -282,6 +286,7 @@
 				F2647BE62435024600283B38 /* String+Extensions.swift */,
 				F2C73ABD24266148008069AE /* VGImportFileTableViewController.swift */,
 				F228B30A243CB5EC00D79D5E /* VGImportTableViewCell.xib */,
+				F23F60C0244C87C100A97CF8 /* VGImportTableViewCell.swift */,
 				F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */,
 				F2C96EB122A853A500180055 /* VGFileManager.swift */,
 				F2EE0CAF2407E76C00916DD9 /* StreamReader.swift */,
@@ -431,6 +436,7 @@
 				F24754F623DDAAD8007E0DF8 /* VGDistanceFormatter.swift */,
 				F24754FB23DDAE26007E0DF8 /* VGDurationFormatter.swift */,
 				F22F37C1243AAB60005E80C1 /* VGDateParsingFormatter.swift */,
+				F23F60C2244C8A5400A97CF8 /* VGFullDateFormatter.swift */,
 			);
 			path = Formatters;
 			sourceTree = "<group>";
@@ -616,6 +622,7 @@
 				F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */,
 				F24D88C523D3C7BD0071F6BC /* VGDownloadLogsViewController.swift in Sources */,
 				F24754FE23DDAFA8007E0DF8 /* VGListEmptyLabel.swift in Sources */,
+				F23F60C1244C87C100A97CF8 /* VGImportTableViewCell.swift in Sources */,
 				F215AC6423DB1AA40001AF24 /* VGVehicle.swift in Sources */,
 				F2D8C30523FDD01500D77BF2 /* NotificationCenterNames.swift in Sources */,
 				F206FA7723D09366009A37F6 /* VGNewJourneyTableViewController.swift in Sources */,
@@ -651,6 +658,7 @@
 				F25669BE23CB6DB700CC7934 /* TrackGraphViewConfig.swift in Sources */,
 				F24754F723DDAAD8007E0DF8 /* VGDistanceFormatter.swift in Sources */,
 				F23BE8F522A5E5BB008FD50C /* VGGraphTableViewCell.swift in Sources */,
+				F23F60C3244C8A5400A97CF8 /* VGFullDateFormatter.swift in Sources */,
 				F25839DD23A6BE8600E76B54 /* VGTracksSummary.swift in Sources */,
 				F2AC16FE23EDAFA400516498 /* VGEditVehicleTableViewController.swift in Sources */,
 				F215AC8323DB3BC50001AF24 /* VGNewVehicleTableViewController.swift in Sources */,

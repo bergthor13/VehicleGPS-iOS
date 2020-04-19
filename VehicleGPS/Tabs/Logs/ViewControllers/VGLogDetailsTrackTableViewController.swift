@@ -24,6 +24,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
     }
     
     var track: VGTrack?
+    let dateFormatter = VGFullDateFormatter()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,11 +82,8 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             }
             let cell1 = UITableViewCell(style: .value2, reuseIdentifier: Strings.dummyIdentifier)
             cell1.tintColor = UIApplication.shared.delegate?.window!!.tintColor
-            let dateFormatter = DateFormatter()
-            dateFormatter.locale = Locale.current
-            dateFormatter.dateStyle = .long
-            dateFormatter.timeStyle = .medium
             cell1.textLabel?.text = Strings.startTime
+            
             cell1.detailTextLabel?.text = dateFormatter.string(from: timeStart)
             
             if indexPath.row == 1 {

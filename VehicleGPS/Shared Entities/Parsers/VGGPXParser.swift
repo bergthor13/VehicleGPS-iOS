@@ -74,6 +74,9 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
         if elementName == "time" {
             let timeString = foundCharacters.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
             currPoint.timestamp = ISO8601DateParser.parse(timeString)
+            if currTrack?.timeStart == nil {
+                currTrack?.timeStart = currPoint.timestamp
+            }
         }
 
         if elementName == "trkpt" || elementName == "wpt" {
@@ -82,6 +85,14 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
         
         if elementName == "trk" {
             tracks.append(currTrack!)
+        }
+        
+        if elementName == "name" {
+            currTrack?.name = foundCharacters.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+        }
+        
+        if elementName == "cmt" {
+            currTrack?.comment = foundCharacters.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
         }
 
         foundCharacters = ""

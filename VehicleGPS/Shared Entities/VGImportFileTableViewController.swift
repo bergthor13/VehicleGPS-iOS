@@ -12,7 +12,7 @@ class VGImportFileTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = Strings.titles.importFile
-        tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
+        tableView.register(VGImportTableViewCell.nib, forCellReuseIdentifier: VGImportTableViewCell.identifier)
         importBarButton = UIBarButtonItem(title: Strings.importFile, style: .done, target: self, action: #selector(tappedImport))
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.cancel, style: .plain, target: self, action: #selector(tappedCancel))
         
@@ -96,8 +96,8 @@ class VGImportFileTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: VGLogsTableViewCell.identifier, for: indexPath) as? VGLogsTableViewCell else {
-            return VGLogsTableViewCell(style: .default, reuseIdentifier: VGLogsTableViewCell.identifier)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: VGImportTableViewCell.identifier, for: indexPath) as? VGImportTableViewCell else {
+            return VGImportTableViewCell(style: .default, reuseIdentifier: VGImportTableViewCell.identifier)
         }
         
         cell.show(track: self.importedTracks[indexPath.row])
