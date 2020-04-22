@@ -9,19 +9,9 @@
 import UIKit
 import CoreLocation
 
-class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLineProtocol {
+class VGLogDetailsTrackTableViewController: UITableViewController {
     var dlpPoint: CGPoint?
     var dlpTime: Date?
-    
-    func didTouchGraph(at point: CGPoint) {
-        for graph in self.tableView.visibleCells {
-            if let graph1 = graph as? VGGraphTableViewCell {
-                graph1.graphView.displayVerticalLine(at: point)
-                dlpPoint = point
-                dlpTime = graph1.graphView.getTimeOfTouched(point: point)
-            }
-        }
-    }
     
     var track: VGTrack?
     let dateFormatter = VGFullDateFormatter()
@@ -30,6 +20,16 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         super.viewDidLoad()
         self.tableView.register(VGGraphTableViewCell.self, forCellReuseIdentifier: VGGraphTableViewCell.identifier)
         self.tableView.allowsSelection = false
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        dlpTime = nil
+        dlpPoint = nil
+        track = nil
+        for (index, graph) in self.tableView.visibleCells.enumerated() {
+            let cell = self.tableView.visibleCells[index] as? VGGraphTableViewCell
+            cell?.graphView.removeAllDLPListeners()
+        }
     }
 
     // MARK: - Table view data source
@@ -63,8 +63,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 cell = VGGraphTableViewCell(style: .default, reuseIdentifier: VGGraphTableViewCell.identifier, tableView: self.tableView)
             }
             
-            cell?.tableView = self.tableView
-            cell!.graphView.dlpList.append(self)
+            cell!.graphView.addDLP(listener: self)
             cell!.graphView.startTime = track?.timeStart
             cell!.graphView.endTime = track?.timeStart?.addingTimeInterval(track!.duration)
 
@@ -125,17 +124,18 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                     continue
                 }
                 
-                let duration = point2.timestamp?.timeIntervalSince(point1.timestamp!)
+                guard let time1 = point1.timestamp, let time2 = point2.timestamp else {
+                    continue
+                }
+                
+                let duration = time2.timeIntervalSince(time1)
                 let coord = CLLocation(latitude: latitude2, longitude: longitude2)
                 let lastCoord = CLLocation(latitude: latitude1, longitude: longitude1)
                 
                 let distance = coord.distance(from: lastCoord)
-                guard let dur = duration else {
-                    continue
-                }
-                let speed = (distance/dur)*3.6
+                let speed = (distance/duration)*3.6
                 if speed < 1200 {
-                    list.append((point1.timestamp!, (distance/dur)*3.6))
+                    list.append((point1.timestamp!, (distance/duration)*3.6))
                 }
             }
             cell?.graphView.showMinMaxValue = false
@@ -153,7 +153,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 if !point.hasGoodFix() {
                     continue
                 }
-                list.append((point.timestamp!, point.elevation!))
+                guard let time = point.timestamp, let ele = point.elevation else {
+                    continue
+                }
+                list.append((time, ele))
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
@@ -167,10 +170,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                 if !point.hasGoodFix() {
                     continue
                 }
-                guard let pdop = point.pdop else {
+                guard let time = point.timestamp, let pdop = point.pdop else {
                     continue
                 }
-                list.append((point.timestamp!, pdop))
+                list.append((time, pdop))
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
@@ -185,11 +188,11 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
                     continue
                 }
                 
-                guard let horizontalAccuracy = point.horizontalAccuracy else {
+                guard let time = point.timestamp, let horizontalAccuracy = point.horizontalAccuracy else {
                     continue
                 }
                 
-                list.append((point.timestamp!, horizontalAccuracy))
+                list.append((time, horizontalAccuracy))
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
             cell!.graphView.numbersList = list
@@ -197,8 +200,8 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         } else if indexPath.section == 5 {
             var list = [(Date, Double)]()
             for point in track!.trackPoints {
-                if let rpm = point.rpm {
-                    list.append((point.timestamp!, rpm))
+                if let rpm = point.rpm, let time = point.timestamp {
+                    list.append((time, rpm))
                 }
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
@@ -207,9 +210,9 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         } else if indexPath.section == 6 {
             var list = [(Date, Double)]()
             for point in track!.trackPoints {
-                if let engineLoad = point.engineLoad {
+                if let engineLoad = point.engineLoad, let time = point.timestamp {
                     if !engineLoad.isNaN {
-                        list.append((point.timestamp!, engineLoad))
+                        list.append((time, engineLoad))
                     }
                     
                 }
@@ -221,8 +224,8 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         } else if indexPath.section == 7 {
             var list = [(Date, Double)]()
             for point in track!.trackPoints {
-                if let throttlePosition = point.throttlePosition {
-                    list.append((point.timestamp!, throttlePosition))
+                if let throttlePosition = point.throttlePosition, let time = point.timestamp {
+                    list.append((time, throttlePosition))
                 }
             }
             cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
@@ -230,8 +233,8 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         } else if indexPath.section == 8 {
             var list = [(Date, Double)]()
             for point in track!.trackPoints {
-                if let coolantTemperature = point.coolantTemperature {
-                    list.append((point.timestamp!, coolantTemperature))
+                if let coolantTemperature = point.coolantTemperature, let time = point.timestamp {
+                    list.append((time, coolantTemperature))
                 }
             }
             cell?.graphView.graphMinValue = 0
@@ -243,8 +246,8 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
         } else if indexPath.section == 9 {
             var list = [(Date, Double)]()
             for point in track!.trackPoints {
-                if let ambientTemperature = point.ambientTemperature {
-                    list.append((point.timestamp!, ambientTemperature))
+                if let ambientTemperature = point.ambientTemperature, let time = point.timestamp {
+                    list.append((time, ambientTemperature))
                 }
             }
             cell!.graphView.color = UIColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 0.3)
@@ -261,5 +264,21 @@ class VGLogDetailsTrackTableViewController: UITableViewController, DisplayLinePr
             return 30
         }
         return 200
+    }
+    
+    deinit {
+
+    }
+}
+
+extension VGLogDetailsTrackTableViewController: DisplayLineProtocol {
+    func didTouchGraph(at point: CGPoint) {
+        for graph in self.tableView.visibleCells {
+            if let graph1 = graph as? VGGraphTableViewCell {
+                graph1.graphView.displayVerticalLine(at: point)
+                dlpPoint = point
+                dlpTime = graph1.graphView.getTimeOfTouched(point: point)
+            }
+        }
     }
 }

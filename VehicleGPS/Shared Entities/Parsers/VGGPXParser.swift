@@ -20,7 +20,7 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
     var currTrack:VGTrack?
     
     func fileToTracks(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, callback: @escaping ([VGTrack]) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)?) {
-        
+        tracks = []
         //Setup the parser and initialize it with the filepath's data
         let data = NSData(contentsOf: fileUrl)
         let parser = XMLParser(data: data! as Data)
@@ -68,7 +68,10 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if elementName == "ele" {
             let strElevation = foundCharacters.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
-            currPoint.elevation = Double(strElevation)!
+            guard let ele = Double(strElevation) else {
+                return
+            }
+            currPoint.elevation = ele
         }
 
         if elementName == "time" {

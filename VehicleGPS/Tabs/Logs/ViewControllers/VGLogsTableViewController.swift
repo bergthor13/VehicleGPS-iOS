@@ -1,6 +1,7 @@
 import UIKit
 import NMSSH
 import CoreData
+import CoreServices
 
 class VGLogsTableViewController: UITableViewController {
     
@@ -72,9 +73,9 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     fileprivate func configureNavigationBar() {
-        //let button1 = UIBarButtonItem(title: Strings.parse, style: .plain, target: self, action: #selector(self.processFiles))
-        //self.navigationItem.leftBarButtonItem = button1
+        let importButtonItem = UIBarButtonItem(image: Icons.importFiles, style: .plain, target: self, action: #selector(self.importFiles))
         self.navigationItem.leftBarButtonItem = editButtonItem
+        self.navigationItem.rightBarButtonItem = importButtonItem
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic
     }
@@ -137,6 +138,13 @@ class VGLogsTableViewController: UITableViewController {
         NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
     }
     
+    @objc func importFiles(_ sender:UIBarButtonItem) {
+        let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypeXML as String, kUTTypePlainText as String], in: .import)
+        documentPicker.delegate = self
+        documentPicker.allowsMultipleSelection = true
+        present(documentPicker, animated: true)
+    }
+    
     @objc func deviceConnected(_ notification:Notification) {
         guard let session = notification.object as? NMSSHSession else {
             return
@@ -172,30 +180,31 @@ class VGLogsTableViewController: UITableViewController {
         guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
             return
         }
-        let totalCount = self.undownloadedFiles.count
-        var downloadProgress = [Double]() {
-            didSet {
-                DispatchQueue.main.async {
-                    self.headerView.setDownloadProgress(percentage: downloadProgress.reduce(0, +)/Double(totalCount))
-                }
-            }
-        }
-        var parseProgress = [Double]() {
-            didSet {
-                DispatchQueue.main.async {
-                    self.headerView.setParseProgress(percentage: parseProgress.reduce(0, +)/Double(totalCount))
-                }
-            }
-        }
-        for _ in 0 ..< totalCount {
-            downloadProgress.append(0)
-            parseProgress.append(0)
-        }
+
         self.headerView.displayProgressBar()
         let group1 = DispatchGroup()
         let group2 = DispatchGroup()
         group1.enter()
         DispatchQueue.global(qos: .utility).async {
+            let totalCount = self.undownloadedFiles.count
+            var downloadProgress = [Double]() {
+                didSet {
+                    DispatchQueue.main.async {
+                        self.headerView.setDownloadProgress(percentage: downloadProgress.reduce(0, +)/Double(totalCount))
+                    }
+                }
+            }
+            var parseProgress = [Double]() {
+                didSet {
+                    DispatchQueue.main.async {
+                        self.headerView.setParseProgress(percentage: parseProgress.reduce(0, +)/Double(totalCount))
+                    }
+                }
+            }
+            for _ in 0 ..< totalCount {
+                downloadProgress.append(0)
+                parseProgress.append(0)
+            }
             for (index, file) in self.undownloadedFiles.enumerated() {
                 group2.enter()
                 delegate.deviceCommunicator.downloadTrackFile(file: file, progress: { (current, total) in
@@ -238,12 +247,14 @@ class VGLogsTableViewController: UITableViewController {
                         }
                         parser.fileToTrack(fileUrl: fileUrl, progress: { (current, total) in
                             parseProgress[index] = Double(current)/Double(total)
-                        }, onSuccess: { (track) in
+                        }, onSuccess: { [unowned self] (track) in
                             let existingIndexPath = self.getIndexPath(for: file.filename)
                             if existingIndexPath != nil {
                                 let existingTrack = self.getTrackAt(indexPath: existingIndexPath!)!
                                 track.id = existingTrack.id
-                                self.dataStore.update(vgTrack: track, onSuccess: { (id) in
+                                self.dataStore.update(vgTrack: track, onSuccess: { [unowned self] (id) in
+                                    track.trackPoints = []
+                                    track.mapPoints = []
                                     let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
                                     self.dataStore.update(file: downlFile, onSuccess: {
                                         parseProgress[index] = 1
@@ -258,7 +269,9 @@ class VGLogsTableViewController: UITableViewController {
                                     group2.leave()
                                 }
                             } else {
-                                self.dataStore.add(vgTrack: track, onSuccess: { (id) in
+                                self.dataStore.add(vgTrack: track, onSuccess: { [unowned self] (id) in
+                                    track.trackPoints = []
+                                    track.mapPoints = []
                                     let downlFile = VGDownloadedFile(name: file.filename, size: file.fileSize as? Int)
                                     self.dataStore.add(file: downlFile, onSuccess: {
                                         parseProgress[index] = 1
@@ -833,5 +846,14 @@ extension VGLogsTableViewController: DisplaySelectVehicleProtocol {
         popover.sourceView = tappedView
 
         present(navController, animated: true, completion: nil)
+    }
+}
+
+
+extension VGLogsTableViewController: UIDocumentPickerDelegate {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        let importController = VGImportFileTableViewController(style: .insetGrouped, fileUrls: urls)
+        let navController = UINavigationController(rootViewController: importController)
+        present(navController, animated: true)
     }
 }

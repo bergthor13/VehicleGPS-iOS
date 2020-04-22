@@ -292,6 +292,15 @@ class VGDataStore {
         }
     }
     
+    
+    /// Returns the magnitude of a vector in three dimensions
+    /// from the given components.
+    ///
+    /// - Parameters:
+    ///     - vgTrack: The *x* component of the vector.
+    ///     - onSuccess: The *y* component of the vector.
+    ///     - onFailure: The *z* component of the vector.
+
     func update(vgTrack: VGTrack, onSuccess: @escaping(UUID)->(), onFailure:@escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator

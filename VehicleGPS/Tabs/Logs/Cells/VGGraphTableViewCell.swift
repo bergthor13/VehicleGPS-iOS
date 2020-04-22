@@ -11,18 +11,13 @@ import UIKit
 class VGGraphTableViewCell: UITableViewCell {
     static let identifier = "GraphCell"
     var graphView: TrackGraphView!
-    var tableView: UITableView? {
-        didSet {
-            self.graphView.tableView = tableView
-        }
-    }
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         initializeView()
     }
     
     init(style: UITableViewCell.CellStyle, reuseIdentifier: String?, tableView: UITableView) {
-        self.tableView = tableView
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         initializeView()
     }
@@ -39,12 +34,7 @@ class VGGraphTableViewCell: UITableViewCell {
     }
 
     func initializeView() {
-        if tableView != nil {
-            self.graphView = TrackGraphView(frame: self.contentView.frame, tableView: self.tableView!)
-        } else {
-            self.graphView = TrackGraphView(frame: self.contentView.frame)
-        }
-
+        self.graphView = TrackGraphView(frame: self.contentView.frame)
         self.contentView.addSubview(graphView)
     }
     override func layoutSubviews() {

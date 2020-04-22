@@ -4,9 +4,9 @@ import MBProgressHUD
 
 class VGImportFileTableViewController: UITableViewController {
     
-    var fileUrl:URL?
+    var fileUrls = [URL]()
     var dataStore = VGDataStore()
-    var importedTracks = [VGTrack]()
+    var importedTracks = [[VGTrack]]()
     var importBarButton = UIBarButtonItem()
 
     override func viewDidLoad() {
@@ -17,7 +17,7 @@ class VGImportFileTableViewController: UITableViewController {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.cancel, style: .plain, target: self, action: #selector(tappedCancel))
         
         let asdf = VGGPXParser()
-        guard let fileUrl = fileUrl else {
+        if fileUrls.count == 0 {
             return
         }
         let activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
@@ -25,24 +25,30 @@ class VGImportFileTableViewController: UITableViewController {
         self.navigationItem.rightBarButtonItem = barButton
         activityIndicator.startAnimating()
         
-        DispatchQueue.global(qos: .utility).async {
-            asdf.fileToTracks(fileUrl: fileUrl, progress: { (curr, count) in
-            }, callback: { (parsedTracks) in
-                self.importedTracks = parsedTracks
-                DispatchQueue.main.async {
-                    activityIndicator.stopAnimating()
-                    self.navigationItem.rightBarButtonItem = self.importBarButton
-                    self.tableView.reloadData()
+        for _ in self.fileUrls {
+            self.importedTracks.append([VGTrack]())
+        }
+        
+            DispatchQueue.global(qos: .utility).async {
+                for (index, fileUrl) in self.fileUrls.enumerated() {
+                    asdf.fileToTracks(fileUrl: fileUrl, progress: { (curr, count) in
+                    }, callback: { (parsedTracks) in
+                        self.importedTracks[index] = parsedTracks
+                        DispatchQueue.main.async {
+                            activityIndicator.stopAnimating()
+                            self.navigationItem.rightBarButtonItem = self.importBarButton
+                            self.tableView.reloadData()
+                        }
+                    }) { (track, style) in
+                      
                 }
-            }) { (track, style) in
-                  
             }
         }
     }
     
-    init(style: UITableView.Style, fileUrl:URL) {
+    init(style: UITableView.Style, fileUrls:[URL]) {
         super.init(style:style)
-        self.fileUrl = fileUrl
+        self.fileUrls = fileUrls
     }
     
     required init?(coder: NSCoder) {
@@ -59,22 +65,28 @@ class VGImportFileTableViewController: UITableViewController {
         let hud = MBProgressHUD.showAdded(to: appDelegate.window!, animated: true)
         hud.mode = .determinateHorizontalBar
         hud.label.text = "Adding Logs..."
-        hud.progress = finishedTracks/Float(self.importedTracks.count)
-        for track in self.importedTracks {
-            self.dataStore.add(
-                vgTrack: track,
-                onSuccess: { (id) in
-                    finishedTracks += 1
-                    hud.progress = finishedTracks/Float(self.importedTracks.count)
-                    if Int(finishedTracks) == self.importedTracks.count {
-                        hud.hide(animated: true)
+        var totalTracks = 0
+        for file in importedTracks {
+            totalTracks += file.count
+        }
+        hud.progress = finishedTracks/Float(totalTracks)
+        for file in self.importedTracks {
+            for track in file {
+                self.dataStore.add(
+                    vgTrack: track,
+                    onSuccess: { (id) in
+                        finishedTracks += 1
+                        hud.progress = finishedTracks/Float(totalTracks)
+                        if Int(finishedTracks) == totalTracks {
+                            hud.hide(animated: true)
+                        }
+                        track.id = id
+                    },
+                    onFailure:  { (error) in
+                        print(error)
                     }
-                    track.id = id
-                },
-                onFailure:  { (error) in
-                    print(error)
-                }
-            )
+                )
+            }
         }
         dismiss(animated: true)
     }
@@ -86,11 +98,11 @@ class VGImportFileTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return fileUrls.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return importedTracks.count
+        return importedTracks[section].count
     }
 
     
@@ -100,15 +112,11 @@ class VGImportFileTableViewController: UITableViewController {
             return VGImportTableViewCell(style: .default, reuseIdentifier: VGImportTableViewCell.identifier)
         }
         
-        cell.show(track: self.importedTracks[indexPath.row])
+        cell.show(track: self.importedTracks[indexPath.section][indexPath.row])
 
         return cell
     }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 {
-            return String(fileUrl!.lastPathComponent)
-        }
-        
-        return nil
+        return String(fileUrls[section].lastPathComponent)
     }
 }

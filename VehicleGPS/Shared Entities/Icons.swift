@@ -17,4 +17,5 @@ struct Icons {
     static let delete = UIImage(systemName: "trash")
     static let add = UIImage(systemName: "plus.circle.fill")
     static let edit = UIImage(systemName: "square.and.pencil")
+    static let importFiles = UIImage(systemName: "square.and.arrow.down.on.square.fill")
 }

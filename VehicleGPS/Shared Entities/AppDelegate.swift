@@ -55,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                        open url: URL,
                        options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
-        let importController = VGImportFileTableViewController(style: .insetGrouped, fileUrl: url)
+        let importController = VGImportFileTableViewController(style: .insetGrouped, fileUrls: [url])
         let navController = UINavigationController(rootViewController: importController)
         tabController.present(navController, animated: true)
         return true

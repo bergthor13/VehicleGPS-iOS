@@ -13,29 +13,33 @@ class VGCSVParser: IVGLogParser {
         return true
     }
     
+    var csv: CSV?
+    
     func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, onSuccess: @escaping (VGTrack) -> (), onFailure:@escaping(Error)->()) {
-            var lastProgressUpdate = Date()
-
-            let track = VGTrack()
-            track.fileName = fileUrl.lastPathComponent
-            do {
-                let resources = try fileUrl.resourceValues(forKeys: [.fileSizeKey])
-                if let fileSize = resources.fileSize {
-                    track.fileSize = fileSize
-                }
-            } catch {
-                onFailure(error)
+        
+        var lastProgressUpdate = Date()
+        
+        let track = VGTrack()
+        track.fileName = fileUrl.lastPathComponent
+        do {
+            let resources = try fileUrl.resourceValues(forKeys: [.fileSizeKey])
+            if let fileSize = resources.fileSize {
+                track.fileSize = fileSize
             }
-            
-            var fileString = String()
-            do {
-                fileString = try String(contentsOf: fileUrl)
-            } catch {/* error handling here */}
-
-            let csv = CSV(string: fileString, column: ",", line: "\n")
-
-            let lineCount = csv.rows.count
-            for (index,row) in csv.rows.enumerated() {
+        } catch {
+            onFailure(error)
+        }
+        
+        var fileString = String()
+        do {
+            fileString = try String(contentsOf: fileUrl)
+        } catch {/* error handling here */}
+        
+        autoreleasepool {
+            csv = CSV(string: fileString, column: ",", line: "\n")
+            }
+            let lineCount = csv!.rows.count
+            for (index,row) in csv!.rows.enumerated() {
                 if abs(lastProgressUpdate.timeIntervalSinceNow) > self.progress_update_delay {
                     progress(UInt(index), UInt(lineCount))
                     lastProgressUpdate = Date()
@@ -46,8 +50,8 @@ class VGCSVParser: IVGLogParser {
                 let dataPoint = self.rowToDataPoint(row: row)
                 track.trackPoints.append(dataPoint)
             }
-
-
+            
+            
             track.process()
             
             let mapPoints = track.trackPoints.filter { (point) -> Bool in
@@ -56,6 +60,10 @@ class VGCSVParser: IVGLogParser {
             track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
             
             onSuccess(track)
+            fileString = ""
+            csv = nil
+
+        
     }
     
     func rowToDataPoint(row: [String]) -> VGDataPoint {

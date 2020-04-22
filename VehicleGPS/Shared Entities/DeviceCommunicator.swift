@@ -130,7 +130,7 @@ class DeviceCommunicator {
         self.downloadManager?.downloadFile(filename: file.filename, progress: { (received, total) -> Bool in
             progress(received, total)
             return true
-        }, callback: { (data) in
+        }, callback: { [unowned self] (data) in
             if let data = data {
                 onSuccess(self.fileManager.dataToFile(data: data, filename: file.filename))
             } else {

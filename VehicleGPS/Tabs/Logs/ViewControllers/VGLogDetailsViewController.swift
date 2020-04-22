@@ -15,7 +15,7 @@ class VGLogDetailsViewController: UIViewController {
     var trackSegmentView: UIView!
     var carSegmentView: UIView!
     
-    var trackDataTableViewController: VGLogDetailsTrackTableViewController?
+    var trackDataTableViewController: VGLogDetailsTrackTableViewController!
     
     var mapView: VGMapView!
     
@@ -77,42 +77,43 @@ class VGLogDetailsViewController: UIViewController {
         alert.popoverPresentationController?.barButtonItem = self.navigationItem.rightBarButtonItem
         
         alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel, handler: nil))
-
+        
         if vgFileManager.fileForTrackExists(track: track) {
             alert.addAction(UIAlertAction(title: Strings.shareCSV, style: .default, handler: { (_) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
-            
-            alert.addAction(UIAlertAction(title: Strings.shareGPX, style: .default, handler: { (_) in
-                //self.track.trackPoints = self.dataStore.getDataPointsForTrack(vgTrack: self.track)
-                let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(track: self.track)!], applicationActivities: nil)
-                self.present(activityVC, animated: true, completion: nil)
-            }))
-            
-            alert.addAction(UIAlertAction(title: Strings.selectVehicle, style: .default, handler: { (_) in
-                let vehCont = VGVehiclesSelectionTableViewController(style: .insetGrouped)
-                vehCont.track = self.track
-                let navCont = UINavigationController(rootViewController: vehCont)
-                self.present(navCont, animated: true, completion: nil)
-            }))
-            
-            alert.addAction(UIAlertAction(title: Strings.splitLog, style: .default, handler: { (_) in
-                guard let selectedTime = self.trackDataTableViewController?.dlpTime else {
-                    return
-                }
-
-                self.vgFileManager.split(track: self.track, at: selectedTime)
-                let (oldTrack, newTrack) = self.dataStore.split(track: self.track, at: selectedTime)
-                //self.dataStore.delete(vgTrack: self.track)
-                //oldTrack.process()
-                //self.vgSnapshotMaker.drawTrack(vgTrack: oldTrack)
-                //self.dataStore.update(vgTrack: oldTrack)
-                //newTrack.process()
-                //self.vgSnapshotMaker.drawTrack(vgTrack: newTrack)
-                //self.dataStore.update(vgTrack: newTrack)
-            }))
         }
+        
+        alert.addAction(UIAlertAction(title: Strings.shareGPX, style: .default, handler: { (_) in
+            //self.track.trackPoints = self.dataStore.getDataPointsForTrack(vgTrack: self.track)
+            let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(track: self.track)!], applicationActivities: nil)
+            self.present(activityVC, animated: true, completion: nil)
+        }))
+        
+        alert.addAction(UIAlertAction(title: Strings.selectVehicle, style: .default, handler: { (_) in
+            let vehCont = VGVehiclesSelectionTableViewController(style: .insetGrouped)
+            vehCont.track = self.track
+            let navCont = UINavigationController(rootViewController: vehCont)
+            self.present(navCont, animated: true, completion: nil)
+        }))
+
+        alert.addAction(UIAlertAction(title: Strings.splitLog, style: .default, handler: { (_) in
+            guard let selectedTime = self.trackDataTableViewController?.dlpTime else {
+                return
+            }
+
+            self.vgFileManager.split(track: self.track, at: selectedTime)
+            let (oldTrack, newTrack) = self.dataStore.split(track: self.track, at: selectedTime)
+            //self.dataStore.delete(vgTrack: self.track)
+            //oldTrack.process()
+            //self.vgSnapshotMaker.drawTrack(vgTrack: oldTrack)
+            //self.dataStore.update(vgTrack: oldTrack)
+            //newTrack.process()
+            //self.vgSnapshotMaker.drawTrack(vgTrack: newTrack)
+            //self.dataStore.update(vgTrack: newTrack)
+        }))
+        
         self.present(alert, animated: true, completion: nil)
     }
     @objc func segmentedControlValueChanged(_ sender: UISegmentedControl?) {
@@ -125,7 +126,6 @@ class VGLogDetailsViewController: UIViewController {
             view.addSubview(mapSegmentView)
 
         case 1:
-            trackSegmentView.backgroundColor = .red
             view.addSubview(trackSegmentView)
 
         default:
@@ -150,15 +150,17 @@ class VGLogDetailsViewController: UIViewController {
         super.viewWillTransition(to: size, with: coordinator)
         
     }
+    
+    deinit {
+        trackSegmentView.removeFromSuperview()
+    }
 
     func initializeTrackDataView() {
         trackSegmentView = UIView(frame: view.frame)
         trackDataTableViewController = VGLogDetailsTrackTableViewController(style: .grouped)
-        trackDataTableViewController!.tableView.frame = view.frame
         trackDataTableViewController!.track = self.track
         addChild(trackDataTableViewController!)
         trackSegmentView.addSubview(trackDataTableViewController!.view)
         trackDataTableViewController!.didMove(toParent: self)
-
     }
 }

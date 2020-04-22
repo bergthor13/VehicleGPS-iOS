@@ -146,7 +146,10 @@ extension VGDataPoint: Equatable {
 
 extension VGDataPoint: Comparable {
     static func < (lhs: VGDataPoint, rhs: VGDataPoint) -> Bool {
-        return lhs.timestamp! < rhs.timestamp!
+        guard let leftTimeStamp = lhs.timestamp, let rightTimeStamp = rhs.timestamp else {
+            return false
+        }
+        return leftTimeStamp < rightTimeStamp
     }
 }
 
