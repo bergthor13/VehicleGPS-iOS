@@ -103,15 +103,28 @@ class VGLogDetailsViewController: UIViewController {
                 return
             }
 
-            self.vgFileManager.split(track: self.track, at: selectedTime)
-            let (oldTrack, newTrack) = self.dataStore.split(track: self.track, at: selectedTime)
-            //self.dataStore.delete(vgTrack: self.track)
-            //oldTrack.process()
-            //self.vgSnapshotMaker.drawTrack(vgTrack: oldTrack)
-            //self.dataStore.update(vgTrack: oldTrack)
-            //newTrack.process()
-            //self.vgSnapshotMaker.drawTrack(vgTrack: newTrack)
-            //self.dataStore.update(vgTrack: newTrack)
+            let (oldTrack, newTrack) = self.split(track: self.track, at: selectedTime)
+            
+            guard let leftTrack = oldTrack, let rightTrack = newTrack else {
+                return
+            }
+            
+
+            leftTrack.process()
+            self.dataStore.update(vgTrack: leftTrack, onSuccess: { (id) in
+                print("UPDATED SUCCESSFULLY: \(id)")
+            }) { (error) in
+                print("ERROR UPDATING")
+                print(error)
+            }
+            
+            rightTrack.process()
+            self.dataStore.add(vgTrack: rightTrack, onSuccess: { (id) in
+                print("ADDED SUCCESSFULLY \(id)")
+            }) { (error) in
+                print("ERROR ADDING")
+                print(error)
+            }
         }))
         
         self.present(alert, animated: true, completion: nil)
@@ -162,5 +175,29 @@ class VGLogDetailsViewController: UIViewController {
         addChild(trackDataTableViewController!)
         trackSegmentView.addSubview(trackDataTableViewController!.view)
         trackDataTableViewController!.didMove(toParent: self)
+    }
+    
+    func split(track:VGTrack, at timestamp:Date) -> (VGTrack?, VGTrack?) {
+        let newTrack = VGTrack()
+        var pointIndex = -1
+        for (index, dataPoint) in track.trackPoints.enumerated() {
+            if dataPoint.timestamp! < timestamp {
+                pointIndex = index
+            }
+        }
+        
+        if pointIndex == -1 {
+            return (nil, nil)
+        }
+        
+        let leftSplit = track.trackPoints[0 ... pointIndex]
+        let rightSplit = track.trackPoints[pointIndex ..< track.trackPoints.count]
+        
+        if rightSplit.count != 0 {
+            track.trackPoints = Array(leftSplit)
+            newTrack.trackPoints = Array(rightSplit)
+        }
+        
+        return (track, newTrack)
     }
 }

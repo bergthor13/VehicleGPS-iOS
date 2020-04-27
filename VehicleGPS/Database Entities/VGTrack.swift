@@ -331,6 +331,7 @@ class VGTrack {
             return
         }
         self.duration = Double(timestampForLastPoint.timeIntervalSince(start))
+        self.mapPoints = VGTrack.getFilteredPointList(list: self.trackPoints)
         self.processed = true
     }
 }
