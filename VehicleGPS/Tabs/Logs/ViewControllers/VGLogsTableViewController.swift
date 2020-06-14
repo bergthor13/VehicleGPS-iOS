@@ -391,7 +391,6 @@ class VGLogsTableViewController: UITableViewController {
             for downFile in self.downloadedFiles {
                 if downFile.name == deviceFile.filename &&
                     Int(downFile.size) != Int(truncating: deviceFile.fileSize!) {
-                    print(downFile.name!, Int(downFile.size), "-------" ,deviceFile.filename, Int(truncating: deviceFile.fileSize!))
                     files.append(deviceFile)
                 }
             }
@@ -532,7 +531,6 @@ class VGLogsTableViewController: UITableViewController {
                 continue
             }
             for (rowIndex, trk) in sectionList.enumerated() {
-                print(fileName, trk.fileName)
                 if fileName == trk.fileName {
                     return IndexPath(row: rowIndex, section: sectionIndex)
                 }
