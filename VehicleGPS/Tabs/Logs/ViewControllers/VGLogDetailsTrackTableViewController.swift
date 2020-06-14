@@ -35,7 +35,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        if track!.hasOBDData {
+        guard let track = track else {
+            return 5
+        }
+        if track.hasOBDData {
             return sections.count
         } else {
             return 5
@@ -145,8 +148,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
 
         } else if indexPath.section == 2 {
             var list = [(Date, Double)]()
-
-            for point in track!.trackPoints {
+            guard let track = track else {
+                return cell!
+            }
+            for point in track.trackPoints {
                 if point.latitude == nil && point.longitude == nil {
                     continue
                 }
@@ -163,7 +168,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
 
         } else if indexPath.section == 3 {
             var list = [(Date, Double)]()
-            for point in track!.trackPoints {
+            guard let track = track else {
+                return cell!
+            }
+            for point in track.trackPoints {
                 if point.latitude == nil && point.longitude == nil {
                     continue
                 }
@@ -180,7 +188,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             
         } else if indexPath.section == 4 {
             var list = [(Date, Double)]()
-            for point in track!.trackPoints {
+            guard let track = track else {
+                return cell!
+            }
+            for point in track.trackPoints {
                 if point.latitude == nil && point.longitude == nil {
                     continue
                 }
@@ -199,7 +210,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             
         } else if indexPath.section == 5 {
             var list = [(Date, Double)]()
-            for point in track!.trackPoints {
+            guard let track = track else {
+                return cell!
+            }
+            for point in track.trackPoints {
                 if let rpm = point.rpm, let time = point.timestamp {
                     list.append((time, rpm))
                 }
@@ -209,7 +223,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
 
         } else if indexPath.section == 6 {
             var list = [(Date, Double)]()
-            for point in track!.trackPoints {
+            guard let track = track else {
+                return cell!
+            }
+            for point in track.trackPoints {
                 if let engineLoad = point.engineLoad, let time = point.timestamp {
                     if !engineLoad.isNaN {
                         list.append((time, engineLoad))
@@ -223,7 +240,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             
         } else if indexPath.section == 7 {
             var list = [(Date, Double)]()
-            for point in track!.trackPoints {
+            guard let track = track else {
+                return cell!
+            }
+            for point in track.trackPoints {
                 if let throttlePosition = point.throttlePosition, let time = point.timestamp {
                     list.append((time, throttlePosition))
                 }
@@ -232,7 +252,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             cell!.graphView.numbersList = list
         } else if indexPath.section == 8 {
             var list = [(Date, Double)]()
-            for point in track!.trackPoints {
+            guard let track = track else {
+                return cell!
+            }
+            for point in track.trackPoints {
                 if let coolantTemperature = point.coolantTemperature, let time = point.timestamp {
                     list.append((time, coolantTemperature))
                 }
@@ -245,7 +268,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             cell!.graphView.horizontalLineMarkers = [90]
         } else if indexPath.section == 9 {
             var list = [(Date, Double)]()
-            for point in track!.trackPoints {
+            guard let track = track else {
+                return cell!
+            }
+            for point in track.trackPoints {
                 if let ambientTemperature = point.ambientTemperature, let time = point.timestamp {
                     list.append((time, ambientTemperature))
                 }
