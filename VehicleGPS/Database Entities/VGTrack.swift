@@ -119,7 +119,7 @@ class VGTrack {
         return String(describing: startTime)
     }
     
-    func getISOStartTime() -> Date? {
+    func getStartTime() -> Date? {
         if timeStart != nil {
             return timeStart
         }
