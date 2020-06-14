@@ -92,12 +92,15 @@ class VGSettingsTableViewController: UITableViewController {
         }
         if indexPath.section == 1 {
             if indexPath.row == 0 {
-                let configuration = NEHotspotConfiguration(ssid: Constants.wireless.ssid, passphrase: Constants.wireless.ssid, isWEP: false)
+                let configuration = NEHotspotConfiguration(ssid: Constants.wireless.ssid, passphrase: Constants.wireless.password, isWEP: false)
                 configuration.joinOnce = true
                 configuration.hidden = true
                 NEHotspotConfigurationManager.shared.apply(configuration) { (error) in
                     if error == nil {
-                        // TODO: Update the list...
+                        if let delegate = UIApplication.shared.delegate as? AppDelegate {
+                            delegate.deviceCommunicator.reconnectToVehicleGPS()
+                        }
+
                     }
                 }
                 tableView.deselectRow(at: indexPath, animated: true)
