@@ -11,8 +11,6 @@ import NMSSH
 
 class VGSFTPManager {
     let session: NMSFTP
-    let remoteFolder = "/home/pi/Tracks/"
-    let deleteFolder = "/home/pi/DeletedTracks/"
     init(session:NMSFTP) {
         self.session = session
         self.session.connect()
@@ -21,7 +19,7 @@ class VGSFTPManager {
     
     func downloadFile(filename: String, progress: @escaping (UInt, UInt) -> Bool, callback:@escaping (Data?) -> Void) {
         self.semaphore.wait()
-        let data = self.session.contents(atPath: self.remoteFolder+filename, progress: { (got, totalBytes) -> Bool in
+        let data = self.session.contents(atPath: Constants.sftp.remoteFolder+filename, progress: { (got, totalBytes) -> Bool in
             return progress(got, totalBytes)
         })
         self.semaphore.signal()
@@ -31,7 +29,7 @@ class VGSFTPManager {
     func getRemoteFiles() -> [NMSFTPFile]? {
         var result = [NMSFTPFile]()
 
-        guard let files = self.session.contentsOfDirectory(atPath: remoteFolder) else {
+        guard let files = self.session.contentsOfDirectory(atPath: Constants.sftp.remoteFolder) else {
             return nil
         }
         
@@ -67,13 +65,13 @@ class VGSFTPManager {
                 return
             }
             
-            var isCopySuccess = self.session.writeContents(data, toFileAtPath: self.deleteFolder + filename)
+            var isCopySuccess = self.session.writeContents(data, toFileAtPath: Constants.sftp.deleteFolder + filename)
             if data.count == 0 {
                 isCopySuccess = true
             }
             
             if isCopySuccess {
-                let isRemoveSuccess = self.session.removeFile(atPath: self.remoteFolder + filename)
+                let isRemoveSuccess = self.session.removeFile(atPath: Constants.sftp.remoteFolder + filename)
                 callback(isRemoveSuccess)
             } else {
 

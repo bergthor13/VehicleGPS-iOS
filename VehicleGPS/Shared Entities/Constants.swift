@@ -18,6 +18,8 @@ struct Constants {
         static let host = "cargps.local"
         static let username = "pi"
         static let password = "easyprintsequence"
+        static let remoteFolder = "/home/pi/Tracks/"
+        static let deleteFolder = "/home/pi/DeletedTracks/"
     }
     
     struct persistentContainer {
