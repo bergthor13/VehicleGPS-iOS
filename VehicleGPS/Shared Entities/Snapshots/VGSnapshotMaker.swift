@@ -35,8 +35,11 @@ class VGSnapshotMaker {
                     track.mapPoints = mapPoints
                     NotificationCenter.default.post(name: .previewImageStartingUpdate, object: track)
                     self.drawTrack(vgTrack: track) { (image, style) -> Void? in
-                        NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: track))
-                        self.vgFileManager.savePNG(image: image!, for: track, style: style!)
+                        guard let image = image else {
+                            return nil
+                        }
+                        NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image, style: style!, track: track))
+                        self.vgFileManager.savePNG(image: image, for: track, style: style!)
                         return nil
                     }
                 }, onFailure: { (error) in
