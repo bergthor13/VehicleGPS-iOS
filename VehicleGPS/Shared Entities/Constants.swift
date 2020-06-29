@@ -16,7 +16,7 @@ struct Constants {
     
     struct sftp {
         static let host = "cargps.local"
-        static let username = "pi"
+        static let username = "gps"
         static let password = "easyprintsequence"
         static let remoteFolder = "/home/pi/Tracks/"
         static let deleteFolder = "/home/pi/DeletedTracks/"
