@@ -1,9 +1,14 @@
 import UIKit
 
 class VGVGPSDeviceSettingsTableViewController: UITableViewController {
+    let dataStore = VGDataStore()
+    var txtHost: UITextField!
+    var txtUsername: UITextField!
+    var txtPassword: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
         title = Strings.titles.vgpsDevice
+        
     }
 
     // MARK: - Table view data source
@@ -33,19 +38,22 @@ class VGVGPSDeviceSettingsTableViewController: UITableViewController {
 
         if indexPath.section == 0 {
             cell = UITableViewCell()
-            textField.text = "cargps.local"
+            txtHost = textField
+            textField.text = dataStore.getHost()
             cell.addSubview(textField)
             
         } else if indexPath.section == 1 {
             cell = UITableViewCell()
-            textField.text = "pi"
+            txtUsername = textField
+            textField.text = dataStore.getUsername()
             cell.addSubview(textField)
 
         } else if indexPath.section == 2 {
             cell = UITableViewCell()
+            txtPassword = textField
             textField.textContentType = .password
             textField.isSecureTextEntry = true
-            textField.text = "easyprintsequence"
+            textField.text = Constants.sftp.password
             cell.addSubview(textField)
         }
         
@@ -54,5 +62,10 @@ class VGVGPSDeviceSettingsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        dataStore.setHost(host: txtHost.text!)
+        dataStore.setUsername(username: txtUsername.text!)
     }
 }

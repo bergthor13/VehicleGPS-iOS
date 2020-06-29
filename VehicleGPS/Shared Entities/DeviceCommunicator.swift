@@ -11,7 +11,10 @@ class DeviceCommunicator {
     
     init() {
         DispatchQueue.global(qos: .userInitiated).async {
-            self.session = NMSSHSession.init(host: Constants.sftp.host, andUsername: Constants.sftp.username)
+            guard let host = self.dataStore.getHost(), let username = self.dataStore.getUsername() else {
+                return
+            }
+            self.session = NMSSHSession.init(host: host, andUsername: username)
             self.reconnectToVehicleGPS(session: self.session!)
         }
     }
