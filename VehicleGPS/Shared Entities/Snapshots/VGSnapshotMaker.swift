@@ -106,7 +106,7 @@ class VGSnapshotMaker {
     
     
     
-    func drawTrack(vgTrack:VGTrack, imageCallback:(@escaping(UIImage?,UIUserInterfaceStyle?)->Void?) = {_,_ in }) {
+    func drawTrack(vgTrack:VGTrack, imageCallback:(@escaping(UIImage?,UIUserInterfaceStyle?)->Void?)) {
         let coordinateList = vgTrack.getMapPoints()
         var snapshotter:MKMapSnapshotter?
         

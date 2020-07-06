@@ -25,6 +25,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         deviceCommunicator = DeviceCommunicator()
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.tintColor = UIColor.init(named: "appColor")
+
+        let splitViewController = SplitViewController(style: .doubleColumn)
+        splitViewController.preferredDisplayMode = .oneBesideSecondary
+        let primary = UICollectionViewController(collectionViewLayout: UICollectionViewLayout())
+        primary.navigationController?.navigationBar.prefersLargeTitles = true
+        primary.navigationItem.largeTitleDisplayMode = .always
+        primary.collectionView.backgroundColor = .clear
+        primary.title = "VehicleGPS"
+        
+        splitViewController.setViewController(primary, for: .primary)
+        splitViewController.setViewController(VGLogsTableViewController(style: .plain), for: .secondary)
+        splitViewController.setViewController(tabController, for: .compact)
+
         self.window?.rootViewController = tabController
         self.window?.makeKeyAndVisible()
         return true

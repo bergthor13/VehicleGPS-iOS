@@ -637,4 +637,20 @@ class VGDataStore {
             UserDefaults.standard.set(encoded, forKey: "DefaultVehicle")
         }
     }
+    
+    func getHost() -> String? {
+        return UserDefaults.standard.string(forKey: "SftpHost")
+    }
+    
+    func getUsername() -> String? {
+        return UserDefaults.standard.string(forKey: "SftpUsername")
+    }
+    
+    func setHost(host:String) {
+        UserDefaults.standard.setValue(host, forKey: "SftpHost")
+    }
+    
+    func setUsername(username:String) {
+        UserDefaults.standard.setValue(username, forKey: "SftpUsername")
+    }
 }

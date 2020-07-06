@@ -43,7 +43,11 @@ class DeviceCommunicator {
     }
     
     func reconnectToVehicleGPS() {
-        reconnectToVehicleGPS(session: self.session!)
+        guard let session = self.session else {
+            return
+        }
+        reconnectToVehicleGPS(session: session)
+
     }
     fileprivate func reconnectToVehicleGPS(session: NMSSHSession) {
         if !session.isConnected || !session.isAuthorized || !sftpSession!.isConnected {

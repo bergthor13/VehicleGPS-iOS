@@ -8,6 +8,7 @@ class VGVGPSDeviceSettingsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = Strings.titles.vgpsDevice
+        tableView.allowsSelection = false
         
     }
 
@@ -33,20 +34,20 @@ class VGVGPSDeviceSettingsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell = UITableViewCell()
-        let textField = UITextField(frame: CGRect(x: 20, y: 0, width: cell.frame.width-40, height: cell.frame.height))
+        let textField = UITextField()
         textField.autocapitalizationType = .none
 
         if indexPath.section == 0 {
             cell = UITableViewCell()
             txtHost = textField
             textField.text = dataStore.getHost()
-            cell.addSubview(textField)
+            cell.contentView.addSubview(textField)
             
         } else if indexPath.section == 1 {
             cell = UITableViewCell()
             txtUsername = textField
             textField.text = dataStore.getUsername()
-            cell.addSubview(textField)
+            cell.contentView.addSubview(textField)
 
         } else if indexPath.section == 2 {
             cell = UITableViewCell()
@@ -54,15 +55,23 @@ class VGVGPSDeviceSettingsTableViewController: UITableViewController {
             textField.textContentType = .password
             textField.isSecureTextEntry = true
             textField.text = Constants.sftp.password
-            cell.addSubview(textField)
+            cell.contentView.addSubview(textField)
         }
-        
+        textField.translatesAutoresizingMaskIntoConstraints = false
+
+        let topConstraint = NSLayoutConstraint(item: textField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1, constant: 0)
+        let bottomConstraint = NSLayoutConstraint(item: textField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1, constant: 0)
+        let leadingConstraint = NSLayoutConstraint(item: textField, attribute: .leading, relatedBy: .equal, toItem: cell.contentView, attribute: .leading, multiplier: 1, constant: 20)
+        let trailingConstraint = NSLayoutConstraint(item: textField, attribute: .trailing, relatedBy: .equal, toItem: cell.contentView, attribute: .trailing, multiplier: 1, constant: 0)
+
+        NSLayoutConstraint.activate([topConstraint, bottomConstraint, leadingConstraint, trailingConstraint])
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 44
     }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         dataStore.setHost(host: txtHost.text!)

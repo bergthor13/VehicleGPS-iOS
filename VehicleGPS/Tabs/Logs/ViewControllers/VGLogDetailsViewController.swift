@@ -129,6 +129,7 @@ class VGLogDetailsViewController: UIViewController {
         
         self.present(alert, animated: true, completion: nil)
     }
+    
     @objc func segmentedControlValueChanged(_ sender: UISegmentedControl?) {
         for view in self.view.subviews {
             view.removeFromSuperview()
@@ -169,11 +170,20 @@ class VGLogDetailsViewController: UIViewController {
     }
 
     func initializeTrackDataView() {
-        trackSegmentView = UIView(frame: view.frame)
+        trackSegmentView = UIView(frame: self.view.frame)
         trackDataTableViewController = VGLogDetailsTrackTableViewController(style: .grouped)
         trackDataTableViewController!.track = self.track
         addChild(trackDataTableViewController!)
         trackSegmentView.addSubview(trackDataTableViewController!.view)
+        trackDataTableViewController!.view.translatesAutoresizingMaskIntoConstraints = false
+
+        let topConstraint = NSLayoutConstraint(item: trackDataTableViewController!.view, attribute: .top, relatedBy: .equal, toItem: trackSegmentView!, attribute: .top, multiplier: 1, constant: 0)
+        let bottomConstraint = NSLayoutConstraint(item: trackDataTableViewController!.view, attribute: .bottom, relatedBy: .equal, toItem: trackSegmentView!, attribute: .bottom, multiplier: 1, constant: 0)
+        let leadingConstraint = NSLayoutConstraint(item: trackDataTableViewController!.view, attribute: .leading, relatedBy: .equal, toItem: trackSegmentView!, attribute: .leading, multiplier: 1, constant: 0)
+        let trailingConstraint = NSLayoutConstraint(item: trackDataTableViewController!.view, attribute: .trailing, relatedBy: .equal, toItem: trackSegmentView!, attribute: .trailing, multiplier: 1, constant: 0)
+
+        NSLayoutConstraint.activate([topConstraint, bottomConstraint, leadingConstraint, trailingConstraint])
+
         trackDataTableViewController!.didMove(toParent: self)
     }
     

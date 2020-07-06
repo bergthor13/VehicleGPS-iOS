@@ -76,6 +76,8 @@
 		F2647BE92435029900283B38 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2647BE82435029900283B38 /* UIView+Extensions.swift */; };
 		F2647BEB24352FBD00283B38 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2647BEA24352FBD00283B38 /* Strings.swift */; };
 		F26B01E8244E009400220F43 /* DisplayLineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26B01E7244E009400220F43 /* DisplayLineProtocol.swift */; };
+		F26B2C0E24B28E1D00E9F22C /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26B2C0D24B28E1D00E9F22C /* SplitViewController.swift */; };
+		F26B2C2824B3570A00E9F22C /* SidebarCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26B2C2724B3570A00E9F22C /* SidebarCollectionViewController.swift */; };
 		F26CCB6B23DBB44600697EFA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F26CCB6D23DBB44600697EFA /* Localizable.strings */; };
 		F2797D5723CD1AC500207650 /* VGHistoryDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2797D5623CD1AC500207650 /* VGHistoryDetailsTableViewController.swift */; };
 		F27CB77C23D38A3D002BF28F /* VGDeviceConnectedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F27CB77B23D38A3D002BF28F /* VGDeviceConnectedHeaderView.xib */; };
@@ -175,6 +177,8 @@
 		F2647BE82435029900283B38 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		F2647BEA24352FBD00283B38 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		F26B01E7244E009400220F43 /* DisplayLineProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayLineProtocol.swift; sourceTree = "<group>"; };
+		F26B2C0D24B28E1D00E9F22C /* SplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
+		F26B2C2724B3570A00E9F22C /* SidebarCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCollectionViewController.swift; sourceTree = "<group>"; };
 		F26CCB6C23DBB44600697EFA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F2797D5623CD1AC500207650 /* VGHistoryDetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGHistoryDetailsTableViewController.swift; sourceTree = "<group>"; };
 		F27CB77B23D38A3D002BF28F /* VGDeviceConnectedHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VGDeviceConnectedHeaderView.xib; sourceTree = "<group>"; };
@@ -282,6 +286,8 @@
 				F24754F823DDABE0007E0DF8 /* Formatters */,
 				F24D88D123D6381D0071F6BC /* Snapshots */,
 				F215ADFA2402786B000ECFFF /* Parsers */,
+				F26B2C0D24B28E1D00E9F22C /* SplitViewController.swift */,
+				F26B2C2724B3570A00E9F22C /* SidebarCollectionViewController.swift */,
 				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
 				F2647BE42434F8B500283B38 /* UIColor+Extensions.swift */,
 				F2647BE82435029900283B38 /* UIView+Extensions.swift */,
@@ -476,8 +482,8 @@
 			buildConfigurationList = F23BE8D022A5E4BA008FD50C /* Build configuration list for PBXNativeTarget "VehicleGPS" */;
 			buildPhases = (
 				668EE25938AB33E5D91A01DD /* [CP] Check Pods Manifest.lock */,
-				F23BE8B722A5E4B9008FD50C /* Sources */,
 				F23BE8B822A5E4B9008FD50C /* Frameworks */,
+				F23BE8B722A5E4B9008FD50C /* Sources */,
 				F23BE8B922A5E4B9008FD50C /* Resources */,
 				73324A3AF290B093A55A79C2 /* [CP] Embed Pods Frameworks */,
 			);
@@ -658,9 +664,11 @@
 				F2F14BB924423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift in Sources */,
 				F2647BE52434F8B500283B38 /* UIColor+Extensions.swift in Sources */,
 				F24D88CB23D622300071F6BC /* VGSnapshotMaker.swift in Sources */,
+				F26B2C0E24B28E1D00E9F22C /* SplitViewController.swift in Sources */,
 				F2C73ABE24266148008069AE /* VGImportFileTableViewController.swift in Sources */,
 				F25669BE23CB6DB700CC7934 /* TrackGraphViewConfig.swift in Sources */,
 				F24754F723DDAAD8007E0DF8 /* VGDistanceFormatter.swift in Sources */,
+				F26B2C2824B3570A00E9F22C /* SidebarCollectionViewController.swift in Sources */,
 				F23BE8F522A5E5BB008FD50C /* VGGraphTableViewCell.swift in Sources */,
 				F23F60C3244C8A5400A97CF8 /* VGFullDateFormatter.swift in Sources */,
 				F25839DD23A6BE8600E76B54 /* VGTracksSummary.swift in Sources */,
@@ -757,7 +765,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -813,7 +821,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -831,15 +839,19 @@
 				CODE_SIGN_ENTITLEMENTS = VehicleGPS/VehicleGPS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NJU97Y2JX6;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = VehicleGPS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bergtor05.VehicleGPS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -853,15 +865,19 @@
 				CODE_SIGN_ENTITLEMENTS = VehicleGPS/VehicleGPS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NJU97Y2JX6;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = VehicleGPS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bergtor05.VehicleGPS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
