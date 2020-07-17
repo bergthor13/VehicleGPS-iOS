@@ -133,7 +133,7 @@ class VGDataPoint {
             return true
         }
         
-        return (!(fixType <= 1 || horizontalAccuracy > 2)) && timestamp != nil
+        return (!(fixType <= 1 || horizontalAccuracy > 100)) && timestamp != nil
     }
 }
 
