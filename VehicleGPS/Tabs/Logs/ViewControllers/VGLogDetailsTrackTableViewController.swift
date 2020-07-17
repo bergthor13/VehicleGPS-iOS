@@ -49,7 +49,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 5
+            return 6
         }
         return 1
     }
@@ -59,6 +59,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: VGGraphTableViewCell?
+        
         if indexPath.section > 0 {
             cell = tableView.dequeueReusableCell(withIdentifier: VGGraphTableViewCell.identifier, for: indexPath) as? VGGraphTableViewCell
 
@@ -113,6 +114,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             if indexPath.row == 4 {
                 cell1.textLabel?.text = Strings.datapoints
                 cell1.detailTextLabel?.text = String(track.trackPoints.count)
+            }
+            if indexPath.row == 5 {
+                cell1.textLabel?.text = Strings.averageSpeed
+                cell1.detailTextLabel?.text = String(track.averageSpeed)
             }
             
             return cell1
