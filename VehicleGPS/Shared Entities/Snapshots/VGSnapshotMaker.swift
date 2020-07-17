@@ -160,10 +160,72 @@ class VGSnapshotMaker {
                     }
                     if coordinateList.count > 0 {
                         self.vgFileManager.savePNG(image: finalImage, for: vgTrack, style: style)
-                        imageCallback(finalImage,style)
+                        imageCallback(finalImage, style)
                     }
                 }
             })
         }
+    }
+    
+    func drawTracks(vgTracks:[VGTrack], imageCallback:(@escaping(UIImage?,UIUserInterfaceStyle?)->Void?)) {
+        
+        let coordList = vgTracks.flatMap { (track) -> [CLLocationCoordinate2D] in
+            return track.getMapPoints()
+        }
+        var snapshotter:MKMapSnapshotter?
+        if coordList.count == 0 {
+            snapshotter = VGZeroMapSnapshotter(style: .dark)
+        } else {
+            snapshotter = VGMapSnapshotter(style: .dark, coordinates: coordList)
+        }
+        
+        snapshotter?.start(completionHandler: { (snapshot, error) in
+            
+            DispatchQueue.global(qos: .utility).async {
+                
+                guard let snapshot = snapshot else {
+                    imageCallback(nil,.dark)
+                    return
+                }
+                
+                let finalImage = UIGraphicsImageRenderer(size: snapshot.image.size).image { _ in
+                        // Draw the map.
+                        snapshot.image.draw(at: .zero)
+                    for vgTrack in vgTracks {
+                        let coordinateList = vgTrack.getMapPoints()
+                        if coordinateList.count == 0 {
+                            imageCallback(snapshot.image, .dark)
+                            return
+                        }
+                        // Convert [CLLocationCoordinate2D] to a [CGPoint].
+                        let points = coordinateList.map { coordinate in
+                            snapshot.point(for: coordinate)
+                        }
+                        
+                        // Go to the first point in the Bezier Path.
+                        let path = UIBezierPath()
+                        path.move(to: points[0])
+                        
+                        // Create a path from the first CGPoint to the last.
+                        for point in points.dropFirst() {
+                            path.addLine(to: point)
+                        }
+                        
+                        // Create a line with the Bezier Path.
+                        path.lineWidth = 3
+                        if let mapColor = vgTrack.vehicle?.mapColor {
+                            mapColor.setStroke()
+                        } else {
+                            UIColor.red.setStroke()
+                        }
+                        
+                        path.stroke()
+                    }
+                }
+                if coordList.count > 0 {
+                    imageCallback(finalImage, .dark)
+                }
+            }
+        })
     }
 }

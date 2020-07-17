@@ -24,6 +24,13 @@ class VGHistoryDetailsTableViewController: UITableViewController {
     var dataStore: VGDataStore!
     var mapCell: UITableViewCell!
     
+    func createMenu() -> UIMenu {
+        let mapAction = UIAction(title: "Flytja kort út sem mynd", image: Icons.photo) { (action) in
+            self.mapToImage()
+        }
+        return UIMenu(title: "", children: [mapAction])
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if let tracksSummary = self.tracksSummary {
@@ -32,13 +39,14 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
         navigationController?.navigationBar.prefersLargeTitles = false
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image:Icons.moreActions, primaryAction: nil, menu: createMenu())
+        
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
         }
         
         mapCell = UITableViewCell()
         mapView = VGMapView(frame: mapCell.contentView.frame)
-        mapView.tracks = tracksSummary?.tracks as! [VGTrack]
         //mapView.activity
         mapView.translatesAutoresizingMaskIntoConstraints = false
         mapCell.contentView.addSubview(mapView)
@@ -47,6 +55,18 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         let layoutTop = NSLayoutConstraint(item: mapView!, attribute: .top, relatedBy: .equal, toItem: mapCell.contentView, attribute: .top, multiplier: 1, constant: 0)
         let layoutBottom = NSLayoutConstraint(item: mapView!, attribute: .bottom, relatedBy: .equal, toItem: mapCell.contentView, attribute: .bottom, multiplier: 1, constant: 0)
         mapCell.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
+
+    }
+    var didLayout = false
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if !didLayout {
+            mapView.tracks = tracksSummary?.tracks as! [VGTrack]
+            didLayout = true
+        }
+        
+
     }
 
     // MARK: - Table view data source
@@ -107,4 +127,37 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         return cell
     }
     
+    func mapToImage() {
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
+        }
+        guard var tracks = tracksSummary?.tracks else {
+            return
+        }
+        let dpGroup = DispatchGroup()
+        for (index, track) in tracks.enumerated() {
+            dpGroup.enter()
+            self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
+                tracks[index].mapPoints = mapPoints
+                dpGroup.leave()
+            }) { (error) in
+                print(error)
+                dpGroup.leave()
+            }
+        }
+        
+        dpGroup.notify(queue: .main) {
+            delegate.snapshotter.drawTracks(vgTracks: self.tracksSummary!.tracks) { (image, style) -> Void? in
+                if let image = image {
+                    let vc = UIActivityViewController(activityItems: [image.pngData()], applicationActivities: [])
+                    DispatchQueue.main.async {
+                        vc.title = "Mynd af korti"
+                        self.present(vc, animated: true)
+                    }
+                }
+                return nil
+            }
+            
+        }
+    }
 }

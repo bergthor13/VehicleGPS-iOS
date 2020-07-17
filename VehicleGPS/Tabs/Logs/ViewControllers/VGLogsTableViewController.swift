@@ -94,14 +94,15 @@ class VGLogsTableViewController: UITableViewController {
         self.headerView.lblLogsAvailable.isHidden = true
         self.headerView.lblConnectedToGPS.isHidden = true
         self.headerView.imgIcon.isHidden = true
-        self.headerView.greenButton.isHidden = true
+        self.headerView.downloadIcon.isHidden = true
         
         // Add tap gesture recognizers to the views
         let headerTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.headerViewTapped(_:)))
         let downloadTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.searchForNewLogsAndDownload))
 
+        self.headerView.downloadIcon.addGestureRecognizer(downloadTapRecognizer)
         self.headerView.greenBackground.addGestureRecognizer(headerTapRecognizer)
-        self.headerView.greenButton.addGestureRecognizer(downloadTapRecognizer)
+        
     }
     
     fileprivate func registerCells() {
@@ -189,15 +190,17 @@ class VGLogsTableViewController: UITableViewController {
             let totalCount = self.undownloadedFiles.count
             var downloadProgress = [Double]() {
                 didSet {
+                    let percentage = downloadProgress.reduce(0, +)/Double(totalCount)
                     DispatchQueue.main.async {
-                        self.headerView.setDownloadProgress(percentage: downloadProgress.reduce(0, +)/Double(totalCount))
+                        self.headerView.setDownloadProgress(percentage: percentage)
                     }
                 }
             }
             var parseProgress = [Double]() {
                 didSet {
+                    let percentage = parseProgress.reduce(0, +)/Double(totalCount)
                     DispatchQueue.main.async {
-                        self.headerView.setParseProgress(percentage: parseProgress.reduce(0, +)/Double(totalCount))
+                        self.headerView.setParseProgress(percentage: percentage)
                     }
                 }
             }
