@@ -73,6 +73,7 @@ struct Strings {
     static let distance = NSLocalizedString("Vegalengd", comment: "")
     static let duration = NSLocalizedString("Tímalengd", comment: "")
     static let datapoints = NSLocalizedString("Gagnapunktar", comment: "")
+    static let averageSpeed = NSLocalizedString("Meðalhraði", comment: "")
     static let setAsDefault = NSLocalizedString("Setja sem sjálfgefið", comment: "")
 
     static let shareCSV = NSLocalizedString("Deila CSV skrá", comment: "")
