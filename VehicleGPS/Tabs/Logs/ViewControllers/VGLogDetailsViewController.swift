@@ -37,11 +37,9 @@ class VGLogDetailsViewController: UIViewController {
         initializeMapView()
         initializeTrackDataView()
         self.view.backgroundColor = .systemBackground
-        
-        let shareButton = UIBarButtonItem(barButtonSystemItem: .action,
-                                          target: self,
-                                          action: #selector(displayShareSelection))
-        self.navigationItem.rightBarButtonItem = shareButton
+                
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image:Icons.moreActions, primaryAction: nil, menu: createMenu())
+
         detailSegment = UISegmentedControl(items: [Strings.map, Strings.statistics])
         detailSegment!.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
         detailSegment!.selectedSegmentIndex = 0
@@ -72,33 +70,31 @@ class VGLogDetailsViewController: UIViewController {
         
     }
     
-    @objc func displayShareSelection() {
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.popoverPresentationController?.barButtonItem = self.navigationItem.rightBarButtonItem
-        
-        alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel, handler: nil))
-        
+    func createMenu() -> UIMenu {
+        var actions = [UIAction]()
         if vgFileManager.fileForTrackExists(track: track) {
-            alert.addAction(UIAlertAction(title: Strings.shareCSV, style: .default, handler: { (_) in
+            actions.append(UIAction(title: Strings.shareCSV, image:Icons.share, handler: { (action) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
         }
         
-        alert.addAction(UIAlertAction(title: Strings.shareGPX, style: .default, handler: { (_) in
+        actions.append(UIAction(title: Strings.shareGPX, image:Icons.share, handler: { (action) in
             //self.track.trackPoints = self.dataStore.getDataPointsForTrack(vgTrack: self.track)
             let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(track: self.track)!], applicationActivities: nil)
             self.present(activityVC, animated: true, completion: nil)
         }))
         
-        alert.addAction(UIAlertAction(title: Strings.selectVehicle, style: .default, handler: { (_) in
+        actions.append(UIAction(title: Strings.selectVehicle, image:Icons.vehicle, handler: { (action) in
             let vehCont = VGVehiclesSelectionTableViewController(style: .insetGrouped)
             vehCont.track = self.track
             let navCont = UINavigationController(rootViewController: vehCont)
             self.present(navCont, animated: true, completion: nil)
         }))
-
-        alert.addAction(UIAlertAction(title: Strings.splitLog, style: .default, handler: { (_) in
+        if self.trackDataTableViewController?.dlpTime != nil {
+            
+        }
+        actions.append(UIAction(title: Strings.splitLog, image:Icons.split, handler: { (action) in
             guard let selectedTime = self.trackDataTableViewController?.dlpTime else {
                 return
             }
@@ -125,6 +121,17 @@ class VGLogDetailsViewController: UIViewController {
                 print("ERROR ADDING")
                 print(error)
             }
+            
+        }))
+        
+        return UIMenu(title: "", children: actions)
+    }
+    
+    @objc func displayShareSelection() {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        alert.addAction(UIAlertAction(title: Strings.splitLog, style: .default, handler: { (_) in
+
         }))
         
         self.present(alert, animated: true, completion: nil)
