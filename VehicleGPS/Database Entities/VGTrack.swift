@@ -1,21 +1,26 @@
-//
-//  VGTrack.swift
-//  VehicleGPS
-//
-//  Created by Bergþór Þrastarson on 01/06/2019.
-//  Copyright © 2019 Bergþór Þrastarson. All rights reserved.
-//
-
 import Foundation
 import CoreLocation
 import CoreData
 
 class VGTrack {
+    /// The ID of the track.
     var id:UUID?
+    
+    /// The name of the track.
     var name:String?
+    
+    /// A comment for the track.
     var comment:String?
-    var duration:Double // In seconds
-    var distance:Double // In kilometers
+    
+    /// The duration of the track. The time between the first and last point of the track.
+    /// Measured in seconds.
+    var duration:Double
+    
+    /// The distance between all points of the track.
+    /// Measured in kilometers
+    var distance:Double
+    
+    
     var fileName:String
     var fileSize:Int // In bytes
     var timeStart:Date?
@@ -30,10 +35,15 @@ class VGTrack {
     var isLocal:Bool
     var isRecording:Bool
     var beingProcessed = false
+    
+    /// The vehicle associated with the track
     var vehicle:VGVehicle?
+    
+    /// Returns the average speed of the track.
+    /// Unit in km/h
     var averageSpeed:Double {
         get {
-            return distance/duration/60/60
+            return distance/(duration/60/60)
         }
     }
     
@@ -99,6 +109,7 @@ class VGTrack {
         track.timeStart = self.timeStart
         return track
     }
+    
     
     var hasOBDData: Bool {
         if self.trackPoints.count == 0 {
