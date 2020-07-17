@@ -67,8 +67,11 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             }
             
             cell!.graphView.addDLP(listener: self)
-            cell!.graphView.startTime = track?.timeStart
-            cell!.graphView.endTime = track?.timeStart?.addingTimeInterval(track!.duration)
+            guard let track = track else {
+                return cell!
+            }
+            cell!.graphView.startTime = track.timeStart
+            cell!.graphView.endTime = track.timeStart?.addingTimeInterval(track.duration)
 
         }
         if indexPath.section == 0 {
@@ -115,7 +118,10 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             return cell1
         } else if indexPath.section == 1 {
             var list = [(Date, Double)]()
-            for (point1, point2) in zip(track!.trackPoints, track!.trackPoints.dropFirst()) {
+            guard let track = track else {
+                return cell!
+            }
+            for (point1, point2) in zip(track.trackPoints, track.trackPoints.dropFirst()) {
                 guard let latitude1 = point1.latitude, let longitude1 = point1.longitude else {
                     continue
                 }
