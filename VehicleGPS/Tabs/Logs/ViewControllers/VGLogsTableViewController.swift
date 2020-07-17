@@ -100,8 +100,8 @@ class VGLogsTableViewController: UITableViewController {
         let headerTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.headerViewTapped(_:)))
         let downloadTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.searchForNewLogsAndDownload))
 
-        self.headerView.downloadIcon.addGestureRecognizer(downloadTapRecognizer)
-        self.headerView.greenBackground.addGestureRecognizer(headerTapRecognizer)
+        self.headerView.downloadView.addGestureRecognizer(downloadTapRecognizer)
+        self.headerView.statusView.addGestureRecognizer(headerTapRecognizer)
         
     }
     

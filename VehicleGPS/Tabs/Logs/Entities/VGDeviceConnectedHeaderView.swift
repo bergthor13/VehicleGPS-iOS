@@ -16,10 +16,12 @@ class VGDeviceConnectedHeaderView: UIView {
     @IBOutlet weak var downloadWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var parseWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var greenBackground: UIView!
-    @IBOutlet weak var greenButton: UIView!
     @IBOutlet weak var lblConnectedToGPS: UILabel!
     @IBOutlet weak var lblLogsAvailable: UILabel!
     @IBOutlet weak var imgIcon: UIImageView!
+    @IBOutlet weak var downloadIcon: UIView!
+    @IBOutlet weak var statusView: UIView!
+    @IBOutlet weak var downloadView: UIView!
     
     static let nibName = "VGDeviceConnectedHeaderView"
     
@@ -38,11 +40,8 @@ class VGDeviceConnectedHeaderView: UIView {
     override func awakeFromNib() {
         super.awakeFromNib()
         self.greenBackground.layer.cornerRadius = 5
-        self.greenButton.layer.cornerRadius = 5
         self.greenBackground.layer.borderColor = UIColor.init(named: "appColor")?.cgColor
-        self.greenButton.layer.borderColor = UIColor.init(named: "appColor")?.cgColor
         self.greenBackground.layer.borderWidth = 0.5
-        self.greenButton.layer.borderWidth = 0.5
         
         self.progressBar.layer.cornerRadius = self.progressBar.frame.height/2
         self.downloadProgress.layer.cornerRadius = self.progressBar.frame.height/2
@@ -74,9 +73,9 @@ class VGDeviceConnectedHeaderView: UIView {
             self.lblLogsAvailable.text = String(format: Strings.newLogPlural, count)
         }
         if count == 0 {
-            self.greenButton.isHidden = true
+            self.downloadIcon.isHidden = true
         } else {
-            self.greenButton.isHidden = false
+            self.downloadIcon.isHidden = false
         }
     }
     
