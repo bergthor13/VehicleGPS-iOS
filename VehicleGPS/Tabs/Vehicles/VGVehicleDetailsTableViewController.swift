@@ -15,6 +15,25 @@ class VGVehicleDetailsTableViewController: VGHistoryDetailsTableViewController {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEdit))
     }
     
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        if indexPath.section == 0 {
+            return mapCell
+        }
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: VGLogsTableViewCell.identifier,
+            for: indexPath
+            ) as? VGLogsTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        if let track = getTrackAt(indexPath: indexPath) {
+            cell.showVehicle = false
+            cell.show(track:track)
+        }
+        return cell
+    }
+    
     @objc func onVehicleUpdated(_ notification:Notification) {
         guard let updatedVehicle = notification.object as? VGVehicle else {
             return

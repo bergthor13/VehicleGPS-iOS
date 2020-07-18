@@ -260,7 +260,7 @@ class VGVehiclesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let detailsVC = VGVehicleDetailsTableViewController(style: .insetGrouped)
+        let detailsVC = VGVehicleDetailsTableViewController(style: .plain)
         detailsVC.vehicle = vehicles[indexPath.row]
         detailsVC.tracksSummary = VGTracksSummary(title: "")
         detailsVC.tracksSummary?.tracks = detailsVC.vehicle?.tracks as! [VGTrack]

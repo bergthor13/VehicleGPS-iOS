@@ -473,7 +473,7 @@ class VGLogsTableViewController: UITableViewController {
                     list.append(item)
                 }
             }
-            self.tracksDictionary = self.tracksToDictionary(trackList: self.combineLists(localList: list, remoteList: newTracks))
+            (self.sections, self.tracksDictionary) = LogDateSplitter.splitLogsByDate(trackList: self.combineLists(localList: list, remoteList: newTracks))
 
             self.tableView.reloadData()
             if self.tracksDictionary.count > 0 {
@@ -575,11 +575,11 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     
-    //MARK: - List Manipulation
+    // MARK: - List Manipulation
     func updateData() {
         self.dataStore.getAllTracks(
             onSuccess: { (tracks) in
-                self.tracksDictionary = self.tracksToDictionary(trackList: tracks)
+                (self.sections, self.tracksDictionary) = LogDateSplitter.splitLogsByDate(trackList: tracks)
                 self.tableView.reloadData()
                 if self.tracksDictionary.count > 0 {
                     self.emptyLabel.isHidden = true
@@ -593,34 +593,6 @@ class VGLogsTableViewController: UITableViewController {
                 self.display(error: error)
             }
         )
-    }
-    
-    func tracksToDictionary(trackList:[VGTrack]) -> Dictionary<String, [VGTrack]>{
-        var result = Dictionary<String, [VGTrack]>()
-        for track in trackList {
-            var day = ""
-            
-            if let timeStart = track.timeStart {
-                day = dateParsingFormatter.string(from: timeStart)
-            }
-            
-            if result[day] == nil {
-                result[day] = [VGTrack]()
-            }
-            
-            if !sections.contains(day) {
-                sections.append(day)
-            }
-            result[day]!.append(track)
-        }
-        
-        // Reorder the sections and lists to display the newest log first.
-        self.sections = self.sections.sorted().reversed()
-        for (day, list) in result {
-            result[day] = list.sorted()
-        }
-        
-        return result
     }
     
     func getTrackAt(indexPath:IndexPath) -> VGTrack? {
@@ -741,10 +713,6 @@ class VGLogsTableViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 76
-    }
-    
 
     
     override func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
@@ -791,9 +759,7 @@ class VGLogsTableViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView,
-      contextMenuConfigurationForRowAt indexPath: IndexPath,
-      point: CGPoint) -> UIContextMenuConfiguration? {
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         let track = getTrackAt(indexPath: indexPath)
         
@@ -824,13 +790,13 @@ class VGLogsTableViewController: UITableViewController {
             let cell = tableView.cellForRow(at: indexPath) as! VGLogsTableViewCell
             self.didTapVehicle(track: track!, tappedView: cell.btnVehicle)
         }
-
+        
         let exportMenu = UIMenu(title: Strings.share, image: Icons.share, identifier: .none, options: .init(), children: [exportGPX, exportOriginal])
-
-      return UIContextMenuConfiguration(identifier: nil,
-        previewProvider: nil) { _ in
-        UIMenu(title: "", children: [selectVehicle, exportMenu, delete])
-      }
+        
+        return UIContextMenuConfiguration(identifier: nil,
+                                          previewProvider: nil) { _ in
+            UIMenu(title: "", children: [selectVehicle, exportMenu, delete])
+        }
     }
 }
 

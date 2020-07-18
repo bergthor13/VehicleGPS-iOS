@@ -319,7 +319,7 @@ class VGHistoryTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let tracksSummary = historySections[indexPath.section].summaries[indexPath.row]
-        let historyDetails = VGHistoryDetailsTableViewController(style: .insetGrouped)
+        let historyDetails = VGHistoryDetailsTableViewController(style: .plain)
         historyDetails.tracksSummary = tracksSummary
         navigationController?.pushViewController(historyDetails, animated: true)
     }

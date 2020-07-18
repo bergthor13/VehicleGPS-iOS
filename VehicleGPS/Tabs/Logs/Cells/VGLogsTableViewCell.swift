@@ -25,7 +25,8 @@ class VGLogsTableViewCell: UITableViewCell {
     @IBOutlet weak var lblFileSize: UILabel!
     @IBOutlet weak var lblVehicle: UILabel!
     @IBOutlet weak var imgVehicle: UIImageView!
-
+    @IBOutlet weak var vehicleHeight: NSLayoutConstraint!
+    
     static let identifier = "LogsCell"
     static let nibName = "VGLogsTableViewCell"
     static let nib = UINib(nibName: VGLogsTableViewCell.nibName, bundle: nil)
@@ -35,6 +36,19 @@ class VGLogsTableViewCell: UITableViewCell {
     let formatter = DateFormatter()
     let distanceFormatter = VGDistanceFormatter()
     let form = VGDurationFormatter()
+    var showVehicle = true {
+        didSet {
+            if showVehicle {
+                vehicleHeight.constant = 20
+                imgVehicle.isHidden = false
+                lblVehicle.isHidden = false
+            } else {
+                vehicleHeight.constant = 0
+                imgVehicle.isHidden = true
+                lblVehicle.isHidden = true
+            }
+        }
+    }
         
     override func awakeFromNib() {
         super.awakeFromNib()

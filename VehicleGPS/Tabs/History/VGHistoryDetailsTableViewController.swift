@@ -20,9 +20,19 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             }
         }
     }
+    
+    // MARK: Formatters
+    let distanceFormatter = VGDistanceFormatter()
+    let durationFormatter = VGDurationFormatter()
+    let headerDateFormatter = VGHeaderDateFormatter()
+    let dateParsingFormatter = VGDateParsingFormatter()
+
     var mapView: VGMapView!
     var dataStore: VGDataStore!
     var mapCell: UITableViewCell!
+    
+    var sections = [String]()
+    var logDict = [String: [VGTrack]]()
     
     func createMenu() -> UIMenu {
         let mapAction = UIAction(title: "Flytja kort út sem mynd", image: Icons.photo) { (action) in
@@ -36,6 +46,12 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         if let tracksSummary = self.tracksSummary {
             title = tracksSummary.dateDescription
         }
+        if let tracks = tracksSummary?.tracks {
+            (self.sections, self.logDict) = LogDateSplitter.splitLogsByDate(trackList: tracks)
+        }
+        print(sections)
+        self.tableView.register(VGLogHeaderView.nib, forHeaderFooterViewReuseIdentifier: VGLogHeaderView.identifier)
+
         self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
         navigationController?.navigationBar.prefersLargeTitles = false
         
@@ -65,21 +81,23 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             mapView.tracks = tracksSummary?.tracks as! [VGTrack]
             didLayout = true
         }
-        
-
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1 + sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             return 1
         }
-        return self.tracksSummary!.tracks.count
+        guard let tracksForSection = logDict[sections[section-1]] else {
+            return 0
+        }
+        return tracksForSection.count
+        
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -90,13 +108,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 {
-            let track = self.tracksSummary!.tracks[indexPath.row]
-            let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
-            logDetailsView.dataStore = self.dataStore
-            logDetailsView.track = track
-            self.navigationController?.pushViewController(logDetailsView, animated: true)
-        } else {
+        if indexPath.section == 0 {
             let vc = UIViewController(nibName: nil, bundle: nil)
             let bigMap = VGMapView(frame: vc.view.frame)
             bigMap.translatesAutoresizingMaskIntoConstraints = false
@@ -108,6 +120,12 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             vc.view.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
             bigMap.tracks = tracksSummary?.tracks as! [VGTrack]
             navigationController?.pushViewController(vc, animated: true)
+        } else {
+            let track = getTrackAt(indexPath: indexPath)
+            let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
+            logDetailsView.dataStore = self.dataStore
+            logDetailsView.track = track
+            self.navigationController?.pushViewController(logDetailsView, animated: true)
         }
     }
     
@@ -123,9 +141,83 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             return UITableViewCell()
         }
         
-        cell.show(track:self.tracksSummary!.tracks[indexPath.row])
+        if let track = getTrackAt(indexPath: indexPath) {
+            cell.show(track:track)
+        }
         return cell
     }
+    
+    func getTrackAt(indexPath:IndexPath) -> VGTrack? {
+        guard let dayFileList = logDict[sections[indexPath.section-1]] else {
+            return nil
+        }
+        let file = dayFileList[indexPath.row]
+        return file
+    }
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+            return 0
+        }
+        return UITableView.automaticDimension
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        print(section)
+        if section == 0 {
+            return UIView()
+        }
+        return getViewForHeader(section: section-1, view:nil)
+    }
+    
+    func getViewForHeader(section:Int, view:VGLogHeaderView?) -> VGLogHeaderView {
+        var hdrView = view
+        
+        if hdrView == nil {
+            hdrView = tableView.dequeueReusableHeaderFooterView(withIdentifier: VGLogHeaderView.identifier) as? VGLogHeaderView
+        }
+        
+        guard let view = hdrView else {
+            return VGLogHeaderView()
+        }
+        
+        let day = sections[section]
+        view.dateLabel.text = " "
+        view.detailsLabel.text = " "
+
+        let dateString = headerDateFormatter.sectionKeyToDateString(sectionKey: day)
+        var totalDuration = 0.0
+        var totalDistance = 0.0
+        var distanceString = ""
+        var durationString = ""
+        guard let trackSection = logDict[day] else {
+            return VGLogHeaderView()
+        }
+        for track in trackSection {
+            totalDuration += track.duration
+            totalDistance += track.distance
+        }
+        distanceString = distanceFormatter.string(fromMeters: totalDistance*1000)
+        
+        let formattedDuration = durationFormatter.string(from: totalDuration)
+        durationString = String(formattedDuration!)
+        
+        view.dateLabel.text = dateString
+        view.detailsLabel.text = distanceString + " - " + durationString
+        
+        
+        var frame1 = view.dateLabel.frame
+        frame1.size.height = dateString.height(withConstrainedWidth: view.bounds.width-40, font: view.dateLabel.font)
+        view.dateLabel.frame = frame1
+        
+        var frame2 = view.detailsLabel.frame
+        frame2.origin.y = frame1.size.height+2+2
+        frame2.size.height = durationString.height(withConstrainedWidth: view.bounds.width-40, font: view.detailsLabel.font)
+        view.detailsLabel.frame = frame2
+        
+        
+        return view
+    }
+
     
     func mapToImage() {
         guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
