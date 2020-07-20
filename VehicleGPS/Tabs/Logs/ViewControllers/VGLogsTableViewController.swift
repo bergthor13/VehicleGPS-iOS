@@ -338,6 +338,7 @@ class VGLogsTableViewController: UITableViewController {
     @objc func searchForNewLogsAndDownload() {
         searchForNewLogs(shouldDownloadFiles: true)
     }
+    
     func searchForNewLogs(shouldDownloadFiles:Bool) {
         guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
              return
@@ -351,8 +352,13 @@ class VGLogsTableViewController: UITableViewController {
                 self.dataStore.getDownloadedFiles(onSuccess: { (downloadedFiles) in
                     self.downloadedFiles = downloadedFiles
                     for deviceFile in filesOnDevice {
-                        if !downloadedFiles.contains(where: { (downfile) -> Bool in return downfile.name == deviceFile.filename && Int(downfile.size) == Int(truncating: deviceFile.fileSize!)}) {
-                            self.undownloadedFiles.append(deviceFile)
+                        for downFile in downloadedFiles {
+                            if downFile.name == deviceFile.filename {
+                                if !(Int(downFile.size) == Int(truncating: deviceFile.fileSize!)) {
+                                    self.undownloadedFiles.append(deviceFile)
+                                }
+                                continue
+                            }
                         }
                     }
                     
