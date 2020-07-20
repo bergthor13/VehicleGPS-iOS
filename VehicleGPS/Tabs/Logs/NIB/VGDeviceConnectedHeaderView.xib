@@ -37,16 +37,16 @@
                             <rect key="frame" x="0.0" y="0.0" width="333" height="46"/>
                             <subviews>
                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="oKw-zu-jzV">
-                                    <rect key="frame" x="58" y="6" width="255" height="34"/>
+                                    <rect key="frame" x="58" y="6" width="270" height="34"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tengt við VehicleGPS" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8pn-NV-c4E">
-                                            <rect key="frame" x="0.0" y="0.0" width="255" height="18"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="270" height="18"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Leita að nýjum ferlum" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lvg-q4-UWn">
-                                            <rect key="frame" x="0.0" y="18" width="255" height="16"/>
+                                            <rect key="frame" x="0.0" y="18" width="270" height="16"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -60,7 +60,7 @@
                                     </constraints>
                                 </imageView>
                                 <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dwT-iJ-z9X">
-                                    <rect key="frame" x="58" y="29.5" width="255" height="5"/>
+                                    <rect key="frame" x="58" y="29.5" width="270" height="5"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EW3-Au-5AF">
                                             <rect key="frame" x="0.0" y="0.0" width="50" height="5"/>
@@ -97,7 +97,7 @@
                                 <constraint firstItem="dwT-iJ-z9X" firstAttribute="centerY" secondItem="lvg-q4-UWn" secondAttribute="centerY" id="Ou7-s0-oIr"/>
                                 <constraint firstItem="YCL-Yj-9CJ" firstAttribute="top" secondItem="GfQ-kh-kg0" secondAttribute="top" id="Q2f-zA-uUl"/>
                                 <constraint firstItem="oKw-zu-jzV" firstAttribute="leading" secondItem="YCL-Yj-9CJ" secondAttribute="trailing" constant="8" symbolic="YES" id="Xgv-4R-lfW"/>
-                                <constraint firstAttribute="trailing" secondItem="oKw-zu-jzV" secondAttribute="trailing" constant="20" symbolic="YES" id="Z83-2Q-kYe"/>
+                                <constraint firstAttribute="trailing" secondItem="oKw-zu-jzV" secondAttribute="trailing" constant="5" id="Z83-2Q-kYe"/>
                                 <constraint firstItem="oKw-zu-jzV" firstAttribute="centerY" secondItem="YCL-Yj-9CJ" secondAttribute="centerY" id="sJv-2T-UF3"/>
                                 <constraint firstItem="dwT-iJ-z9X" firstAttribute="centerX" secondItem="lvg-q4-UWn" secondAttribute="centerX" id="vzj-gK-l3f"/>
                             </constraints>

@@ -8,17 +8,12 @@
 
 import UIKit
 
-protocol ColorPickerDelegate {
-    func didPick(color:UIColor)
-}
-
 class VGNewVehicleTableViewController: UITableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-
     var cell: VGNewVehicleTableViewCell! {
         didSet {
             cell.txtName.text = vehicle.name
             cell.txtName.becomeFirstResponder()
-            cell.colorBox.backgroundColor = vehicle.mapColor
+            cell.colorWell.selectedColor = vehicle.mapColor
             if vehicle.image != nil {
                 cell.imgProfile.image = vehicle.image
                 selectedImage = vehicle.image
@@ -27,12 +22,11 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
             self.cell.imgProfile.isUserInteractionEnabled = true
             let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapImage))
             self.cell.imgProfile?.addGestureRecognizer(imageTapGesture)
-            let colorTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapColor))
-            self.cell.colorContainer.addGestureRecognizer(colorTapGesture)
             
             self.cell.txtName.addTarget(self, action: #selector(nameDidChange(_:)), for: .editingChanged)
             
             enableDisableSave(button: self.navigationItem.rightBarButtonItem!, string: self.cell.txtName.text!)
+            self.cell.colorWell.addTarget(self, action: #selector(colorWellChanged(_:)), for: .valueChanged)
             
         }
     }
@@ -95,13 +89,6 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
     }
 
     // MARK: - Table view data source
-    @objc func didTapColor() {
-        let colorPicker = VGColorPickerTableViewController(style: .insetGrouped)
-        colorPicker.delegate = self
-        
-        self.present(UINavigationController(rootViewController: colorPicker), animated: true, completion: nil)
-    }
-    
     
     @objc func didTapImage() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -178,12 +165,10 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         self.cell = cell as? VGNewVehicleTableViewCell
         return cell
     }
-}
-
-
-extension VGNewVehicleTableViewController: ColorPickerDelegate {
-    func didPick(color: UIColor) {
-        self.cell.colorBox.backgroundColor = color
+    
+    @objc func colorWellChanged(_ colorWell:VGColorWell) {
+        let color = cell.colorWell.selectedColor
+        self.cell.colorWell.selectedColor = color
         vehicle.mapColor = color
     }
 }

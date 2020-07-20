@@ -91,9 +91,7 @@ class VGLogDetailsViewController: UIViewController {
             let navCont = UINavigationController(rootViewController: vehCont)
             self.present(navCont, animated: true, completion: nil)
         }))
-        if self.trackDataTableViewController?.dlpTime != nil {
-            
-        }
+        
         actions.append(UIAction(title: Strings.splitLog, image:Icons.split, handler: { (action) in
             guard let selectedTime = self.trackDataTableViewController?.dlpTime else {
                 return
@@ -122,6 +120,14 @@ class VGLogDetailsViewController: UIViewController {
                 print(error)
             }
             
+        }))
+        
+        actions.append(UIAction(title: Strings.delete, image:Icons.delete, attributes: .destructive, handler: { (action) in
+            self.dataStore.delete(trackWith: self.track.id!) {
+                self.navigationController?.popViewController(animated: true)
+            } onFailure: { (error) in
+                print(error)
+            }
         }))
         
         return UIMenu(title: "", children: actions)

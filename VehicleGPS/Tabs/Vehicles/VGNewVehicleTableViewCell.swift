@@ -15,6 +15,8 @@ class VGNewVehicleTableViewCell: UITableViewCell {
     @IBOutlet weak var colorContainer: UIView!
     @IBOutlet weak var colorBox: UIView!
     
+    var colorWell: VGColorWell!
+    
     static let identifier = "NewVehicleCell"
     static let nibName = "VGNewVehicleTableViewCell"
     static let nib = UINib(nibName: VGNewVehicleTableViewCell.nibName, bundle: nil)
@@ -22,7 +24,8 @@ class VGNewVehicleTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        colorBox.layer.cornerRadius = colorBox.bounds.height/2
+        colorWell = VGColorWell(frame: self.colorBox.frame)
+        self.colorContainer.addSubview(colorWell)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

@@ -34,13 +34,6 @@ class VGHistoryDetailsTableViewController: UITableViewController {
     var sections = [String]()
     var logDict = [String: [VGTrack]]()
     
-    func createMenu() -> UIMenu {
-        let mapAction = UIAction(title: "Flytja kort út sem mynd", image: Icons.photo) { (action) in
-            self.mapToImage()
-        }
-        return UIMenu(title: "", children: [mapAction])
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         if let tracksSummary = self.tracksSummary {
@@ -55,7 +48,6 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
         navigationController?.navigationBar.prefersLargeTitles = false
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image:Icons.moreActions, primaryAction: nil, menu: createMenu())
         
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
@@ -109,16 +101,8 @@ class VGHistoryDetailsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
-            let vc = UIViewController(nibName: nil, bundle: nil)
-            let bigMap = VGMapView(frame: vc.view.frame)
-            bigMap.translatesAutoresizingMaskIntoConstraints = false
-            vc.view.addSubview(bigMap)
-            let layoutLeft = NSLayoutConstraint(item: bigMap, attribute: .leading, relatedBy: .equal, toItem: vc.view, attribute: .leading, multiplier: 1, constant: 0)
-            let layoutRight = NSLayoutConstraint(item: bigMap, attribute: .trailing, relatedBy: .equal, toItem: vc.view, attribute: .trailing, multiplier: 1, constant: 0)
-            let layoutTop = NSLayoutConstraint(item: bigMap, attribute: .top, relatedBy: .equal, toItem: vc.view, attribute: .top, multiplier: 1, constant: 0)
-            let layoutBottom = NSLayoutConstraint(item: bigMap, attribute: .bottom, relatedBy: .equal, toItem: vc.view, attribute: .bottom, multiplier: 1, constant: 0)
-            vc.view.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
-            bigMap.tracks = tracksSummary?.tracks as! [VGTrack]
+            let vc = VGMapViewController(nibName: nil, bundle: nil)
+            vc.tracks = tracksSummary!.tracks
             navigationController?.pushViewController(vc, animated: true)
         } else {
             let track = getTrackAt(indexPath: indexPath)
@@ -216,40 +200,5 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         
         
         return view
-    }
-
-    
-    func mapToImage() {
-        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
-        }
-        guard var tracks = tracksSummary?.tracks else {
-            return
-        }
-        let dpGroup = DispatchGroup()
-        for (index, track) in tracks.enumerated() {
-            dpGroup.enter()
-            self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
-                tracks[index].mapPoints = mapPoints
-                dpGroup.leave()
-            }) { (error) in
-                print(error)
-                dpGroup.leave()
-            }
-        }
-        
-        dpGroup.notify(queue: .main) {
-            delegate.snapshotter.drawTracks(vgTracks: self.tracksSummary!.tracks) { (image, style) -> Void? in
-                if let image = image {
-                    let vc = UIActivityViewController(activityItems: [image.pngData()], applicationActivities: [])
-                    DispatchQueue.main.async {
-                        vc.title = "Mynd af korti"
-                        self.present(vc, animated: true)
-                    }
-                }
-                return nil
-            }
-            
-        }
     }
 }
