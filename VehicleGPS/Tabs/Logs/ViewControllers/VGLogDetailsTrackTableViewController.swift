@@ -117,7 +117,9 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             }
             if indexPath.row == 5 {
                 cell1.textLabel?.text = Strings.averageSpeed
-                cell1.detailTextLabel?.text = String(track.averageSpeed)
+                let speed = Measurement(value: track.averageSpeed, unit: UnitSpeed.kilometersPerHour)
+                let formatter = VGSpeedFormatter()
+                cell1.detailTextLabel?.text = formatter.string(from: speed)
             }
             
             return cell1

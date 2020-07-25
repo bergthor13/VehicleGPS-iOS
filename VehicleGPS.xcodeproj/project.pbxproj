@@ -86,6 +86,7 @@
 		F280AC8F24C2773500509C5E /* LogDateSplitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F280AC8E24C2773500509C5E /* LogDateSplitter.swift */; };
 		F280AC9324C3352C00509C5E /* VGMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F280AC9224C3352C00509C5E /* VGMapViewController.swift */; };
 		F280ACD124C37DCB00509C5E /* VGColorWell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F280ACD024C37DCB00509C5E /* VGColorWell.swift */; };
+		F281D41724CBAFD800102B4B /* SpeedFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F281D41624CBAFD800102B4B /* SpeedFormatter.swift */; };
 		F286124C24C0DA920029F34A /* VGMapSnapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F286124B24C0DA920029F34A /* VGMapSnapshotter.swift */; };
 		F28D752D248D512D0060DFD6 /* VGFileNameDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F28D752C248D512D0060DFD6 /* VGFileNameDateFormatter.swift */; };
 		F297DD032439445B00431472 /* DeviceCommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F297DD022439445B00431472 /* DeviceCommunicator.swift */; };
@@ -190,6 +191,7 @@
 		F280AC8E24C2773500509C5E /* LogDateSplitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogDateSplitter.swift; sourceTree = "<group>"; };
 		F280AC9224C3352C00509C5E /* VGMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGMapViewController.swift; sourceTree = "<group>"; };
 		F280ACD024C37DCB00509C5E /* VGColorWell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGColorWell.swift; sourceTree = "<group>"; };
+		F281D41624CBAFD800102B4B /* SpeedFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedFormatter.swift; sourceTree = "<group>"; };
 		F286124B24C0DA920029F34A /* VGMapSnapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGMapSnapshotter.swift; sourceTree = "<group>"; };
 		F28D752C248D512D0060DFD6 /* VGFileNameDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFileNameDateFormatter.swift; sourceTree = "<group>"; };
 		F297DD022439445B00431472 /* DeviceCommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCommunicator.swift; sourceTree = "<group>"; };
@@ -450,6 +452,7 @@
 			children = (
 				F24754F423DD9219007E0DF8 /* VGHeaderDateFormatter.swift */,
 				F24754F623DDAAD8007E0DF8 /* VGDistanceFormatter.swift */,
+				F281D41624CBAFD800102B4B /* SpeedFormatter.swift */,
 				F24754FB23DDAE26007E0DF8 /* VGDurationFormatter.swift */,
 				F22F37C1243AAB60005E80C1 /* VGDateParsingFormatter.swift */,
 				F28D752C248D512D0060DFD6 /* VGFileNameDateFormatter.swift */,
@@ -651,6 +654,7 @@
 				F24D88CF23D632D60071F6BC /* VGTrackMapSnapshotter.swift in Sources */,
 				F2647BE72435024600283B38 /* String+Extensions.swift in Sources */,
 				F280ACD124C37DCB00509C5E /* VGColorWell.swift in Sources */,
+				F281D41724CBAFD800102B4B /* SpeedFormatter.swift in Sources */,
 				F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */,
 				F257077E22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift in Sources */,
 				F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */,
