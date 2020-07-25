@@ -42,7 +42,6 @@ class VGMapSnapshotter: MKMapSnapshotter {
             : latitudeDelta;
         
         let longitudeDelta = abs(maxLon - minLon) * MAP_PADDING
-        print()
         // Set the region of the map that is rendered.
         let region = MKCoordinateRegion(center: location, span: MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta))
         mapSnapshotOptions.region = region

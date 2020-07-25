@@ -268,7 +268,6 @@ public class TrackGraphView: UIView {
         }
         
         oldLocation = (scrollView?.contentOffset.x)!/(scrollView?.contentSize.width)!
-        print((deltaX-oldDelta)*(1-(1/scrollView.contentSize.width)))
         scrollView.contentSize.width += (deltaX-oldDelta)*(1-(1/scrollView.contentSize.width))
         
         graphFrame.frame.size = scrollView.contentSize
