@@ -29,20 +29,31 @@ class VGHistoryDetailsTableViewController: UITableViewController {
 
     var mapView: VGMapView!
     var dataStore: VGDataStore!
+    var vgFileManager: VGFileManager!
+    let vgGPXGenerator = VGGPXGenerator()
+
     var mapCell: UITableViewCell!
     
     var sections = [String]()
     var logDict = [String: [VGTrack]]()
     
+    func addObserver(selector:Selector, name:Notification.Name) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        addObserver(selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack)
+        addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
+        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
+        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
+
         if let tracksSummary = self.tracksSummary {
             title = tracksSummary.dateDescription
         }
         if let tracks = tracksSummary?.tracks {
             (self.sections, self.logDict) = LogDateSplitter.splitLogsByDate(trackList: tracks)
         }
-        print(sections)
         self.tableView.register(VGLogHeaderView.nib, forHeaderFooterViewReuseIdentifier: VGLogHeaderView.identifier)
 
         self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
@@ -51,6 +62,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
+            self.vgFileManager = appDelegate.fileManager
         }
         
         mapCell = UITableViewCell()
@@ -65,6 +77,119 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         mapCell.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
 
     }
+    
+    @objc func previewImageStarting(_ notification:Notification) {
+        guard let newTrack = notification.object as? VGTrack else {
+            return
+        }
+        DispatchQueue.main.async {
+            guard let indexPath = self.getIndexPath(for: newTrack) else {
+                return
+            }
+            guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+                return
+            }
+            let track = self.getTrackAt(indexPath: indexPath)
+            track?.beingProcessed = true
+            cell.activityView.startAnimating()
+        }
+
+    }
+    
+    @objc func previewImageStopping(_ notification:Notification) {
+        guard let updatedNotification = notification.object as? ImageUpdatedNotification else {
+            return
+        }
+        DispatchQueue.main.async {
+            if self.traitCollection.userInterfaceStyle == updatedNotification.style {
+                guard let indexPath = self.getIndexPath(for: updatedNotification.track) else {
+                    return
+                }
+                guard let cell = self.tableView.cellForRow(at: self.getIndexPath(for: updatedNotification.track)!) as? VGLogsTableViewCell else {
+                    return
+                }
+                let track = self.getTrackAt(indexPath: indexPath)
+                track?.beingProcessed = false
+                cell.activityView.stopAnimating()
+                cell.trackView.image = updatedNotification.image
+            }
+        }
+
+
+    }
+    
+    @objc func onVehicleAddedToLog(_ notification:Notification) {
+        guard let newTrack = notification.object as? VGTrack else {
+            return
+        }
+        guard let vehicle = newTrack.vehicle else {
+            return
+        }
+        guard let indexPath = getIndexPath(for: newTrack) else {
+            return
+        }
+        guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+            return
+        }
+        getTrackAt(indexPath: indexPath)?.vehicle = newTrack.vehicle
+        
+        cell.lblVehicle.text = vehicle.name
+    }
+    
+    @objc func onLogUpdated(_ notification:Notification) {
+        guard let updatedTrack = notification.object as? VGTrack else {
+            return
+        }
+
+        DispatchQueue.main.async {
+            
+            guard let indexPath = self.getIndexPath(for: updatedTrack) else {
+                return
+            }
+            
+            guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+                return
+            }
+            
+            if self.logDict[self.sections[indexPath.section]] == nil {
+                return
+            }
+            
+            self.logDict[self.sections[indexPath.section]]![indexPath.row] = updatedTrack
+            cell.show(track: updatedTrack)
+        }
+        
+        
+    }
+    
+    func getIndexPath(for track:VGTrack) -> IndexPath? {
+        for (sectionIndex, section) in sections.enumerated() {
+            guard let sectionList = logDict[section] else {
+                continue
+            }
+            for (rowIndex, trk) in sectionList.enumerated() {
+                if track.id == trk.id {
+                    return IndexPath(row: rowIndex, section: sectionIndex)
+                }
+            }
+        }
+        return nil
+    }
+    
+    func getIndexPath(for fileName:String) -> IndexPath? {
+        for (sectionIndex, section) in sections.enumerated() {
+            guard let sectionList = logDict[section] else {
+                continue
+            }
+            for (rowIndex, trk) in sectionList.enumerated() {
+                if fileName == trk.fileName {
+                    return IndexPath(row: rowIndex, section: sectionIndex)
+                }
+            }
+        }
+        return nil
+    }
+
     var didLayout = false
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -131,6 +256,78 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         return cell
     }
     
+    
+    
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let track = getTrackAt(indexPath: indexPath)
+        
+        let delete = UIAction(title: Strings.delete, image: Icons.delete, identifier: .none, discoverabilityTitle: nil, attributes: .destructive, state: .off) {_ in
+            self.deleteTrack(at: indexPath)
+        }
+        
+        let exportOriginal = UIAction(title: Strings.shareCSV, image: Icons.share, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+            let activityVC = UIActivityViewController(activityItems: [self.vgFileManager!.getAbsoluteFilePathFor(track: track!)!], applicationActivities: nil)
+            self.present(activityVC, animated: true, completion: nil)
+        }
+        
+        let exportGPX = UIAction(title: Strings.shareGPX, image: Icons.share, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+            
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.dataStore.getDataPointsForTrack(with: track!.id!, onSuccess: { (dataPoints) in
+                    track!.trackPoints = dataPoints
+                    let fileUrl = self.vgGPXGenerator.generateGPXFor(track: track!)!
+                    let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
+                    self.present(activityVC, animated: true, completion: nil)
+                }) { (error) in
+                    //self.display(error: error)
+                }
+            }
+        }
+        
+        let selectVehicle = UIAction(title: Strings.selectVehicle, image: Icons.vehicle, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+            let cell = tableView.cellForRow(at: indexPath) as! VGLogsTableViewCell
+            self.didTapVehicle(track: track!, tappedView: cell.btnVehicle)
+        }
+        
+        let exportMenu = UIMenu(title: Strings.share, image: Icons.share, identifier: .none, options: .init(), children: [exportGPX, exportOriginal])
+        
+        return UIContextMenuConfiguration(identifier: nil,
+                                          previewProvider: nil) { _ in
+            UIMenu(title: "", children: [selectVehicle, exportMenu, delete])
+        }
+    }
+    
+    func deleteTrack(at indexPath:IndexPath) {
+        // Delete the row from the data source
+        guard let track = self.getTrackAt(indexPath: indexPath) else {
+            return
+        }
+        
+        self.logDict[self.sections[indexPath.section]]?.remove(at: indexPath.row)
+        tableView.deleteRows(at: [indexPath], with: .fade)
+
+        if self.logDict[self.sections[indexPath.section]]?.count == 0 {
+            self.logDict.removeValue(forKey: self.sections[indexPath.section])
+            self.sections.remove(at: indexPath.section)
+            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
+        }
+        self.vgFileManager?.deleteFileFor(track: track)
+        if self.logDict.count > 0 {
+            //self.emptyLabel.isHidden = true
+            self.tableView.separatorStyle = .singleLine
+        } else {
+            //self.emptyLabel.isHidden = false
+            self.tableView.separatorStyle = .none
+        }
+
+        self.dataStore.delete(trackWith: track.id!, onSuccess: {
+            
+        }) { (error) in
+            //self.display(error: error)
+        }
+    }
+    
     func getTrackAt(indexPath:IndexPath) -> VGTrack? {
         guard let dayFileList = logDict[sections[indexPath.section-1]] else {
             return nil
@@ -146,7 +343,6 @@ class VGHistoryDetailsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        print(section)
         if section == 0 {
             return UIView()
         }
@@ -200,5 +396,21 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         
         
         return view
+    }
+}
+
+extension VGHistoryDetailsTableViewController: DisplaySelectVehicleProtocol {
+    func didTapVehicle(track: VGTrack, tappedView:UIView?) {
+        let selectionVC = VGVehiclesSelectionTableViewController(style: .insetGrouped)
+        selectionVC.track = track
+        
+        let navController = UINavigationController(rootViewController: selectionVC)
+        navController.modalPresentationStyle = .popover
+        navController.preferredContentSize = CGSize(width: 414, height: 600)
+        
+        let popover: UIPopoverPresentationController = navController.popoverPresentationController!
+        popover.sourceView = tappedView
+
+        present(navController, animated: true, completion: nil)
     }
 }

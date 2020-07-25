@@ -19,7 +19,6 @@ class VGDeviceConnectedHeaderView: UIView {
     @IBOutlet weak var lblConnectedToGPS: UILabel!
     @IBOutlet weak var lblLogsAvailable: UILabel!
     @IBOutlet weak var imgIcon: UIImageView!
-    @IBOutlet weak var downloadIcon: UIView!
     @IBOutlet weak var statusView: UIView!
     @IBOutlet weak var downloadView: UIView!
     
@@ -73,13 +72,14 @@ class VGDeviceConnectedHeaderView: UIView {
             self.lblLogsAvailable.text = String(format: Strings.newLogPlural, count)
         }
         if count == 0 {
-            self.downloadIcon.isHidden = true
+            self.downloadView.isHidden = true
         } else {
-            self.downloadIcon.isHidden = false
+            self.downloadView.isHidden = false
         }
     }
     
     func searchingForLogs() {
+        self.downloadView.isHidden = true
         self.lblLogsAvailable.text = Strings.searchForLogs
     }
     
@@ -92,6 +92,7 @@ class VGDeviceConnectedHeaderView: UIView {
     }
     
     func displayProgressBar() {
+        self.downloadView.isHidden = true
         self.progressBar.isHidden = false
         self.lblLogsAvailable.text = " "
         self.downloadWidthConstraint.constant = 0

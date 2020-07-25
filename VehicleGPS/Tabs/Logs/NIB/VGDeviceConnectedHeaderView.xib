@@ -60,7 +60,7 @@
                                     </constraints>
                                 </imageView>
                                 <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dwT-iJ-z9X">
-                                    <rect key="frame" x="58" y="29.5" width="270" height="5"/>
+                                    <rect key="frame" x="58" y="29.5" width="307" height="5"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EW3-Au-5AF">
                                             <rect key="frame" x="0.0" y="0.0" width="50" height="5"/>
@@ -91,15 +91,15 @@
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstItem="dwT-iJ-z9X" firstAttribute="width" secondItem="lvg-q4-UWn" secondAttribute="width" id="6Il-dY-vKn"/>
+                                <constraint firstItem="dwT-iJ-z9X" firstAttribute="width" secondItem="lvg-q4-UWn" secondAttribute="width" constant="37" id="6Il-dY-vKn"/>
                                 <constraint firstItem="YCL-Yj-9CJ" firstAttribute="leading" secondItem="GfQ-kh-kg0" secondAttribute="leading" constant="5" id="C6G-09-MTA"/>
                                 <constraint firstAttribute="bottom" secondItem="YCL-Yj-9CJ" secondAttribute="bottom" id="Cj5-VQ-Wml"/>
                                 <constraint firstItem="dwT-iJ-z9X" firstAttribute="centerY" secondItem="lvg-q4-UWn" secondAttribute="centerY" id="Ou7-s0-oIr"/>
                                 <constraint firstItem="YCL-Yj-9CJ" firstAttribute="top" secondItem="GfQ-kh-kg0" secondAttribute="top" id="Q2f-zA-uUl"/>
                                 <constraint firstItem="oKw-zu-jzV" firstAttribute="leading" secondItem="YCL-Yj-9CJ" secondAttribute="trailing" constant="8" symbolic="YES" id="Xgv-4R-lfW"/>
                                 <constraint firstAttribute="trailing" secondItem="oKw-zu-jzV" secondAttribute="trailing" constant="5" id="Z83-2Q-kYe"/>
+                                <constraint firstItem="dwT-iJ-z9X" firstAttribute="leading" secondItem="lvg-q4-UWn" secondAttribute="leading" id="miG-mg-Krx"/>
                                 <constraint firstItem="oKw-zu-jzV" firstAttribute="centerY" secondItem="YCL-Yj-9CJ" secondAttribute="centerY" id="sJv-2T-UF3"/>
-                                <constraint firstItem="dwT-iJ-z9X" firstAttribute="centerX" secondItem="lvg-q4-UWn" secondAttribute="centerX" id="vzj-gK-l3f"/>
                             </constraints>
                         </view>
                     </subviews>
@@ -127,7 +127,6 @@
             <nil key="simulatedBottomBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
-                <outlet property="downloadIcon" destination="iOb-or-Czc" id="zAk-pF-WYO"/>
                 <outlet property="downloadProgress" destination="EW3-Au-5AF" id="dci-yb-lS5"/>
                 <outlet property="downloadView" destination="Vnw-Sa-kkf" id="DF0-3I-PMs"/>
                 <outlet property="downloadWidthConstraint" destination="Krb-Ua-ciP" id="HgU-za-Cyi"/>

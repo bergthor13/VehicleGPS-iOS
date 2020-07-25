@@ -94,7 +94,7 @@ class VGLogsTableViewController: UITableViewController {
         self.headerView.lblLogsAvailable.isHidden = true
         self.headerView.lblConnectedToGPS.isHidden = true
         self.headerView.imgIcon.isHidden = true
-        self.headerView.downloadIcon.isHidden = true
+        self.headerView.downloadView.isHidden = true
         
         // Add tap gesture recognizers to the views
         let headerTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.headerViewTapped(_:)))
@@ -352,13 +352,18 @@ class VGLogsTableViewController: UITableViewController {
                 self.dataStore.getDownloadedFiles(onSuccess: { (downloadedFiles) in
                     self.downloadedFiles = downloadedFiles
                     for deviceFile in filesOnDevice {
+                        var fileFoundOnPhone = false
                         for downFile in downloadedFiles {
                             if downFile.name == deviceFile.filename {
-                                if !(Int(downFile.size) == Int(truncating: deviceFile.fileSize!)) {
+                                fileFoundOnPhone = true
+                                if Int(downFile.size) != Int(truncating: deviceFile.fileSize!) {
                                     self.undownloadedFiles.append(deviceFile)
                                 }
                                 continue
                             }
+                        }
+                        if !fileFoundOnPhone {
+                            self.undownloadedFiles.append(deviceFile)
                         }
                     }
                     
