@@ -21,7 +21,7 @@ class VGFileNameDateFormatter: DateFormatter {
     }
     
     func configure() {
-        dateFormat = "yyyy-MM-dd hhmmss"
+        dateFormat = "yyyy-MM-dd HHmmss"
         locale = Locale(identifier: "en_US_POSIX")
     }
 }
