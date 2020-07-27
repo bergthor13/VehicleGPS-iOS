@@ -29,6 +29,9 @@ class VGLogsTableViewController: UITableViewController {
     var downloadedFiles = [DownloadedFile]()
     var undownloadedFiles = [NMSFTPFile]()
     
+    var toolbarButtonShare = UIBarButtonItem(title: Strings.share, style: .plain, target: self, action: #selector(exportTracks))
+    var toolbarButtonDelete = UIBarButtonItem(title: Strings.delete, style: .plain, target: self, action: #selector(deleteTracks))
+
     // MARK: - Initializers
     override init(style: UITableView.Style) {
         super.init(style: style)
@@ -43,6 +46,7 @@ class VGLogsTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
         
     }
 
@@ -80,12 +84,55 @@ class VGLogsTableViewController: UITableViewController {
         self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic
     }
     
-    fileprivate func configureRefreshControl() {
-        // TODO: Reconnect RefreshControl
-        // Add Refresh Control to Table View
-        //let refreshControl = UIRefreshControl()
-        //refreshControl.addTarget(self, action: #selector(fetchLogList), for: UIControl.Event.valueChanged)
-        //tableView.refreshControl = refreshControl
+    fileprivate func configureToolbar() {
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        toolbarButtonDelete.tintColor = .red
+        setToolbarItems([toolbarButtonShare, space, toolbarButtonDelete], animated: false)
+        
+    }
+    
+    @objc func deleteTracks() {
+        print("DELETING SELECTED TRACKS")
+    }
+    @objc func exportTracks() {
+        var tracks = [VGTrack]()
+        guard let indexPaths = tableView.indexPathsForSelectedRows else {
+            return
+        }
+        for indexPath in indexPaths {
+            guard let track = getTrackAt(indexPath: indexPath) else {
+                continue
+            }
+            tracks.append(track)
+        }
+        
+        let dpGroup = DispatchGroup()
+        for track in tracks {
+            dpGroup.enter()
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.dataStore.getDataPointsForTrack(with: track.id!) { (dataPoints) in
+                    track.trackPoints = dataPoints
+                    dpGroup.leave()
+                } onFailure: { (error) in
+                    print(error)
+                    dpGroup.leave()
+                }
+            }
+        }
+        dpGroup.wait()
+        let fileUrl = self.vgGPXGenerator.generateGPXFor(tracks: tracks)
+        let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
+        self.present(activityVC, animated: true, completion: nil)
+    }
+    
+    func showEditToolbar() {
+        navigationController?.setToolbarHidden(false, animated: true)
+
+    }
+    
+    func hideEditToolbar() {
+        navigationController?.setToolbarHidden(true, animated: true)
+
     }
     
     fileprivate func setUpDeviceConnectedBanner() {
@@ -116,7 +163,7 @@ class VGLogsTableViewController: UITableViewController {
         initializeClasses()
         configureEmptyListLabel()
         configureNavigationBar()
-        configureRefreshControl()
+        configureToolbar()
         setUpDeviceConnectedBanner()
         registerCells()
         updateData()
@@ -704,6 +751,12 @@ class VGLogsTableViewController: UITableViewController {
             guard let selectedIndexPaths = tableView.indexPathsForSelectedRows else {
                 return
             }
+            
+            if selectedIndexPaths.count == 0 {
+                self.hideEditToolbar()
+            } else {
+                self.showEditToolbar()
+            }
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
             let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
@@ -719,8 +772,10 @@ class VGLogsTableViewController: UITableViewController {
         }
         if tableView.isEditing {
             guard let selectedIndexPaths = tableView.indexPathsForSelectedRows else {
+                self.hideEditToolbar()
                 return
             }
+
         }
     }
     
@@ -788,7 +843,7 @@ class VGLogsTableViewController: UITableViewController {
             DispatchQueue.global(qos: .userInitiated).async {
                 self.dataStore.getDataPointsForTrack(with: track!.id!, onSuccess: { (dataPoints) in
                     track!.trackPoints = dataPoints
-                    let fileUrl = self.vgGPXGenerator.generateGPXFor(track: track!)!
+                    let fileUrl = self.vgGPXGenerator.generateGPXFor(tracks: [track!])!
                     let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
                     self.present(activityVC, animated: true, completion: nil)
                 }) { (error) in
@@ -813,6 +868,9 @@ class VGLogsTableViewController: UITableViewController {
 
 extension VGLogsTableViewController: DisplaySelectVehicleProtocol {
     func didTapVehicle(track: VGTrack, tappedView:UIView?) {
+        if tableView.isEditing {
+            return
+        }
         let selectionVC = VGVehiclesSelectionTableViewController(style: .insetGrouped)
         selectionVC.track = track
         

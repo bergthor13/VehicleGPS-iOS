@@ -13,6 +13,7 @@ class VGSettingsTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     override init(style: UITableView.Style) {

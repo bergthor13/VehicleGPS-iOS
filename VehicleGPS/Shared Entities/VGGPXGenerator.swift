@@ -23,11 +23,19 @@ class VGGPXGenerator {
     }
     
     func getGPXBegin() -> String {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.topografix.com/GPX/1/0\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd\" version=\"1.0\" creator=\"gpx.py -- https://github.com/tkrajina/gpxpy\"><trk><trkseg>"
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.topografix.com/GPX/1/0\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd\" version=\"1.0\" creator=\"VehicleGPS\">"
+    }
+    
+    func getTrackBegin() -> String {
+        return "<trk><trkseg>"
+    }
+    
+    func getTrackEnd() -> String {
+        return "</trkseg></trk>"
     }
     
     func getGPXEnd() -> String {
-        return "</trkseg></trk></gpx>"
+        return "</gpx>"
     }
     
     func getTrackPointGPX(point:VGDataPoint) -> String {
@@ -59,22 +67,26 @@ class VGGPXGenerator {
         return trackPointString
     }
     
-    func generateGPXFor(track: VGTrack) -> URL? {
+    func generateGPXFor(tracks: [VGTrack]) -> URL? {
         var result = getGPXBegin()
         
-        for point in track.trackPoints {
-            guard let _ = point.latitude, let _ = point.longitude else {
-                continue
+        for track in tracks {
+            result += getTrackBegin()
+            for point in track.trackPoints {
+                guard let _ = point.latitude, let _ = point.longitude else {
+                    continue
+                }
+                
+                if !point.hasGoodFix() {
+                    continue
+                }
+                
+                result += getTrackPointGPX(point: point)
             }
-            
-            if !point.hasGoodFix() {
-                continue
-            }
-            
-            result += getTrackPointGPX(point: point)
+            result += getTrackEnd()
         }
         result += getGPXEnd()
-        guard let tmpFile = vgFileManager.getTemporaryGPXPathFor(track: track) else {
+        guard let tmpFile = vgFileManager.getTemporaryGPXPathFor(track: nil) else {
             return nil
         }
         

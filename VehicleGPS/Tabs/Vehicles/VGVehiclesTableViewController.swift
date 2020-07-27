@@ -52,6 +52,7 @@ class VGVehiclesTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         reloadVehicles(shouldReloadTableView: true)
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     fileprivate func registerCells() {
         self.tableView.register(VGVehicleTableViewCell.nib, forCellReuseIdentifier: VGVehicleTableViewCell.identifier)

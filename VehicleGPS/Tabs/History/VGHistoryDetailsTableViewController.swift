@@ -276,7 +276,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             DispatchQueue.global(qos: .userInitiated).async {
                 self.dataStore.getDataPointsForTrack(with: track!.id!, onSuccess: { (dataPoints) in
                     track!.trackPoints = dataPoints
-                    let fileUrl = self.vgGPXGenerator.generateGPXFor(track: track!)!
+                    let fileUrl = self.vgGPXGenerator.generateGPXFor(tracks: [track!])!
                     let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
                     self.present(activityVC, animated: true, completion: nil)
                 }) { (error) in

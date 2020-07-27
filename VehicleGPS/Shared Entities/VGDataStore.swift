@@ -382,9 +382,9 @@ class VGDataStore {
                 result.append(vgPoint)
             }
             fetchedDataPoints = []
-            DispatchQueue.main.async {
-                onSuccess(result.sorted())
-            }
+            onSuccess(result.sorted())
+
+            
         }
     }
     

@@ -271,9 +271,9 @@ class VGFileManager {
 
     }
     
-    func getTemporaryGPXPathFor(track: VGTrack) -> URL? {
+    func getTemporaryGPXPathFor(track: VGTrack?) -> URL? {
         let tempFolder = URL(fileURLWithPath: NSTemporaryDirectory())
-        guard let timeStart = track.getStartTime() else {
+        guard let timeStart = track?.getStartTime() else {
             return tempFolder.appendingPathComponent("gpx_file.gpx")
         }
         let fileNameWithoutExt = VGFileNameDateFormatter().string(from: timeStart)

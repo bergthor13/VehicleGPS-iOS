@@ -25,6 +25,7 @@ class VGLogDetailsViewController: UIViewController {
     var vgLogParser: IVGLogParser!
     var vgGPXGenerator = VGGPXGenerator()
     var detailSegment: UISegmentedControl?
+    var barsHidden = false
 
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = false
@@ -47,6 +48,7 @@ class VGLogDetailsViewController: UIViewController {
         self.view.addSubview(mapSegmentView)
 
         self.mapView.mapType = .hybrid
+        self.mapView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(mapTapped)))
         if self.track.mapPoints.count == 0 {
             self.dataStore.getMapPointsForTrack(with: self.track.id!, onSuccess: { (mapPoints) in
                 self.track.mapPoints = mapPoints
@@ -70,6 +72,53 @@ class VGLogDetailsViewController: UIViewController {
         
     }
     
+    override var prefersStatusBarHidden: Bool {
+        return barsHidden
+    }
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return .slide
+    }
+    
+    @objc func mapTapped() {
+        
+        if barsHidden {
+            self.navigationController?.setNavigationBarHidden(false, animated: true)
+            barsHidden = false
+            self.showTabBar()
+        } else {
+            self.navigationController?.setNavigationBarHidden(true, animated: true)
+            barsHidden = true
+            self.hideTabBar()
+
+        }
+        
+    }
+    
+    func hideTabBar() {
+        guard var frame = self.tabBarController?.tabBar.frame else {
+            return
+        }
+        frame.origin.y = self.view.frame.size.height + frame.size.height
+        UIView.animate(withDuration: 0.2, animations: {
+            self.tabBarController?.tabBar.frame = frame
+            self.setNeedsStatusBarAppearanceUpdate()
+        })
+
+    }
+
+    func showTabBar() {
+        guard var frame = self.tabBarController?.tabBar.frame else {
+            return
+        }
+        frame.origin.y = self.view.frame.size.height - frame.size.height
+        UIView.animate(withDuration: 0.2, animations: {
+            self.tabBarController?.tabBar.frame = frame
+            self.setNeedsStatusBarAppearanceUpdate()
+
+        })
+    }
+    
     func createMenu() -> UIMenu {
         var actions = [UIAction]()
         if vgFileManager.fileForTrackExists(track: track) {
@@ -81,7 +130,7 @@ class VGLogDetailsViewController: UIViewController {
         
         actions.append(UIAction(title: Strings.shareGPX, image:Icons.share, handler: { (action) in
             //self.track.trackPoints = self.dataStore.getDataPointsForTrack(vgTrack: self.track)
-            let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(track: self.track)!], applicationActivities: nil)
+            let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(tracks: [self.track])!], applicationActivities: nil)
             self.present(activityVC, animated: true, completion: nil)
         }))
         

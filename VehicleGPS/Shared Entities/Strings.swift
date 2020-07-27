@@ -129,6 +129,7 @@ struct Strings {
     static let takePicture = NSLocalizedString("Taka mynd", comment: "")
     static let photoLibrary = NSLocalizedString("Myndasafn", comment: "")
     static let searchForLogs = NSLocalizedString("Leita að nýjum ferlum", comment: "")
-    
+    static let exportMapAsImage = NSLocalizedString("Flytja kort út sem mynd", comment: "")
+        
     static let dummyIdentifier = "dummy"
 }
