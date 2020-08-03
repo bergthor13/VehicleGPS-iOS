@@ -29,8 +29,8 @@ class VGLogsTableViewController: UITableViewController {
     var downloadedFiles = [DownloadedFile]()
     var undownloadedFiles = [NMSFTPFile]()
     
-    var toolbarButtonShare = UIBarButtonItem(title: Strings.share, style: .plain, target: self, action: #selector(exportTracks))
-    var toolbarButtonDelete = UIBarButtonItem(title: Strings.delete, style: .plain, target: self, action: #selector(deleteTracks))
+    var toolbarButtonShare: UIBarButtonItem!
+    var toolbarButtonDelete: UIBarButtonItem!
 
     // MARK: - Initializers
     override init(style: UITableView.Style) {
@@ -53,6 +53,8 @@ class VGLogsTableViewController: UITableViewController {
     func initializeTableViewController() {
         self.navigationController?.navigationBar.prefersLargeTitles = true
         title = Strings.titles.logs
+        self.toolbarButtonShare = UIBarButtonItem(title: Strings.share, style: .plain, target: self, action: #selector(exportTracks(_:)))
+        self.toolbarButtonDelete = UIBarButtonItem(title: Strings.delete, style: .plain, target: self, action: #selector(deleteTracks(_:)))
         tabBarItem = UITabBarItem(title: Strings.titles.logs,
                                   image: Icons.log,
                                   tag: 0)
@@ -86,15 +88,16 @@ class VGLogsTableViewController: UITableViewController {
     
     fileprivate func configureToolbar() {
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        toolbarButtonDelete.tintColor = .red
+        self.toolbarButtonDelete.tintColor = .red
         setToolbarItems([toolbarButtonShare, space, toolbarButtonDelete], animated: false)
         
     }
     
-    @objc func deleteTracks() {
+    @objc func deleteTracks(_ sender:UIBarButtonItem) {
         print("DELETING SELECTED TRACKS")
     }
-    @objc func exportTracks() {
+    
+    @objc func exportTracks(_ sender:UIBarButtonItem) {
         var tracks = [VGTrack]()
         guard let indexPaths = tableView.indexPathsForSelectedRows else {
             return
@@ -133,6 +136,13 @@ class VGLogsTableViewController: UITableViewController {
     func hideEditToolbar() {
         navigationController?.setToolbarHidden(true, animated: true)
 
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        if !editing {
+            navigationController?.setToolbarHidden(true, animated: true)
+        }
     }
     
     fileprivate func setUpDeviceConnectedBanner() {
