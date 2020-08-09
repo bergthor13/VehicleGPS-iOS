@@ -2,6 +2,7 @@ import UIKit
 import NMSSH
 import CoreData
 import CoreServices
+import UniformTypeIdentifiers
 
 class VGLogsTableViewController: UITableViewController {
     
@@ -123,9 +124,12 @@ class VGLogsTableViewController: UITableViewController {
             }
         }
         dpGroup.wait()
-        let fileUrl = self.vgGPXGenerator.generateGPXFor(tracks: tracks)
-        let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
-        self.present(activityVC, animated: true, completion: nil)
+        if let fileUrl = self.vgGPXGenerator.generateGPXFor(tracks: tracks) {
+            let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
+            self.present(activityVC, animated: true, completion: nil)
+        } else {
+            displayErrorAlert(title: "Could not generate GPX", message: "An error occurred and generating a GPX file failed.")
+        }
     }
     
     func showEditToolbar() {
@@ -197,7 +201,8 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     @objc func importFiles(_ sender:UIBarButtonItem) {
-        let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypeXML as String, kUTTypePlainText as String], in: .import)
+        let supportedTypes: [UTType] = [UTType(filenameExtension: "gpx")!, UTType(filenameExtension: "csv")!]
+        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
         documentPicker.delegate = self
         documentPicker.allowsMultipleSelection = true
         present(documentPicker, animated: true)
@@ -230,7 +235,6 @@ class VGLogsTableViewController: UITableViewController {
             if cell.currentTrack!.isRecording {
                 cell.animateRecording()
             }
-            
         }
     }
     
@@ -777,11 +781,11 @@ class VGLogsTableViewController: UITableViewController {
         
     }
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        guard let track = getTrackAt(indexPath: indexPath) else {
+        guard let _ = getTrackAt(indexPath: indexPath) else {
             return
         }
         if tableView.isEditing {
-            guard let selectedIndexPaths = tableView.indexPathsForSelectedRows else {
+            guard let _ = tableView.indexPathsForSelectedRows else {
                 self.hideEditToolbar()
                 return
             }

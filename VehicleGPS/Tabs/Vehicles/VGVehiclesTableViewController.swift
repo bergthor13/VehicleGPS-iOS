@@ -261,10 +261,13 @@ class VGVehiclesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vehicle = vehicles[indexPath.row]
+        guard let tracks = vehicle.tracks else { return }
+        
         let detailsVC = VGVehicleDetailsTableViewController(style: .plain)
-        detailsVC.vehicle = vehicles[indexPath.row]
+        detailsVC.vehicle = vehicle
         detailsVC.tracksSummary = VGTracksSummary(title: "")
-        detailsVC.tracksSummary?.tracks = detailsVC.vehicle?.tracks as! [VGTrack]
+        detailsVC.tracksSummary?.tracks = tracks
         navigationController?.pushViewController(detailsVC, animated: true)
     }
     

@@ -26,7 +26,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
         dlpTime = nil
         dlpPoint = nil
         track = nil
-        for (index, graph) in self.tableView.visibleCells.enumerated() {
+        for (index, _) in self.tableView.visibleCells.enumerated() {
             let cell = self.tableView.visibleCells[index] as? VGGraphTableViewCell
             cell?.graphView.removeAllDLPListeners()
         }

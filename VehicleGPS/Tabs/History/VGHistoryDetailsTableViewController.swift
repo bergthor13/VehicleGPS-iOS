@@ -195,8 +195,12 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         super.viewDidLayoutSubviews()
         
         if !didLayout {
-            mapView.tracks = tracksSummary?.tracks as! [VGTrack]
             didLayout = true
+            guard let tracks = tracksSummary?.tracks else {
+                return
+            }
+            mapView.tracks = tracks
+            
         }
     }
 

@@ -238,11 +238,15 @@ class VGLogDetailsViewController: UIViewController {
         addChild(trackDataTableViewController!)
         trackSegmentView.addSubview(trackDataTableViewController!.view)
         trackDataTableViewController!.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        guard let dataView = trackDataTableViewController.view else {
+            return
+        }
 
-        let topConstraint = NSLayoutConstraint(item: trackDataTableViewController!.view, attribute: .top, relatedBy: .equal, toItem: trackSegmentView!, attribute: .top, multiplier: 1, constant: 0)
-        let bottomConstraint = NSLayoutConstraint(item: trackDataTableViewController!.view, attribute: .bottom, relatedBy: .equal, toItem: trackSegmentView!, attribute: .bottom, multiplier: 1, constant: 0)
-        let leadingConstraint = NSLayoutConstraint(item: trackDataTableViewController!.view, attribute: .leading, relatedBy: .equal, toItem: trackSegmentView!, attribute: .leading, multiplier: 1, constant: 0)
-        let trailingConstraint = NSLayoutConstraint(item: trackDataTableViewController!.view, attribute: .trailing, relatedBy: .equal, toItem: trackSegmentView!, attribute: .trailing, multiplier: 1, constant: 0)
+        let topConstraint = NSLayoutConstraint(item: dataView, attribute: .top, relatedBy: .equal, toItem: trackSegmentView!, attribute: .top, multiplier: 1, constant: 0)
+        let bottomConstraint = NSLayoutConstraint(item: dataView, attribute: .bottom, relatedBy: .equal, toItem: trackSegmentView!, attribute: .bottom, multiplier: 1, constant: 0)
+        let leadingConstraint = NSLayoutConstraint(item: dataView, attribute: .leading, relatedBy: .equal, toItem: trackSegmentView!, attribute: .leading, multiplier: 1, constant: 0)
+        let trailingConstraint = NSLayoutConstraint(item: dataView, attribute: .trailing, relatedBy: .equal, toItem: trackSegmentView!, attribute: .trailing, multiplier: 1, constant: 0)
 
         NSLayoutConstraint.activate([topConstraint, bottomConstraint, leadingConstraint, trailingConstraint])
 

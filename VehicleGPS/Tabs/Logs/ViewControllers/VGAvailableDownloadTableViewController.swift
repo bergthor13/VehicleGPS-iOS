@@ -67,7 +67,7 @@ class VGAvailableDownloadTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
-            let track = self.getTrackAt(indexPath: indexPath)
+            //let track = self.getTrackAt(indexPath: indexPath)
             
 //            self.downloadManager?.deleteFile(filename: track.fileName, callback: { (success) in
 //                if success {

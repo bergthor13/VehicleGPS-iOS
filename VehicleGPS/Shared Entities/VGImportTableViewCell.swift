@@ -58,7 +58,7 @@ class VGImportTableViewCell: UITableViewCell {
 
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        guard let track = currentTrack else {return}
+        //guard let track = currentTrack else {return}
     }
     
     func fileNameToDate(dateString: String) -> Date? {

@@ -306,7 +306,7 @@ class VGDataStore {
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
             guard var oldTrack = self.getTrack(in: context, with: vgTrack.id!) else {
-                var error = NSError(domain: "", code: 123, userInfo: ["NSLocalizedDescriptionKey":"Can't find old track"])
+                let error = NSError(domain: "", code: 123, userInfo: ["NSLocalizedDescriptionKey":"Can't find old track"])
                 onFailure(error)
                 return
             }

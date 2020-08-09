@@ -105,7 +105,10 @@ class VGMapViewController: UIViewController {
         dpGroup.notify(queue: .main) {
             delegate.snapshotter.drawTracks(vgTracks: self.tracks) { (image, style) -> Void? in
                 if let image = image {
-                    let vc = UIActivityViewController(activityItems: [image.pngData()], applicationActivities: [])
+                    guard let pngImageData = image.pngData() else {
+                        return nil
+                    }
+                    let vc = UIActivityViewController(activityItems: [pngImageData], applicationActivities: [])
                     DispatchQueue.main.async {
                         self.present(vc, animated: true)
                     }
