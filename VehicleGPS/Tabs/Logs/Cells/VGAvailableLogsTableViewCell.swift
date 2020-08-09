@@ -24,8 +24,6 @@ class VGAvailableLogsTableViewCell: UITableViewCell {
     var vgFileManager: VGFileManager!
     var currentTrack: VGTrack?
     let formatter = DateFormatter()
-    let distanceFormatter = VGDistanceFormatter()
-    let form = VGDurationFormatter()
     
     func update(progress: Double) {
         let viewWidth = self.frame.width

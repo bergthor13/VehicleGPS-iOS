@@ -23,21 +23,12 @@ class VGImportTableViewCell: UITableViewCell {
     var vgFileManager: VGFileManager!
     var currentTrack: VGTrack?
     let formatter = VGFullDateFormatter()
-    let distanceFormatter = VGDistanceFormatter()
-    let form = VGDurationFormatter()
         
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.vgFileManager = appDelegate.fileManager
         }
-    
-        NotificationCenter.default.addObserver(self, selector: #selector(preferredContentSizeChanged(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
-    }
-    
-    
-    @objc func preferredContentSizeChanged(_ sender:Any) {
     }
     
     func show(track: VGTrack) {
@@ -51,14 +42,9 @@ class VGImportTableViewCell: UITableViewCell {
             self.lblStartDate!.text = formatter.string(from: track.timeStart!)
         }
         
-        self.lblDistance.text = distanceFormatter.string(fromMeters: track.distance*1000)
-        self.lblDuration.text = form.string(from: track.duration)
+        self.lblDistance.text = (track.distance*1000).asDistanceString()
+        self.lblDuration.text = track.duration.asDurationString()
         self.lblComment.text = track.comment
-    }
-
-    
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        //guard let track = currentTrack else {return}
     }
     
     func fileNameToDate(dateString: String) -> Date? {

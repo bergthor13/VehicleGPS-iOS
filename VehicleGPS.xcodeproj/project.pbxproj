@@ -98,6 +98,7 @@
 		F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C96EB122A853A500180055 /* VGFileManager.swift */; };
 		F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */; };
 		F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */; };
+		F2D8AB0824E05AA8009E0925 /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D8AB0724E05AA8009E0925 /* Double+Extensions.swift */; };
 		F2D8C30523FDD01500D77BF2 /* NotificationCenterNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D8C30423FDD01500D77BF2 /* NotificationCenterNames.swift */; };
 		F2DCA9442402E3BA00CA9CF1 /* VGArduinoCSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */; };
 		F2EE0CB02407E76C00916DD9 /* StreamReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EE0CAF2407E76C00916DD9 /* StreamReader.swift */; };
@@ -204,6 +205,7 @@
 		F2C96EB122A853A500180055 /* VGFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFileManager.swift; sourceTree = "<group>"; };
 		F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDataStore.swift; sourceTree = "<group>"; };
 		F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGPXGenerator.swift; sourceTree = "<group>"; };
+		F2D8AB0724E05AA8009E0925 /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
 		F2D8C30423FDD01500D77BF2 /* NotificationCenterNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterNames.swift; sourceTree = "<group>"; };
 		F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGArduinoCSVParser.swift; sourceTree = "<group>"; };
 		F2DCA94524043FFC00CA9CF1 /* is */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = is; path = is.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -297,6 +299,7 @@
 				F26B2C2724B3570A00E9F22C /* SidebarCollectionViewController.swift */,
 				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
 				F2647BE42434F8B500283B38 /* UIColor+Extensions.swift */,
+				F2D8AB0724E05AA8009E0925 /* Double+Extensions.swift */,
 				F2647BE82435029900283B38 /* UIView+Extensions.swift */,
 				F2647BE62435024600283B38 /* String+Extensions.swift */,
 				F2C73ABD24266148008069AE /* VGImportFileTableViewController.swift */,
@@ -679,6 +682,7 @@
 				F2B50C2C24151C9D002ECCC6 /* VGShortCSVParser.swift in Sources */,
 				F2F14BB924423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift in Sources */,
 				F2647BE52434F8B500283B38 /* UIColor+Extensions.swift in Sources */,
+				F2D8AB0824E05AA8009E0925 /* Double+Extensions.swift in Sources */,
 				F24D88CB23D622300071F6BC /* VGSnapshotMaker.swift in Sources */,
 				F26B2C0E24B28E1D00E9F22C /* SplitViewController.swift in Sources */,
 				F2C73ABE24266148008069AE /* VGImportFileTableViewController.swift in Sources */,

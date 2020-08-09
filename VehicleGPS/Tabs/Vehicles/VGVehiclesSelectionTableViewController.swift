@@ -47,8 +47,8 @@ class VGVehiclesSelectionTableViewController: VGVehiclesTableViewController {
         } else {
             cell.colorBanner.backgroundColor = .red
         }
-        cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
-        cell.lblDuration.text = durationFormatter.string(from: duration)
+        cell.lblDistance.text = (distance*1000).asDistanceString()
+        cell.lblDuration.text = duration.asDurationString()
         cell.imgVehicle?.image = VGFileManager().getImage(for: vehicles[indexPath.row])
 
         if dataStore.getDefaultVehicleID() == vehicles[indexPath.row].id {

@@ -98,10 +98,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             }
             if indexPath.row == 2 {
                 cell1.textLabel?.text = Strings.distance
-                let lengthFormatter = VGDistanceFormatter()
-                
-                lengthFormatter.unitStyle = .medium
-                cell1.detailTextLabel?.text = lengthFormatter.string(fromMeters: track.distance*1000)
+                cell1.detailTextLabel?.text = (track.distance*1000).asDistanceString()
 
             }
             if indexPath.row == 3 {

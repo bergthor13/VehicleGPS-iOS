@@ -34,8 +34,8 @@ class VGLogsTableViewCell: UITableViewCell {
     var vgFileManager: VGFileManager!
     var currentTrack: VGTrack?
     let formatter = DateFormatter()
-    let distanceFormatter = VGDistanceFormatter()
     let form = VGDurationFormatter()
+    let distanceFormatter = VGDistanceFormatter()
     var showVehicle = true {
         didSet {
             if showVehicle {

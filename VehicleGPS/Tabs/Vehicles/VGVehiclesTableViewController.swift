@@ -13,8 +13,6 @@ class VGVehiclesTableViewController: UITableViewController {
     var vehicles = [VGVehicle]()
     let dataStore = VGDataStore()
     
-    var distanceFormatter = VGDistanceFormatter()
-    var durationFormatter = VGDurationFormatter()
     var fileManager = VGFileManager()
     
     var emptyLabel: UILabel!
@@ -239,8 +237,8 @@ class VGVehiclesTableViewController: UITableViewController {
         }
         
         guard let tracks = vehicle.tracks else {
-            cell.lblDistance.text = distanceFormatter.string(for: 0)
-            cell.lblDuration.text = durationFormatter.string(from: 0)
+            cell.lblDistance.text = 0.0.asDistanceString()
+            cell.lblDuration.text = 0.0.asDurationString()
             return cell
         }
         var distance = 0.0
@@ -250,8 +248,8 @@ class VGVehiclesTableViewController: UITableViewController {
             duration += track.duration
         }
         
-        cell.lblDistance.text = distanceFormatter.string(for: distance*1000)
-        cell.lblDuration.text = durationFormatter.string(from: duration)
+        cell.lblDistance.text = (distance*1000).asDistanceString()
+        cell.lblDuration.text = duration.asDurationString()
 
         return cell
     }

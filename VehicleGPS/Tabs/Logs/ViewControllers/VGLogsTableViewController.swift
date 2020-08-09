@@ -21,15 +21,15 @@ class VGLogsTableViewController: UITableViewController {
     var emptyLabel: UILabel!
     
     // MARK: Formatters
-    let distanceFormatter = VGDistanceFormatter()
-    let durationFormatter = VGDurationFormatter()
     let headerDateFormatter = VGHeaderDateFormatter()
     let dateParsingFormatter = VGDateParsingFormatter()
     
+    // MARK: File Lists
     var filesOnDevice = [NMSFTPFile]()
     var downloadedFiles = [DownloadedFile]()
     var undownloadedFiles = [NMSFTPFile]()
     
+    // MARK: Toolbar Buttons
     var toolbarButtonShare: UIBarButtonItem!
     var toolbarButtonDelete: UIBarButtonItem!
 
@@ -45,55 +45,8 @@ class VGLogsTableViewController: UITableViewController {
 
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.navigationBar.prefersLargeTitles = true
-        
-    }
-
-    func initializeTableViewController() {
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        title = Strings.titles.logs
-        self.toolbarButtonShare = UIBarButtonItem(title: Strings.share, style: .plain, target: self, action: #selector(exportTracks(_:)))
-        self.toolbarButtonDelete = UIBarButtonItem(title: Strings.delete, style: .plain, target: self, action: #selector(deleteTracks(_:)))
-        tabBarItem = UITabBarItem(title: Strings.titles.logs,
-                                  image: Icons.log,
-                                  tag: 0)
-    }
-    
-    fileprivate func initializeClasses() {
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            self.dataStore = appDelegate.dataStore
-            self.vgFileManager = appDelegate.fileManager
-        }
-    }
-    
-    fileprivate func configureEmptyListLabel() {
-        if let delegate = UIApplication.shared.delegate as? AppDelegate {
-            emptyLabel = VGListEmptyLabel(text: Strings.noLogs,
-                                          containerView: self.view,
-                                          navigationBar: navigationController!.navigationBar,
-                                          tabBar: delegate.tabController.tabBar)
-        }
-
-        view.addSubview(emptyLabel)
-    }
-    
-    fileprivate func configureNavigationBar() {
-        let importButtonItem = UIBarButtonItem(image: Icons.importFiles, style: .plain, target: self, action: #selector(self.importFiles))
-        self.navigationItem.leftBarButtonItem = editButtonItem
-        self.navigationItem.rightBarButtonItem = importButtonItem
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic
-    }
-    
-    fileprivate func configureToolbar() {
-        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        self.toolbarButtonDelete.tintColor = .red
-        setToolbarItems([toolbarButtonShare, space, toolbarButtonDelete], animated: false)
-        
-    }
-    
+    // MARK: - Button Actions
+    // MARK: Toolbar
     @objc func deleteTracks(_ sender:UIBarButtonItem) {
         print("DELETING SELECTED TRACKS")
     }
@@ -132,110 +85,12 @@ class VGLogsTableViewController: UITableViewController {
         }
     }
     
-    func showEditToolbar() {
-        navigationController?.setToolbarHidden(false, animated: true)
-
-    }
-    
-    func hideEditToolbar() {
-        navigationController?.setToolbarHidden(true, animated: true)
-
-    }
-    
-    override func setEditing(_ editing: Bool, animated: Bool) {
-        super.setEditing(editing, animated: animated)
-        if !editing {
-            navigationController?.setToolbarHidden(true, animated: true)
-        }
-    }
-    
-    fileprivate func setUpDeviceConnectedBanner() {
-        self.headerView = VGDeviceConnectedHeaderView.loadFromNibNamed(nibNamed: VGDeviceConnectedHeaderView.nibName)
-        self.headerView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 51)
-        self.headerView.lblLogsAvailable.isHidden = true
-        self.headerView.lblConnectedToGPS.isHidden = true
-        self.headerView.imgIcon.isHidden = true
-        self.headerView.downloadView.isHidden = true
-        
-        // Add tap gesture recognizers to the views
-        let headerTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.headerViewTapped(_:)))
-        let downloadTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.searchForNewLogsAndDownload))
-
-        self.headerView.downloadView.addGestureRecognizer(downloadTapRecognizer)
-        self.headerView.statusView.addGestureRecognizer(headerTapRecognizer)
-        
-    }
-    
-    fileprivate func registerCells() {
-        self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
-        self.tableView.register(VGLogHeaderView.nib, forHeaderFooterViewReuseIdentifier: VGLogHeaderView.identifier)
-    }
-        
-    // MARK: - View Did Load Functions
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        initializeClasses()
-        configureEmptyListLabel()
-        configureNavigationBar()
-        configureToolbar()
-        setUpDeviceConnectedBanner()
-        registerCells()
-        updateData()
-        addObservers()
-        tableView.allowsMultipleSelection = true
-        tableView.allowsMultipleSelectionDuringEditing = true
-    }
-    
-    func addObservers() {
-        addObserver(selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack)
-        addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
-        addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
-        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
-        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
-        addObserver(selector: #selector(deviceConnected(_:)), name: .deviceConnected)
-        addObserver(selector: #selector(deviceDisconnected(_:)), name: .deviceDisconnected)
-    }
-    
-    func addObserver(selector:Selector, name:Notification.Name) {
-        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
-    }
-    
     @objc func importFiles(_ sender:UIBarButtonItem) {
         let supportedTypes: [UTType] = [UTType(filenameExtension: "gpx")!, UTType(filenameExtension: "csv")!]
         let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
         documentPicker.delegate = self
         documentPicker.allowsMultipleSelection = true
         present(documentPicker, animated: true)
-    }
-    
-    @objc func deviceConnected(_ notification:Notification) {
-        guard let session = notification.object as? NMSSHSession else {
-            return
-        }
-        DispatchQueue.main.async {
-            self.headerView.deviceConnected(hostname: session.host)
-            self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
-            self.tableView.tableHeaderView = self.headerView
-
-            self.searchForNewLogs(shouldDownloadFiles: false)
-        }
-
-    }
-    
-    @objc func deviceDisconnected(_ notification:Notification) {
-        DispatchQueue.main.async {
-            self.tableView.tableHeaderView = nil
-        }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        for cell in tableView!.visibleCells as! [VGLogsTableViewCell] {
-            if cell.currentTrack!.isRecording {
-                cell.animateRecording()
-            }
-        }
     }
     
     @objc func downloadFiles() {
@@ -382,98 +237,26 @@ class VGLogsTableViewController: UITableViewController {
         }
         
     }
-    
-    func display(error:Error) {
-        display(error: error.localizedDescription)
-    }
-    
-    func display(error:String) {
-        DispatchQueue.main.async {
-            let alert = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: Strings.ok, style: .default))
-            self.present(alert, animated: true)
-        }
-        
-    }
-    
-    @objc func searchForNewLogsAndDownload() {
-        searchForNewLogs(shouldDownloadFiles: true)
-    }
-    
-    func searchForNewLogs(shouldDownloadFiles:Bool) {
-        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
-             return
-        }
-        
-        self.headerView.searchingForLogs()
-        DispatchQueue.global(qos: .utility).async {
-            delegate.deviceCommunicator.getAvailableFiles(onSuccess: { (filesOnDevice) in
-                self.undownloadedFiles.removeAll()
-                self.filesOnDevice = filesOnDevice
-                self.dataStore.getDownloadedFiles(onSuccess: { (downloadedFiles) in
-                    self.downloadedFiles = downloadedFiles
-                    for deviceFile in filesOnDevice {
-                        var fileFoundOnPhone = false
-                        for downFile in downloadedFiles {
-                            if downFile.name == deviceFile.filename {
-                                fileFoundOnPhone = true
-                                if Int(downFile.size) != Int(truncating: deviceFile.fileSize!) {
-                                    self.undownloadedFiles.append(deviceFile)
-                                }
-                                continue
-                            }
-                        }
-                        if !fileFoundOnPhone {
-                            self.undownloadedFiles.append(deviceFile)
-                        }
-                    }
-                    
-                    DispatchQueue.main.async {
-                        self.headerView.newLogsAvailable(count: self.undownloadedFiles.count)
-                        if shouldDownloadFiles {
-                            self.downloadFiles()
-                        }
-                    }
-                    
-                                        
-                    let recordingFileNames = self.getRecordingFile()
-                    for recordingFileName in recordingFileNames {
-                        guard let recordingIndexPath = self.getIndexPath(for: recordingFileName.filename) else {
-                            continue
-                        }
-                        self.tracksDictionary[self.sections[recordingIndexPath.section]]![recordingIndexPath.row].isRecording = true
-                        
-                        DispatchQueue.main.async {
-                            guard let cell = self.tableView.cellForRow(at: recordingIndexPath) as? VGLogsTableViewCell else {
-                                return
-                            }
-                            cell.animateRecording()
-                        }
-                    }
 
-                }) { (error) in
-                    self.display(error: error)
-                }
-            }) { (error) in
-                self.display(error: error)
-            }
+    // MARK: Notifications
+    @objc func deviceConnected(_ notification:Notification) {
+        guard let session = notification.object as? NMSSHSession else {
+            return
+        }
+        DispatchQueue.main.async {
+            self.headerView.deviceConnected(hostname: session.host)
+            self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
+            self.tableView.tableHeaderView = self.headerView
+
+            self.searchForNewLogs(shouldDownloadFiles: false)
         }
     }
     
-    func getRecordingFile() -> [NMSFTPFile] {
-        var files = [NMSFTPFile]()
-        for deviceFile in self.filesOnDevice {
-            for downFile in self.downloadedFiles {
-                if downFile.name == deviceFile.filename &&
-                    Int(downFile.size) != Int(truncating: deviceFile.fileSize!) {
-                    files.append(deviceFile)
-                }
-            }
+    @objc func deviceDisconnected(_ notification:Notification) {
+        DispatchQueue.main.async {
+            self.tableView.tableHeaderView = nil
         }
-        return files
     }
-    
-    
     
     @objc func previewImageStarting(_ notification:Notification) {
         guard let newTrack = notification.object as? VGTrack else {
@@ -584,6 +367,229 @@ class VGLogsTableViewController: UITableViewController {
         }
         
         
+    }
+
+    
+
+        
+    // MARK: - Overrides
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        initializeClasses()
+        configureEmptyListLabel()
+        configureNavigationBar()
+        configureToolbar()
+        setUpDeviceConnectedBanner()
+        registerCells()
+        updateData()
+        addObservers()
+        tableView.allowsMultipleSelection = true
+        tableView.allowsMultipleSelectionDuringEditing = true
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        if !editing {
+            navigationController?.setToolbarHidden(true, animated: true)
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        for cell in tableView!.visibleCells as! [VGLogsTableViewCell] {
+            if cell.currentTrack!.isRecording {
+                cell.animateRecording()
+            }
+        }
+    }
+    
+    // MARK: - Setup Functions
+    
+    fileprivate func setUpDeviceConnectedBanner() {
+        self.headerView = VGDeviceConnectedHeaderView.loadFromNibNamed(nibNamed: VGDeviceConnectedHeaderView.nibName)
+        self.headerView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 51)
+        self.headerView.lblLogsAvailable.isHidden = true
+        self.headerView.lblConnectedToGPS.isHidden = true
+        self.headerView.imgIcon.isHidden = true
+        self.headerView.downloadView.isHidden = true
+        
+        // Add tap gesture recognizers to the views
+        let headerTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.headerViewTapped(_:)))
+        let downloadTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.searchForNewLogsAndDownload))
+
+        self.headerView.downloadView.addGestureRecognizer(downloadTapRecognizer)
+        self.headerView.statusView.addGestureRecognizer(headerTapRecognizer)
+        
+    }
+    
+    fileprivate func registerCells() {
+        self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
+        self.tableView.register(VGLogHeaderView.nib, forHeaderFooterViewReuseIdentifier: VGLogHeaderView.identifier)
+    }
+    
+    func addObservers() {
+        addObserver(selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack)
+        addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
+        addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
+        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
+        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
+        addObserver(selector: #selector(deviceConnected(_:)), name: .deviceConnected)
+        addObserver(selector: #selector(deviceDisconnected(_:)), name: .deviceDisconnected)
+    }
+    
+    func addObserver(selector:Selector, name:Notification.Name) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
+    }
+    
+    
+    func initializeTableViewController() {
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        title = Strings.titles.logs
+        self.toolbarButtonShare = UIBarButtonItem(title: Strings.share, style: .plain, target: self, action: #selector(exportTracks(_:)))
+        self.toolbarButtonDelete = UIBarButtonItem(title: Strings.delete, style: .plain, target: self, action: #selector(deleteTracks(_:)))
+        tabBarItem = UITabBarItem(title: Strings.titles.logs,
+                                  image: Icons.log,
+                                  tag: 0)
+    }
+    
+    fileprivate func initializeClasses() {
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            self.dataStore = appDelegate.dataStore
+            self.vgFileManager = appDelegate.fileManager
+        }
+    }
+    
+    fileprivate func configureEmptyListLabel() {
+        if let delegate = UIApplication.shared.delegate as? AppDelegate {
+            emptyLabel = VGListEmptyLabel(text: Strings.noLogs,
+                                          containerView: self.view,
+                                          navigationBar: navigationController!.navigationBar,
+                                          tabBar: delegate.tabController.tabBar)
+        }
+
+        view.addSubview(emptyLabel)
+    }
+    
+    fileprivate func configureNavigationBar() {
+        let importButtonItem = UIBarButtonItem(image: Icons.importFiles, style: .plain, target: self, action: #selector(self.importFiles))
+        self.navigationItem.leftBarButtonItem = editButtonItem
+        self.navigationItem.rightBarButtonItem = importButtonItem
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic
+    }
+    
+    fileprivate func configureToolbar() {
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        self.toolbarButtonDelete.tintColor = .red
+        setToolbarItems([toolbarButtonShare, space, toolbarButtonDelete], animated: false)
+        
+    }
+    
+    // MARK: - Other
+    func showEditToolbar() {
+        navigationController?.setToolbarHidden(false, animated: true)
+
+    }
+    
+    func hideEditToolbar() {
+        navigationController?.setToolbarHidden(true, animated: true)
+
+    }
+        
+    func display(error:Error) {
+        display(error: error.localizedDescription)
+    }
+    
+    func display(error:String) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: Strings.ok, style: .default))
+            self.present(alert, animated: true)
+        }
+        
+    }
+    
+    @objc func searchForNewLogsAndDownload() {
+        searchForNewLogs(shouldDownloadFiles: true)
+    }
+    
+    func searchForNewLogs(shouldDownloadFiles:Bool) {
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+             return
+        }
+        
+        self.headerView.searchingForLogs()
+        DispatchQueue.global(qos: .utility).async {
+            delegate.deviceCommunicator.getAvailableFiles(onSuccess: { (filesOnDevice) in
+                self.undownloadedFiles.removeAll()
+                self.filesOnDevice = filesOnDevice
+                self.dataStore.getDownloadedFiles(onSuccess: { (downloadedFiles) in
+                    self.downloadedFiles = downloadedFiles
+                    for deviceFile in filesOnDevice {
+                        var fileFoundOnPhone = false
+                        for downFile in downloadedFiles {
+                            if downFile.name == deviceFile.filename {
+                                fileFoundOnPhone = true
+                                if Int(downFile.size) != Int(truncating: deviceFile.fileSize!) {
+                                    self.undownloadedFiles.append(deviceFile)
+                                }
+                                continue
+                            }
+                        }
+                        if !fileFoundOnPhone {
+                            self.undownloadedFiles.append(deviceFile)
+                        }
+                    }
+                    
+                    DispatchQueue.main.async {
+                        self.headerView.newLogsAvailable(count: self.undownloadedFiles.count)
+                        if shouldDownloadFiles {
+                            self.downloadFiles()
+                        }
+                    }
+                    
+                                        
+                    let recordingFileNames = self.getRecordingFile()
+                    for recordingFileName in recordingFileNames {
+                        guard let recordingIndexPath = self.getIndexPath(for: recordingFileName.filename) else {
+                            continue
+                        }
+                        self.tracksDictionary[self.sections[recordingIndexPath.section]]![recordingIndexPath.row].isRecording = true
+                        
+                        DispatchQueue.main.async {
+                            guard let cell = self.tableView.cellForRow(at: recordingIndexPath) as? VGLogsTableViewCell else {
+                                return
+                            }
+                            cell.animateRecording()
+                        }
+                    }
+
+                }) { (error) in
+                    self.display(error: error)
+                }
+            }) { (error) in
+                self.display(error: error)
+            }
+        }
+    }
+    
+    func getRecordingFile() -> [NMSFTPFile] {
+        var files = [NMSFTPFile]()
+        for deviceFile in self.filesOnDevice {
+            for downFile in self.downloadedFiles {
+                if downFile.name == deviceFile.filename &&
+                    Int(downFile.size) != Int(truncating: deviceFile.fileSize!) {
+                    files.append(deviceFile)
+                }
+            }
+        }
+        return files
     }
     
     func getIndexPath(for track:VGTrack) -> IndexPath? {
@@ -702,10 +708,10 @@ class VGLogsTableViewController: UITableViewController {
             totalDuration += track.duration
             totalDistance += track.distance
         }
-        distanceString = distanceFormatter.string(fromMeters: totalDistance*1000)
+        distanceString = (totalDistance*1000).asDistanceString()
         
-        let formattedDuration = durationFormatter.string(from: totalDuration)
-        durationString = String(formattedDuration!)
+        let formattedDuration = totalDuration.asDurationString()
+        durationString = formattedDuration
         
         view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
@@ -809,36 +815,7 @@ class VGLogsTableViewController: UITableViewController {
             self.deleteTrack(at: indexPath)
         }
     }
-    func deleteTrack(at indexPath:IndexPath) {
-        // Delete the row from the data source
-        guard let track = self.getTrackAt(indexPath: indexPath) else {
-            return
-        }
-        
-        self.tracksDictionary[self.sections[indexPath.section]]?.remove(at: indexPath.row)
-        tableView.deleteRows(at: [indexPath], with: .fade)
 
-        if self.tracksDictionary[self.sections[indexPath.section]]?.count == 0 {
-            self.tracksDictionary.removeValue(forKey: self.sections[indexPath.section])
-            self.sections.remove(at: indexPath.section)
-            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
-        }
-        self.vgFileManager?.deleteFileFor(track: track)
-        if self.tracksDictionary.count > 0 {
-            self.emptyLabel.isHidden = true
-            self.tableView.separatorStyle = .singleLine
-        } else {
-            self.emptyLabel.isHidden = false
-            self.tableView.separatorStyle = .none
-        }
-
-        self.dataStore.delete(trackWith: track.id!, onSuccess: {
-            
-        }) { (error) in
-            self.display(error: error)
-        }
-    }
-    
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         let track = getTrackAt(indexPath: indexPath)
@@ -878,8 +855,39 @@ class VGLogsTableViewController: UITableViewController {
             UIMenu(title: "", children: [selectVehicle, exportMenu, delete])
         }
     }
+    
+    func deleteTrack(at indexPath:IndexPath) {
+        // Delete the row from the data source
+        guard let track = self.getTrackAt(indexPath: indexPath) else {
+            return
+        }
+        
+        self.tracksDictionary[self.sections[indexPath.section]]?.remove(at: indexPath.row)
+        tableView.deleteRows(at: [indexPath], with: .fade)
+
+        if self.tracksDictionary[self.sections[indexPath.section]]?.count == 0 {
+            self.tracksDictionary.removeValue(forKey: self.sections[indexPath.section])
+            self.sections.remove(at: indexPath.section)
+            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
+        }
+        self.vgFileManager?.deleteFileFor(track: track)
+        if self.tracksDictionary.count > 0 {
+            self.emptyLabel.isHidden = true
+            self.tableView.separatorStyle = .singleLine
+        } else {
+            self.emptyLabel.isHidden = false
+            self.tableView.separatorStyle = .none
+        }
+
+        self.dataStore.delete(trackWith: track.id!, onSuccess: {
+            
+        }) { (error) in
+            self.display(error: error)
+        }
+    }
 }
 
+// MARK: - Extensions
 extension VGLogsTableViewController: DisplaySelectVehicleProtocol {
     func didTapVehicle(track: VGTrack, tappedView:UIView?) {
         if tableView.isEditing {

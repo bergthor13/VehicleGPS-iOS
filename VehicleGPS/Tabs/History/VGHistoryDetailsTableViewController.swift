@@ -22,8 +22,6 @@ class VGHistoryDetailsTableViewController: UITableViewController {
     }
     
     // MARK: Formatters
-    let distanceFormatter = VGDistanceFormatter()
-    let durationFormatter = VGDurationFormatter()
     let headerDateFormatter = VGHeaderDateFormatter()
     let dateParsingFormatter = VGDateParsingFormatter()
 
@@ -380,10 +378,8 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             totalDuration += track.duration
             totalDistance += track.distance
         }
-        distanceString = distanceFormatter.string(fromMeters: totalDistance*1000)
-        
-        let formattedDuration = durationFormatter.string(from: totalDuration)
-        durationString = String(formattedDuration!)
+        distanceString = (totalDistance*1000).asDistanceString()
+        durationString = totalDuration.asDurationString()
         
         view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
