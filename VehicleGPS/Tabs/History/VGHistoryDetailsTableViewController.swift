@@ -261,6 +261,9 @@ class VGHistoryDetailsTableViewController: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        if indexPath.section == 0 {
+            return nil
+        }
         
         let track = getTrackAt(indexPath: indexPath)
         

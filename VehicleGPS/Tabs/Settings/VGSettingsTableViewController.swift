@@ -108,4 +108,14 @@ class VGSettingsTableViewController: UITableViewController {
             }
         }
     }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if section == 1 {
+            let name: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
+            let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+            let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+            return "\(name) \(version) (\(build))"
+        }
+        return nil
+    }
 }

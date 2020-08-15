@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17175" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17175" systemVersion="19G2021" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="DataPoint" representedClassName="DataPoint" syncable="YES" codeGenerationType="class">
         <attribute name="ambientTemperature" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
         <attribute name="cadence" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
@@ -35,6 +35,7 @@
     </entity>
     <entity name="Track" representedClassName="Track" syncable="YES" codeGenerationType="class">
         <attribute name="comment" optional="YES" attributeType="String"/>
+        <attribute name="dataPointCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="fileName" optional="YES" attributeType="String"/>
@@ -56,7 +57,7 @@
     <entity name="Vehicle" representedClassName="Vehicle" syncable="YES" codeGenerationType="class">
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="image" optional="YES" attributeType="URI"/>
-        <attribute name="mapColor" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureCoding"/>
+        <attribute name="mapColor" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureCoding" customClassName="NSObject"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="tracks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Track" inverseName="vehicle" inverseEntity="Track"/>
@@ -71,7 +72,7 @@
         <element name="DataPoint" positionX="196.8671875" positionY="-25.84765625" width="128" height="358"/>
         <element name="DownloadedFile" positionX="144" positionY="126" width="128" height="73"/>
         <element name="MapPoint" positionX="144" positionY="126" width="128" height="103"/>
-        <element name="Track" positionX="-63" positionY="-18" width="128" height="313"/>
+        <element name="Track" positionX="-63" positionY="-18" width="128" height="328"/>
         <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="148"/>
         <element name="VehicleType" positionX="144" positionY="126" width="128" height="88"/>
     </elements>

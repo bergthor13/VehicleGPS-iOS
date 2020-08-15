@@ -35,6 +35,7 @@ class VGTrack {
     var isLocal:Bool
     var isRecording:Bool
     var beingProcessed = false
+    var dataPointCount = 0
     
     /// The vehicle associated with the track
     var vehicle:VGVehicle?

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import NMSSH
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,6 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        NMSSHLogger.shared().isEnabled = false
+        
         snapshotter = VGSnapshotMaker(fileManager: self.fileManager, dataStore: self.dataStore)
         deviceCommunicator = DeviceCommunicator()
         self.window = UIWindow(frame: UIScreen.main.bounds)

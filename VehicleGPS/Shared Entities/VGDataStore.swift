@@ -414,7 +414,7 @@ class VGDataStore {
             let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
             do {
                 var returnList = [VGVehicle]()
-                let result =  try context.fetch(fetchRequest)
+                let result = try context.fetch(fetchRequest)
                 for item in result {
                     let newVehicle = VGVehicle(vehicle: item)
                     tracksForVehicleRequests.enter()
@@ -473,7 +473,6 @@ class VGDataStore {
     func update(vgVehicle:VGVehicle, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
-        
         guard let newVehicle = getVehicle(in: context, with: vgVehicle.id!) else {
             return
         }

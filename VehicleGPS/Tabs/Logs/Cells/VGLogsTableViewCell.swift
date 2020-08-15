@@ -106,7 +106,7 @@ class VGLogsTableViewCell: UITableViewCell {
                                                   fromByteCount: Int64(truncating: NSNumber(value: track.fileSize)),
                                                   countStyle: .file)
         
-        self.lblFileSize!.text = fileSizeWithUnit
+        self.lblFileSize!.text = String(track.dataPointCount)
         
         self.lblDistance.text = distanceFormatter.string(fromMeters: track.distance*1000)
                 
