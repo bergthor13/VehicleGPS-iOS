@@ -26,6 +26,9 @@ class VGDataPoint {
     var coolantTemperature:Double?
     var ambientTemperature:Double?
     var throttlePosition:Double?
+    var cadence:Int?
+    var power:Double?
+    var heartRate:Int?
     
     var hasOBDData: Bool {
         return (rpm != nil || engineLoad != nil || coolantTemperature != nil || ambientTemperature != nil || throttlePosition != nil)
@@ -54,6 +57,9 @@ class VGDataPoint {
         self.coolantTemperature = dataPoint.value(forKey: "coolantTemperature") as? Double
         self.ambientTemperature = dataPoint.value(forKey: "ambientTemperature") as? Double
         self.throttlePosition = dataPoint.value(forKey: "throttlePosition") as? Double
+        self.cadence = dataPoint.value(forKey: "cadence") as? Int
+        self.power = dataPoint.value(forKey: "power") as? Double
+        self.heartRate = dataPoint.value(forKey: "heartRate") as? Int
     }
     
     func setEntity(dataPoint:DataPoint, track:Track) -> DataPoint{
@@ -118,6 +124,15 @@ class VGDataPoint {
         }
         if let throttlePosition = self.throttlePosition {
             dataPoint.throttlePosition = throttlePosition
+        }
+        if let cadence = self.cadence {
+            dataPoint.cadence = Int16(cadence)
+        }
+        if let power = self.power {
+            dataPoint.power = power
+        }
+        if let heartRate = self.heartRate {
+            dataPoint.heartRate = Int16(heartRate)
         }
         
         dataPoint.track = track

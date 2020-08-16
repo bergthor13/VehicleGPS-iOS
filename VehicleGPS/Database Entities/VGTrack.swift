@@ -36,6 +36,25 @@ class VGTrack {
     var isRecording:Bool
     var beingProcessed = false
     var dataPointCount = 0
+    var graphTypes: Set<GraphType> {
+        var types = Set<GraphType>()
+        
+        for point in trackPoints {
+            if point.timestamp != nil { types.insert(.speed) }
+            if point.elevation != nil { types.insert(.elevation) }
+            if point.pdop != nil { types.insert(.pdop) }
+            if point.horizontalAccuracy != nil { types.insert(.horizontalAccuracy) }
+            if point.rpm != nil { types.insert(.rpm) }
+            if point.engineLoad != nil { types.insert(.engineLoad) }
+            if point.throttlePosition != nil { types.insert(.throttlePosition) }
+            if point.coolantTemperature != nil { types.insert(.coolantTemperature) }
+            if point.ambientTemperature != nil { types.insert(.ambientTemperature) }
+            if point.heartRate != nil { types.insert(.heartRate) }
+            if point.power != nil { types.insert(.power) }
+            if point.cadence != nil { types.insert(.cadence) }
+        }
+        return types
+    }
     
     /// The vehicle associated with the track
     var vehicle:VGVehicle?

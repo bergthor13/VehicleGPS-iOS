@@ -103,6 +103,7 @@
 		F2DCA9442402E3BA00CA9CF1 /* VGArduinoCSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */; };
 		F2EE0CB02407E76C00916DD9 /* StreamReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EE0CAF2407E76C00916DD9 /* StreamReader.swift */; };
 		F2F14BB924423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F14BB824423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift */; };
+		F2F77DEE24E8A2A100C2F09D /* GraphType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F77DED24E8A2A100C2F09D /* GraphType.swift */; };
 		F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FDA85D23C646B3000B8B76 /* VGDatabaseTableViewController.swift */; };
 		F2FF02382442815000502869 /* VGDownloadedFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FF02372442815000502869 /* VGDownloadedFile.swift */; };
 /* End PBXBuildFile section */
@@ -211,6 +212,7 @@
 		F2DCA94524043FFC00CA9CF1 /* is */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = is; path = is.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F2EE0CAF2407E76C00916DD9 /* StreamReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamReader.swift; sourceTree = "<group>"; };
 		F2F14BB824423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGVGPSDeviceSettingsTableViewController.swift; sourceTree = "<group>"; };
+		F2F77DED24E8A2A100C2F09D /* GraphType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphType.swift; sourceTree = "<group>"; };
 		F2FDA85D23C646B3000B8B76 /* VGDatabaseTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDatabaseTableViewController.swift; sourceTree = "<group>"; };
 		F2FF02372442815000502869 /* VGDownloadedFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDownloadedFile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -255,6 +257,7 @@
 				F23BE8E922A5E5BB008FD50C /* VGTrack.swift */,
 				F2AC170123F0094C00516498 /* VGMapPoint.swift */,
 				F2FF02372442815000502869 /* VGDownloadedFile.swift */,
+				F2F77DED24E8A2A100C2F09D /* GraphType.swift */,
 			);
 			path = "Database Entities";
 			sourceTree = "<group>";
@@ -689,6 +692,7 @@
 				F25669BE23CB6DB700CC7934 /* TrackGraphViewConfig.swift in Sources */,
 				F24754F723DDAAD8007E0DF8 /* VGDistanceFormatter.swift in Sources */,
 				F26B2C2824B3570A00E9F22C /* SidebarCollectionViewController.swift in Sources */,
+				F2F77DEE24E8A2A100C2F09D /* GraphType.swift in Sources */,
 				F23BE8F522A5E5BB008FD50C /* VGGraphTableViewCell.swift in Sources */,
 				F23F60C3244C8A5400A97CF8 /* VGFullDateFormatter.swift in Sources */,
 				F25839DD23A6BE8600E76B54 /* VGTracksSummary.swift in Sources */,

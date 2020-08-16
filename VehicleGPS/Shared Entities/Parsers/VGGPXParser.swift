@@ -81,6 +81,23 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
                 currTrack?.timeStart = currPoint.timestamp
             }
         }
+        
+        if elementName == "gpxtpx:atemp" {
+            let temp = foundCharacters.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+            currPoint.ambientTemperature = Double(temp)!
+        }
+        
+        if elementName == "gpxtpx:hr" {
+            let hr = foundCharacters.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+            currPoint.heartRate = Int(hr)!
+        }
+        
+        if elementName == "gpxtpx:cad" {
+            let cad = foundCharacters.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+            currPoint.cadence = Int(cad)!
+        }
+        
+        
 
         if elementName == "trkpt" || elementName == "wpt" {
             currTrack!.trackPoints.append(currPoint)
