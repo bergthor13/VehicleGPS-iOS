@@ -26,7 +26,7 @@ class VGCoolantTemperatureGraphGenerator: VGGraphGenerator {
             }
             configuration.numbersList.append((time, Double(coolantTemperature)))
         }
-        configuration.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
+        configuration.color = UIColor(red: 165/255.0, green: 50/255.0, blue: 45/255.0, alpha: 0.3)
         configuration.startTime = track.timeStart
         configuration.endTime = track.timeStart?.addingTimeInterval(track.duration)
 

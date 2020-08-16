@@ -318,6 +318,7 @@
 		F2169BEB23C9CE4500DE8547 /* Shared Entities */ = {
 			isa = PBXGroup;
 			children = (
+				F255E86824E98CF0003DF00F /* Generators */,
 				F24754F823DDABE0007E0DF8 /* Formatters */,
 				F24D88D123D6381D0071F6BC /* Snapshots */,
 				F215ADFA2402786B000ECFFF /* Parsers */,
@@ -472,19 +473,6 @@
 				F24D88C623D3CB0D0071F6BC /* VGAvailableDownloadTableViewController.swift */,
 				F23BE8E722A5E5BB008FD50C /* VGLogDetailsViewController.swift */,
 				F257077D22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift */,
-				F2F77DEF24E96B6600C2F09D /* VGGraphGenerator.swift */,
-				F2F77DF124E96B8000C2F09D /* VGSpeedGraphGenerator.swift */,
-				F255E85224E96E46003DF00F /* VGElevationGraphGenerator.swift */,
-				F255E85424E97E84003DF00F /* VGHeartRateGraphGenerator.swift */,
-				F255E85D24E98239003DF00F /* VGAmbientTemperatureGraphGenerator.swift */,
-				F255E85A24E98239003DF00F /* VGCadenceGraphGenerator.swift */,
-				F255E85E24E98239003DF00F /* VGCoolantTemperatureGraphGenerator.swift */,
-				F255E85624E98239003DF00F /* VGEngineLoadGraphGenerator.swift */,
-				F255E85924E98239003DF00F /* VGHorizontalAccuracyGraphGenerator.swift */,
-				F255E85B24E98239003DF00F /* VGPDOPGraphGenerator.swift */,
-				F255E85724E98239003DF00F /* VGPowerGraphGenerator.swift */,
-				F255E85C24E98239003DF00F /* VGRPMGraphGenerator.swift */,
-				F255E85824E98239003DF00F /* VGThrottlePositionGraphGenerator.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -512,6 +500,26 @@
 				F286124B24C0DA920029F34A /* VGMapSnapshotter.swift */,
 			);
 			path = Snapshots;
+			sourceTree = "<group>";
+		};
+		F255E86824E98CF0003DF00F /* Generators */ = {
+			isa = PBXGroup;
+			children = (
+				F2F77DEF24E96B6600C2F09D /* VGGraphGenerator.swift */,
+				F2F77DF124E96B8000C2F09D /* VGSpeedGraphGenerator.swift */,
+				F255E85224E96E46003DF00F /* VGElevationGraphGenerator.swift */,
+				F255E85424E97E84003DF00F /* VGHeartRateGraphGenerator.swift */,
+				F255E85D24E98239003DF00F /* VGAmbientTemperatureGraphGenerator.swift */,
+				F255E85A24E98239003DF00F /* VGCadenceGraphGenerator.swift */,
+				F255E85E24E98239003DF00F /* VGCoolantTemperatureGraphGenerator.swift */,
+				F255E85624E98239003DF00F /* VGEngineLoadGraphGenerator.swift */,
+				F255E85924E98239003DF00F /* VGHorizontalAccuracyGraphGenerator.swift */,
+				F255E85B24E98239003DF00F /* VGPDOPGraphGenerator.swift */,
+				F255E85724E98239003DF00F /* VGPowerGraphGenerator.swift */,
+				F255E85C24E98239003DF00F /* VGRPMGraphGenerator.swift */,
+				F255E85824E98239003DF00F /* VGThrottlePositionGraphGenerator.swift */,
+			);
+			path = Generators;
 			sourceTree = "<group>";
 		};
 		F25839CD23A6602C00E76B54 /* History */ = {

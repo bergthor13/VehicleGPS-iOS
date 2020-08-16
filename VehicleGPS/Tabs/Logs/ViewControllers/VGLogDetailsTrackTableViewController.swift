@@ -112,7 +112,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             }
             
             cell!.graphView.addDLP(listener: self)
-            guard let track = track else {
+            guard let _ = track else {
                 return cell!
             }
             
