@@ -36,22 +36,49 @@ class VGTrack {
     var isRecording:Bool
     var beingProcessed = false
     var dataPointCount = 0
-    var graphTypes: Set<GraphType> {
-        var types = Set<GraphType>()
+    var graphTypes: [VGGraphGenerator?] {
+        var types = [VGGraphGenerator?]()
+        for _ in (0..<12) {
+            types.append(nil)
+        }
         
         for point in trackPoints {
-            if point.timestamp != nil { types.insert(.speed) }
-            if point.elevation != nil { types.insert(.elevation) }
-            if point.pdop != nil { types.insert(.pdop) }
-            if point.horizontalAccuracy != nil { types.insert(.horizontalAccuracy) }
-            if point.rpm != nil { types.insert(.rpm) }
-            if point.engineLoad != nil { types.insert(.engineLoad) }
-            if point.throttlePosition != nil { types.insert(.throttlePosition) }
-            if point.coolantTemperature != nil { types.insert(.coolantTemperature) }
-            if point.ambientTemperature != nil { types.insert(.ambientTemperature) }
-            if point.heartRate != nil { types.insert(.heartRate) }
-            if point.power != nil { types.insert(.power) }
-            if point.cadence != nil { types.insert(.cadence) }
+            if types[0] == nil {
+                if point.timestamp != nil { types.replaceSubrange(0...0, with: [VGSpeedGraphGenerator()]) }
+            }
+            if types[1] == nil {
+                if point.elevation != nil { types.replaceSubrange(1...1, with: [VGElevationGraphGenerator()]) }
+            }
+            if types[2] == nil {
+                if point.pdop != nil { types.replaceSubrange(2...2, with: [VGPDOPGraphGenerator()]) }
+            }
+            if types[3] == nil {
+                if point.horizontalAccuracy != nil { types.replaceSubrange(3...3, with: [VGHorizontalAccuracyGraphGenerator()]) }
+            }
+            if types[4] == nil {
+                if point.rpm != nil { types.replaceSubrange(4...4, with: [VGRPMGraphGenerator()]) }
+            }
+            if types[5] == nil {
+                if point.engineLoad != nil { types.replaceSubrange(5...5, with: [VGEngineLoadGraphGenerator()]) }
+            }
+            if types[6] == nil {
+                if point.throttlePosition != nil { types.replaceSubrange(6...6, with: [VGThrottlePositionGraphGenerator()]) }
+            }
+            if types[7] == nil {
+                if point.coolantTemperature != nil { types.replaceSubrange(7...7, with: [VGCoolantTemperatureGraphGenerator()]) }
+            }
+            if types[8] == nil {
+                if point.ambientTemperature != nil { types.replaceSubrange(8...8, with: [VGAmbientTemperatureGraphGenerator()]) }
+            }
+            if types[9] == nil {
+                if point.heartRate != nil { types.replaceSubrange(9...9, with: [VGHeartRateGraphGenerator()]) }
+            }
+            if types[10] == nil {
+                if point.power != nil { types.replaceSubrange(10...10, with: [VGPowerGraphGenerator()]) }
+            }
+            if types[11] == nil {
+                if point.cadence != nil { types.replaceSubrange(11...11, with: [VGCadenceGraphGenerator()]) }
+            }
         }
         return types
     }

@@ -57,6 +57,17 @@
 		F24D88CB23D622300071F6BC /* VGSnapshotMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88CA23D622300071F6BC /* VGSnapshotMaker.swift */; };
 		F24D88CD23D631C00071F6BC /* VGZeroMapSnapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88CC23D631C00071F6BC /* VGZeroMapSnapshotter.swift */; };
 		F24D88CF23D632D60071F6BC /* VGTrackMapSnapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88CE23D632D60071F6BC /* VGTrackMapSnapshotter.swift */; };
+		F255E85324E96E46003DF00F /* VGElevationGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F255E85224E96E46003DF00F /* VGElevationGraphGenerator.swift */; };
+		F255E85524E97E84003DF00F /* VGHeartRateGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F255E85424E97E84003DF00F /* VGHeartRateGraphGenerator.swift */; };
+		F255E85F24E98239003DF00F /* VGEngineLoadGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F255E85624E98239003DF00F /* VGEngineLoadGraphGenerator.swift */; };
+		F255E86024E98239003DF00F /* VGPowerGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F255E85724E98239003DF00F /* VGPowerGraphGenerator.swift */; };
+		F255E86124E98239003DF00F /* VGThrottlePositionGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F255E85824E98239003DF00F /* VGThrottlePositionGraphGenerator.swift */; };
+		F255E86224E98239003DF00F /* VGHorizontalAccuracyGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F255E85924E98239003DF00F /* VGHorizontalAccuracyGraphGenerator.swift */; };
+		F255E86324E98239003DF00F /* VGCadenceGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F255E85A24E98239003DF00F /* VGCadenceGraphGenerator.swift */; };
+		F255E86424E98239003DF00F /* VGPDOPGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F255E85B24E98239003DF00F /* VGPDOPGraphGenerator.swift */; };
+		F255E86524E98239003DF00F /* VGRPMGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F255E85C24E98239003DF00F /* VGRPMGraphGenerator.swift */; };
+		F255E86624E98239003DF00F /* VGAmbientTemperatureGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F255E85D24E98239003DF00F /* VGAmbientTemperatureGraphGenerator.swift */; };
+		F255E86724E98239003DF00F /* VGCoolantTemperatureGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F255E85E24E98239003DF00F /* VGCoolantTemperatureGraphGenerator.swift */; };
 		F25669BE23CB6DB700CC7934 /* TrackGraphViewConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25669BD23CB6DB700CC7934 /* TrackGraphViewConfig.swift */; };
 		F257077A22F09AAA00F201B3 /* TrackGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F257077922F09AAA00F201B3 /* TrackGraphView.swift */; };
 		F257077E22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F257077D22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift */; };
@@ -103,7 +114,8 @@
 		F2DCA9442402E3BA00CA9CF1 /* VGArduinoCSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */; };
 		F2EE0CB02407E76C00916DD9 /* StreamReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EE0CAF2407E76C00916DD9 /* StreamReader.swift */; };
 		F2F14BB924423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F14BB824423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift */; };
-		F2F77DEE24E8A2A100C2F09D /* GraphType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F77DED24E8A2A100C2F09D /* GraphType.swift */; };
+		F2F77DF024E96B6600C2F09D /* VGGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F77DEF24E96B6600C2F09D /* VGGraphGenerator.swift */; };
+		F2F77DF224E96B8000C2F09D /* VGSpeedGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F77DF124E96B8000C2F09D /* VGSpeedGraphGenerator.swift */; };
 		F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FDA85D23C646B3000B8B76 /* VGDatabaseTableViewController.swift */; };
 		F2FF02382442815000502869 /* VGDownloadedFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FF02372442815000502869 /* VGDownloadedFile.swift */; };
 /* End PBXBuildFile section */
@@ -164,6 +176,17 @@
 		F24D88CA23D622300071F6BC /* VGSnapshotMaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGSnapshotMaker.swift; sourceTree = "<group>"; };
 		F24D88CC23D631C00071F6BC /* VGZeroMapSnapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGZeroMapSnapshotter.swift; sourceTree = "<group>"; };
 		F24D88CE23D632D60071F6BC /* VGTrackMapSnapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGTrackMapSnapshotter.swift; sourceTree = "<group>"; };
+		F255E85224E96E46003DF00F /* VGElevationGraphGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGElevationGraphGenerator.swift; sourceTree = "<group>"; };
+		F255E85424E97E84003DF00F /* VGHeartRateGraphGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGHeartRateGraphGenerator.swift; sourceTree = "<group>"; };
+		F255E85624E98239003DF00F /* VGEngineLoadGraphGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGEngineLoadGraphGenerator.swift; sourceTree = "<group>"; };
+		F255E85724E98239003DF00F /* VGPowerGraphGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGPowerGraphGenerator.swift; sourceTree = "<group>"; };
+		F255E85824E98239003DF00F /* VGThrottlePositionGraphGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGThrottlePositionGraphGenerator.swift; sourceTree = "<group>"; };
+		F255E85924E98239003DF00F /* VGHorizontalAccuracyGraphGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGHorizontalAccuracyGraphGenerator.swift; sourceTree = "<group>"; };
+		F255E85A24E98239003DF00F /* VGCadenceGraphGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGCadenceGraphGenerator.swift; sourceTree = "<group>"; };
+		F255E85B24E98239003DF00F /* VGPDOPGraphGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGPDOPGraphGenerator.swift; sourceTree = "<group>"; };
+		F255E85C24E98239003DF00F /* VGRPMGraphGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGRPMGraphGenerator.swift; sourceTree = "<group>"; };
+		F255E85D24E98239003DF00F /* VGAmbientTemperatureGraphGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGAmbientTemperatureGraphGenerator.swift; sourceTree = "<group>"; };
+		F255E85E24E98239003DF00F /* VGCoolantTemperatureGraphGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGCoolantTemperatureGraphGenerator.swift; sourceTree = "<group>"; };
 		F25669BD23CB6DB700CC7934 /* TrackGraphViewConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackGraphViewConfig.swift; sourceTree = "<group>"; };
 		F257077922F09AAA00F201B3 /* TrackGraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackGraphView.swift; sourceTree = "<group>"; };
 		F257077D22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGLogDetailsTrackTableViewController.swift; sourceTree = "<group>"; };
@@ -212,7 +235,8 @@
 		F2DCA94524043FFC00CA9CF1 /* is */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = is; path = is.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F2EE0CAF2407E76C00916DD9 /* StreamReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamReader.swift; sourceTree = "<group>"; };
 		F2F14BB824423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGVGPSDeviceSettingsTableViewController.swift; sourceTree = "<group>"; };
-		F2F77DED24E8A2A100C2F09D /* GraphType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphType.swift; sourceTree = "<group>"; };
+		F2F77DEF24E96B6600C2F09D /* VGGraphGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGraphGenerator.swift; sourceTree = "<group>"; };
+		F2F77DF124E96B8000C2F09D /* VGSpeedGraphGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGSpeedGraphGenerator.swift; sourceTree = "<group>"; };
 		F2FDA85D23C646B3000B8B76 /* VGDatabaseTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDatabaseTableViewController.swift; sourceTree = "<group>"; };
 		F2FF02372442815000502869 /* VGDownloadedFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDownloadedFile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -257,7 +281,6 @@
 				F23BE8E922A5E5BB008FD50C /* VGTrack.swift */,
 				F2AC170123F0094C00516498 /* VGMapPoint.swift */,
 				F2FF02372442815000502869 /* VGDownloadedFile.swift */,
-				F2F77DED24E8A2A100C2F09D /* GraphType.swift */,
 			);
 			path = "Database Entities";
 			sourceTree = "<group>";
@@ -449,6 +472,19 @@
 				F24D88C623D3CB0D0071F6BC /* VGAvailableDownloadTableViewController.swift */,
 				F23BE8E722A5E5BB008FD50C /* VGLogDetailsViewController.swift */,
 				F257077D22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift */,
+				F2F77DEF24E96B6600C2F09D /* VGGraphGenerator.swift */,
+				F2F77DF124E96B8000C2F09D /* VGSpeedGraphGenerator.swift */,
+				F255E85224E96E46003DF00F /* VGElevationGraphGenerator.swift */,
+				F255E85424E97E84003DF00F /* VGHeartRateGraphGenerator.swift */,
+				F255E85D24E98239003DF00F /* VGAmbientTemperatureGraphGenerator.swift */,
+				F255E85A24E98239003DF00F /* VGCadenceGraphGenerator.swift */,
+				F255E85E24E98239003DF00F /* VGCoolantTemperatureGraphGenerator.swift */,
+				F255E85624E98239003DF00F /* VGEngineLoadGraphGenerator.swift */,
+				F255E85924E98239003DF00F /* VGHorizontalAccuracyGraphGenerator.swift */,
+				F255E85B24E98239003DF00F /* VGPDOPGraphGenerator.swift */,
+				F255E85724E98239003DF00F /* VGPowerGraphGenerator.swift */,
+				F255E85C24E98239003DF00F /* VGRPMGraphGenerator.swift */,
+				F255E85824E98239003DF00F /* VGThrottlePositionGraphGenerator.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -627,6 +663,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F255E86224E98239003DF00F /* VGHorizontalAccuracyGraphGenerator.swift in Sources */,
 				F297DD032439445B00431472 /* DeviceCommunicator.swift in Sources */,
 				F24754F523DD9219007E0DF8 /* VGHeaderDateFormatter.swift in Sources */,
 				F280AC8F24C2773500509C5E /* LogDateSplitter.swift in Sources */,
@@ -634,23 +671,28 @@
 				F24754FC23DDAE26007E0DF8 /* VGDurationFormatter.swift in Sources */,
 				F22F37C2243AAB60005E80C1 /* VGDateParsingFormatter.swift in Sources */,
 				F25839D723A680D400E76B54 /* VGHistoryTableViewController.swift in Sources */,
+				F2F77DF024E96B6600C2F09D /* VGGraphGenerator.swift in Sources */,
 				F23BE8F422A5E5BB008FD50C /* VGTrack.swift in Sources */,
 				F286124C24C0DA920029F34A /* VGMapSnapshotter.swift in Sources */,
 				F25839D923A680FC00E76B54 /* VGHistoryTableViewCell.swift in Sources */,
 				F2647BE92435029900283B38 /* UIView+Extensions.swift in Sources */,
 				F25839E323AAD1E000E76B54 /* VGHistoryHeader.swift in Sources */,
 				F23BE8DD22A5E596008FD50C /* NewNetworkTableViewController.swift in Sources */,
+				F2F77DF224E96B8000C2F09D /* VGSpeedGraphGenerator.swift in Sources */,
 				F20574B724379C720044282B /* Constants.swift in Sources */,
 				F23BE8D422A5E566008FD50C /* VGTabBarController.swift in Sources */,
 				F2647BEB24352FBD00283B38 /* Strings.swift in Sources */,
 				F26B01E8244E009400220F43 /* DisplayLineProtocol.swift in Sources */,
+				F255E86324E98239003DF00F /* VGCadenceGraphGenerator.swift in Sources */,
 				F23BE8F222A5E5BB008FD50C /* VGLogDetailsViewController.swift in Sources */,
 				F257077A22F09AAA00F201B3 /* TrackGraphView.swift in Sources */,
 				F23BE8C722A5E4B9008FD50C /* VehicleGPS.xcdatamodeld in Sources */,
 				F2AC170223F0094C00516498 /* VGMapPoint.swift in Sources */,
 				F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */,
 				F24D88C523D3C7BD0071F6BC /* VGDownloadLogsViewController.swift in Sources */,
+				F255E86024E98239003DF00F /* VGPowerGraphGenerator.swift in Sources */,
 				F24754FE23DDAFA8007E0DF8 /* VGListEmptyLabel.swift in Sources */,
+				F255E86624E98239003DF00F /* VGAmbientTemperatureGraphGenerator.swift in Sources */,
 				F23F60C1244C87C100A97CF8 /* VGImportTableViewCell.swift in Sources */,
 				F215AC6423DB1AA40001AF24 /* VGVehicle.swift in Sources */,
 				F2D8C30523FDD01500D77BF2 /* NotificationCenterNames.swift in Sources */,
@@ -663,8 +705,10 @@
 				F281D41724CBAFD800102B4B /* SpeedFormatter.swift in Sources */,
 				F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */,
 				F257077E22F09B9900F201B3 /* VGLogDetailsTrackTableViewController.swift in Sources */,
+				F255E85524E97E84003DF00F /* VGHeartRateGraphGenerator.swift in Sources */,
 				F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */,
 				F27DFBA824194E330089DFF1 /* VGGPXParser.swift in Sources */,
+				F255E86724E98239003DF00F /* VGCoolantTemperatureGraphGenerator.swift in Sources */,
 				F215AC7E23DB38D90001AF24 /* VGVehiclesTableViewController.swift in Sources */,
 				F23BE8E022A5E596008FD50C /* VGWiFiTableViewController.swift in Sources */,
 				F27CB77E23D38C50002BF28F /* VGDeviceConnectedHeaderView.swift in Sources */,
@@ -672,6 +716,8 @@
 				F23A32D123DBA85100B21050 /* VGVehicleTableViewCell.swift in Sources */,
 				F2797D5723CD1AC500207650 /* VGHistoryDetailsTableViewController.swift in Sources */,
 				F22235FF23E21216008EF8E5 /* VGVehicleDetailsTableViewController.swift in Sources */,
+				F255E85F24E98239003DF00F /* VGEngineLoadGraphGenerator.swift in Sources */,
+				F255E85324E96E46003DF00F /* VGElevationGraphGenerator.swift in Sources */,
 				F247550223DDBC43007E0DF8 /* VGAvailableLogsTableViewCell.swift in Sources */,
 				F28D752D248D512D0060DFD6 /* VGFileNameDateFormatter.swift in Sources */,
 				F215AC8723DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift in Sources */,
@@ -685,14 +731,15 @@
 				F2B50C2C24151C9D002ECCC6 /* VGShortCSVParser.swift in Sources */,
 				F2F14BB924423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift in Sources */,
 				F2647BE52434F8B500283B38 /* UIColor+Extensions.swift in Sources */,
+				F255E86424E98239003DF00F /* VGPDOPGraphGenerator.swift in Sources */,
 				F2D8AB0824E05AA8009E0925 /* Double+Extensions.swift in Sources */,
 				F24D88CB23D622300071F6BC /* VGSnapshotMaker.swift in Sources */,
 				F26B2C0E24B28E1D00E9F22C /* SplitViewController.swift in Sources */,
 				F2C73ABE24266148008069AE /* VGImportFileTableViewController.swift in Sources */,
+				F255E86524E98239003DF00F /* VGRPMGraphGenerator.swift in Sources */,
 				F25669BE23CB6DB700CC7934 /* TrackGraphViewConfig.swift in Sources */,
 				F24754F723DDAAD8007E0DF8 /* VGDistanceFormatter.swift in Sources */,
 				F26B2C2824B3570A00E9F22C /* SidebarCollectionViewController.swift in Sources */,
-				F2F77DEE24E8A2A100C2F09D /* GraphType.swift in Sources */,
 				F23BE8F522A5E5BB008FD50C /* VGGraphTableViewCell.swift in Sources */,
 				F23F60C3244C8A5400A97CF8 /* VGFullDateFormatter.swift in Sources */,
 				F25839DD23A6BE8600E76B54 /* VGTracksSummary.swift in Sources */,
@@ -700,6 +747,7 @@
 				F215AC8323DB3BC50001AF24 /* VGNewVehicleTableViewController.swift in Sources */,
 				F24D88CD23D631C00071F6BC /* VGZeroMapSnapshotter.swift in Sources */,
 				F2FF02382442815000502869 /* VGDownloadedFile.swift in Sources */,
+				F255E86124E98239003DF00F /* VGThrottlePositionGraphGenerator.swift in Sources */,
 				F215ADFC2402799C000ECFFF /* VGCSVParser.swift in Sources */,
 				F228C43C23D76A9700E5BBB7 /* IVGLogParser.swift in Sources */,
 				F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */,

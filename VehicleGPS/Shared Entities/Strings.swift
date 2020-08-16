@@ -90,6 +90,9 @@ struct Strings {
     static let throttlePos = NSLocalizedString("Eldsneytisgjöf", comment: "")
     static let coolTemp = NSLocalizedString("Hiti á kælivökva", comment: "")
     static let ambTemp = NSLocalizedString("Útihiti", comment: "")
+    static let heartRate = NSLocalizedString("Púls", comment: "")
+    static let cadence = NSLocalizedString("Taktur", comment: "")
+    static let power = NSLocalizedString("Afl", comment: "")
 
     static let parse = NSLocalizedString("Þátta", comment: "")
 

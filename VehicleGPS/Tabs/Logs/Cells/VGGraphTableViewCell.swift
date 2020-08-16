@@ -29,8 +29,7 @@ class VGGraphTableViewCell: UITableViewCell {
 
     override func prepareForReuse() {
         self.graphView.displayHorizontalLine(at: [])
-        self.graphView.showMinMaxValue = false
-        self.graphView.numbersList = []
+        self.graphView.configuration.showMinMaxValue = false
     }
 
     func initializeView() {

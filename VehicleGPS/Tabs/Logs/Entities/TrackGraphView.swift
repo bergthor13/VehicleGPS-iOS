@@ -3,74 +3,48 @@ import UIKit
 import CoreLocation
 
 public class TrackGraphView: UIView {
+    private var graphLayer: CAShapeLayer!
+    private var lineLayer: CAShapeLayer!
+    private var graphClipLayer: CAShapeLayer!
+    private var graphSelectLayer: CAShapeLayer!
+    private var graphSelectPath: UIBezierPath!
     
-    public var graphLayer: CAShapeLayer!
-    public var lineLayer: CAShapeLayer!
-    public var graphClipLayer: CAShapeLayer!
-    public var graphSelectLayer: CAShapeLayer!
-    public var graphSelectPath: UIBezierPath!
-        
-    public var color: UIColor?
+    private var  graphFrame: UIView!
+
     private var maxValue: CGFloat = CGFloat(-Double.infinity)
     private var minValue: CGFloat = CGFloat(Double.infinity)
-    public var graphMaxValue: Double?
-    public var graphMinValue: CGFloat?
-    public var graphSeparatorRight: UIView?
-    public var graphSeparatorLeft: UIView?
     
-    public var graphFrame: UIView!
+    private var graphSeparatorRight: UIView?
+    private var graphSeparatorLeft: UIView?
+    
     private var scrollView:UIScrollView!
     private var pinchRecognizer: UIPinchGestureRecognizer!
     
-    public var maxLabel: UILabel?
-    public var minLabel: UILabel?
-    public var startTime: Date?
-    public var endTime: Date?
-    public var showMinMaxValue: Bool = true
-    public var inset = UIEdgeInsets(top: 12, left: 20, bottom: 12, right: 60)
-
-    public var selectedPoint: CGPoint?
+    private var maxLabel: UILabel?
+    private var minLabel: UILabel?
+        
+    var selectedPoint: CGPoint?
     var dlpList: [DisplayLineProtocol]?
     
-    public var horizontalLineMarkers = [Double]() {
-        didSet {
-            setNeedsLayout()
-        }
-    }
-    
-    func addDLP(listener:DisplayLineProtocol) {
-        if dlpList == nil {
-            dlpList = [DisplayLineProtocol]()
-        }
-        dlpList?.append(listener)
-    }
-    
-    public func removeAllDLPListeners() {
-        dlpList?.removeAll()
-        dlpList = nil
-    }
-    
-    private var elePoints = [(Date, CGFloat)]()
-    
-    public var numbersList = [(Date, Double)]() {
+    var configuration = TrackGraphViewConfig() {
         didSet {
             elePoints = []
-            guard let endTime = self.endTime else {return}
-            guard let startTime = self.startTime else {return}
+            guard let endTime = configuration.endTime else {return}
+            guard let startTime = configuration.startTime else {return}
             self.maxValue = CGFloat(-Double.infinity)
             self.minValue = CGFloat(Double.infinity)
             let pixelWidth = self.graphFrame.bounds.width*UIScreen.main.scale
             let totalSeconds = endTime.timeIntervalSince(startTime)
             let secondsPerPixel = totalSeconds/Double(pixelWidth)
-            if numbersList.count == 0 {
+            if configuration.numbersList.count == 0 {
                 setNeedsLayout()
                 return
             }
             
             var totalAltitude: CGFloat = 0.0
-            var lastPixel = numbersList.first!.0
+            var lastPixel = configuration.numbersList.first!.0
             var pointCount = 0
-            for item in numbersList {
+            for item in configuration.numbersList {
                 if item.1 == Double.infinity {
                     continue
                 }
@@ -102,21 +76,21 @@ public class TrackGraphView: UIView {
                 }
             }
             
-            if elePoints.count == 1 && numbersList.count > 1 {
+            if elePoints.count == 1 && configuration.numbersList.count > 1 {
                 let elePointsElement = elePoints.first!
-                let numbersListElement = numbersList.last!
+                let numbersListElement = configuration.numbersList.last!
                 elePoints.append((numbersListElement.0, CGFloat(numbersListElement.1)))
                 maxValue = CGFloat(max(Double(elePointsElement.1), Double(numbersListElement.1)))
                 minValue = CGFloat(min(Double(numbersListElement.1), Double(elePointsElement.1)))
             }
 
-            if showMinMaxValue {
-                guard let newMax = self.graphMaxValue else {
+            if configuration.showMinMaxValue {
+                guard let newMax = configuration.graphMaxValue else {
                     setNeedsLayout()
                     return
                 }
                 
-                guard let newMin = self.graphMinValue else {
+                guard let newMin = configuration.graphMinValue else {
                     setNeedsLayout()
                     return
                 }
@@ -127,6 +101,21 @@ public class TrackGraphView: UIView {
             setNeedsLayout()
         }
     }
+    
+    func addDLP(listener:DisplayLineProtocol) {
+        if dlpList == nil {
+            dlpList = [DisplayLineProtocol]()
+        }
+        dlpList?.append(listener)
+    }
+    
+    public func removeAllDLPListeners() {
+        dlpList?.removeAll()
+        dlpList = nil
+    }
+    
+    private var elePoints = [(Date, CGFloat)]()
+    
     
     public func displayVerticalLine(at point: CGPoint) {
         graphSelectLayer.sublayers?.removeAll()
@@ -197,8 +186,8 @@ public class TrackGraphView: UIView {
     }
     
     public func getTimeOfTouched(point:CGPoint) -> Date? {
-        guard let startTime = self.startTime else {return nil}
-        guard let endTime = self.endTime else {return nil}
+        guard let startTime = configuration.startTime else {return nil}
+        guard let endTime = configuration.endTime else {return nil}
         
         let totalSeconds = endTime.timeIntervalSince(startTime)
         let positionPercentage = point.x / self.graphFrame.frame.width
@@ -217,11 +206,11 @@ public class TrackGraphView: UIView {
     public override func layoutSubviews() {
         super.layoutSubviews()
         clearGraph()
-        displayHorizontalLine(at: horizontalLineMarkers)
+        displayHorizontalLine(at: configuration.horizontalLineMarkers)
         if elePoints.count == 0 {
             return
         }
-        self.scrollView.frame =  CGRect(x: self.bounds.origin.x+inset.left, y: self.bounds.origin.y+inset.top, width: self.bounds.width-inset.left-inset.right, height: self.bounds.height-inset.top-inset.bottom)
+        self.scrollView.frame =  CGRect(x: self.bounds.origin.x+configuration.inset.left, y: self.bounds.origin.y+configuration.inset.top, width: self.bounds.width-configuration.inset.left-configuration.inset.right, height: self.bounds.height-configuration.inset.top-configuration.inset.bottom)
         self.graphFrame.frame = CGRect(x: 0, y: 0, width: self.scrollView.frame.width, height: self.scrollView.frame.height)
         self.scrollView.contentSize = self.graphFrame.frame.size
         drawGraph()
@@ -238,8 +227,8 @@ public class TrackGraphView: UIView {
         
         self.maxLabel!.text = String(format: "%.2f", self.maxValue)
         self.minLabel?.text = String(format: "%.2f", self.minValue)
-        self.maxLabel?.frame = CGRect(x: self.inset.left+self.scrollView.frame.width+5, y: 5, width: 200, height: 15)
-        self.minLabel?.frame = CGRect(x: self.inset.left+self.scrollView.frame.width+5, y: self.bounds.height-20, width: 200, height: 15)
+        self.maxLabel?.frame = CGRect(x: configuration.inset.left+self.scrollView.frame.width+5, y: 5, width: 200, height: 15)
+        self.minLabel?.frame = CGRect(x: configuration.inset.left+self.scrollView.frame.width+5, y: self.bounds.height-20, width: 200, height: 15)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -286,7 +275,7 @@ public class TrackGraphView: UIView {
     
     public func initializeView() {
         graphLayer = CAShapeLayer()
-        self.scrollView = UIScrollView(frame: CGRect(x: self.bounds.origin.x+inset.left, y: self.bounds.origin.y+inset.top, width: self.bounds.width-inset.left-inset.right, height: self.bounds.height-inset.top-inset.bottom))
+        self.scrollView = UIScrollView(frame: CGRect(x: self.bounds.origin.x+configuration.inset.left, y: self.bounds.origin.y+configuration.inset.top, width: self.bounds.width-configuration.inset.left-configuration.inset.right, height: self.bounds.height-configuration.inset.top-configuration.inset.bottom))
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
         self.pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(didPinch))
@@ -414,8 +403,8 @@ public class TrackGraphView: UIView {
     
     public func drawGraph() {
         clearGraph()
-        guard let endTime = self.endTime else {return}
-        guard let startTime = self.startTime else {return}
+        guard let endTime = configuration.endTime else {return}
+        guard let startTime = configuration.startTime else {return}
         if elePoints.count == 0 { return }
         UIGraphicsBeginImageContext(self.graphFrame.frame.size)
 
@@ -441,7 +430,7 @@ public class TrackGraphView: UIView {
         
         let graphPath = UIBezierPath()
         
-        graphLayer.strokeColor = self.color?.withAlphaComponent(0.8).cgColor
+        graphLayer.strokeColor = configuration.color.withAlphaComponent(0.8).cgColor
         graphLayer.fillColor = UIColor.clear.cgColor
         graphLayer.lineWidth = 0.5
         
@@ -487,11 +476,9 @@ public class TrackGraphView: UIView {
         // Add the clipping path to the context
         clippingPath.addClip()
         
-        if self.color == nil {
-            graphClipLayer.fillColor = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3).cgColor
-        } else {
-            graphClipLayer.fillColor = self.color?.cgColor
-        }
+        
+        graphClipLayer.fillColor = configuration.color.cgColor
+        
         
         let rectPath = UIBezierPath(rect: self.graphFrame.frame)
         rectPath.fill()

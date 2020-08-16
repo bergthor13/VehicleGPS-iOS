@@ -13,14 +13,63 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
     var dlpPoint: CGPoint?
     var dlpTime: Date?
     
-    var track: VGTrack?
+    var track: VGTrack? {
+        didSet {
+            guard let track = track else {
+                summary.append((Strings.noTrack,""))
+                return
+            }
+            self.summarize(track: track)
+            graphGenerators = track.graphTypes
+            for generator in graphGenerators {
+                guard let generator = generator else {
+                    continue
+                }
+                trackConfigs.append(generator.generate(from: track))
+            }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+        
+    }
+    
     let dateFormatter = VGFullDateFormatter()
+    var trackConfigs = [TrackGraphViewConfig]()
+    var summary = [(String, String)]()
+    var graphGenerators = [VGGraphGenerator?]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(VGGraphTableViewCell.self, forCellReuseIdentifier: VGGraphTableViewCell.identifier)
         self.tableView.allowsSelection = false
+
+        
     }
+    
+    func summarize(track:VGTrack) {
+        summary.removeAll()
+        guard let timeStart = track.timeStart else {
+            summary.append((Strings.noStartTime,""))
+            return
+        }
+
+        summary.append((Strings.startTime, dateFormatter.string(from: timeStart)))
+        summary.append((Strings.endtime, dateFormatter.string(from: timeStart.addingTimeInterval(track.duration))))
+        summary.append((Strings.distance, (track.distance*1000).asDistanceString()))
+        let dcFormatter = DateComponentsFormatter()
+        dcFormatter.allowedUnits = [.hour, .minute, .second]
+        dcFormatter.unitsStyle = .short
+
+        summary.append((Strings.duration, dcFormatter.string(from: track.duration) ?? ""))
+
+        summary.append((Strings.datapoints, String(track.trackPoints.count)))
+        let speed = Measurement(value: track.averageSpeed, unit: UnitSpeed.kilometersPerHour)
+        let formatter = VGSpeedFormatter()
+        summary.append((Strings.averageSpeed, formatter.string(from: speed)))
+
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         dlpTime = nil
@@ -34,27 +83,22 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
 
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        guard let track = track else {
-            return 5
-        }
-        if track.hasOBDData {
-            return sections.count
-        } else {
-            return 5
-        }
+        return trackConfigs.count+1
     }
     
     let sections = [Strings.summary, Strings.speed, Strings.elevation, Strings.pdop, Strings.hAcc, Strings.rpm, Strings.engineLoad, Strings.throttlePos, Strings.coolTemp, Strings.ambTemp]
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 6
+            return summary.count
         }
         return 1
     }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sections[section]
+        if section == 0 {
+            return Strings.summary
+        }
+        return trackConfigs[section-1].name
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -71,226 +115,18 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             guard let track = track else {
                 return cell!
             }
-            cell!.graphView.startTime = track.timeStart
-            cell!.graphView.endTime = track.timeStart?.addingTimeInterval(track.duration)
-
-        }
-        if indexPath.section == 0 {
-            guard let track = track else {
-                let cell1 = UITableViewCell(style: .value1, reuseIdentifier: Strings.dummyIdentifier)
-                cell1.textLabel?.text = Strings.noTrack
-                return cell1
+            
+            cell!.graphView.configuration = trackConfigs[indexPath.section-1]
+            if let selectedPoint = dlpPoint {
+                cell?.graphView.displayVerticalLine(at: selectedPoint)
             }
-            guard let timeStart = track.timeStart else {
-                let cell1 = UITableViewCell(style: .value1, reuseIdentifier: Strings.dummyIdentifier)
-                cell1.textLabel?.text = Strings.noStartTime
-                return cell1
-            }
+        } else {
             let cell1 = UITableViewCell(style: .value2, reuseIdentifier: Strings.dummyIdentifier)
             cell1.tintColor = UIApplication.shared.delegate?.window!!.tintColor
-            cell1.textLabel?.text = Strings.startTime
-            
-            cell1.detailTextLabel?.text = dateFormatter.string(from: timeStart)
-            
-            if indexPath.row == 1 {
-                cell1.textLabel?.text = Strings.endtime
-                cell1.detailTextLabel?.text = dateFormatter.string(from: timeStart.addingTimeInterval(track.duration))
-            }
-            if indexPath.row == 2 {
-                cell1.textLabel?.text = Strings.distance
-                cell1.detailTextLabel?.text = (track.distance*1000).asDistanceString()
-
-            }
-            if indexPath.row == 3 {
-                cell1.textLabel?.text = Strings.duration
-                let dcFormatter = DateComponentsFormatter()
-                dcFormatter.allowedUnits = [.hour, .minute, .second]
-                dcFormatter.unitsStyle = .short
-                cell1.detailTextLabel?.text = dcFormatter.string(from: track.duration)
-            }
-            if indexPath.row == 4 {
-                cell1.textLabel?.text = Strings.datapoints
-                cell1.detailTextLabel?.text = String(track.trackPoints.count)
-            }
-            if indexPath.row == 5 {
-                cell1.textLabel?.text = Strings.averageSpeed
-                let speed = Measurement(value: track.averageSpeed, unit: UnitSpeed.kilometersPerHour)
-                let formatter = VGSpeedFormatter()
-                cell1.detailTextLabel?.text = formatter.string(from: speed)
-            }
-            
+            cell1.textLabel?.text = summary[indexPath.row].0
+            cell1.detailTextLabel?.text = summary[indexPath.row].1
             return cell1
-        } else if indexPath.section == 1 {
-            var list = [(Date, Double)]()
-            guard let track = track else {
-                return cell!
-            }
-            for (point1, point2) in zip(track.trackPoints, track.trackPoints.dropFirst()) {
-                guard let latitude1 = point1.latitude, let longitude1 = point1.longitude else {
-                    continue
-                }
-                guard let latitude2 = point2.latitude, let longitude2 = point2.longitude else {
-                    continue
-                }
-                
-                if !point1.hasGoodFix() || !point2.hasGoodFix() {
-                    continue
-                }
-                
-                guard let time1 = point1.timestamp, let time2 = point2.timestamp else {
-                    continue
-                }
-                
-                let duration = time2.timeIntervalSince(time1)
-                let coord = CLLocation(latitude: latitude2, longitude: longitude2)
-                let lastCoord = CLLocation(latitude: latitude1, longitude: longitude1)
-                
-                let distance = coord.distance(from: lastCoord)
-                let speed = (distance/duration)*3.6
-                if speed < 1200 {
-                    list.append((point1.timestamp!, (distance/duration)*3.6))
-                }
-            }
-            cell?.graphView.showMinMaxValue = false
-            cell!.graphView.color = UIColor(red: 0, green: 0.5, blue: 1, alpha: 0.3)
-            cell!.graphView.numbersList = list
-            cell!.graphView.horizontalLineMarkers = [30, 40, 50, 60, 70, 80, 90]
 
-        } else if indexPath.section == 2 {
-            var list = [(Date, Double)]()
-            guard let track = track else {
-                return cell!
-            }
-            for point in track.trackPoints {
-                if point.latitude == nil && point.longitude == nil {
-                    continue
-                }
-                if !point.hasGoodFix() {
-                    continue
-                }
-                guard let time = point.timestamp, let ele = point.elevation else {
-                    continue
-                }
-                list.append((time, ele))
-            }
-            cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
-            cell!.graphView.numbersList = list
-
-        } else if indexPath.section == 3 {
-            var list = [(Date, Double)]()
-            guard let track = track else {
-                return cell!
-            }
-            for point in track.trackPoints {
-                if point.latitude == nil && point.longitude == nil {
-                    continue
-                }
-                if !point.hasGoodFix() {
-                    continue
-                }
-                guard let time = point.timestamp, let pdop = point.pdop else {
-                    continue
-                }
-                list.append((time, pdop))
-            }
-            cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
-            cell!.graphView.numbersList = list
-            
-        } else if indexPath.section == 4 {
-            var list = [(Date, Double)]()
-            guard let track = track else {
-                return cell!
-            }
-            for point in track.trackPoints {
-                if point.latitude == nil && point.longitude == nil {
-                    continue
-                }
-                if !point.hasGoodFix() {
-                    continue
-                }
-                
-                guard let time = point.timestamp, let horizontalAccuracy = point.horizontalAccuracy else {
-                    continue
-                }
-                
-                list.append((time, horizontalAccuracy))
-            }
-            cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
-            cell!.graphView.numbersList = list
-            
-        } else if indexPath.section == 5 {
-            var list = [(Date, Double)]()
-            guard let track = track else {
-                return cell!
-            }
-            for point in track.trackPoints {
-                if let rpm = point.rpm, let time = point.timestamp {
-                    list.append((time, rpm))
-                }
-            }
-            cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
-            cell!.graphView.numbersList = list
-
-        } else if indexPath.section == 6 {
-            var list = [(Date, Double)]()
-            guard let track = track else {
-                return cell!
-            }
-            for point in track.trackPoints {
-                if let engineLoad = point.engineLoad, let time = point.timestamp {
-                    if !engineLoad.isNaN {
-                        list.append((time, engineLoad))
-                    }
-                    
-                }
-            }
-            cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
-            cell!.graphView.numbersList = list
-            cell!.graphView.horizontalLineMarkers = [30, 40, 50, 60, 70, 80, 90]
-            
-        } else if indexPath.section == 7 {
-            var list = [(Date, Double)]()
-            guard let track = track else {
-                return cell!
-            }
-            for point in track.trackPoints {
-                if let throttlePosition = point.throttlePosition, let time = point.timestamp {
-                    list.append((time, throttlePosition))
-                }
-            }
-            cell!.graphView.color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
-            cell!.graphView.numbersList = list
-        } else if indexPath.section == 8 {
-            var list = [(Date, Double)]()
-            guard let track = track else {
-                return cell!
-            }
-            for point in track.trackPoints {
-                if let coolantTemperature = point.coolantTemperature, let time = point.timestamp {
-                    list.append((time, coolantTemperature))
-                }
-            }
-            cell?.graphView.graphMinValue = 0
-            cell?.graphView.graphMaxValue = 100
-            cell?.graphView.showMinMaxValue = true
-            cell!.graphView.color = UIColor(red: 165/255.0, green: 50/255.0, blue: 45/255.0, alpha: 0.3)
-            cell!.graphView.numbersList = list
-            cell!.graphView.horizontalLineMarkers = [90]
-        } else if indexPath.section == 9 {
-            var list = [(Date, Double)]()
-            guard let track = track else {
-                return cell!
-            }
-            for point in track.trackPoints {
-                if let ambientTemperature = point.ambientTemperature, let time = point.timestamp {
-                    list.append((time, ambientTemperature))
-                }
-            }
-            cell!.graphView.color = UIColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 0.3)
-            cell!.graphView.numbersList = list
-        }
-        if let selectedPoint = dlpPoint {
-            cell?.graphView.displayVerticalLine(at: selectedPoint)
         }
         return cell!
     }
