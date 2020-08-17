@@ -11,9 +11,9 @@ import UIKit
 class VGTabBarController: UITabBarController {
     let controllers = [
         VGLogsTableViewController(style: .plain),
-        VGHistoryTableViewController(style: .insetGrouped),
-        VGJourneyTableViewController(style: .insetGrouped),
-        VGVehiclesTableViewController(style: .insetGrouped),
+        VGHistoryTableViewController(style: .grouped),
+        VGJourneyTableViewController(style: .grouped),
+        VGVehiclesTableViewController(style: .grouped),
         VGSettingsTableViewController(style: .grouped)
     ]
     override func viewDidLoad() {

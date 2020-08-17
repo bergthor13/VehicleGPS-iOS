@@ -9,25 +9,23 @@
 import Foundation
 import UIKit
 
-class VGVehicle {
+class VGVehicleType {
     public var id: UUID?
-    public var image: UIImage?
-    public var mapColor: UIColor?
     public var name: String?
-    public var tracks: [VGTrack]?
+    public var icon: UIImage?
     public var order: Int?
     
-    init(vehicle:Vehicle) {
-        self.id = vehicle.id
-        self.name = vehicle.name
-        self.mapColor = vehicle.mapColor as? UIColor
+    init(type:VehicleType) {
+        self.id = type.id
+        self.name = type.name
+        self.order = Int(type.order)
     }
     
     init() {
         
     }
     
-    static func == (lhs: VGVehicle, rhs: VGVehicle) -> Bool {
+    static func == (lhs: VGVehicleType, rhs: VGVehicleType) -> Bool {
         return lhs.id == rhs.id
     }
 }

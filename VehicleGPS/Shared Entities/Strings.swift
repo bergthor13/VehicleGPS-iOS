@@ -41,6 +41,7 @@ struct Strings {
         static let importFile = NSLocalizedString("Flytja inn skrá", comment: "")
         
         static let newVehicle = NSLocalizedString("Nýtt farartæki", comment: "")
+        static let newVehicleType = NSLocalizedString("Nýr farartækjahópur", comment: "")
         static let newJourney = NSLocalizedString("Nýtt ferðalag", comment: "")
         
         

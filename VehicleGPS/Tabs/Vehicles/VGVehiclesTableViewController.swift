@@ -34,7 +34,9 @@ class VGVehiclesTableViewController: UITableViewController {
                                   image: Icons.vehicle,
                                   tag: 0)
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.add, style: .plain, target: self, action: #selector(didTapAddVehicle))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.add, primaryAction: nil, menu: createMenu())
+        self.navigationItem.leftBarButtonItem = editButtonItem
+
 
     }
     override func viewDidLoad() {
@@ -120,13 +122,33 @@ class VGVehiclesTableViewController: UITableViewController {
     }
     
     @objc func didTapAddVehicle() {
-        let newVehicleVC = VGNewVehicleTableViewController(style: .grouped)
-        newVehicleVC.vehiclesController = self
-        let navController = UINavigationController(rootViewController: newVehicleVC)
-        if self.popoverPresentationController != nil {
-            navController.modalPresentationStyle = .currentContext
-        }
-        self.present(navController, animated: true, completion: nil)
+    }
+    
+    func createMenu() -> UIMenu {
+        var actions = [UIAction]()
+
+        
+        actions.append(UIAction(title: Strings.titles.newVehicle, image:Icons.vehicle, handler: { (action) in
+            let newVehicleVC = VGNewVehicleTableViewController(style: .grouped)
+            newVehicleVC.vehiclesController = self
+            let navController = UINavigationController(rootViewController: newVehicleVC)
+            if self.popoverPresentationController != nil {
+                navController.modalPresentationStyle = .currentContext
+            }
+            self.present(navController, animated: true, completion: nil)
+        }))
+        
+        actions.append(UIAction(title: Strings.titles.newVehicleType, image:Icons.vehicle, handler: { (action) in
+            let newVehicleVC = VGNewVehicleTableViewController(style: .grouped)
+            newVehicleVC.vehiclesController = self
+            let navController = UINavigationController(rootViewController: newVehicleVC)
+            if self.popoverPresentationController != nil {
+                navController.modalPresentationStyle = .currentContext
+            }
+            self.present(navController, animated: true, completion: nil)
+        }))
+        
+        return UIMenu(title: "", children: actions)
     }
 
     override func viewDidLayoutSubviews() {
@@ -188,6 +210,9 @@ class VGVehiclesTableViewController: UITableViewController {
             print(error)
         }
 
+    }
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
