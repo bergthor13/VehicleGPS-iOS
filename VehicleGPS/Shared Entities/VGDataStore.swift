@@ -103,6 +103,7 @@ class VGDataStore {
             }
             return fetchedVehicle
         } catch {
+            print("Fetching vehicle failed")
             return nil
         }
     }
@@ -264,14 +265,14 @@ class VGDataStore {
             self.semaphore.wait()
             if let defaultVehicleID = self.getDefaultVehicleID() {
                 // Get the vehicle in question
-                guard let vehicle = self.getVehicle(in: context, with: defaultVehicleID) else {
-                    return
+                if let vehicle = self.getVehicle(in: context, with: defaultVehicleID) {
+                    vgTrack.vehicle = VGVehicle(vehicle: vehicle)
+                    newTrack.vehicle = vehicle
                 }
-                newTrack.vehicle = vehicle
-                vgTrack.id = newID
-                vgTrack.vehicle = VGVehicle(vehicle: vehicle)
             }
+
             vgTrack.id = newID
+
             do {
                 
                 try context.save()

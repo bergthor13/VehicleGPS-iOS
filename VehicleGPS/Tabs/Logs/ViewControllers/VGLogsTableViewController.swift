@@ -376,13 +376,13 @@ class VGLogsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeClasses()
-        configureEmptyListLabel()
         configureNavigationBar()
         configureToolbar()
         setUpDeviceConnectedBanner()
         registerCells()
         updateData()
         addObservers()
+        configureEmptyListLabel()
         tableView.allowsMultipleSelection = true
         tableView.allowsMultipleSelectionDuringEditing = true
     }
@@ -468,7 +468,7 @@ class VGLogsTableViewController: UITableViewController {
     fileprivate func configureEmptyListLabel() {
         if let delegate = UIApplication.shared.delegate as? AppDelegate {
             emptyLabel = VGListEmptyLabel(text: Strings.noLogs,
-                                          containerView: self.view,
+                                          containerView: self.tableView,
                                           navigationBar: navigationController!.navigationBar,
                                           tabBar: delegate.tabController.tabBar)
         }
