@@ -251,7 +251,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             ) as? VGLogsTableViewCell else {
             return UITableViewCell()
         }
-        
+        cell.delegate = self
         if let track = getTrackAt(indexPath: indexPath) {
             cell.show(track:track)
         }
