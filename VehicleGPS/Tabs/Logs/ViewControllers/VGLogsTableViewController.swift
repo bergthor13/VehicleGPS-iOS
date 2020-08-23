@@ -776,10 +776,10 @@ class VGLogsTableViewController: UITableViewController {
             return
         }
         
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            appDelegate.trackDetailsViewController.track = track
-            return
-        }
+//        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+//            appDelegate.trackDetailsViewController.track = track
+//            return
+//        }
         
         if tableView.isEditing {
             guard let selectedIndexPaths = tableView.indexPathsForSelectedRows else {

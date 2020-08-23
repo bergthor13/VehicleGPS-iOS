@@ -89,7 +89,7 @@
 		F2647BE92435029900283B38 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2647BE82435029900283B38 /* UIView+Extensions.swift */; };
 		F2647BEB24352FBD00283B38 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2647BEA24352FBD00283B38 /* Strings.swift */; };
 		F26B01E8244E009400220F43 /* DisplayLineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26B01E7244E009400220F43 /* DisplayLineProtocol.swift */; };
-		F26B2C0E24B28E1D00E9F22C /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26B2C0D24B28E1D00E9F22C /* SplitViewController.swift */; };
+		F26B2C0E24B28E1D00E9F22C /* VGSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26B2C0D24B28E1D00E9F22C /* VGSplitViewController.swift */; };
 		F26B2C2824B3570A00E9F22C /* SidebarCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26B2C2724B3570A00E9F22C /* SidebarCollectionViewController.swift */; };
 		F26CCB6B23DBB44600697EFA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F26CCB6D23DBB44600697EFA /* Localizable.strings */; };
 		F2797D5723CD1AC500207650 /* VGHistoryDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2797D5623CD1AC500207650 /* VGHistoryDetailsTableViewController.swift */; };
@@ -222,7 +222,7 @@
 		F2647BE82435029900283B38 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		F2647BEA24352FBD00283B38 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		F26B01E7244E009400220F43 /* DisplayLineProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisplayLineProtocol.swift; sourceTree = "<group>"; };
-		F26B2C0D24B28E1D00E9F22C /* SplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
+		F26B2C0D24B28E1D00E9F22C /* VGSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGSplitViewController.swift; sourceTree = "<group>"; };
 		F26B2C2724B3570A00E9F22C /* SidebarCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCollectionViewController.swift; sourceTree = "<group>"; };
 		F26CCB6C23DBB44600697EFA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F2797D5623CD1AC500207650 /* VGHistoryDetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGHistoryDetailsTableViewController.swift; sourceTree = "<group>"; };
@@ -347,7 +347,7 @@
 				F24D88D123D6381D0071F6BC /* Snapshots */,
 				F215ADFA2402786B000ECFFF /* Parsers */,
 				F23BE8BE22A5E4B9008FD50C /* AppDelegate.swift */,
-				F26B2C0D24B28E1D00E9F22C /* SplitViewController.swift */,
+				F26B2C0D24B28E1D00E9F22C /* VGSplitViewController.swift */,
 				F26B2C2724B3570A00E9F22C /* SidebarCollectionViewController.swift */,
 				F2647BE42434F8B500283B38 /* UIColor+Extensions.swift */,
 				F2D8AB0724E05AA8009E0925 /* Double+Extensions.swift */,
@@ -808,7 +808,7 @@
 				F255E86424E98239003DF00F /* VGPDOPGraphGenerator.swift in Sources */,
 				F2D8AB0824E05AA8009E0925 /* Double+Extensions.swift in Sources */,
 				F24D88CB23D622300071F6BC /* VGSnapshotMaker.swift in Sources */,
-				F26B2C0E24B28E1D00E9F22C /* SplitViewController.swift in Sources */,
+				F26B2C0E24B28E1D00E9F22C /* VGSplitViewController.swift in Sources */,
 				F2C73ABE24266148008069AE /* VGImportFileTableViewController.swift in Sources */,
 				F255E86524E98239003DF00F /* VGRPMGraphGenerator.swift in Sources */,
 				F25669BE23CB6DB700CC7934 /* TrackGraphViewConfig.swift in Sources */,

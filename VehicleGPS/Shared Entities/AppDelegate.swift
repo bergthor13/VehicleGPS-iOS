@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import NMSSH
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,6 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var tabController = VGTabBarController()
     var snapshotter: VGSnapshotMaker!
     var deviceCommunicator: DeviceCommunicator!
+    var trackDetailsViewController = VGLogDetailsViewController()
+    var splitViewController = UISplitViewController(style: .tripleColumn)
+
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -29,18 +33,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.tintColor = UIColor.init(named: "appColor")
                 
-        let splitViewController = UISplitViewController(style: .tripleColumn)
         splitViewController.preferredDisplayMode = .twoOverSecondary
-        //splitViewController.presentsWithGesture = false
-        //splitViewController.preferredSplitBehavior = .tile
 
-        splitViewController.setViewController(SidebarViewController(), for: .primary)
+        splitViewController.setViewController(VGSplitViewController(), for: .primary)
         splitViewController.setViewController(VGLogsTableViewController(style: .plain), for: .supplementary)
         splitViewController.setViewController(trackDetailsViewController, for: .secondary)
         splitViewController.setViewController(tabController, for: .compact)
         
 
-        self.window?.rootViewController = splitViewController
+        self.window?.rootViewController = tabController
         self.window?.makeKeyAndVisible()
         return true
     }

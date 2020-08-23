@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SidebarViewController: UIViewController {
+class VGSplitViewController: UIViewController {
     
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
     private var collectionView: UICollectionView! = nil
@@ -38,7 +38,7 @@ class SidebarViewController: UIViewController {
 
 // MARK: - Layout
 
-extension SidebarViewController {
+extension VGSplitViewController {
 
     private func createLayout() -> UICollectionViewLayout {
         return UICollectionViewCompositionalLayout { section, layoutEnvironment in
@@ -52,7 +52,7 @@ extension SidebarViewController {
 
 // MARK: - Data
 
-extension SidebarViewController {
+extension VGSplitViewController {
 
     private func configureHierarchy() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
@@ -134,7 +134,7 @@ extension SidebarViewController {
 
 // MARK: - UICollectionViewDelegate
 
-extension SidebarViewController: UICollectionViewDelegate {
+extension VGSplitViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard indexPath.section == 0 else { return }
