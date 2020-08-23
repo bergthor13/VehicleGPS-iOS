@@ -309,12 +309,12 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             return
         }
         
-        self.logDict[self.sections[indexPath.section]]?.remove(at: indexPath.row)
+        self.logDict[self.sections[indexPath.section-1]]?.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: .fade)
 
-        if self.logDict[self.sections[indexPath.section]]?.count == 0 {
-            self.logDict.removeValue(forKey: self.sections[indexPath.section])
-            self.sections.remove(at: indexPath.section)
+        if self.logDict[self.sections[indexPath.section-1]]?.count == 0 {
+            self.logDict.removeValue(forKey: self.sections[indexPath.section-1])
+            self.sections.remove(at: indexPath.section-1)
             tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
         }
         self.vgFileManager?.deleteFileFor(track: track)
