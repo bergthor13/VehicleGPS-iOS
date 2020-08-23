@@ -100,7 +100,9 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
         
 
         if elementName == "trkpt" || elementName == "wpt" {
-            currTrack!.trackPoints.append(currPoint)
+            if let track = currTrack {
+                track.trackPoints.append(currPoint)
+            }
         }
         
         if elementName == "trk" {

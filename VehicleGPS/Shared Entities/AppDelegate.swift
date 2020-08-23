@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import NMSSH
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -29,20 +28,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         deviceCommunicator = DeviceCommunicator()
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.tintColor = UIColor.init(named: "appColor")
+                
+        let splitViewController = UISplitViewController(style: .tripleColumn)
+        splitViewController.preferredDisplayMode = .twoOverSecondary
+        //splitViewController.presentsWithGesture = false
+        //splitViewController.preferredSplitBehavior = .tile
 
-        let splitViewController = SplitViewController(style: .doubleColumn)
-        splitViewController.preferredDisplayMode = .oneBesideSecondary
-        let primary = UICollectionViewController(collectionViewLayout: UICollectionViewLayout())
-        primary.navigationController?.navigationBar.prefersLargeTitles = true
-        primary.navigationItem.largeTitleDisplayMode = .always
-        primary.collectionView.backgroundColor = .clear
-        primary.title = "VehicleGPS"
-        
-        splitViewController.setViewController(primary, for: .primary)
-        splitViewController.setViewController(VGLogsTableViewController(style: .plain), for: .secondary)
+        splitViewController.setViewController(SidebarViewController(), for: .primary)
+        splitViewController.setViewController(VGLogsTableViewController(style: .plain), for: .supplementary)
+        splitViewController.setViewController(trackDetailsViewController, for: .secondary)
         splitViewController.setViewController(tabController, for: .compact)
+        
 
-        self.window?.rootViewController = tabController
+        self.window?.rootViewController = splitViewController
         self.window?.makeKeyAndVisible()
         return true
     }

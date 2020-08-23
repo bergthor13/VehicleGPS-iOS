@@ -22,17 +22,30 @@ class VGFileManager {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
         }
-        createDirectory(directoryName: LOG_DIRECTORY)
-        createDirectory(directoryName: IMAGE_DIRECTORY_LIGHT)
-        createDirectory(directoryName: IMAGE_DIRECTORY_DARK)
-        createDirectory(directoryName: VEHICLE_IMAGE_DIRECTORY)
+        createDirectory(directoryName: LOG_DIRECTORY, in: getDocumentsFolder()!)
+        createDirectory(directoryName: IMAGE_DIRECTORY_LIGHT, in: getAppSupportFolder()!)
+        createDirectory(directoryName: IMAGE_DIRECTORY_DARK, in: getAppSupportFolder()!)
+        createDirectory(directoryName: VEHICLE_IMAGE_DIRECTORY, in: getAppSupportFolder()!)
     }
     
-    func createDirectory(directoryName:String) {
-        let logFolder = getDocumentsFolder()?.appendingPathComponent(directoryName)
-        if !fileManager.fileExists(atPath: logFolder!.path) {
+    func createDirectory(directoryName:String, in folder:URL) {
+        let logFolder = folder.appendingPathComponent(directoryName)
+        let urls = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask) as [NSURL]
+        if let applicationSupportURL = urls.last {
+            
+            if !fileManager.fileExists(atPath: applicationSupportURL.absoluteString!) {
+                do {
+                    try fileManager.createDirectory(at: applicationSupportURL as URL, withIntermediateDirectories: true, attributes: nil)
+                } catch {
+                    print("ERROR")
+                }
+            }
+        }
+        
+        
+        if !fileManager.fileExists(atPath: logFolder.path) {
             do {
-                try fileManager.createDirectory(atPath: logFolder!.path,
+                try fileManager.createDirectory(atPath: logFolder.path,
                                                 withIntermediateDirectories: false,
                                                 attributes: nil)
             } catch let error {
@@ -161,6 +174,13 @@ class VGFileManager {
         return nil
     }
     
+    func getAppSupportFolder() -> URL? {
+        if let dir = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+            return dir
+        }
+        return nil
+    }
+    
     func getLogsFolder() -> URL? {
         if var dir = getDocumentsFolder() {
             dir.appendPathComponent(LOG_DIRECTORY)
@@ -170,7 +190,7 @@ class VGFileManager {
     }
     
     func getVehicleImagesFolder() -> URL? {
-        if var dir = getDocumentsFolder() {
+        if var dir = getAppSupportFolder() {
             dir.appendPathComponent(VEHICLE_IMAGE_DIRECTORY)
             return dir
         }
@@ -178,7 +198,7 @@ class VGFileManager {
     }
     
     func getImageFolder(style: UIUserInterfaceStyle) -> URL? {
-        if var dir = getDocumentsFolder() {
+        if var dir = getAppSupportFolder() {
             if style == .dark {
                 dir.appendPathComponent(IMAGE_DIRECTORY_DARK)
             } else if style == .light {

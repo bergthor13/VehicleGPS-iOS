@@ -761,9 +761,23 @@ class VGLogsTableViewController: UITableViewController {
         
         return cell
     }
-    
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        guard let selectedItems = tableView.indexPathsForSelectedRows else {
+            return indexPath
+        }
+        
+        for indexPath in selectedItems {
+            tableView.deselectRow(at: indexPath, animated: false)
+        }
+        return indexPath
+    }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let track = getTrackAt(indexPath: indexPath) else {
+            return
+        }
+        
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            appDelegate.trackDetailsViewController.track = track
             return
         }
         
@@ -804,17 +818,6 @@ class VGLogsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
         return Strings.delete
     }
-    
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            self.deleteTrack(at: indexPath)
-        }
-    }
 
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
@@ -836,7 +839,10 @@ class VGLogsTableViewController: UITableViewController {
                     track!.trackPoints = dataPoints
                     let fileUrl = self.vgGPXGenerator.generateGPXFor(tracks: [track!])!
                     let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
-                    self.present(activityVC, animated: true, completion: nil)
+                    DispatchQueue.main.async {
+                        self.present(activityVC, animated: true, completion: nil)
+
+                    }
                 }) { (error) in
                     self.display(error: error)
                 }

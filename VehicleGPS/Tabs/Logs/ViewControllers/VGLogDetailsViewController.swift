@@ -19,7 +19,11 @@ class VGLogDetailsViewController: UIViewController {
     
     var mapView: VGMapView!
     
-    var track: VGTrack!
+    var track: VGTrack! {
+        didSet {
+            getTrackPoints(for:track)
+        }
+    }
     var dataStore: VGDataStore!
     var vgFileManager: VGFileManager!
     var vgLogParser: IVGLogParser!
@@ -34,6 +38,7 @@ class VGLogDetailsViewController: UIViewController {
         super.viewDidLoad()
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.vgFileManager = appDelegate.fileManager
+            self.dataStore = appDelegate.dataStore
         }
         initializeMapView()
         initializeTrackDataView()
@@ -49,30 +54,39 @@ class VGLogDetailsViewController: UIViewController {
 
         self.mapView.mapType = .hybrid
         self.mapView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(mapTapped)))
-        if self.track.mapPoints.count == 0 {
-            self.dataStore.getMapPointsForTrack(with: self.track.id!, onSuccess: { (mapPoints) in
-                self.track.mapPoints = mapPoints
-                if self.track.mapPoints.count != 0 {
-                    self.mapView.tracks = [self.track]
+        guard let track = track else {
+            return
+        }
+        getTrackPoints(for:track)
+        
+    }
+    
+    func getTrackPoints(for track:VGTrack) {
+        let overlays = mapView.overlays
+        mapView.removeOverlays(overlays)
+        if track.mapPoints.count == 0 {
+            self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
+                track.mapPoints = mapPoints
+                if track.mapPoints.count != 0 {
+                    self.mapView.tracks = [track]
                 }
             }) { (error) in
                 print(error)
             }
         } else {
-            self.mapView.tracks = [self.track]
+            self.mapView.tracks = [track]
         }
         
-        if self.track.trackPoints.count == 0 {
-            self.dataStore.getDataPointsForTrack(with: self.track.id!, onSuccess: { (dataPoints) in
-                self.track.trackPoints = dataPoints
-                self.trackDataTableViewController!.track = self.track
+        if track.trackPoints.count == 0 {
+            self.dataStore.getDataPointsForTrack(with: track.id!, onSuccess: { (dataPoints) in
+                track.trackPoints = dataPoints
+                self.trackDataTableViewController!.track = track
             }) { (error) in
                 print(error)
             }
         }
-        
+
     }
-    
     override var prefersStatusBarHidden: Bool {
         return barsHidden
     }
@@ -120,8 +134,11 @@ class VGLogDetailsViewController: UIViewController {
         })
     }
     
-    func createMenu() -> UIMenu {
+    func createMenu() -> UIMenu? {
         var actions = [UIAction]()
+        guard let track = track else {
+            return nil
+        }
         if vgFileManager.fileForTrackExists(track: track) {
             actions.append(UIAction(title: Strings.shareCSV, image:Icons.share, handler: { (action) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: self.track)!], applicationActivities: nil)

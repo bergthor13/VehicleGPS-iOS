@@ -15,6 +15,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
     
     var track: VGTrack? {
         didSet {
+            trackConfigs.removeAll()
             guard let track = track else {
                 summary.append((Strings.noTrack,""))
                 return
@@ -150,6 +151,10 @@ extension VGLogDetailsTrackTableViewController: DisplayLineProtocol {
                 graph1.graphView.displayVerticalLine(at: point)
                 dlpPoint = point
                 dlpTime = graph1.graphView.getTimeOfTouched(point: point)
+                if let time = dlpTime {
+                    print(time)
+                }
+                
             }
         }
     }

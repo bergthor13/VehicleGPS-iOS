@@ -1,73 +1,73 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17175" systemVersion="19G2021" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17175" systemVersion="19G2021" minimumToolsVersion="Xcode 9.0" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="DataPoint" representedClassName="DataPoint" syncable="YES" codeGenerationType="class">
-        <attribute name="ambientTemperature" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="cadence" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
-        <attribute name="coolantTemperature" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="elevation" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="engineLoad" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="fixType" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
-        <attribute name="fullyResolved" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="gnssFixOK" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="heartRate" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
-        <attribute name="horizontalAccuracy" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="latitude" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="longitude" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="pdop" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="power" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="rpm" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="satellites" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
-        <attribute name="throttlePosition" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <attribute name="timeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="timeStampString" optional="YES" attributeType="String"/>
-        <attribute name="verticalAccuracy" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
-        <relationship name="track" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Track" inverseName="trackPoints" inverseEntity="Track"/>
+        <attribute name="ambientTemperature" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="cadence" optional="YES" attributeType="Integer 16" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="coolantTemperature" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="elevation" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="engineLoad" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="fixType" optional="YES" attributeType="Integer 16" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="fullyResolved" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="gnssFixOK" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="heartRate" optional="YES" attributeType="Integer 16" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="horizontalAccuracy" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="pdop" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="power" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="rpm" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="satellites" optional="YES" attributeType="Integer 16" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="throttlePosition" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="timeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="timeStampString" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="verticalAccuracy" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="track" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Track" inverseName="trackPoints" inverseEntity="Track" syncable="YES"/>
     </entity>
     <entity name="DownloadedFile" representedClassName="DownloadedFile" syncable="YES" codeGenerationType="class">
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="size" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="size" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
     </entity>
     <entity name="MapPoint" representedClassName="MapPoint" syncable="YES" codeGenerationType="class">
-        <attribute name="latitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="longitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="timeStamp" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="track" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Track" inverseName="mapPoints" inverseEntity="Track"/>
+        <attribute name="latitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="longitude" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="timeStamp" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="track" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Track" inverseName="mapPoints" inverseEntity="Track" syncable="YES"/>
     </entity>
     <entity name="Track" representedClassName="Track" syncable="YES" codeGenerationType="class">
-        <attribute name="comment" optional="YES" attributeType="String"/>
-        <attribute name="dataPointCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="fileName" optional="YES" attributeType="String"/>
-        <attribute name="fileSize" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="localFilePath" optional="YES" attributeType="URI"/>
-        <attribute name="maxLat" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="maxLon" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="minLat" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="minLon" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="processed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="timeStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="vehicleID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="mapPoints" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MapPoint" inverseName="track" inverseEntity="MapPoint"/>
-        <relationship name="trackPoints" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DataPoint" inverseName="track" inverseEntity="DataPoint"/>
-        <relationship name="vehicle" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Vehicle" inverseName="tracks" inverseEntity="Vehicle"/>
+        <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dataPointCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="fileName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fileSize" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="localFilePath" optional="YES" attributeType="URI" syncable="YES"/>
+        <attribute name="maxLat" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="maxLon" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="minLat" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="minLon" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="processed" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="timeStart" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="vehicleID" optional="YES" attributeType="UUID" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="mapPoints" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MapPoint" inverseName="track" inverseEntity="MapPoint" syncable="YES"/>
+        <relationship name="trackPoints" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DataPoint" inverseName="track" inverseEntity="DataPoint" syncable="YES"/>
+        <relationship name="vehicle" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Vehicle" inverseName="tracks" inverseEntity="Vehicle" syncable="YES"/>
     </entity>
     <entity name="Vehicle" representedClassName="Vehicle" syncable="YES" codeGenerationType="class">
-        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="image" optional="YES" attributeType="URI"/>
-        <attribute name="mapColor" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureCoding" customClassName="NSObject"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="tracks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Track" inverseName="vehicle" inverseEntity="Track"/>
-        <relationship name="vehicleType" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="VehicleType" inverseName="vehicles" inverseEntity="VehicleType"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="image" optional="YES" attributeType="URI" syncable="YES"/>
+        <attribute name="mapColor" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureCoding" customClassName="NSObject" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="tracks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Track" inverseName="vehicle" inverseEntity="Track" syncable="YES"/>
+        <relationship name="vehicleType" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="VehicleType" inverseName="vehicles" inverseEntity="VehicleType" syncable="YES"/>
     </entity>
     <entity name="VehicleType" representedClassName="VehicleType" syncable="YES" codeGenerationType="class">
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="vehicles" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Vehicle" inverseName="vehicleType" inverseEntity="Vehicle"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="vehicles" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Vehicle" inverseName="vehicleType" inverseEntity="Vehicle" syncable="YES"/>
     </entity>
     <elements>
         <element name="DataPoint" positionX="196.8671875" positionY="-25.84765625" width="128" height="358"/>

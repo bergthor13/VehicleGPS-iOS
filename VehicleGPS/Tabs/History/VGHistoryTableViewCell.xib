@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17140" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17115"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -16,19 +17,19 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="234,2" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EnF-6D-YlM">
-                        <rect key="frame" x="16" y="16.5" width="74.5" height="34"/>
+                        <rect key="frame" x="20" y="16.666666666666671" width="73.333333333333329" height="34"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="21. sept 2019" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cuF-CM-EgC">
-                        <rect key="frame" x="306" y="8" width="92" height="18"/>
+                        <rect key="frame" x="302" y="8" width="92" height="18"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
-                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="textColor" systemColor="secondaryLabelColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="20" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0pE-Fx-DOU">
-                        <rect key="frame" x="372.5" y="38.5" width="21.5" height="20.5"/>
+                        <rect key="frame" x="372.66666666666669" y="38.666666666666664" width="21.333333333333314" height="20.333333333333336"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -37,9 +38,9 @@
                 <constraints>
                     <constraint firstAttribute="bottom" secondItem="0pE-Fx-DOU" secondAttribute="bottom" constant="8" id="1JE-RN-he1"/>
                     <constraint firstItem="cuF-CM-EgC" firstAttribute="top" secondItem="wXU-sJ-mKg" secondAttribute="top" constant="8" id="1KH-Co-2EP"/>
-                    <constraint firstAttribute="trailing" secondItem="cuF-CM-EgC" secondAttribute="trailing" constant="16" id="2ra-WF-tN2"/>
+                    <constraint firstAttribute="trailing" secondItem="cuF-CM-EgC" secondAttribute="trailing" constant="20" symbolic="YES" id="2ra-WF-tN2"/>
                     <constraint firstItem="0pE-Fx-DOU" firstAttribute="top" secondItem="cuF-CM-EgC" secondAttribute="bottom" priority="250" constant="8" id="mPh-gk-dbW"/>
-                    <constraint firstItem="EnF-6D-YlM" firstAttribute="leading" secondItem="wXU-sJ-mKg" secondAttribute="leading" constant="16" id="qjd-FV-qtQ"/>
+                    <constraint firstItem="EnF-6D-YlM" firstAttribute="leading" secondItem="wXU-sJ-mKg" secondAttribute="leading" constant="20" symbolic="YES" id="qjd-FV-qtQ"/>
                     <constraint firstAttribute="trailing" secondItem="0pE-Fx-DOU" secondAttribute="trailing" constant="20" symbolic="YES" id="wU4-qR-Hlb"/>
                     <constraint firstItem="EnF-6D-YlM" firstAttribute="centerY" secondItem="wXU-sJ-mKg" secondAttribute="centerY" id="xEp-y1-Mvx"/>
                 </constraints>
@@ -52,4 +53,9 @@
             <point key="canvasLocation" x="28.985507246376812" y="-56.584821428571423"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
 </document>
