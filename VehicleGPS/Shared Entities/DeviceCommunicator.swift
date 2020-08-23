@@ -139,7 +139,7 @@ class DeviceCommunicator {
             return true
         }, callback: { [unowned self] (data) in
             if let data = data {
-                onSuccess(self.fileManager.dataToFile(data: data, filename: file.filename))
+                onSuccess(self.fileManager.saveDownloaded(data: data, filename: file.filename))
             } else {
                 onFailure("No data to write.")
             }

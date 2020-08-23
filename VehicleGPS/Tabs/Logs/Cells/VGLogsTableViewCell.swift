@@ -112,7 +112,7 @@ class VGLogsTableViewCell: UITableViewCell {
         
         self.lblDuration.attributedText = styleString(unstyledString: formattedDuration!, substrings: ["h", "m", "s"])
 
-        trackView.image = vgFileManager.openImageFor(track: track, style: self.traitCollection.userInterfaceStyle)
+        trackView.image = vgFileManager.getPreviewImage(for: track, with: self.traitCollection.userInterfaceStyle)
         trackView.layer.borderWidth = 0.5
         trackView.layer.borderColor = UIColor.secondaryLabel.cgColor
         if let vehicle = track.vehicle {
@@ -164,7 +164,7 @@ class VGLogsTableViewCell: UITableViewCell {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         guard let track = currentTrack else {return}
         trackView.layer.borderColor = UIColor.secondaryLabel.cgColor
-        trackView.image = vgFileManager.openImageFor(track: track, style: self.traitCollection.userInterfaceStyle)
+        trackView.image = vgFileManager.getPreviewImage(for: track, with: self.traitCollection.userInterfaceStyle)
     }
     
     func styleString(unstyledString: String, substrings: [String]) -> NSAttributedString {

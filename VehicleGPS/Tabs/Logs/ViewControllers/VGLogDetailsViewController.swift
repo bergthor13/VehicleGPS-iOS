@@ -62,8 +62,8 @@ class VGLogDetailsViewController: UIViewController {
     }
     
     func getTrackPoints(for track:VGTrack) {
-        let overlays = mapView.overlays
-        mapView.removeOverlays(overlays)
+
+        
         if track.mapPoints.count == 0 {
             self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
                 track.mapPoints = mapPoints
@@ -74,13 +74,16 @@ class VGLogDetailsViewController: UIViewController {
                 print(error)
             }
         } else {
-            self.mapView.tracks = [track]
+            if self.mapView != nil {
+                let overlays = mapView.overlays
+                mapView.removeOverlays(overlays)
+                self.mapView.tracks = [track]
+            }
         }
         
         if track.trackPoints.count == 0 {
             self.dataStore.getDataPointsForTrack(with: track.id!, onSuccess: { (dataPoints) in
                 track.trackPoints = dataPoints
-                self.trackDataTableViewController!.track = track
             }) { (error) in
                 print(error)
             }

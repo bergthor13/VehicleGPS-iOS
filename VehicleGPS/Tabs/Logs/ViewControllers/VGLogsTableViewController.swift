@@ -876,7 +876,7 @@ class VGLogsTableViewController: UITableViewController {
             self.sections.remove(at: indexPath.section)
             tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
         }
-        self.vgFileManager?.deleteFileFor(track: track)
+        self.vgFileManager?.deleteFile(for: track)
         if self.tracksDictionary.count > 0 {
             self.emptyLabel.isHidden = true
             self.tableView.separatorStyle = .singleLine

@@ -39,7 +39,7 @@ class VGSnapshotMaker {
                             return nil
                         }
                         NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image, style: style!, track: track))
-                        self.vgFileManager.savePNG(image: image, for: track, style: style!)
+                        self.vgFileManager.savePreview(image: image, for: track, with: style!)
                         return nil
                     }
                 }, onFailure: { (error) in
@@ -50,7 +50,7 @@ class VGSnapshotMaker {
             NotificationCenter.default.post(name: .previewImageStartingUpdate, object: track)
             self.drawTrack(vgTrack: track) { (image, style) -> Void? in
                 NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: track))
-                self.vgFileManager.savePNG(image: image!, for: track, style: style!)
+                self.vgFileManager.savePreview(image: image!, for: track, with: style!)
                 return nil
             }
 
@@ -85,7 +85,7 @@ class VGSnapshotMaker {
                 NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
                 self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
                     NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
-                    self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
+                    self.vgFileManager.savePreview(image: image!, for: newTrack, with: style!)
                     return nil
                 }
             }) { (error) in
@@ -95,7 +95,7 @@ class VGSnapshotMaker {
             NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
             self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
                 NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
-                self.vgFileManager.savePNG(image: image!, for: newTrack, style: style!)
+                self.vgFileManager.savePreview(image: image!, for: newTrack, with: style!)
                 return nil
             }
 
@@ -124,7 +124,7 @@ class VGSnapshotMaker {
                     
                     let finalImage = UIGraphicsImageRenderer(size: snapshot.image.size).image { _ in
                         if coordinateList.count == 0 {
-                            self.vgFileManager.savePNG(image: snapshot.image, for: vgTrack, style: style)
+                            self.vgFileManager.savePreview(image: snapshot.image, for: vgTrack, with: style)
                             imageCallback(snapshot.image, style)
                             return
                         }
@@ -157,7 +157,7 @@ class VGSnapshotMaker {
                         path.stroke()
                     }
                     if coordinateList.count > 0 {
-                        self.vgFileManager.savePNG(image: finalImage, for: vgTrack, style: style)
+                        self.vgFileManager.savePreview(image: finalImage, for: vgTrack, with: style)
                         imageCallback(finalImage, style)
                     }
                 }

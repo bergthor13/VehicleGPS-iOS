@@ -8,6 +8,7 @@ class VGImportFileTableViewController: UITableViewController {
     var dataStore = VGDataStore()
     var importedTracks = [[VGTrack]]()
     var importBarButton = UIBarButtonItem()
+    var vgFileManager = VGFileManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,7 +17,6 @@ class VGImportFileTableViewController: UITableViewController {
         importBarButton = UIBarButtonItem(title: Strings.importFile, style: .done, target: self, action: #selector(tappedImport))
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.cancel, style: .plain, target: self, action: #selector(tappedCancel))
         
-        let asdf = VGGPXParser()
         if fileUrls.count == 0 {
             return
         }
@@ -29,9 +29,12 @@ class VGImportFileTableViewController: UITableViewController {
             self.importedTracks.append([VGTrack]())
         }
         
-            DispatchQueue.global(qos: .utility).async {
-                for (index, fileUrl) in self.fileUrls.enumerated() {
-                    asdf.fileToTracks(fileUrl: fileUrl, progress: { (curr, count) in
+        DispatchQueue.global(qos: .utility).async {
+            for (index, fileUrl) in self.fileUrls.enumerated() {
+                let parser = self.vgFileManager.getParser(for: fileUrl)
+                
+                if let parser = parser as? VGGPXParser {
+                    parser.fileToTracks(fileUrl: fileUrl, progress: { (curr, count) in
                     }, callback: { (parsedTracks) in
                         self.importedTracks[index] = parsedTracks
                         DispatchQueue.main.async {
@@ -40,8 +43,25 @@ class VGImportFileTableViewController: UITableViewController {
                             self.tableView.reloadData()
                         }
                     }) { (track, style) in
-                      
+                        
+                    }
+                } else {
+                    parser?.fileToTrack(fileUrl: fileUrl, progress: { (curr, count) in
+                        
+                    }, onSuccess: { (parsedTrack) in
+                        self.importedTracks[0] = [parsedTrack]
+                        DispatchQueue.main.async {
+                            activityIndicator.stopAnimating()
+                            self.navigationItem.rightBarButtonItem = self.importBarButton
+                            self.tableView.reloadData()
+                        }
+
+                    }, onFailure: { (error) in
+                        print(error)
+                    })
                 }
+                
+
             }
         }
     }

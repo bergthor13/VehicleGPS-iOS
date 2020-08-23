@@ -317,7 +317,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             self.sections.remove(at: indexPath.section-1)
             tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
         }
-        self.vgFileManager?.deleteFileFor(track: track)
+        self.vgFileManager?.deleteFile(for: track)
         if self.logDict.count > 0 {
             //self.emptyLabel.isHidden = true
             self.tableView.separatorStyle = .singleLine

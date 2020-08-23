@@ -454,7 +454,7 @@ class VGDataStore {
             newVehicle.order = Int16(vgVehicle.order ?? -1)
             vgVehicle.id = newVehicle.id
             if let image = vgVehicle.image {
-                newVehicle.image = self.vgFileManager.imageToFile(image: image, for: vgVehicle)
+                newVehicle.image = self.vgFileManager.save(image: image, for: vgVehicle)
             }
             
             
@@ -485,7 +485,7 @@ class VGDataStore {
         newVehicle.order = Int16(vgVehicle.order ?? -1)
         
         if let image = vgVehicle.image {
-            newVehicle.image = vgFileManager.imageToFile(image: image, for: vgVehicle)
+            newVehicle.image = vgFileManager.save(image: image, for: vgVehicle)
         }
         
         do {
