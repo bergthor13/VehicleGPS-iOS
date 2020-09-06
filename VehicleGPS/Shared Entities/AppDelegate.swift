@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var snapshotter: VGSnapshotMaker!
     var deviceCommunicator: DeviceCommunicator!
     var trackDetailsViewController = VGLogDetailsViewController()
-    var splitViewController = UISplitViewController(style: .tripleColumn)
+//    var splitViewController = UISplitViewController(style: .tripleColumn)
 
     
     func application(_ application: UIApplication,
@@ -33,12 +33,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.tintColor = UIColor.init(named: "appColor")
                 
-        splitViewController.preferredDisplayMode = .twoOverSecondary
-
-        splitViewController.setViewController(VGSplitViewController(), for: .primary)
-        splitViewController.setViewController(VGLogsTableViewController(style: .plain), for: .supplementary)
-        splitViewController.setViewController(trackDetailsViewController, for: .secondary)
-        splitViewController.setViewController(tabController, for: .compact)
+//        splitViewController.preferredDisplayMode = .twoOverSecondary
+//
+//        splitViewController.setViewController(VGSplitViewController(), for: .primary)
+//        splitViewController.setViewController(VGLogsTableViewController(style: .plain), for: .supplementary)
+//        splitViewController.setViewController(trackDetailsViewController, for: .secondary)
+//        splitViewController.setViewController(tabController, for: .compact)
         
 
         self.window?.rootViewController = tabController

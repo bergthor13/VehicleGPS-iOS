@@ -761,16 +761,7 @@ class VGLogsTableViewController: UITableViewController {
         
         return cell
     }
-    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        guard let selectedItems = tableView.indexPathsForSelectedRows else {
-            return indexPath
-        }
-        
-        for indexPath in selectedItems {
-            tableView.deselectRow(at: indexPath, animated: false)
-        }
-        return indexPath
-    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let track = getTrackAt(indexPath: indexPath) else {
             return

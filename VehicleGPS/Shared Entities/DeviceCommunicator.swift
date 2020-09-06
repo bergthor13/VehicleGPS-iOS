@@ -37,9 +37,21 @@ class DeviceCommunicator {
     }
     
     func disconnectFromVehicleGPS() {
-        sftpSession?.disconnect()
-        session?.disconnect()
+        
+        if sftpSession != nil {
+            if sftpSession!.isConnected {
+                sftpSession!.disconnect()
+            }
+        }
+        
+        if session != nil {
+            if session!.isConnected {
+                session!.disconnect()
+            }
+        }
+        
         NotificationCenter.default.post(name: .deviceDisconnected, object: nil)
+
     }
     
     func reconnectToVehicleGPS() {

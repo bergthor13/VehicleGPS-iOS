@@ -22,28 +22,38 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
     func fileToTracks(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, callback: @escaping ([VGTrack]) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)?) {
         tracks = []
         //Setup the parser and initialize it with the filepath's data
-        let data = NSData(contentsOf: fileUrl)
-        let parser = XMLParser(data: data! as Data)
-        parser.delegate = self
-
-        //Parse the data, here the file will be read
-        let success = parser.parse()
-        if success {
-            for track in tracks {
-                track.process()
-                let mapPoints = track.trackPoints.filter { (point) -> Bool in
-                    return point.hasGoodFix()
-                }
-                track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
-                
-                callback(tracks)
+        do {
+            guard let data = try Data(contentsOf: fileUrl) as Data? else {
+                callback([VGTrack]())
+                return
             }
-            
-            return
+            let parser = XMLParser(data: data)
+            parser.delegate = self
 
+            //Parse the data, here the file will be read
+            let success = parser.parse()
+            if success {
+                for track in tracks {
+                    track.process()
+                    let mapPoints = track.trackPoints.filter { (point) -> Bool in
+                        return point.hasGoodFix()
+                    }
+                    track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
+                    
+                    callback(tracks)
+                }
+                return
+
+            }
+
+        } catch {
+            // TODO: Allow nil.
+            callback([VGTrack()])
+            return
         }
-        // TODO: Allow nil.
-        callback([VGTrack()])
+
+        
+        
     }
     
     func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, onSuccess: @escaping (VGTrack) -> (), onFailure:@escaping(Error)->()) {

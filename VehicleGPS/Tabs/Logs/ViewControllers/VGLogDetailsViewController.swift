@@ -84,6 +84,7 @@ class VGLogDetailsViewController: UIViewController {
         if track.trackPoints.count == 0 {
             self.dataStore.getDataPointsForTrack(with: track.id!, onSuccess: { (dataPoints) in
                 track.trackPoints = dataPoints
+                self.trackDataTableViewController.track = track
             }) { (error) in
                 print(error)
             }
