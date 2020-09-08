@@ -36,8 +36,8 @@ class VGFileManager {
             if !fileManager.fileExists(atPath: applicationSupportURL.absoluteString!) {
                 do {
                     try fileManager.createDirectory(at: applicationSupportURL as URL, withIntermediateDirectories: true, attributes: nil)
-                } catch {
-                    print("ERROR")
+                } catch let error {
+                    print(error)
                 }
             }
         }
@@ -61,6 +61,7 @@ class VGFileManager {
         if fileExtension == "gpx" {
             return VGGPXParser()
         }
+        _ = url.startAccessingSecurityScopedResource()
         if let aStreamReader = StreamReader(path: url) {
             defer {
                 aStreamReader.close()
@@ -86,11 +87,19 @@ class VGFileManager {
                 return VGArduinoCSVParser()
             }
         }
+        url.stopAccessingSecurityScopedResource()
         return VGCSVParser()
     }
     
     func getDocumentsFolder() -> URL? {
         if let dir = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+            return dir
+        }
+        return nil
+    }
+    
+    func getTemporaryFolder() -> URL? {
+        if let dir = fileManager.urls(for: .itemReplacementDirectory, in: .userDomainMask).first {
             return dir
         }
         return nil

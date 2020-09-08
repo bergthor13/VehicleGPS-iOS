@@ -32,15 +32,24 @@ class VGArduinoCSVParser: IVGLogParser {
             if let fileSize = resources.fileSize {
                 track.fileSize = fileSize
             }
-        } catch {
+        } catch let error {
+            print(error)
             onFailure(error)
         }
         
+        var fileData = Data()
         var fileString = String()
-        do {
-            fileString = try String(contentsOf: fileUrl)
-        } catch {/* error handling here */}
         
+        do {
+            _ = fileUrl.startAccessingSecurityScopedResource()
+            fileData = try Data(contentsOf: fileUrl)
+            fileString = String(data: fileData, encoding: .utf8)!
+        } catch let error {
+            print(error)
+            fileUrl.stopAccessingSecurityScopedResource()
+        }
+        fileUrl.stopAccessingSecurityScopedResource()
+
         let csv = CSV(string: fileString, column: ";", line: "\r\n")
         
         let lineCount = csv.rows.count
@@ -63,6 +72,7 @@ class VGArduinoCSVParser: IVGLogParser {
             return point.hasGoodFix()
         }
         track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
+        track.name = "Track"
         onSuccess(track)
     }
     

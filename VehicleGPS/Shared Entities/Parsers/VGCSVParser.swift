@@ -5,7 +5,7 @@ import fastCSV
 class VGCSVParser: IVGLogParser {
     let progress_update_delay = TimeInterval(0.1)
     let PNG_PADDING:CGFloat = 0.9
-
+    
     func isValid(row:[String]) -> Bool {
         if row.count < 16 {
             return false
@@ -26,50 +26,58 @@ class VGCSVParser: IVGLogParser {
             if let fileSize = resources.fileSize {
                 track.fileSize = fileSize
             }
-        } catch {
+        } catch let error {
+            print(error)
             onFailure(error)
         }
         
         var fileString = String()
         do {
-            fileString = try String(contentsOf: fileUrl)
-        } catch {/* error handling here */}
+            _ = fileUrl.startAccessingSecurityScopedResource()
+            let fileData = try Data(contentsOf: fileUrl)
+            fileString = String(data: fileData, encoding: .utf8)!
+        } catch let error {
+            print(error)
+            fileUrl.stopAccessingSecurityScopedResource()
+        }
+        fileUrl.stopAccessingSecurityScopedResource()
+        
         
         autoreleasepool {
             csv = CSV(string: fileString, column: ",", line: "\n")
+        }
+        let lineCount = csv!.rows.count
+        for (index,row) in csv!.rows.enumerated() {
+            if abs(lastProgressUpdate.timeIntervalSinceNow) > self.progress_update_delay {
+                progress(UInt(index), UInt(lineCount))
+                lastProgressUpdate = Date()
             }
-            let lineCount = csv!.rows.count
-            for (index,row) in csv!.rows.enumerated() {
-                if abs(lastProgressUpdate.timeIntervalSinceNow) > self.progress_update_delay {
-                    progress(UInt(index), UInt(lineCount))
-                    lastProgressUpdate = Date()
-                }
-                if !self.isValid(row: row) {
-                    continue
-                }
-                let dataPoint = self.rowToDataPoint(row: row)
-                track.trackPoints.append(dataPoint)
+            if !self.isValid(row: row) {
+                continue
             }
-            
-            
-            track.process()
-            
-            let mapPoints = track.trackPoints.filter { (point) -> Bool in
-                return point.hasGoodFix()
-            }
-            track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
-            
-            onSuccess(track)
-            fileString = ""
-            csv = nil
-
+            let dataPoint = self.rowToDataPoint(row: row)
+            track.trackPoints.append(dataPoint)
+        }
+        
+        
+        track.process()
+        
+        let mapPoints = track.trackPoints.filter { (point) -> Bool in
+            return point.hasGoodFix()
+        }
+        track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
+        track.name = "Track"
+        onSuccess(track)
+        fileString = ""
+        csv = nil
+        
         
     }
     
     func rowToDataPoint(row: [String]) -> VGDataPoint {
         // TIME,LATITUDE,LONGITUDE,ELEVATION,SATELLITES,HORIZONTAL_ACCURACY,VERTICAL_ACCURACY,PDOP,FIX_TYPE,GNSS_FIX_OK,FULLY_RESOLVED,RPM,ENGINE_LOAD,COOLANT_TEMPERATURE,AMBIENT_TEMPERATURE,THROTTLE_POSITION
         // 2019-04-24T17:46:17.599829,63.995643,-22.634326,41.482,7,0.994,1.484,3.48,3,True,False,1103.5,34.509803921568626,14,5,14.509803921568627
-
+        
         let dataPoint = VGDataPoint()
         dataPoint.timestamp = ISO8601DateParser.parse(String(row[0]))
         dataPoint.latitude = Double(row[1])
@@ -119,64 +127,64 @@ class VGCSVParser: IVGLogParser {
 
 
 class ISO8601DateParser {
-  
-static var calendar = Calendar(identifier: .gregorian)
-
+    
+    static var calendar = Calendar(identifier: .gregorian)
+    
     static func parse(_ dateString: String) -> Date? {
-    var components = DateComponents()
-    guard let year = getItem(string: dateString, startIndex: 0, count: 4) else {
-        return nil
-    }
-
-    guard let month = getItem(string: dateString, startIndex: 5, count: 2) else {
-        return nil
-    }
-
-    guard let day = getItem(string: dateString, startIndex: 8, count: 2) else {
-        return nil
-    }
-
-    guard let hour = getItem(string: dateString, startIndex: 11, count: 2) else {
-        return nil
-    }
-
-    guard let minute = getItem(string: dateString, startIndex: 14, count: 2) else {
-        return nil
-    }
-
-    guard let second = getItem(string: dateString, startIndex: 17, count: 2) else {
-        return nil
-    }
-        
-    if dateString.count >= 26 {
-        if let nanosecond = getItem(string: dateString, startIndex: 20, count: 6) {
-            components.nanosecond = nanosecond*1000
-        } else {
-            components.nanosecond = 0
+        var components = DateComponents()
+        guard let year = getItem(string: dateString, startIndex: 0, count: 4) else {
+            return nil
         }
-    } else {
-        if dateString.count >= 23 {
-            if let nanosecond = getItem(string: dateString, startIndex: 20, count: 3) {
-                components.nanosecond = nanosecond*1000000
+        
+        guard let month = getItem(string: dateString, startIndex: 5, count: 2) else {
+            return nil
+        }
+        
+        guard let day = getItem(string: dateString, startIndex: 8, count: 2) else {
+            return nil
+        }
+        
+        guard let hour = getItem(string: dateString, startIndex: 11, count: 2) else {
+            return nil
+        }
+        
+        guard let minute = getItem(string: dateString, startIndex: 14, count: 2) else {
+            return nil
+        }
+        
+        guard let second = getItem(string: dateString, startIndex: 17, count: 2) else {
+            return nil
+        }
+        
+        if dateString.count >= 26 {
+            if let nanosecond = getItem(string: dateString, startIndex: 20, count: 6) {
+                components.nanosecond = nanosecond*1000
             } else {
                 components.nanosecond = 0
             }
         } else {
-            components.nanosecond = 0
+            if dateString.count >= 23 {
+                if let nanosecond = getItem(string: dateString, startIndex: 20, count: 3) {
+                    components.nanosecond = nanosecond*1000000
+                } else {
+                    components.nanosecond = 0
+                }
+            } else {
+                components.nanosecond = 0
+            }
         }
+        
+        
+        components.year   = year
+        components.month  = month
+        components.day    = day
+        components.hour   = hour
+        components.minute = minute
+        components.second = second
+        let date = calendar.date(from: components)
+        return date
     }
     
-
-    components.year   = year
-    components.month  = month
-    components.day    = day
-    components.hour   = hour
-    components.minute = minute
-    components.second = second
-    let date = calendar.date(from: components)
-    return date
-  }
-
     static private func getItem(string:String, startIndex:Int, count:Int) -> Int? {
         if string.count < startIndex+count {
             return nil
@@ -186,5 +194,5 @@ static var calendar = Calendar(identifier: .gregorian)
         let range = start..<end
         return Int(String(string[range]))
     }
-
+    
 }

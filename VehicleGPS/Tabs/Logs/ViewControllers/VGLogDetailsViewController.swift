@@ -21,6 +21,9 @@ class VGLogDetailsViewController: UIViewController {
     
     var track: VGTrack! {
         didSet {
+            if trackDataTableViewController == nil {
+                initializeTrackDataView()
+            }
             getTrackPoints(for:track)
         }
     }
@@ -41,7 +44,9 @@ class VGLogDetailsViewController: UIViewController {
             self.dataStore = appDelegate.dataStore
         }
         initializeMapView()
-        initializeTrackDataView()
+        if trackDataTableViewController == nil {
+            initializeTrackDataView()
+        }
         self.view.backgroundColor = .systemBackground
                 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image:Icons.moreActions, primaryAction: nil, menu: createMenu())

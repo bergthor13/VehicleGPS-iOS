@@ -12,22 +12,26 @@ import CoreLocation
 class VGLogDetailsTrackTableViewController: UITableViewController {
     var dlpPoint: CGPoint?
     var dlpTime: Date?
+    var semaphore = DispatchSemaphore(value: 1)
     
     var track: VGTrack? {
         didSet {
-            trackConfigs.removeAll()
             guard let track = track else {
                 summary.append((Strings.noTrack,""))
                 return
             }
+            semaphore.wait()
             self.summarize(track: track)
             graphGenerators = track.graphTypes
+            trackConfigs.removeAll()
             for generator in graphGenerators {
                 guard let generator = generator else {
                     continue
                 }
                 trackConfigs.append(generator.generate(from: track))
             }
+            semaphore.signal()
+
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
@@ -68,7 +72,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
         let speed = Measurement(value: track.averageSpeed, unit: UnitSpeed.kilometersPerHour)
         let formatter = VGSpeedFormatter()
         summary.append((Strings.averageSpeed, formatter.string(from: speed)))
-
     }
     
     override func viewWillDisappear(_ animated: Bool) {

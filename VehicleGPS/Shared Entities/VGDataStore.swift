@@ -58,7 +58,8 @@ class VGDataStore {
         
         do {
             return try context.fetch(dataPointFetchRequest)
-        } catch {
+        } catch let error {
+            print(error)
             return []
         }
     }
@@ -73,7 +74,8 @@ class VGDataStore {
             dataPointFetchRequest.predicate = NSPredicate(format: "track = %@", fetchedTrack)
             return try context.fetch(dataPointFetchRequest)
             
-        } catch {
+        } catch let error {
+            print(error)
             return []
         }
     }
@@ -87,7 +89,8 @@ class VGDataStore {
                 return nil
             }
             return fetchedTrack
-        } catch {
+        } catch let error {
+            print(error)
             print("Fetching track failed")
             return nil
         }
@@ -102,7 +105,8 @@ class VGDataStore {
                 return nil
             }
             return fetchedVehicle
-        } catch {
+        } catch let error {
+            print(error)
             print("Fetching vehicle failed")
             return nil
         }

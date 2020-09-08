@@ -22,11 +22,14 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
     func fileToTracks(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, callback: @escaping ([VGTrack]) -> Void, imageCallback: ((VGTrack, UIUserInterfaceStyle?) -> Void)?) {
         tracks = []
         //Setup the parser and initialize it with the filepath's data
+
+        
+        
+        _ = fileUrl.startAccessingSecurityScopedResource()
+
         do {
-            guard let data = try Data(contentsOf: fileUrl) as Data? else {
-                callback([VGTrack]())
-                return
-            }
+            let data = try Data(contentsOf: fileUrl)
+            fileUrl.stopAccessingSecurityScopedResource()
             let parser = XMLParser(data: data)
             parser.delegate = self
 
@@ -46,8 +49,10 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
 
             }
 
-        } catch {
+        } catch let error {
             // TODO: Allow nil.
+            print(error)
+            fileUrl.stopAccessingSecurityScopedResource()
             callback([VGTrack()])
             return
         }
