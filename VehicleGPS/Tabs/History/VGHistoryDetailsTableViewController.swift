@@ -67,6 +67,8 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         mapView = VGMapView(frame: mapCell.contentView.frame)
         //mapView.activity
         mapView.translatesAutoresizingMaskIntoConstraints = false
+        
+        //mapView.fill(parentView: mapCell.contentView, with: UIEdgeInsets.zero)
         mapCell.contentView.addSubview(mapView)
         let layoutLeft = NSLayoutConstraint(item: mapView!, attribute: .leading, relatedBy: .equal, toItem: mapCell.contentView, attribute: .leading, multiplier: 1, constant: 0)
         let layoutRight = NSLayoutConstraint(item: mapView!, attribute: .trailing, relatedBy: .equal, toItem: mapCell.contentView, attribute: .trailing, multiplier: 1, constant: 0)

@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import UniformTypeIdentifiers
+
 
 class VGHistoryTableViewController: UITableViewController {
     var tracks = [VGTrack]()
@@ -94,6 +96,50 @@ class VGHistoryTableViewController: UITableViewController {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
         }
+        let importButtonItem = UIBarButtonItem(image: Icons.importFiles, style: .plain, target: self, action: #selector(self.importFiles))
+        self.navigationItem.rightBarButtonItem = importButtonItem
+        addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
+
+
+        
+    }
+    
+    func addObserver(selector:Selector, name:Notification.Name) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
+    }
+    
+    @objc func onLogsAdded(_ notification:Notification) {
+        guard let newTracks = notification.object as? [VGTrack] else {
+            return
+        }
+        
+        for track in newTracks {
+            self.tracks.append(track)
+        }
+        
+
+        DispatchQueue.main.async {
+            self.segmentChanged(id: self.historyHeader.sortingSegment.selectedSegmentIndex)
+            self.tableView.reloadData()
+            if self.tracks.count > 0 {
+                self.emptyLabel.isHidden = true
+                self.tableView.separatorStyle = .singleLine
+            } else {
+                self.emptyLabel.isHidden = false
+                self.tableView.separatorStyle = .none
+            }
+        }
+        
+        
+    }
+
+    
+    @objc func importFiles(_ sender:UIBarButtonItem) {
+        let supportedTypes: [UTType] = [UTType(filenameExtension: "gpx")!, UTType(filenameExtension: "csv")!]
+        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
+        documentPicker.delegate = self
+        documentPicker.allowsMultipleSelection = true
+        present(documentPicker, animated: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -258,14 +304,25 @@ class VGHistoryTableViewController: UITableViewController {
     }
     
     func segmentChanged(id: Int) {
-        if id == 0 { // Day
-            historySections = getDayDictionary(tracks: tracks)
-        } else if id == 1 { // Month
-            historySections = getMonthDictionary(tracks: tracks)
-        } else if id == 2 { // Year
-            historySections = getYearDictionary(tracks: tracks)
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            switch id {
+                case SegmentType.day.rawValue:
+                    self.historySections = self.getDayDictionary(tracks: self.tracks)
+                case SegmentType.month.rawValue:
+                    self.historySections = self.getMonthDictionary(tracks: self.tracks)
+                case SegmentType.year.rawValue:
+                    self.historySections = self.getYearDictionary(tracks: self.tracks)
+                case SegmentType.allTracks.rawValue:
+                    self.historySections = [VGHistorySection]()
+                default:
+                    break
+            }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
-        tableView.reloadData()
+
     }
 
     // MARK: - Table view data source
@@ -321,5 +378,13 @@ class VGHistoryTableViewController: UITableViewController {
         let historyDetails = VGHistoryDetailsTableViewController(style: .plain)
         historyDetails.tracksSummary = tracksSummary
         navigationController?.pushViewController(historyDetails, animated: true)
+    }
+}
+
+extension VGHistoryTableViewController: UIDocumentPickerDelegate {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        let importController = VGImportFileTableViewController(style: .insetGrouped, fileUrls: urls)
+        let navController = UINavigationController(rootViewController: importController)
+        present(navController, animated: true)
     }
 }

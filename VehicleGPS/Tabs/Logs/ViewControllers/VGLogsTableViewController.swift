@@ -79,19 +79,14 @@ class VGLogsTableViewController: UITableViewController {
         dpGroup.wait()
         if let fileUrl = self.vgGPXGenerator.generateGPXFor(tracks: tracks) {
             let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
+            activityVC.popoverPresentationController?.barButtonItem = self.toolbarButtonShare
             self.present(activityVC, animated: true, completion: nil)
         } else {
             displayErrorAlert(title: "Could not generate GPX", message: "An error occurred and generating a GPX file failed.")
         }
     }
     
-    @objc func importFiles(_ sender:UIBarButtonItem) {
-        let supportedTypes: [UTType] = [UTType(filenameExtension: "gpx")!, UTType(filenameExtension: "csv")!]
-        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
-        documentPicker.delegate = self
-        documentPicker.allowsMultipleSelection = true
-        present(documentPicker, animated: true)
-    }
+
     
     @objc func downloadFiles() {
         guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
@@ -450,11 +445,11 @@ class VGLogsTableViewController: UITableViewController {
     
     func initializeTableViewController() {
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        title = Strings.titles.logs
+        title = Strings.titles.vgpsDevice
         self.toolbarButtonShare = UIBarButtonItem(title: Strings.share, style: .plain, target: self, action: #selector(exportTracks(_:)))
         self.toolbarButtonDelete = UIBarButtonItem(title: Strings.delete, style: .plain, target: self, action: #selector(deleteTracks(_:)))
-        tabBarItem = UITabBarItem(title: Strings.titles.logs,
-                                  image: Icons.log,
+        tabBarItem = UITabBarItem(title: Strings.titles.vgps,
+                                  image: Icons.device,
                                   tag: 0)
     }
     
@@ -477,9 +472,7 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     fileprivate func configureNavigationBar() {
-        let importButtonItem = UIBarButtonItem(image: Icons.importFiles, style: .plain, target: self, action: #selector(self.importFiles))
         self.navigationItem.leftBarButtonItem = editButtonItem
-        self.navigationItem.rightBarButtonItem = importButtonItem
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic
     }
@@ -905,10 +898,4 @@ extension VGLogsTableViewController: DisplaySelectVehicleProtocol {
 }
 
 
-extension VGLogsTableViewController: UIDocumentPickerDelegate {
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let importController = VGImportFileTableViewController(style: .insetGrouped, fileUrls: urls)
-        let navController = UINavigationController(rootViewController: importController)
-        present(navController, animated: true)
-    }
-}
+

@@ -45,7 +45,7 @@ class VGDatabaseTableViewController: UITableViewController {
         }
     }
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -54,7 +54,7 @@ class VGDatabaseTableViewController: UITableViewController {
         } else if section == 1 {
             return 2
         } else {
-            return 1
+            return 0
         }
     }
 
@@ -91,11 +91,11 @@ class VGDatabaseTableViewController: UITableViewController {
                 cell.detailTextLabel?.text = String(fileManager.getTrackImageCount())
             }
 
-        } else if indexPath.section == 2 {
-            cell = UITableViewCell.init(style: .default, reuseIdentifier: Strings.dummyIdentifier)
-            cell.textLabel?.text = Strings.settings.databaseMaintenance
-            cell.textLabel?.textColor = view.tintColor
-        }
+        }// else if indexPath.section == 2 {
+//            cell = UITableViewCell.init(style: .default, reuseIdentifier: Strings.dummyIdentifier)
+//            cell.textLabel?.text = Strings.settings.databaseMaintenance
+//            cell.textLabel?.textColor = view.tintColor
+//        }
         return cell
     }
     

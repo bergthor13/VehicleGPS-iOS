@@ -1,7 +1,7 @@
 "Farartæki" = "Vehicles";
 "Ferðalög" = "Journeys";
 "Saga" = "History";
-"Ferlar" = "Logs";
+"Ferlar" = "Tracks";
 "Stillingar" = "Settings";
 "Gagnagrunnur" = "Database";
 "Nýtt farartæki" = "New Vehicle";
@@ -16,7 +16,7 @@
 "Mánuður" = "Month";
 "Ár" = "Year";
 
-"Engir ferlar" = "No Logs";
+"Engir ferlar" = "No Tracks";
 "Engin saga" = "No History";
 "Engin ferðalög" = "No Journeys";
 "Engin farartæki" = "No Vehicles";
@@ -25,7 +25,7 @@
 "Tengjast við VehicleGPS" = "Connect to VehicleGPS";
 "Hlutir" = "Objects";
 "Skrár" = "Files";
-"Ferlaskrár" = "Log Files";
+"Ferlaskrár" = "Track Files";
 "Yfirlitsmyndir" = "Map Preview Images";
 "Framkvæma gagnagrunnsviðhald" = "Perform Database Maintenance";
 "Kort" = "Map";
@@ -43,7 +43,7 @@
 "Deila CSV skrá" = "Share CSV File";
 "Deila GPX skrá" = "Share GPX File";
 "Vinna úr skránni aftur" = "Process File Again";
-"Skipta ferli í tvennt" = "Split Log";
+"Skipta ferli í tvennt" = "Split Track";
 
 "Hraði" = "Speed";
 "Hæð yfir sjávarmáli" = "Elevation";
@@ -68,17 +68,17 @@
 
 "Velja lit" = "Select Color";
 
-"Þátta. %i ferlar eftir." = "Parsing. %i logs left.";
-"%i nýr ferill í boði"="%i new log available";
-"%i nýjir ferlar í boði"="%i new logs available";
+"Þátta. %i ferlar eftir." = "Parsing. %i tracks left.";
+"%i nýr ferill í boði"="%i new track available";
+"%i nýjir ferlar í boði"="%i new tracks available";
 
 
-"Hleður niður. %i ferlar eftir." = "Downloading. %i logs left.";
+"Hleður niður. %i ferlar eftir." = "Downloading. %i tracks left.";
 "Tengt við %@" = "Connected to %@";
 
 "Ekkert farartæki" = "No Vehicle";
 
-"ferlar" = "logs";
+"ferlar" = "tracks";
 "Velja farartæki" = "Select Vehicle";
 "Deila" = "Share";
 
@@ -89,7 +89,7 @@
 "Villa í auðkenningu" = "Authorization Error";
 "Villa í tengingu við SFTP vefþjón" = "SFTP Connection Error";
 
-"Enginn ferill" = "No Log";
+"Enginn ferill" = "No Track";
 "Enginn byrjunartími" = "No Start Time";
 
 "Taka mynd" = "Take Photo";

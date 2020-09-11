@@ -37,6 +37,8 @@ struct Strings {
         static let settings = NSLocalizedString("Stillingar", comment: "Settings Title")
         static let database = NSLocalizedString("Gagnagrunnur", comment: "Database Title")
         static let vgpsDevice = NSLocalizedString("VehicleGPS tæki", comment: "")
+        static let vgps = NSLocalizedString("VehicleGPS", comment: "")
+
 
         static let importFile = NSLocalizedString("Flytja inn skrá", comment: "")
         

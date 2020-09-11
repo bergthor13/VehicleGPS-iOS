@@ -8,28 +8,43 @@
 
 import UIKit
 
+enum SegmentType:Int {
+    case allTracks = 0
+    case day = 1
+    case month = 2
+    case year = 3
+}
+
 class VGHistoryHeader: UIView {
 
     var sortingSegment: UISegmentedControl
     var historyTableViewController: VGHistoryTableViewController?
     
+    struct SegmentItem {
+        var title:String
+        var type: SegmentType
+    }
+    
+    var segments = [
+        SegmentItem(title: "Allir ferlar", type: .allTracks),
+        SegmentItem(title: Strings.day, type: .day),
+        SegmentItem(title: Strings.month, type: .month),
+        SegmentItem(title: Strings.year, type: .year)
+    ]
+    
     func configure() {
         sortingSegment.addTarget(self, action: #selector(valueChanged(sender:)), for: .valueChanged)
+        
         self.translatesAutoresizingMaskIntoConstraints = false
         sortingSegment.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(sortingSegment)
-        let layoutLeft = NSLayoutConstraint(item: sortingSegment, attribute: .leading, relatedBy: .equal, toItem: self.safeAreaLayoutGuide, attribute: .leading, multiplier: 1, constant: 20)
-        let layoutRight = NSLayoutConstraint(item: sortingSegment, attribute: .trailing, relatedBy: .equal, toItem: self.safeAreaLayoutGuide, attribute: .trailing, multiplier: 1, constant: -20)
-        let layoutTop = NSLayoutConstraint(item: sortingSegment, attribute: .top, relatedBy: .equal, toItem: self.safeAreaLayoutGuide, attribute: .top, multiplier: 1, constant: 11)
-        let layoutBottom = NSLayoutConstraint(item: sortingSegment, attribute: .bottom, relatedBy: .equal, toItem: self.safeAreaLayoutGuide, attribute: .bottom, multiplier: 1, constant: 11)
-
-        self.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
-        sortingSegment.insertSegment(withTitle: Strings.day, at: 0, animated: false)
-        sortingSegment.insertSegment(withTitle: Strings.month, at: 1, animated: false)
-        sortingSegment.insertSegment(withTitle: Strings.year, at: 2, animated: false)
-        sortingSegment.selectedSegmentIndex = 1
-        let bla = NSLayoutConstraint(item: sortingSegment, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 28)
-        sortingSegment.addConstraint(bla)
+        
+        sortingSegment.fill(parentView: self, layoutGuide: self.safeAreaLayoutGuide, with: UIEdgeInsets(top: 11, left: 11, bottom: 20, right: 20))
+        
+        for segment in segments {
+            sortingSegment.insertSegment(withTitle: segment.title, at: segment.type.rawValue, animated: false)
+        }
+        sortingSegment.selectedSegmentIndex = SegmentType.month.rawValue
+        
     }
     
     required init?(coder: NSCoder) {
@@ -50,13 +65,4 @@ class VGHistoryHeader: UIView {
         }
         htvc.segmentChanged(id: sender.selectedSegmentIndex)
     }
-    
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
-
 }

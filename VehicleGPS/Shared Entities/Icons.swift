@@ -21,4 +21,5 @@ struct Icons {
     static let importFiles = UIImage(systemName: "square.and.arrow.down.on.square.fill")
     static let photo = UIImage(systemName: "photo")
     static let split = UIImage(systemName: "square.split.2x1")
+    static let device = UIImage(imageLiteralResourceName: "deviceIcon")
 }
