@@ -152,7 +152,7 @@ struct Item: Hashable {
 }
 
 let tabsItems = [Item(title: Strings.titles.logs, image: Icons.log),
-                 Item(title: Strings.titles.history, image: Icons.history),
+                 Item(title: Strings.titles.logs, image: Icons.history),
                  Item(title: Strings.titles.journeys, image: Icons.journeys),
                  Item(title: Strings.titles.vehicles, image: Icons.vehicle),
                  Item(title: Strings.titles.settings, image: Icons.settings)]

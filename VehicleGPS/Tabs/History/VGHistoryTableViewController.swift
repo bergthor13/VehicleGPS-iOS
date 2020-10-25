@@ -11,13 +11,20 @@ import UniformTypeIdentifiers
 
 
 class VGHistoryTableViewController: UITableViewController {
-    var tracks = [VGTrack]()
+    var tracks = [VGTrack]() {
+        didSet {
+            DispatchQueue.main.async {
+                self.segmentChanged(id: self.historyHeader.sortingSegment.selectedSegmentIndex)
+            }
+        }
+    }
     let dateFormatter = DateFormatter()
     let numberFormatter = NumberFormatter()
     var dataStore: VGDataStore!
     var emptyLabel: UILabel!
     var historyHeader: VGHistoryHeader!
-
+    var allTracksDataSource: VGHistoryAllTracksDataSource!
+    
     var historySections = [VGHistorySection]() {
         didSet {
             for section in historySections {
@@ -33,6 +40,8 @@ class VGHistoryTableViewController: UITableViewController {
 
     fileprivate func registerCells() {
         self.tableView.register(VGHistoryTableViewCell.nib, forCellReuseIdentifier: VGHistoryTableViewCell.identifier)
+        self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
+        self.tableView.register(VGLogHeaderView.nib, forHeaderFooterViewReuseIdentifier: VGLogHeaderView.identifier)
     }
     
     fileprivate func configureFormatters() {
@@ -45,7 +54,7 @@ class VGHistoryTableViewController: UITableViewController {
     
     fileprivate func configureEmptyListLabel() {
         if let delegate = UIApplication.shared.delegate as? AppDelegate {
-            emptyLabel = VGListEmptyLabel(text: Strings.noHistory,
+            emptyLabel = VGListEmptyLabel(text: Strings.noLogs,
                                           containerView: self.view,
                                           navigationBar: navigationController!.navigationBar,
                                           tabBar: delegate.tabController.tabBar)
@@ -65,12 +74,13 @@ class VGHistoryTableViewController: UITableViewController {
     }
 
     func initializeTableViewController() {
-        title = Strings.titles.history
+        title = Strings.titles.logs
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        tabBarItem = UITabBarItem(title: Strings.titles.history,
+        tabBarItem = UITabBarItem(title: Strings.titles.logs,
                                   image: Icons.history,
                                   tag: 0)
-        
+        allTracksDataSource = VGHistoryAllTracksDataSource(parentViewController: self)
+        allTracksDataSource.tracks = self.tracks
     }
     
     override func viewDidLoad() {
@@ -118,17 +128,16 @@ class VGHistoryTableViewController: UITableViewController {
         }
         
 
-        DispatchQueue.main.async {
-            self.segmentChanged(id: self.historyHeader.sortingSegment.selectedSegmentIndex)
-            self.tableView.reloadData()
-            if self.tracks.count > 0 {
-                self.emptyLabel.isHidden = true
-                self.tableView.separatorStyle = .singleLine
-            } else {
-                self.emptyLabel.isHidden = false
-                self.tableView.separatorStyle = .none
-            }
-        }
+//        DispatchQueue.main.async {
+//            self.tableView.reloadData()
+//            if self.tracks.count > 0 {
+//                self.emptyLabel.isHidden = true
+//                self.tableView.separatorStyle = .singleLine
+//            } else {
+//                self.emptyLabel.isHidden = false
+//                self.tableView.separatorStyle = .none
+//            }
+//        }
         
         
     }
@@ -146,7 +155,6 @@ class VGHistoryTableViewController: UITableViewController {
         dataStore.getAllTracks(
             onSuccess: { (tracks) in
                 self.tracks = tracks
-                self.segmentChanged(id: self.historyHeader.sortingSegment.selectedSegmentIndex)
                 if self.historySections.count > 0 {
                     self.emptyLabel.isHidden = true
                 }
@@ -314,16 +322,25 @@ class VGHistoryTableViewController: UITableViewController {
                 case SegmentType.year.rawValue:
                     self.historySections = self.getYearDictionary(tracks: self.tracks)
                 case SegmentType.allTracks.rawValue:
-                    self.historySections = [VGHistorySection]()
+                    self.allTracksDataSource.tracks = self.tracks
+                    break
                 default:
                     break
             }
             DispatchQueue.main.async {
+                if id == SegmentType.allTracks.rawValue {
+                    self.tableView.dataSource = self.allTracksDataSource
+                    self.tableView.delegate = self.allTracksDataSource
+                } else {
+                    self.tableView.dataSource = self
+                    self.tableView.delegate = self
+                }
                 self.tableView.reloadData()
             }
         }
 
     }
+    
 
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -341,12 +358,16 @@ class VGHistoryTableViewController: UITableViewController {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: VGHistoryTableViewCell.identifier, for: indexPath) as? VGHistoryTableViewCell else {
             return UITableViewCell()
         }
+        
+        if historyHeader.sortingSegment.selectedSegmentIndex == SegmentType.allTracks.rawValue {
+            return VGLogsTableViewCell()
+        }
+        
         let section = historySections[indexPath.section]
         let summary = section.summaries[indexPath.row]
         
         var unformattedDistance = String(numberFormatter.string(from: NSNumber(value: summary.distance))!) + " km"
         var distanceText = NSMutableAttributedString.init(string: unformattedDistance)
-        
         
         let scaledFont = UIFont.systemFont(ofSize: 17, weight: .semibold)
         let fontMetrics = UIFontMetrics(forTextStyle: .body)

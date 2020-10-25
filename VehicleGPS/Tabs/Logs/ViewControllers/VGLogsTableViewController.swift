@@ -409,10 +409,10 @@ class VGLogsTableViewController: UITableViewController {
     fileprivate func setUpDeviceConnectedBanner() {
         self.headerView = VGDeviceConnectedHeaderView.loadFromNibNamed(nibNamed: VGDeviceConnectedHeaderView.nibName)
         self.headerView.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 51)
-        self.headerView.lblLogsAvailable.isHidden = true
-        self.headerView.lblConnectedToGPS.isHidden = true
-        self.headerView.imgIcon.isHidden = true
-        self.headerView.downloadView.isHidden = true
+        self.headerView.lblLogsAvailable.isHidden = false
+        self.headerView.lblConnectedToGPS.isHidden = false
+        self.headerView.imgIcon.isHidden = false
+        self.headerView.downloadView.isHidden = false
         
         // Add tap gesture recognizers to the views
         let headerTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.headerViewTapped(_:)))

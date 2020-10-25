@@ -103,7 +103,13 @@ class VGMapViewController: UIViewController {
         }
         
         dpGroup.notify(queue: .main) {
-            delegate.snapshotter.drawTracks(vgTracks: self.tracks) { (image, style) -> Void? in
+            var drawnTracks = [VGTrack]()
+            for track in self.tracks {
+                if track.distance != 0.0 {
+                    drawnTracks.append(track)
+                }
+            }
+            delegate.snapshotter.drawTracks(vgTracks: drawnTracks) { (image, style) -> Void? in
                 if let image = image {
                     guard let pngImageData = image.pngData() else {
                         return nil

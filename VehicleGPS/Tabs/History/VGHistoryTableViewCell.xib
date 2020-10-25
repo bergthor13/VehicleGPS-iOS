@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17140" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17154" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17115"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17124"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="VGHistoryTableViewController" customModule="VehicleGPS" customModuleProvider="target"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="HistoryCell" rowHeight="67" id="oln-ng-SK9" customClass="VGHistoryTableViewCell" customModule="VehicleGPS" customModuleProvider="target">
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="HistoryCell" rowHeight="67" id="oln-ng-SK9" customClass="VGHistoryTableViewCell" customModule="VehicleGPS" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="414" height="67"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="oln-ng-SK9" id="wXU-sJ-mKg">
-                <rect key="frame" x="0.0" y="0.0" width="414" height="67"/>
+                <rect key="frame" x="0.0" y="0.0" width="382.66666666666669" height="67"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="234,2" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EnF-6D-YlM">
@@ -23,13 +23,13 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="21. sept 2019" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cuF-CM-EgC">
-                        <rect key="frame" x="302" y="8" width="92" height="18"/>
+                        <rect key="frame" x="282.66666666666669" y="8" width="92" height="18"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                         <color key="textColor" systemColor="secondaryLabelColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="20" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0pE-Fx-DOU">
-                        <rect key="frame" x="372.66666666666669" y="38.666666666666664" width="21.333333333333314" height="20.333333333333336"/>
+                        <rect key="frame" x="353.33333333333331" y="38.666666666666664" width="21.333333333333314" height="20.333333333333336"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -38,10 +38,10 @@
                 <constraints>
                     <constraint firstAttribute="bottom" secondItem="0pE-Fx-DOU" secondAttribute="bottom" constant="8" id="1JE-RN-he1"/>
                     <constraint firstItem="cuF-CM-EgC" firstAttribute="top" secondItem="wXU-sJ-mKg" secondAttribute="top" constant="8" id="1KH-Co-2EP"/>
-                    <constraint firstAttribute="trailing" secondItem="cuF-CM-EgC" secondAttribute="trailing" constant="20" symbolic="YES" id="2ra-WF-tN2"/>
+                    <constraint firstAttribute="trailing" secondItem="cuF-CM-EgC" secondAttribute="trailing" constant="8" id="2ra-WF-tN2"/>
                     <constraint firstItem="0pE-Fx-DOU" firstAttribute="top" secondItem="cuF-CM-EgC" secondAttribute="bottom" priority="250" constant="8" id="mPh-gk-dbW"/>
                     <constraint firstItem="EnF-6D-YlM" firstAttribute="leading" secondItem="wXU-sJ-mKg" secondAttribute="leading" constant="20" symbolic="YES" id="qjd-FV-qtQ"/>
-                    <constraint firstAttribute="trailing" secondItem="0pE-Fx-DOU" secondAttribute="trailing" constant="20" symbolic="YES" id="wU4-qR-Hlb"/>
+                    <constraint firstAttribute="trailing" secondItem="0pE-Fx-DOU" secondAttribute="trailing" constant="8" id="wU4-qR-Hlb"/>
                     <constraint firstItem="EnF-6D-YlM" firstAttribute="centerY" secondItem="wXU-sJ-mKg" secondAttribute="centerY" id="xEp-y1-Mvx"/>
                 </constraints>
             </tableViewCellContentView>

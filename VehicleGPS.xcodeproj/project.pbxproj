@@ -115,6 +115,7 @@
 		F2D8AB0824E05AA8009E0925 /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D8AB0724E05AA8009E0925 /* Double+Extensions.swift */; };
 		F2D8C30523FDD01500D77BF2 /* NotificationCenterNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D8C30423FDD01500D77BF2 /* NotificationCenterNames.swift */; };
 		F2DCA9442402E3BA00CA9CF1 /* VGArduinoCSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */; };
+		F2E34408250C2EAF00EC021B /* VGHistoryAllTracksDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2E34407250C2EAF00EC021B /* VGHistoryAllTracksDataSource.swift */; };
 		F2EE0CB02407E76C00916DD9 /* StreamReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EE0CAF2407E76C00916DD9 /* StreamReader.swift */; };
 		F2F14BB924423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F14BB824423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift */; };
 		F2F77DF024E96B6600C2F09D /* VGGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F77DEF24E96B6600C2F09D /* VGGraphGenerator.swift */; };
@@ -251,6 +252,7 @@
 		F2D8C30423FDD01500D77BF2 /* NotificationCenterNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterNames.swift; sourceTree = "<group>"; };
 		F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGArduinoCSVParser.swift; sourceTree = "<group>"; };
 		F2DCA94524043FFC00CA9CF1 /* is */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = is; path = is.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F2E34407250C2EAF00EC021B /* VGHistoryAllTracksDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGHistoryAllTracksDataSource.swift; sourceTree = "<group>"; };
 		F2EE0CAF2407E76C00916DD9 /* StreamReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamReader.swift; sourceTree = "<group>"; };
 		F2F14BB824423D0300982E8A /* VGVGPSDeviceSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGVGPSDeviceSettingsTableViewController.swift; sourceTree = "<group>"; };
 		F2F77DEF24E96B6600C2F09D /* VGGraphGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGraphGenerator.swift; sourceTree = "<group>"; };
@@ -555,6 +557,7 @@
 			isa = PBXGroup;
 			children = (
 				F25839D623A680D400E76B54 /* VGHistoryTableViewController.swift */,
+				F2E34407250C2EAF00EC021B /* VGHistoryAllTracksDataSource.swift */,
 				F25839D823A680FC00E76B54 /* VGHistoryTableViewCell.swift */,
 				F25839DA23A6810F00E76B54 /* VGHistoryTableViewCell.xib */,
 				F25839E223AAD1E000E76B54 /* VGHistoryHeader.swift */,
@@ -772,6 +775,7 @@
 				F24754FE23DDAFA8007E0DF8 /* VGListEmptyLabel.swift in Sources */,
 				F255E86624E98239003DF00F /* VGAmbientTemperatureGraphGenerator.swift in Sources */,
 				F23F60C1244C87C100A97CF8 /* VGImportTableViewCell.swift in Sources */,
+				F2E34408250C2EAF00EC021B /* VGHistoryAllTracksDataSource.swift in Sources */,
 				F215AC6423DB1AA40001AF24 /* VGVehicle.swift in Sources */,
 				F2D8C30523FDD01500D77BF2 /* NotificationCenterNames.swift in Sources */,
 				F206FA7723D09366009A37F6 /* VGNewJourneyTableViewController.swift in Sources */,

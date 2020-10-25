@@ -26,7 +26,7 @@ class VGHistoryHeader: UIView {
     }
     
     var segments = [
-        SegmentItem(title: "Allir ferlar", type: .allTracks),
+        SegmentItem(title: Strings.allTracks, type: .allTracks),
         SegmentItem(title: Strings.day, type: .day),
         SegmentItem(title: Strings.month, type: .month),
         SegmentItem(title: Strings.year, type: .year)

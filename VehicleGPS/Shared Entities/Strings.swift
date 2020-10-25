@@ -14,6 +14,7 @@ struct Strings {
     static let delete = NSLocalizedString("Eyða", comment: "Used when canceling something")
     static let edit = NSLocalizedString("Breyta", comment: "")
 
+    static let allTracks = NSLocalizedString("Allir ferlar", comment: "Segment Item Title in Tracks")
     static let day = NSLocalizedString("Dagur", comment: "")
     static let month = NSLocalizedString("Mánuður", comment: "")
     static let year = NSLocalizedString("Ár", comment: "")

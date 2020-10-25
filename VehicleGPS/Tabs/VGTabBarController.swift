@@ -12,7 +12,7 @@ class VGTabBarController: UITabBarController {
     let logsTableViewController = VGLogsTableViewController(style: .plain)
     var controllers = [
         UINavigationController(rootViewController: VGHistoryTableViewController(style: .grouped)),
-        UINavigationController(rootViewController: VGJourneyTableViewController(style: .grouped)),
+        //UINavigationController(rootViewController: VGJourneyTableViewController(style: .grouped)),
         UINavigationController(rootViewController: VGVehiclesTableViewController(style: .grouped)),
         UINavigationController(rootViewController: VGSettingsTableViewController(style: .grouped))
     ]
