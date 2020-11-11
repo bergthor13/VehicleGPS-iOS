@@ -119,6 +119,20 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         
     }
     
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        guard let _ = getTrackAt(indexPath: indexPath) else {
+            return
+        }
+        if tableView.isEditing {
+            guard let _ = tableView.indexPathsForSelectedRows else {
+                self.hideEditToolbar()
+                return
+            }
+
+        }
+    }
+    
+    
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         let track = getTrackAt(indexPath: indexPath)

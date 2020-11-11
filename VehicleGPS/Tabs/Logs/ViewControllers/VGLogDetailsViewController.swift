@@ -67,8 +67,6 @@ class VGLogDetailsViewController: UIViewController {
     }
     
     func getTrackPoints(for track:VGTrack) {
-
-        
         if track.mapPoints.count == 0 {
             self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
                 track.mapPoints = mapPoints

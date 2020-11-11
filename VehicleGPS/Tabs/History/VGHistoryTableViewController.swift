@@ -24,6 +24,12 @@ class VGHistoryTableViewController: UITableViewController {
     var emptyLabel: UILabel!
     var historyHeader: VGHistoryHeader!
     var allTracksDataSource: VGHistoryAllTracksDataSource!
+    let vgGPXGenerator = VGGPXGenerator()
+    
+    // MARK: Toolbar Buttons
+    var toolbarButtonShare: UIBarButtonItem!
+    var toolbarButtonDelete: UIBarButtonItem!
+
     
     var historySections = [VGHistorySection]() {
         didSet {
@@ -62,6 +68,8 @@ class VGHistoryTableViewController: UITableViewController {
         view.addSubview(emptyLabel)
     }
     
+    
+    
     override init(style: UITableView.Style) {
         super.init(style: style)
         initializeTableViewController()
@@ -70,6 +78,22 @@ class VGHistoryTableViewController: UITableViewController {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         initializeTableViewController()
+
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        if !editing {
+            navigationController?.setToolbarHidden(true, animated: true)
+        }
+    }
+    func showEditToolbar() {
+        navigationController?.setToolbarHidden(false, animated: true)
+
+    }
+    
+    func hideEditToolbar() {
+        navigationController?.setToolbarHidden(true, animated: true)
 
     }
 
@@ -89,6 +113,11 @@ class VGHistoryTableViewController: UITableViewController {
         registerCells()
         configureFormatters()
         configureEmptyListLabel()
+        self.toolbarButtonShare = UIBarButtonItem(title: Strings.share, style: .plain, target: self, action: #selector(exportTracks(_:)))
+        self.toolbarButtonDelete = UIBarButtonItem(title: Strings.delete, style: .plain, target: self, action: #selector(deleteTracks(_:)))
+
+        configureToolbar()
+        
         
         historyHeader = VGHistoryHeader(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         historyHeader.historyTableViewController = self
@@ -106,12 +135,83 @@ class VGHistoryTableViewController: UITableViewController {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
         }
-        let importButtonItem = UIBarButtonItem(image: Icons.importFiles, style: .plain, target: self, action: #selector(self.importFiles))
-        self.navigationItem.rightBarButtonItem = importButtonItem
+        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(image:Icons.moreActions, primaryAction: nil, menu: createMenu()), UIBarButtonItem(image:Icons.filter, primaryAction: nil, menu: createFilterMenu())]
+        self.navigationItem.leftBarButtonItem = editButtonItem
         addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
-
-
         
+        tableView.allowsMultipleSelection = true
+        tableView.allowsMultipleSelectionDuringEditing = true
+
+    }
+    
+    func createFilterMenu() -> UIMenu {
+        let tagFilter = UIAction(title: "Tags", image: Icons.tag) { (action) in
+            
+        }
+        let dateFilter = UIAction(title: "Date", image: Icons.calendar) { (action) in
+            
+        }
+        return UIMenu(title: "Filter by...", children: [tagFilter, dateFilter])
+
+    }
+    
+    // MARK: - Button Actions
+    // MARK: Toolbar
+    @objc func deleteTracks(_ sender:UIBarButtonItem) {
+        print("DELETING SELECTED TRACKS")
+    }
+    
+    @objc func exportTracks(_ sender:UIBarButtonItem) {
+        guard let dataSource = tableView.dataSource as? VGHistoryAllTracksDataSource else {
+            return
+        }
+        var tracks = [VGTrack]()
+        guard let indexPaths = tableView.indexPathsForSelectedRows else {
+            return
+        }
+        for indexPath in indexPaths {
+            
+            guard let track = dataSource.getTrackAt(indexPath: indexPath) else {
+                continue
+            }
+            tracks.append(track)
+        }
+        
+        let dpGroup = DispatchGroup()
+        for track in tracks {
+            dpGroup.enter()
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.dataStore.getDataPointsForTrack(with: track.id!) { (dataPoints) in
+                    track.trackPoints = dataPoints
+                    dpGroup.leave()
+                } onFailure: { (error) in
+                    print(error)
+                    dpGroup.leave()
+                }
+            }
+        }
+        dpGroup.wait()
+        if let fileUrl = self.vgGPXGenerator.generateGPXFor(tracks: tracks) {
+            let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
+            activityVC.popoverPresentationController?.barButtonItem = self.toolbarButtonShare
+            self.present(activityVC, animated: true, completion: nil)
+        } else {
+            //displayErrorAlert(title: "Could not generate GPX", message: "An error occurred and generating a GPX file failed.")
+        }
+    }
+    
+    fileprivate func configureToolbar() {
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        self.toolbarButtonDelete.tintColor = .red
+        setToolbarItems([toolbarButtonShare, space, toolbarButtonDelete], animated: false)
+        
+    }
+    
+    func createMenu() -> UIMenu {
+        let mapAction = UIAction(title: Strings.titles.importFiles, image: Icons.importFiles) { (action) in
+            self.importFiles()
+        }
+        return UIMenu(title: "", children: [mapAction])
     }
     
     func addObserver(selector:Selector, name:Notification.Name) {
@@ -143,7 +243,7 @@ class VGHistoryTableViewController: UITableViewController {
     }
 
     
-    @objc func importFiles(_ sender:UIBarButtonItem) {
+    func importFiles() {
         let supportedTypes: [UTType] = [UTType(filenameExtension: "gpx")!, UTType(filenameExtension: "csv")!]
         let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
         documentPicker.delegate = self
@@ -395,10 +495,34 @@ class VGHistoryTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let tracksSummary = historySections[indexPath.section].summaries[indexPath.row]
-        let historyDetails = VGHistoryDetailsTableViewController(style: .plain)
-        historyDetails.tracksSummary = tracksSummary
-        navigationController?.pushViewController(historyDetails, animated: true)
+        
+        if tableView.isEditing {
+            guard let selectedIndexPaths = tableView.indexPathsForSelectedRows else {
+                return
+            }
+            
+            if selectedIndexPaths.count == 0 {
+                self.hideEditToolbar()
+            } else {
+                self.showEditToolbar()
+            }
+        } else {
+            tableView.deselectRow(at: indexPath, animated: true)
+            let tracksSummary = historySections[indexPath.section].summaries[indexPath.row]
+            let historyDetails = VGHistoryDetailsTableViewController(style: .plain)
+            historyDetails.tracksSummary = tracksSummary
+            navigationController?.pushViewController(historyDetails, animated: true)
+        }        
+    }
+    
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        if tableView.isEditing {
+            guard let _ = tableView.indexPathsForSelectedRows else {
+                self.hideEditToolbar()
+                return
+            }
+
+        }
     }
 }
 

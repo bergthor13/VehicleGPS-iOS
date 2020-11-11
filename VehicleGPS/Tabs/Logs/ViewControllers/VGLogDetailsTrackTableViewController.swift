@@ -102,6 +102,9 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
         if section == 0 {
             return Strings.summary
         }
+        if trackConfigs.count <= 0 {
+            return ""
+        }
         return trackConfigs[section-1].name
     }
     

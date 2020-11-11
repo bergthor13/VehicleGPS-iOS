@@ -90,16 +90,25 @@ class VGMapViewController: UIViewController {
             return
         }
 
+        let semaphore = DispatchSemaphore(value: 10)
         let dpGroup = DispatchGroup()
         for (index, track) in tracks.enumerated() {
-            dpGroup.enter()
-            self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
-                self.tracks[index].mapPoints = mapPoints
-                dpGroup.leave()
-            }) { (error) in
-                print(error)
-                dpGroup.leave()
+            
+            DispatchQueue.global(qos: .userInitiated).async {
+                dpGroup.enter()
+                semaphore.wait()
+                self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
+                    self.tracks[index].mapPoints = mapPoints
+                    dpGroup.leave()
+                    semaphore.signal()
+
+                }) { (error) in
+                    print(error)
+                    dpGroup.leave()
+                    semaphore.signal()
+                }
             }
+
         }
         
         dpGroup.notify(queue: .main) {
@@ -121,20 +130,6 @@ class VGMapViewController: UIViewController {
                 }
                 return nil
             }
-            
         }
     }
-
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

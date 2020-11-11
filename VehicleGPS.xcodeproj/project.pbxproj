@@ -98,8 +98,6 @@
 		F280AC9324C3352C00509C5E /* VGMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F280AC9224C3352C00509C5E /* VGMapViewController.swift */; };
 		F280ACD124C37DCB00509C5E /* VGColorWell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F280ACD024C37DCB00509C5E /* VGColorWell.swift */; };
 		F281D41724CBAFD800102B4B /* SpeedFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F281D41624CBAFD800102B4B /* SpeedFormatter.swift */; };
-		F281E0B125081A9700BDC9E5 /* FirstLaunchOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F281E0B025081A9700BDC9E5 /* FirstLaunchOnboardingViewController.swift */; };
-		F281E0B325081AAE00BDC9E5 /* FirstLaunchOnboardingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F281E0B225081AAE00BDC9E5 /* FirstLaunchOnboardingView.xib */; };
 		F281E0B5250953C100BDC9E5 /* ConstraintApplyer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F281E0B4250953C100BDC9E5 /* ConstraintApplyer.swift */; };
 		F286124C24C0DA920029F34A /* VGMapSnapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F286124B24C0DA920029F34A /* VGMapSnapshotter.swift */; };
 		F28D752D248D512D0060DFD6 /* VGFileNameDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F28D752C248D512D0060DFD6 /* VGFileNameDateFormatter.swift */; };
@@ -233,8 +231,6 @@
 		F280AC9224C3352C00509C5E /* VGMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGMapViewController.swift; sourceTree = "<group>"; };
 		F280ACD024C37DCB00509C5E /* VGColorWell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGColorWell.swift; sourceTree = "<group>"; };
 		F281D41624CBAFD800102B4B /* SpeedFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedFormatter.swift; sourceTree = "<group>"; };
-		F281E0B025081A9700BDC9E5 /* FirstLaunchOnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLaunchOnboardingViewController.swift; sourceTree = "<group>"; };
-		F281E0B225081AAE00BDC9E5 /* FirstLaunchOnboardingView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FirstLaunchOnboardingView.xib; sourceTree = "<group>"; };
 		F281E0B4250953C100BDC9E5 /* ConstraintApplyer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstraintApplyer.swift; sourceTree = "<group>"; };
 		F286124B24C0DA920029F34A /* VGMapSnapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGMapSnapshotter.swift; sourceTree = "<group>"; };
 		F28D752C248D512D0060DFD6 /* VGFileNameDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFileNameDateFormatter.swift; sourceTree = "<group>"; };
@@ -375,8 +371,6 @@
 				F228B30E243CED3A00D79D5E /* VGMapView.swift */,
 				F280AC8E24C2773500509C5E /* LogDateSplitter.swift */,
 				F280AC9224C3352C00509C5E /* VGMapViewController.swift */,
-				F281E0B025081A9700BDC9E5 /* FirstLaunchOnboardingViewController.swift */,
-				F281E0B225081AAE00BDC9E5 /* FirstLaunchOnboardingView.xib */,
 				F281E0B4250953C100BDC9E5 /* ConstraintApplyer.swift */,
 			);
 			path = "Shared Entities";
@@ -434,8 +428,8 @@
 				F23BE8C822A5E4BA008FD50C /* Assets.xcassets */,
 				F23BE8C522A5E4B9008FD50C /* VehicleGPS.xcdatamodeld */,
 				F215AC7523DB1EF80001AF24 /* Database Entities */,
-				F2169BEB23C9CE4500DE8547 /* Shared Entities */,
 				F2169BEC23C9CE5800DE8547 /* Tabs */,
+				F2169BEB23C9CE4500DE8547 /* Shared Entities */,
 			);
 			path = VehicleGPS;
 			sourceTree = "<group>";
@@ -624,7 +618,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1200;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = "Bergþór Þrastarson";
 				TargetAttributes = {
 					F23BE8BA22A5E4B9008FD50C = {
@@ -682,7 +676,6 @@
 				F247550023DDBB87007E0DF8 /* VGAvailableLogsTableViewCell.xib in Resources */,
 				F25839DB23A6810F00E76B54 /* VGHistoryTableViewCell.xib in Resources */,
 				F23BE8C922A5E4BA008FD50C /* Assets.xcassets in Resources */,
-				F281E0B325081AAE00BDC9E5 /* FirstLaunchOnboardingView.xib in Resources */,
 				F2AB17572428F658003240C1 /* VGNewVehicleTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -762,7 +755,6 @@
 				F23BE8D422A5E566008FD50C /* VGTabBarController.swift in Sources */,
 				F2647BEB24352FBD00283B38 /* Strings.swift in Sources */,
 				F26B01E8244E009400220F43 /* DisplayLineProtocol.swift in Sources */,
-				F281E0B125081A9700BDC9E5 /* FirstLaunchOnboardingViewController.swift in Sources */,
 				F281E0B5250953C100BDC9E5 /* ConstraintApplyer.swift in Sources */,
 				F255E86324E98239003DF00F /* VGCadenceGraphGenerator.swift in Sources */,
 				F23BE8F222A5E5BB008FD50C /* VGLogDetailsViewController.swift in Sources */,
@@ -910,6 +902,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -972,6 +965,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;

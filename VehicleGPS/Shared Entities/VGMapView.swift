@@ -27,16 +27,30 @@ class VGMapView: MKMapView {
                 self.setRegion(region, animated: false)
 
             }
+            let semaphore = DispatchSemaphore(value: 10)
             let dpGroup = DispatchGroup()
             for track in self.tracks {
-                dpGroup.enter()
-                self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
-                    track.mapPoints = mapPoints
-                    self.display(track: track, on: self)
-                    dpGroup.leave()
-                }) { (error) in
-                    print(error)
-                    dpGroup.leave()
+
+                DispatchQueue.global(qos: .userInitiated).async {
+                    dpGroup.enter()
+                    semaphore.wait()
+                    self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
+                        DispatchQueue.main.async {
+
+                            track.mapPoints = mapPoints
+                            self.display(track: track, on: self)
+                        }
+                        dpGroup.leave()
+                        semaphore.signal()
+                        
+                    }) { (error) in
+                        print("Error")
+                        print(error)
+                        
+                        dpGroup.leave()
+                        semaphore.signal()
+                    }
+
                 }
             }
             

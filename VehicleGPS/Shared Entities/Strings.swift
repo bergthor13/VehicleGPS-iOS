@@ -41,7 +41,7 @@ struct Strings {
         static let vgps = NSLocalizedString("VehicleGPS", comment: "")
 
 
-        static let importFile = NSLocalizedString("Flytja inn skrá", comment: "")
+        static let importFiles = NSLocalizedString("Flytja inn skrár", comment: "")
         
         static let newVehicle = NSLocalizedString("Nýtt farartæki", comment: "")
         static let newVehicleType = NSLocalizedString("Nýr farartækjahópur", comment: "")

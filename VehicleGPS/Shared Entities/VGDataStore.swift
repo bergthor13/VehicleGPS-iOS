@@ -68,12 +68,11 @@ class VGDataStore {
         guard let fetchedTrack = getTrack(in: context, with: id) else {
             return [MapPoint]()
         }
-        
         do {
             let dataPointFetchRequest = MapPoint.fetchRequest() as NSFetchRequest<MapPoint>
             dataPointFetchRequest.predicate = NSPredicate(format: "track = %@", fetchedTrack)
-            return try context.fetch(dataPointFetchRequest)
-            
+            let mapPoints = try context.fetch(dataPointFetchRequest)
+            return mapPoints
         } catch let error {
             print(error)
             return []
@@ -398,15 +397,15 @@ class VGDataStore {
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
             var fetchedMapPoints = self.getMapPoints(in: context, forTrackWith: id)
+            
             var result = [VGMapPoint]()
             for point in fetchedMapPoints {
                 let vgPoint = VGMapPoint(point: point)
                 result.append(vgPoint)
             }
             fetchedMapPoints = []
-            DispatchQueue.main.async {
-                onSuccess(result.sorted())
-            }
+            onSuccess(result.sorted())
+            
         }
     }
     

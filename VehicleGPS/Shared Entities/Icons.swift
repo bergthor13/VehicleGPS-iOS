@@ -22,4 +22,7 @@ struct Icons {
     static let photo = UIImage(systemName: "photo")
     static let split = UIImage(systemName: "square.split.2x1")
     static let device = UIImage(imageLiteralResourceName: "deviceIcon")
+    static let filter = UIImage(systemName: "line.horizontal.3.decrease.circle")
+    static let tag = UIImage(systemName: "tag")
+    static let calendar = UIImage(systemName: "calendar")
 }
