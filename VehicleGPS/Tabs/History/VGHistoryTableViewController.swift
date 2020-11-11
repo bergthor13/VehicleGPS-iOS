@@ -29,6 +29,7 @@ class VGHistoryTableViewController: UITableViewController {
     // MARK: Toolbar Buttons
     var toolbarButtonShare: UIBarButtonItem!
     var toolbarButtonDelete: UIBarButtonItem!
+    var toolbarButtonSelectVehicle: UIBarButtonItem!
 
     
     var historySections = [VGHistorySection]() {
@@ -115,7 +116,9 @@ class VGHistoryTableViewController: UITableViewController {
         configureEmptyListLabel()
         self.toolbarButtonShare = UIBarButtonItem(title: Strings.share, style: .plain, target: self, action: #selector(exportTracks(_:)))
         self.toolbarButtonDelete = UIBarButtonItem(title: Strings.delete, style: .plain, target: self, action: #selector(deleteTracks(_:)))
+        self.toolbarButtonSelectVehicle = UIBarButtonItem(title: Strings.selectVehicle, style: .plain, target: self, action: #selector(selectVehicle(_:)))
 
+        
         configureToolbar()
         
         
@@ -157,6 +160,11 @@ class VGHistoryTableViewController: UITableViewController {
     
     // MARK: - Button Actions
     // MARK: Toolbar
+    
+    @objc func selectVehicle(_ sender:UIBarButtonItem) {
+        print("Selecting Vehicle")
+    }
+    
     @objc func deleteTracks(_ sender:UIBarButtonItem) {
         print("DELETING SELECTED TRACKS")
     }
@@ -203,7 +211,7 @@ class VGHistoryTableViewController: UITableViewController {
     fileprivate func configureToolbar() {
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         self.toolbarButtonDelete.tintColor = .red
-        setToolbarItems([toolbarButtonShare, space, toolbarButtonDelete], animated: false)
+        setToolbarItems([toolbarButtonShare, space, toolbarButtonSelectVehicle, space, toolbarButtonDelete], animated: false)
         
     }
     
