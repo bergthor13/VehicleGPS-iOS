@@ -18,14 +18,15 @@ class VGMapView: MKMapView {
     
     var tracks = [VGTrack]() {
         didSet {
-            activity.startAnimating()
-            guard let region = self.getRegion(for:self.tracks) else {
-                self.activity.stopAnimating()
-                return
-            }
-            if region.span.latitudeDelta != Double.infinity {
-                self.setRegion(region, animated: false)
-
+            DispatchQueue.main.async {
+                self.activity.startAnimating()
+                guard let region = self.getRegion(for:self.tracks) else {
+                    self.activity.stopAnimating()
+                    return
+                }
+                if region.span.latitudeDelta != Double.infinity {
+                    self.setRegion(region, animated: false)
+                }
             }
             let semaphore = DispatchSemaphore(value: 10)
             let dpGroup = DispatchGroup()
