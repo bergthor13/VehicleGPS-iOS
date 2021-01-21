@@ -8,6 +8,8 @@
 
 import UIKit
 import UniformTypeIdentifiers
+import Pulley
+import EventKit
 
 
 class VGHistoryTableViewController: UITableViewController {
@@ -16,6 +18,17 @@ class VGHistoryTableViewController: UITableViewController {
             DispatchQueue.main.async {
                 self.segmentChanged(id: self.historyHeader.sortingSegment.selectedSegmentIndex)
             }
+//            let selTracks: [VGTrack] = [tracks[3], tracks[6]]
+//            let editor = VGEditor(parentViewController: self)
+//            for (index, track) in selTracks.enumerated() {
+//                dataStore.getDataPointsForTrack(with: track.id!) { (points) in
+//                    selTracks[index].trackPoints = points
+//                    editor.tracks = selTracks
+//                } onFailure: { (error) in
+//                    print(error)
+//                }
+//
+//            }
         }
     }
     let dateFormatter = DateFormatter()
@@ -30,6 +43,7 @@ class VGHistoryTableViewController: UITableViewController {
     var toolbarButtonShare: UIBarButtonItem!
     var toolbarButtonDelete: UIBarButtonItem!
     var toolbarButtonSelectVehicle: UIBarButtonItem!
+    var toolbarButtonStartEditor: UIBarButtonItem!
 
     
     var historySections = [VGHistorySection]() {
@@ -114,9 +128,10 @@ class VGHistoryTableViewController: UITableViewController {
         registerCells()
         configureFormatters()
         configureEmptyListLabel()
-        self.toolbarButtonShare = UIBarButtonItem(title: Strings.share, style: .plain, target: self, action: #selector(exportTracks(_:)))
-        self.toolbarButtonDelete = UIBarButtonItem(title: Strings.delete, style: .plain, target: self, action: #selector(deleteTracks(_:)))
-        self.toolbarButtonSelectVehicle = UIBarButtonItem(title: Strings.selectVehicle, style: .plain, target: self, action: #selector(selectVehicle(_:)))
+        self.toolbarButtonShare = UIBarButtonItem(title: nil, image: Icons.share, primaryAction: nil, menu: shareTracks())
+        self.toolbarButtonDelete = UIBarButtonItem(image: Icons.delete, style: .plain, target: self, action: #selector(deleteTracks(_:)))
+        self.toolbarButtonSelectVehicle = UIBarButtonItem(image: Icons.vehicle, style: .plain, target: self, action: #selector(selectVehicle(_:)))
+        self.toolbarButtonStartEditor = UIBarButtonItem(image: Icons.editor, style: .plain, target: self, action: #selector(startEditor(_:)))
 
         
         configureToolbar()
@@ -144,7 +159,6 @@ class VGHistoryTableViewController: UITableViewController {
         
         tableView.allowsMultipleSelection = true
         tableView.allowsMultipleSelectionDuringEditing = true
-
     }
     
     func createFilterMenu() -> UIMenu {
@@ -169,7 +183,112 @@ class VGHistoryTableViewController: UITableViewController {
         print("DELETING SELECTED TRACKS")
     }
     
-    @objc func exportTracks(_ sender:UIBarButtonItem) {
+    @objc func startEditor(_ sender:UIBarButtonItem) {
+        let selTracks = getSelectedTracks()
+        let editor = VGEditor(parentViewController: self)
+        for (index, track) in selTracks.enumerated() {
+            dataStore.getDataPointsForTrack(with: track.id!) { (points) in
+                selTracks[index].trackPoints = points
+                editor.tracks = selTracks
+            } onFailure: { (error) in
+                print(error)
+            }
+
+        }
+        
+    }
+    
+    func getSelectedTracks() -> [VGTrack]{
+        guard let dataSource = tableView.dataSource as? VGHistoryAllTracksDataSource else {
+            return []
+        }
+        
+        guard let indexPaths = tableView.indexPathsForSelectedRows else {
+            return []
+        }
+        
+        var selectedTracks = [VGTrack]()
+        for indexPath in indexPaths {
+            guard let track = dataSource.getTrackAt(indexPath: indexPath) else {
+                continue
+            }
+            selectedTracks.append(track)
+        }
+        return selectedTracks
+    }
+    
+    func shareTracks() -> UIMenu? {
+        let exportGPX = UIAction(title: "Export to GPX file", image: Icons.share, identifier: nil, discoverabilityTitle: nil, attributes: .init(), state: .off) { (action) in
+            self.exportTracks()
+        }
+        let addToCalendar = UIAction(title: "Add to Calendar", image: Icons.calendar, identifier: nil, discoverabilityTitle: nil, attributes: .init(), state: .off) { (action) in
+            self.exportToCalendar()
+        }
+
+        return UIMenu(title: "Share tracks", image: nil, identifier: nil, options: .displayInline, children: [exportGPX, addToCalendar])
+    }
+    
+    func insertEvent(store: EKEventStore) {
+        DispatchQueue.main.async {
+            guard let dataSource = self.tableView.dataSource as? VGHistoryAllTracksDataSource else {
+                return
+            }
+            guard let indexPaths = self.tableView.indexPathsForSelectedRows else {
+                return
+            }
+            for indexPath in indexPaths {
+                
+                guard let track = dataSource.getTrackAt(indexPath: indexPath) else {
+                    continue
+                }
+                let event:EKEvent = EKEvent(eventStore: store)
+                let startDate = track.timeStart
+                let endDate = startDate!.addingTimeInterval(track.duration)
+                event.title = "Track"
+                event.startDate = startDate
+                event.endDate = endDate
+                event.location = track.prettyDescription()
+                event.calendar = store.defaultCalendarForNewEvents
+                
+                do {
+                    try store.save(event, span: .thisEvent)
+                } catch let error as NSError {
+                print("failed to save event with error : \(error)")
+                }
+                print("Saved Event")
+
+            }
+        }
+        
+        
+    }
+    
+    func exportToCalendar() {
+            // 1
+            let eventStore = EKEventStore()
+                
+            // 2
+            switch EKEventStore.authorizationStatus(for: .event) {
+            case .authorized:
+                insertEvent(store: eventStore)
+                case .denied:
+                    print("Access denied")
+                case .notDetermined:
+                // 3
+                    eventStore.requestAccess(to: .event, completion:
+                      {[weak self] (granted: Bool, error: Error?) -> Void in
+                          if granted {
+                            self!.insertEvent(store: eventStore)
+                          } else {
+                                print("Access denied")
+                          }
+                    })
+                    default:
+                        print("Case default")
+            }
+    }
+    
+    @objc func exportTracks(_ sender:UIBarButtonItem? = nil) {
         guard let dataSource = tableView.dataSource as? VGHistoryAllTracksDataSource else {
             return
         }
@@ -211,7 +330,7 @@ class VGHistoryTableViewController: UITableViewController {
     fileprivate func configureToolbar() {
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         self.toolbarButtonDelete.tintColor = .red
-        setToolbarItems([toolbarButtonShare, space, toolbarButtonSelectVehicle, space, toolbarButtonDelete], animated: false)
+        setToolbarItems([toolbarButtonShare, space, toolbarButtonSelectVehicle, space, toolbarButtonStartEditor, space, toolbarButtonDelete], animated: false)
         
     }
     
@@ -439,6 +558,8 @@ class VGHistoryTableViewController: UITableViewController {
                 if id == SegmentType.allTracks.rawValue {
                     self.tableView.dataSource = self.allTracksDataSource
                     self.tableView.delegate = self.allTracksDataSource
+                    self.allTracksDataSource.tableView = self.tableView
+
                 } else {
                     self.tableView.dataSource = self
                     self.tableView.delegate = self
@@ -539,5 +660,11 @@ extension VGHistoryTableViewController: UIDocumentPickerDelegate {
         let importController = VGImportFileTableViewController(style: .insetGrouped, fileUrls: urls)
         let navController = UINavigationController(rootViewController: importController)
         present(navController, animated: true)
+    }
+}
+
+extension VGHistoryTableViewController: PulleyDrawerViewControllerDelegate {
+    func partialRevealDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
+        return 50.0
     }
 }

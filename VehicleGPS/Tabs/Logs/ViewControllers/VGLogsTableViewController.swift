@@ -233,26 +233,7 @@ class VGLogsTableViewController: UITableViewController {
         
     }
 
-    // MARK: Notifications
-    @objc func deviceConnected(_ notification:Notification) {
-        guard let session = notification.object as? NMSSHSession else {
-            return
-        }
-        DispatchQueue.main.async {
-            self.headerView.deviceConnected(hostname: session.host)
-            self.headerView.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 51)
-            self.tableView.tableHeaderView = self.headerView
-
-            self.searchForNewLogs(shouldDownloadFiles: false)
-        }
-    }
-    
-    @objc func deviceDisconnected(_ notification:Notification) {
-        DispatchQueue.main.async {
-            self.tableView.tableHeaderView = nil
-        }
-    }
-    
+    // MARK: Notifications    
     @objc func previewImageStarting(_ notification:Notification) {
         guard let newTrack = notification.object as? VGTrack else {
             return
@@ -363,9 +344,6 @@ class VGLogsTableViewController: UITableViewController {
         
         
     }
-
-    
-
         
     // MARK: - Overrides
     override func viewDidLoad() {
@@ -413,6 +391,8 @@ class VGLogsTableViewController: UITableViewController {
         self.headerView.lblConnectedToGPS.isHidden = false
         self.headerView.imgIcon.isHidden = false
         self.headerView.downloadView.isHidden = false
+        self.tableView.tableHeaderView = self.headerView
+        self.searchForNewLogs(shouldDownloadFiles: false)
         
         // Add tap gesture recognizers to the views
         let headerTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.headerViewTapped(_:)))
@@ -434,8 +414,6 @@ class VGLogsTableViewController: UITableViewController {
         addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
         addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
         addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
-        addObserver(selector: #selector(deviceConnected(_:)), name: .deviceConnected)
-        addObserver(selector: #selector(deviceDisconnected(_:)), name: .deviceDisconnected)
     }
     
     func addObserver(selector:Selector, name:Notification.Name) {

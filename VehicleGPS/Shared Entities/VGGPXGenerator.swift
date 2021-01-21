@@ -27,7 +27,7 @@ class VGGPXGenerator {
     }
     
     func getTrackBegin() -> String {
-        return "<trk><trkseg>"
+        return "<trk><trkseg>\n"
     }
     
     func getTrackEnd() -> String {
@@ -63,7 +63,7 @@ class VGGPXGenerator {
         if let pdop = point.pdop {
             trackPointString += "<pdop>\(pdop)</pdop>"
         }
-        trackPointString += "</trkpt>"
+        trackPointString += "</trkpt>\n"
         return trackPointString
     }
     

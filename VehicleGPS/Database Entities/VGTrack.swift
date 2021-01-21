@@ -392,6 +392,13 @@ class VGTrack {
         self.mapPoints = VGTrack.getFilteredPointList(list: self.trackPoints)
         self.processed = true
     }
+    
+    func prettyDescription() -> String {
+        var stringResult = ""
+        stringResult += "Distance: \(VGDistanceFormatter().string(for: self.distance*1000)!)\n"
+        stringResult += "Duration: \(self.duration.asDurationString())\n"
+        return stringResult
+    }
 }
 
 extension VGTrack: Equatable {

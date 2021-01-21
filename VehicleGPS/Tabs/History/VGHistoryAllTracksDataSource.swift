@@ -16,6 +16,8 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         }
     }
     
+    var tableView: UITableView!
+    
     let vgFileManager = VGFileManager()
     let dataStore = VGDataStore()
     let vgGPXGenerator = VGGPXGenerator()
@@ -135,14 +137,16 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
-        let track = getTrackAt(indexPath: indexPath)
+        guard let track = getTrackAt(indexPath: indexPath) else {
+            return nil
+        }
         
         let delete = UIAction(title: Strings.delete, image: Icons.delete, identifier: .none, discoverabilityTitle: nil, attributes: .destructive, state: .off) {_ in
             self.deleteTrack(at: indexPath, in:tableView)
         }
         
         let exportOriginal = UIAction(title: Strings.shareCSV, image: Icons.share, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
-            let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: track!)!], applicationActivities: nil)
+            let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: track)!], applicationActivities: nil)
             
             self.parentViewController.present(activityVC, animated: true, completion: nil)
         }
@@ -150,9 +154,9 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         let exportGPX = UIAction(title: Strings.shareGPX, image: Icons.share, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             
             DispatchQueue.global(qos: .userInitiated).async {
-                self.dataStore.getDataPointsForTrack(with: track!.id!, onSuccess: { (dataPoints) in
-                    track!.trackPoints = dataPoints
-                    let fileUrl = self.vgGPXGenerator.generateGPXFor(tracks: [track!])!
+                self.dataStore.getDataPointsForTrack(with: track.id!, onSuccess: { (dataPoints) in
+                    track.trackPoints = dataPoints
+                    let fileUrl = self.vgGPXGenerator.generateGPXFor(tracks: [track])!
                     let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
                     DispatchQueue.main.async {
                         self.parentViewController.present(activityVC, animated: true, completion: nil)
@@ -167,16 +171,25 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         let selectVehicle = UIAction(title: Strings.selectVehicle, image: Icons.vehicle, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             let cell = tableView.cellForRow(at: indexPath) as! VGLogsTableViewCell
             if !tableView.isEditing {
-                self.didTapVehicle(track: track!, tappedView: cell.btnVehicle)
+                self.didTapVehicle(track: track, tappedView: cell.btnVehicle)
             }
         }
         
         let exportMenu = UIMenu(title: Strings.share, image: Icons.share, identifier: .none, options: .init(), children: [exportGPX, exportOriginal])
         
-        return UIContextMenuConfiguration(identifier: nil,
-                                          previewProvider: nil) { _ in
-            UIMenu(title: "", children: [selectVehicle, exportMenu, delete])
+        if vgFileManager.fileForTrackExists(track: track) {
+            return UIContextMenuConfiguration(identifier: nil,
+                                              previewProvider: nil) { _ in
+                UIMenu(title: "", children: [selectVehicle, exportMenu, delete])
+            }
+        } else {
+            return UIContextMenuConfiguration(identifier: nil,
+                                              previewProvider: nil) { _ in
+                UIMenu(title: "", children: [selectVehicle, exportGPX, delete])
+            }
         }
+        
+
     }
     
     func deleteTrack(at indexPath:IndexPath, in tableView:UITableView) {
@@ -331,8 +344,8 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
                 }
             }
             (self.sections, self.tracksDictionary) = LogDateSplitter.splitLogsByDate(trackList: self.combineLists(localList: list, remoteList: newTracks))
-
             self.parentViewController.tableView.reloadData()
+
         }
         
         

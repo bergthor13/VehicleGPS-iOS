@@ -46,6 +46,8 @@
 	<string>Forritið þarf heimild til að vista mynd í tækið þitt</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Forritið þarf aðgang að myndunum þínum til að þú getir valið mynd af farartæki</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Forritið þarf aðgang að dagatölunum þínum til að bæta færslu í dagatalið</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

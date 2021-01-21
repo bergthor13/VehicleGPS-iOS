@@ -43,7 +43,7 @@ class VGHistoryHeader: UIView {
         for segment in segments {
             sortingSegment.insertSegment(withTitle: segment.title, at: segment.type.rawValue, animated: false)
         }
-        sortingSegment.selectedSegmentIndex = SegmentType.month.rawValue
+        sortingSegment.selectedSegmentIndex = SegmentType.allTracks.rawValue
         
     }
     

@@ -99,10 +99,7 @@ class VGFileManager {
     }
     
     func getTemporaryFolder() -> URL? {
-        if let dir = fileManager.urls(for: .itemReplacementDirectory, in: .userDomainMask).first {
-            return dir
-        }
-        return nil
+        return FileManager.default.temporaryDirectory
     }
     
     func getAppSupportFolder() -> URL? {
@@ -219,6 +216,9 @@ class VGFileManager {
 
     
     func fileForTrackExists(track: VGTrack) -> Bool {
+        if track.fileName == "" {
+            return false
+        }
         let logFolder = getLogsFolder()
         let filePath = logFolder!.appendingPathComponent(track.fileName).path
         return fileManager.fileExists(atPath: filePath)

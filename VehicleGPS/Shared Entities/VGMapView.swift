@@ -80,7 +80,17 @@ class VGMapView: MKMapView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
+        delegate = self
+        activity = UIActivityIndicatorView()
+        activity.translatesAutoresizingMaskIntoConstraints = false
+        activity.style = .large
+        activity.hidesWhenStopped = true
+        activity.stopAnimating()
+        self.addSubview(activity)
+        let activityLayoutCenterX = NSLayoutConstraint(item: activity!, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0)
+        let activityLayoutCenterY = NSLayoutConstraint(item: activity!, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0)
+        self.addConstraints([activityLayoutCenterX, activityLayoutCenterY])
     }
     
     func getRegion(for tracks: [VGTrack]) -> MKCoordinateRegion? {

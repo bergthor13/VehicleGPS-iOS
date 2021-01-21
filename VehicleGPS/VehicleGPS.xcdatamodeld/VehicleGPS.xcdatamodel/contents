@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17175" systemVersion="19G2021" minimumToolsVersion="Xcode 9.0" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17511" systemVersion="20B29" minimumToolsVersion="Xcode 9.0" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="DataPoint" representedClassName="DataPoint" syncable="YES" codeGenerationType="class">
         <attribute name="ambientTemperature" optional="YES" attributeType="Double" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="cadence" optional="YES" attributeType="Integer 16" usesScalarValueType="YES" syncable="YES"/>
@@ -73,8 +73,8 @@
         <element name="DataPoint" positionX="196.8671875" positionY="-25.84765625" width="128" height="358"/>
         <element name="DownloadedFile" positionX="144" positionY="126" width="128" height="73"/>
         <element name="MapPoint" positionX="144" positionY="126" width="128" height="103"/>
-        <element name="Track" positionX="-63" positionY="-18" width="128" height="328"/>
-        <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="148"/>
-        <element name="VehicleType" positionX="144" positionY="126" width="128" height="103"/>
+        <element name="Track" positionX="-63" positionY="-18" width="128" height="314"/>
+        <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="134"/>
+        <element name="VehicleType" positionX="144" positionY="108" width="128" height="89"/>
     </elements>
 </model>

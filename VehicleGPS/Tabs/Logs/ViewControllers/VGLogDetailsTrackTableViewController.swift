@@ -122,6 +122,9 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
             guard let _ = track else {
                 return cell!
             }
+            if trackConfigs.count == 0 {
+                return cell!
+            }
             
             cell!.graphView.configuration = trackConfigs[indexPath.section-1]
             if let selectedPoint = dlpPoint {
