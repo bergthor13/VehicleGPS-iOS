@@ -37,6 +37,7 @@ class VGLogDetailsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = false
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
@@ -63,7 +64,6 @@ class VGLogDetailsViewController: UIViewController {
             return
         }
         getTrackPoints(for:track)
-        
     }
     
     func getTrackPoints(for track:VGTrack) {

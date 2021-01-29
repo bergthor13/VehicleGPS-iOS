@@ -113,10 +113,9 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
             }
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
-            let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
-            logDetailsView.dataStore = self.dataStore
-            logDetailsView.track = track
-            parentViewController.navigationController?.pushViewController(logDetailsView, animated: true)
+            let pulleyEditor = PulleyEditorViewController()
+            pulleyEditor.track = track
+            parentViewController.navigationController?.pushViewController(pulleyEditor, animated: true)
         }
         
     }

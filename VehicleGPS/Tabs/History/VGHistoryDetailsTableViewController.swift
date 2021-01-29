@@ -235,10 +235,9 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             navigationController?.pushViewController(vc, animated: true)
         } else {
             let track = getTrackAt(indexPath: indexPath)
-            let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
-            logDetailsView.dataStore = self.dataStore
-            logDetailsView.track = track
-            self.navigationController?.pushViewController(logDetailsView, animated: true)
+            let pulleyEditor = PulleyEditorViewController()
+            pulleyEditor.track = track
+            navigationController?.pushViewController(pulleyEditor, animated: true)
         }
     }
     

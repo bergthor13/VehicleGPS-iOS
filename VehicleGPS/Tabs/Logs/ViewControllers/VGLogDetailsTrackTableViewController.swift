@@ -140,12 +140,18 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
         }
         return cell!
     }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
             return 30
         }
         return 200
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section != 0 {
+            return 200
+        }
+        return UITableView.automaticDimension
     }
     
     deinit {
@@ -160,10 +166,6 @@ extension VGLogDetailsTrackTableViewController: DisplayLineProtocol {
                 graph1.graphView.displayVerticalLine(at: point)
                 dlpPoint = point
                 dlpTime = graph1.graphView.getTimeOfTouched(point: point)
-                if let time = dlpTime {
-                    print(time)
-                }
-                
             }
         }
     }

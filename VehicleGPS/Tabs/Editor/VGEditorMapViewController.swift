@@ -10,8 +10,9 @@ import UIKit
 import MapKit
 
 class VGEditorMapViewController: UIViewController {
-        
-    @IBOutlet weak var editorMapView: VGMapView!
+    var dlpPoint: CGPoint?
+    var dlpTime: Date?
+    var editorMapView: VGMapView!
     
     var tracks = [VGTrack]() {
         didSet {
@@ -20,28 +21,17 @@ class VGEditorMapViewController: UIViewController {
         }
     }
 
-//    init(tracks:[VGTrack]) {
-//        super.init(nibName: "VGEditorView", bundle: nil)
-//        initialize()
-//        self.tracks = tracks
-//        editorMapView.tracks = tracks
-//    }
-    
-    @IBAction func didTapDone(_ sender: Any) {
-        dismiss(animated: true)
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        editorMapView = VGMapView()
+        editorMapView.fill(parentView: self.view, with: .zero)
+        
+
     }
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        //self.initialize()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
-    func initialize() {
-        view.backgroundColor = .systemBackground
-        //editorMapView.layoutMargins = UIEdgeInsets(top: 44, left: 0, bottom: 44, right: 0)
-        //editorMapView.mapType = .hybrid
+}
+
+extension VGEditorMapViewController: DisplayLineProtocol {
+    func didTouchGraph(at point: CGPoint) {
+        print("asdf")
     }
 }

@@ -351,9 +351,6 @@ public class TrackGraphView: UIView {
                 }
             }
             
-            
-
-
         case .ended, .failed, .cancelled:
             break
         default:

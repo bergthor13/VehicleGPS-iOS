@@ -114,7 +114,7 @@ class VGHistoryTableViewController: UITableViewController {
 
     func initializeTableViewController() {
         title = Strings.titles.logs
-        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationController?.navigationBar.prefersLargeTitles = false
         tabBarItem = UITabBarItem(title: Strings.titles.logs,
                                   image: Icons.history,
                                   tag: 0)
@@ -185,11 +185,10 @@ class VGHistoryTableViewController: UITableViewController {
     
     @objc func startEditor(_ sender:UIBarButtonItem) {
         let selTracks = getSelectedTracks()
-        let editor = VGEditor(parentViewController: self)
         for (index, track) in selTracks.enumerated() {
             dataStore.getDataPointsForTrack(with: track.id!) { (points) in
                 selTracks[index].trackPoints = points
-                editor.tracks = selTracks
+                //editor.tracks = selTracks
             } onFailure: { (error) in
                 print(error)
             }
@@ -401,7 +400,7 @@ class VGHistoryTableViewController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     func getYearDictionary(tracks: [VGTrack]) -> [VGHistorySection] {
