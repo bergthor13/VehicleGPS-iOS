@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -23,7 +22,7 @@
                     <rect key="frame" x="362" y="15" width="36" height="36"/>
                     <subviews>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="arrow.right.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="1Yi-xX-Irz">
-                            <rect key="frame" x="6" y="0.5" width="24" height="23"/>
+                            <rect key="frame" x="6" y="0.99999999999999822" width="24" height="22.666666666666664"/>
                             <color key="tintColor" name="appColor"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="24" id="j2J-cL-7W0"/>
@@ -48,12 +47,72 @@
                         <constraint firstAttribute="bottom" secondItem="hnI-0u-Dqe" secondAttribute="bottom" id="rUo-kt-9ub"/>
                     </constraints>
                 </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="K4w-gi-sKP">
+                    <rect key="frame" x="240.99999999999997" y="15" width="50.666666666666657" height="36"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="arrow.triangle.merge" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="fP3-Uq-H5K">
+                            <rect key="frame" x="13.333333333333343" y="2" width="24" height="19.333333333333332"/>
+                            <color key="tintColor" name="appColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="24" id="BCK-HI-TeO"/>
+                                <constraint firstAttribute="width" constant="24" id="sBv-8X-mK2"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Combine" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N2n-dM-abc">
+                            <rect key="frame" x="0.0" y="24" width="50.666666666666664" height="12"/>
+                            <color key="tintColor" name="appColor"/>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                            <color key="textColor" name="appColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="fP3-Uq-H5K" firstAttribute="centerX" secondItem="K4w-gi-sKP" secondAttribute="centerX" id="CiH-Yc-BJg"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" secondItem="K4w-gi-sKP" secondAttribute="height" multiplier="1:1" id="Eer-KC-RnA"/>
+                        <constraint firstAttribute="bottom" secondItem="N2n-dM-abc" secondAttribute="bottom" id="Fa2-Xd-K5G"/>
+                        <constraint firstAttribute="trailing" secondItem="N2n-dM-abc" secondAttribute="trailing" id="Ooa-Kj-BFI"/>
+                        <constraint firstItem="N2n-dM-abc" firstAttribute="top" secondItem="fP3-Uq-H5K" secondAttribute="bottom" id="P8Q-wg-Rc2"/>
+                        <constraint firstItem="N2n-dM-abc" firstAttribute="leading" secondItem="K4w-gi-sKP" secondAttribute="leading" id="iFJ-OO-1Cr"/>
+                        <constraint firstItem="fP3-Uq-H5K" firstAttribute="top" secondItem="K4w-gi-sKP" secondAttribute="top" id="jlu-dS-LzS"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LbJ-2M-bV3">
+                    <rect key="frame" x="137" y="15" width="36" height="36"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mappin" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="nvQ-Yg-P2E">
+                            <rect key="frame" x="6" y="0.33333333333333215" width="24" height="23.333333333333336"/>
+                            <color key="tintColor" name="appColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="24" id="3Kg-dX-Fp7"/>
+                                <constraint firstAttribute="width" constant="24" id="Ega-zh-fil"/>
+                            </constraints>
+                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" weight="regular"/>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Points" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hDQ-wB-sgM">
+                            <rect key="frame" x="0.0" y="24" width="36" height="12"/>
+                            <color key="tintColor" name="appColor"/>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                            <color key="textColor" name="appColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="hDQ-wB-sgM" secondAttribute="trailing" id="3lk-51-8zZ"/>
+                        <constraint firstItem="hDQ-wB-sgM" firstAttribute="leading" secondItem="LbJ-2M-bV3" secondAttribute="leading" id="8M4-Ix-nD4"/>
+                        <constraint firstItem="hDQ-wB-sgM" firstAttribute="top" secondItem="nvQ-Yg-P2E" secondAttribute="bottom" id="9L5-b8-hTv"/>
+                        <constraint firstAttribute="bottom" secondItem="hDQ-wB-sgM" secondAttribute="bottom" id="FKw-Ng-5Hk"/>
+                        <constraint firstItem="nvQ-Yg-P2E" firstAttribute="centerX" secondItem="LbJ-2M-bV3" secondAttribute="centerX" id="j7s-Jk-ifN"/>
+                        <constraint firstItem="nvQ-Yg-P2E" firstAttribute="top" secondItem="LbJ-2M-bV3" secondAttribute="top" id="oO5-HE-rRj"/>
+                    </constraints>
+                </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jCN-nr-h8T">
                     <rect key="frame" x="189" y="15" width="36" height="36"/>
                     <subviews>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="scissors" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Ze7-Z8-lkI">
-                            <rect key="frame" x="6" y="1" width="24" height="22.5"/>
-                            <color key="tintColor" systemColor="quaternaryLabelColor"/>
+                            <rect key="frame" x="6" y="1.3333333333333339" width="24" height="22"/>
+                            <color key="tintColor" name="appColor"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="24" id="gkI-Ww-04H"/>
                                 <constraint firstAttribute="height" constant="24" id="go3-8N-U1D"/>
@@ -61,8 +120,9 @@
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Split" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k6s-Ep-VhR">
                             <rect key="frame" x="0.0" y="24" width="36" height="12"/>
+                            <color key="tintColor" name="appColor"/>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                            <color key="textColor" systemColor="quaternaryLabelColor"/>
+                            <color key="textColor" name="appColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
@@ -81,7 +141,7 @@
                     <rect key="frame" x="16" y="15" width="36" height="36"/>
                     <subviews>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="arrow.left.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="MR5-oq-7oL">
-                            <rect key="frame" x="6" y="0.5" width="24" height="23"/>
+                            <rect key="frame" x="6" y="0.99999999999999822" width="24" height="22.666666666666664"/>
                             <color key="tintColor" name="appColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="24" id="BVC-Te-Gr7"/>
@@ -118,22 +178,29 @@
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
+                <constraint firstItem="LbJ-2M-bV3" firstAttribute="width" relation="greaterThanOrEqual" secondItem="LbJ-2M-bV3" secondAttribute="height" multiplier="1:1" id="4dW-Sd-t3u"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="bY3-3s-xqE" secondAttribute="bottom" constant="5" id="BoX-9S-IHf"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="PuM-X1-cLb" secondAttribute="bottom" constant="5" id="HDE-rM-zPn"/>
                 <constraint firstItem="bY3-3s-xqE" firstAttribute="top" secondItem="eCI-JP-OJx" secondAttribute="bottom" constant="5" id="HmN-gM-k2j"/>
                 <constraint firstItem="PuM-X1-cLb" firstAttribute="top" secondItem="eCI-JP-OJx" secondAttribute="bottom" constant="5" id="JBc-Jc-5a4"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="bY3-3s-xqE" secondAttribute="trailing" constant="16" id="LYx-50-fK8"/>
                 <constraint firstItem="PuM-X1-cLb" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="Ly1-8d-Tgn"/>
+                <constraint firstItem="jCN-nr-h8T" firstAttribute="leading" secondItem="LbJ-2M-bV3" secondAttribute="trailing" constant="16" id="Qqi-dR-oZX"/>
+                <constraint firstAttribute="bottom" secondItem="LbJ-2M-bV3" secondAttribute="bottom" constant="5" id="RCz-2r-jY4"/>
+                <constraint firstItem="K4w-gi-sKP" firstAttribute="top" secondItem="eCI-JP-OJx" secondAttribute="bottom" constant="5" id="SED-BW-S6A"/>
                 <constraint firstItem="jCN-nr-h8T" firstAttribute="top" secondItem="eCI-JP-OJx" secondAttribute="bottom" constant="5" id="Xtw-yt-pMX"/>
                 <constraint firstItem="dGi-Nq-Pvz" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Y3B-sc-01R"/>
                 <constraint firstItem="dGi-Nq-Pvz" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="alp-7a-W0J"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="jCN-nr-h8T" secondAttribute="bottom" constant="5" id="aoz-Pr-VuF"/>
+                <constraint firstItem="LbJ-2M-bV3" firstAttribute="top" secondItem="eCI-JP-OJx" secondAttribute="bottom" constant="5" id="cDM-BH-ocs"/>
                 <constraint firstItem="eCI-JP-OJx" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="dgq-GS-ie2"/>
                 <constraint firstItem="PuM-X1-cLb" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="gvV-AU-Csf"/>
                 <constraint firstItem="jCN-nr-h8T" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="kYi-tO-T04"/>
                 <constraint firstAttribute="bottom" secondItem="dGi-Nq-Pvz" secondAttribute="bottom" id="orR-uY-3h7"/>
+                <constraint firstItem="K4w-gi-sKP" firstAttribute="leading" secondItem="jCN-nr-h8T" secondAttribute="trailing" constant="16" id="ref-fK-Yva"/>
                 <constraint firstItem="bY3-3s-xqE" firstAttribute="width" relation="greaterThanOrEqual" secondItem="bY3-3s-xqE" secondAttribute="height" multiplier="1:1" id="sAH-Ba-Gdl"/>
                 <constraint firstAttribute="trailing" secondItem="dGi-Nq-Pvz" secondAttribute="trailing" id="sFg-Em-3YZ"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="K4w-gi-sKP" secondAttribute="bottom" constant="5" id="u3n-fk-ndN"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="PuM-X1-cLb" secondAttribute="bottom" constant="5" id="wAI-LU-mdx"/>
                 <constraint firstAttribute="bottom" secondItem="dGi-Nq-Pvz" secondAttribute="bottom" id="x3d-72-y5U"/>
                 <constraint firstItem="eCI-JP-OJx" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="5" id="y5J-tm-FlU"/>
@@ -152,12 +219,11 @@
     <resources>
         <image name="arrow.left.circle" catalog="system" width="128" height="121"/>
         <image name="arrow.right.circle" catalog="system" width="128" height="121"/>
+        <image name="arrow.triangle.merge" catalog="system" width="115" height="128"/>
+        <image name="mappin" catalog="system" width="105" height="128"/>
         <image name="scissors" catalog="system" width="128" height="92"/>
         <namedColor name="appColor">
             <color red="0.10199999809265137" green="0.74500000476837158" blue="0.11299999803304672" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <systemColor name="quaternaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.17999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
     </resources>
 </document>

@@ -89,9 +89,6 @@ class PulleyEditorViewController: PulleyViewController {
             self.present(navCont, animated: true, completion: nil)
         }))
         
-        actions.append(UIAction(title: Strings.splitLog, image:Icons.split, handler: { (action) in
-        }))
-        
         actions.append(UIAction(title: Strings.delete, image:Icons.delete, attributes: .destructive, handler: { (action) in
             self.dataStore.delete(trackWith: track.id!) {
                 self.navigationController?.popViewController(animated: true)
@@ -150,31 +147,29 @@ class PulleyEditorViewController: PulleyViewController {
             return
         }
 
-
         leftTrack.process()
-        self.dataStore.update(vgTrack: leftTrack, onSuccess: { (id) in
-            print("UPDATED SUCCESSFULLY: \(id)")
-            self.dataStore.getDataPointsForTrack(with: track.id!) { (points) in
-                leftTrack.trackPoints = points
-                trackViewController.tvcontroller.dlpTime = nil
-                trackViewController.tvcontroller.dlpPoint = nil
-                mapViewController.tracks = [leftTrack]
-                trackViewController.tracks = [leftTrack]
-                
-            } onFailure: { (error) in
-                print(error)
-            }
-
-            mapViewController.tracks = [oldTrack!]
-            trackViewController.tracks = [oldTrack!]
-        }) { (error) in
-            print("ERROR UPDATING")
-            print(error)
-        }
-
         rightTrack.process()
         self.dataStore.add(vgTrack: rightTrack, onSuccess: { (id) in
             print("ADDED SUCCESSFULLY \(id)")
+            self.dataStore.update(vgTrack: leftTrack, onSuccess: { (id) in
+                print("UPDATED SUCCESSFULLY: \(id)")
+                self.dataStore.getDataPointsForTrack(with: track.id!) { (points) in
+                    leftTrack.trackPoints = points
+                    trackViewController.tvcontroller.dlpTime = nil
+                    trackViewController.tvcontroller.dlpPoint = nil
+                    mapViewController.tracks = [leftTrack]
+                    trackViewController.tracks = [leftTrack]
+                    
+                } onFailure: { (error) in
+                    print(error)
+                }
+
+                mapViewController.tracks = [oldTrack!]
+                trackViewController.tracks = [oldTrack!]
+            }) { (error) in
+                print("ERROR UPDATING")
+                print(error)
+            }
         }) { (error) in
             print("ERROR ADDING")
             print(error)
@@ -187,10 +182,27 @@ class PulleyEditorViewController: PulleyViewController {
 
 extension PulleyEditorViewController: VGEditorToolbarDelegate  {
     func didTap(button: ButtonType) {
+        guard let track = track else {
+            return
+        }
         switch button {
         case .next:
+            if selectedDataPointIndex == track.trackPoints.count-1 {
+                selectedDataPointIndex = 0
+            } else {
+                selectedDataPointIndex += 1
+            }
+            print(track.trackPoints[selectedDataPointIndex])
             break
         case .previous:
+            if selectedDataPointIndex == -1 {
+                selectedDataPointIndex = track.trackPoints.count-1
+            } else if selectedDataPointIndex == 0 {
+                selectedDataPointIndex = track.trackPoints.count-1
+            } else {
+                selectedDataPointIndex -= 1
+            }
+            print(track.trackPoints[selectedDataPointIndex])
             break
         case .split:
             split()
@@ -198,5 +210,7 @@ extension PulleyEditorViewController: VGEditorToolbarDelegate  {
         default:
             break
         }
+        //mapViewController.editorMapView
+        
     }
 }

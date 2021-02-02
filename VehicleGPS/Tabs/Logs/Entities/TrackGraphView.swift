@@ -161,11 +161,17 @@ public class TrackGraphView: UIView {
         self.graphFrame.addSubview(bottomLine)
 
         for value in list {
-            if getColumnYPoint(graphPoint: CGFloat(value)) < 0 {
+            let yPoint = getColumnYPoint(graphPoint: CGFloat(value))
+            
+            if yPoint < 0 {
                 continue
             }
             
-            let line = UIView(frame: CGRect(origin: CGPoint(x: 0, y: getColumnYPoint(graphPoint: CGFloat(value))), size: CGSize(width: self.graphFrame.frame.width, height: 0.5)))
+            if yPoint.isNaN {
+                continue
+            }
+            
+            let line = UIView(frame: CGRect(origin: CGPoint(x: 0, y: yPoint), size: CGSize(width: self.graphFrame.frame.width, height: 0.5)))
             line.tag = 300
             if traitCollection.userInterfaceStyle == .light {
                 line.backgroundColor = .lightGray
@@ -409,6 +415,7 @@ public class TrackGraphView: UIView {
         let graphWidth = self.graphFrame.frame.width
 
         let columnYPoint = { (graphPoint: Double) -> CGFloat in
+            
             if self.maxValue == self.minValue {
                 if CGFloat(graphPoint) > self.maxValue {
                     return self.graphFrame.frame.height
@@ -422,6 +429,11 @@ public class TrackGraphView: UIView {
             
             var y: CGFloat = (CGFloat(graphPoint) - self.minValue) * CGFloat(graphHeight) / CGFloat(self.maxValue - self.minValue)
             y = graphHeight - y
+            
+            if y.isNaN  || y.isInfinite {
+                return 0
+            }
+            
             return y
         }
         

@@ -25,8 +25,10 @@ class VGEditorMapViewController: UIViewController {
         super.viewDidLoad()
         editorMapView = VGMapView()
         editorMapView.fill(parentView: self.view, with: .zero)
+    }
+    
+    func drawCircleAt(location:CLLocationCoordinate2D) {
         
-
     }
 }
 

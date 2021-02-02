@@ -17,11 +17,9 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
     var track: VGTrack? {
         didSet {
             guard let track = track else {
-                summary.append((Strings.noTrack,""))
                 return
             }
             semaphore.wait()
-            self.summarize(track: track)
             graphGenerators = track.graphTypes
             trackConfigs.removeAll()
             for generator in graphGenerators {
@@ -41,7 +39,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
     
     let dateFormatter = VGFullDateFormatter()
     var trackConfigs = [TrackGraphViewConfig]()
-    var summary = [(String, String)]()
     var graphGenerators = [VGGraphGenerator?]()
     
     override func viewDidLoad() {
@@ -50,28 +47,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
         self.tableView.allowsSelection = false
 
         
-    }
-    
-    func summarize(track:VGTrack) {
-        summary.removeAll()
-        guard let timeStart = track.timeStart else {
-            summary.append((Strings.noStartTime,""))
-            return
-        }
-
-        summary.append((Strings.startTime, dateFormatter.string(from: timeStart)))
-        summary.append((Strings.endtime, dateFormatter.string(from: timeStart.addingTimeInterval(track.duration))))
-        summary.append((Strings.distance, (track.distance*1000).asDistanceString()))
-        let dcFormatter = DateComponentsFormatter()
-        dcFormatter.allowedUnits = [.hour, .minute, .second]
-        dcFormatter.unitsStyle = .short
-
-        summary.append((Strings.duration, dcFormatter.string(from: track.duration) ?? ""))
-
-        summary.append((Strings.datapoints, String(track.trackPoints.count)))
-        let speed = Measurement(value: track.averageSpeed, unit: UnitSpeed.kilometersPerHour)
-        let formatter = VGSpeedFormatter()
-        summary.append((Strings.averageSpeed, formatter.string(from: speed)))
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -87,75 +62,48 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
 
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return trackConfigs.count+1
+        return trackConfigs.count
     }
     
-    let sections = [Strings.summary, Strings.speed, Strings.elevation, Strings.pdop, Strings.hAcc, Strings.rpm, Strings.engineLoad, Strings.throttlePos, Strings.coolTemp, Strings.ambTemp]
+    let sections = [Strings.speed, Strings.elevation, Strings.pdop, Strings.hAcc, Strings.rpm, Strings.engineLoad, Strings.throttlePos, Strings.coolTemp, Strings.ambTemp]
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
-            return summary.count
-        }
         return 1
     }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 {
-            return Strings.summary
-        }
         if trackConfigs.count <= 0 {
             return ""
         }
-        return trackConfigs[section-1].name
+        return trackConfigs[section].name
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: VGGraphTableViewCell?
         
-        if indexPath.section > 0 {
-            cell = tableView.dequeueReusableCell(withIdentifier: VGGraphTableViewCell.identifier, for: indexPath) as? VGGraphTableViewCell
+        cell = tableView.dequeueReusableCell(withIdentifier: VGGraphTableViewCell.identifier, for: indexPath) as? VGGraphTableViewCell
 
-            if cell == nil {
-                cell = VGGraphTableViewCell(style: .default, reuseIdentifier: VGGraphTableViewCell.identifier, tableView: self.tableView)
-            }
-            
-            cell!.graphView.addDLP(listener: self)
-            guard let _ = track else {
-                return cell!
-            }
-            if trackConfigs.count == 0 {
-                return cell!
-            }
-            
-            cell!.graphView.configuration = trackConfigs[indexPath.section-1]
-            if let selectedPoint = dlpPoint {
-                cell?.graphView.displayVerticalLine(at: selectedPoint)
-            }
-        } else {
-            let cell1 = UITableViewCell(style: .value2, reuseIdentifier: Strings.dummyIdentifier)
-            cell1.tintColor = UIApplication.shared.delegate?.window!!.tintColor
-            cell1.textLabel?.text = summary[indexPath.row].0
-            cell1.detailTextLabel?.text = summary[indexPath.row].1
-            return cell1
-
+        if cell == nil {
+            cell = VGGraphTableViewCell(style: .default, reuseIdentifier: VGGraphTableViewCell.identifier, tableView: self.tableView)
         }
+        
+        cell!.graphView.addDLP(listener: self)
+        guard let _ = track else {
+            return cell!
+        }
+        if trackConfigs.count == 0 {
+            return cell!
+        }
+        
+        cell!.graphView.configuration = trackConfigs[indexPath.section]
+        if let selectedPoint = dlpPoint {
+            cell?.graphView.displayVerticalLine(at: selectedPoint)
+        }
+
         return cell!
-    }
-    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return 30
-        }
-        return 200
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section != 0 {
-            return 200
-        }
-        return UITableView.automaticDimension
-    }
-    
-    deinit {
-
+        return 125
     }
 }
 

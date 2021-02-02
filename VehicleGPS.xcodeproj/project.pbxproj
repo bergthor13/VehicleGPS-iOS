@@ -117,6 +117,7 @@
 		F2B50C2C24151C9D002ECCC6 /* VGShortCSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B50C2B24151C9D002ECCC6 /* VGShortCSVParser.swift */; };
 		F2C73ABE24266148008069AE /* VGImportFileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C73ABD24266148008069AE /* VGImportFileTableViewController.swift */; };
 		F2C96EB222A853A500180055 /* VGFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C96EB122A853A500180055 /* VGFileManager.swift */; };
+		F2D0248525C9C2EA00336574 /* VGToolbarButton.xib in Resources */ = {isa = PBXBuildFile; fileRef = F2D0248425C9C2EA00336574 /* VGToolbarButton.xib */; };
 		F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */; };
 		F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */; };
 		F2D8AB0824E05AA8009E0925 /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D8AB0724E05AA8009E0925 /* Double+Extensions.swift */; };
@@ -261,6 +262,7 @@
 		F2B50C2B24151C9D002ECCC6 /* VGShortCSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGShortCSVParser.swift; sourceTree = "<group>"; };
 		F2C73ABD24266148008069AE /* VGImportFileTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGImportFileTableViewController.swift; sourceTree = "<group>"; };
 		F2C96EB122A853A500180055 /* VGFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFileManager.swift; sourceTree = "<group>"; };
+		F2D0248425C9C2EA00336574 /* VGToolbarButton.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VGToolbarButton.xib; sourceTree = "<group>"; };
 		F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDataStore.swift; sourceTree = "<group>"; };
 		F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGPXGenerator.swift; sourceTree = "<group>"; };
 		F2D8AB0724E05AA8009E0925 /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
@@ -600,6 +602,7 @@
 				F2542E9D25C338E700E0E588 /* VGEditorToolbar.swift */,
 				F2542EA525C4C93000E0E588 /* VGEditorToolbarDelegate.swift */,
 				F2542EA125C338FF00E0E588 /* VGEditorToolbar.xib */,
+				F2D0248425C9C2EA00336574 /* VGToolbarButton.xib */,
 				F2678C4225792E0100BD6E93 /* GraphCollectionViewCell.swift */,
 				F2678C3E2579262C00BD6E93 /* VGTrackCollectionViewController.swift */,
 				F2919B11257E86AA001E7934 /* VGTrackEditorHeaderView.swift */,
@@ -701,6 +704,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2D0248525C9C2EA00336574 /* VGToolbarButton.xib in Resources */,
 				F257078022F0C10B00F201B3 /* VGLogHeaderView.xib in Resources */,
 				F23BE8F722A5E5BB008FD50C /* VGLogsTableViewCell.xib in Resources */,
 				F228B30B243CB5EC00D79D5E /* VGImportTableViewCell.xib in Resources */,

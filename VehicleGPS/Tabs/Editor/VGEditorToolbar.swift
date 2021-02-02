@@ -37,18 +37,15 @@ class VGEditorToolbar: UIView {
     
     @objc func didTapSplitButton(_ sender:UIView?) {
         delegate?.didTap(button: .split)
-        print("SPLITTING")
         
     }
     
     @objc func didTapNextButton(_ sender:UIView?) {
         delegate?.didTap(button: .next)
-        print("Next!")
     }
     
     @objc func didTapPrevButton(_ sender:UIView?) {
         delegate?.didTap(button: .previous)
-        print("Prev!")
     }
     
     required init?(coder: NSCoder) {

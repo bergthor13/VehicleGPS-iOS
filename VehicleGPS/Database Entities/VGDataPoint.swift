@@ -171,6 +171,25 @@ extension VGDataPoint: Comparable {
 
 extension VGDataPoint: CustomStringConvertible {
     var description: String {
-        return "timestamp: \(String(describing: self.timestamp)), ele:\(String(describing: self.elevation))"
+        var result = ""
+        if timestamp != nil          {result += "         timestamp: " + String(describing: self.timestamp!) + "\n"}
+        if latitude != nil           {result += "          latitude: " + String(describing: self.latitude!) + "\n"}
+        if longitude != nil          {result += "         longitude: " + String(describing: self.longitude!) + "\n"}
+        if elevation != nil          {result += "         elevation: " + String(describing: self.elevation!) + "\n"}
+        if satellites != nil         {result += "        satellites: " + String(describing: self.satellites!) + "\n"}
+        if horizontalAccuracy != nil {result += "horizontalAccuracy: " + String(describing: self.horizontalAccuracy!) + "\n"}
+        if verticalAccuracy != nil   {result += "  verticalAccuracy: " + String(describing: self.verticalAccuracy!) + "\n"}
+        if pdop != nil               {result += "              pdop: " + String(describing: self.pdop!) + "\n"}
+        if fixType != nil            {result += "           fixType: " + String(describing: self.fixType!) + "\n"}
+        if gnssFixOk != nil          {result += "         gnssFixOk: " + String(describing: self.gnssFixOk!) + "\n"}
+        if fullyResolved != nil      {result += "     fullyResolved: " + String(describing: self.fullyResolved!) + "\n"}
+        if rpm != nil                {result += "               rpm: " + String(describing: self.rpm!) + "\n"}
+        if engineLoad != nil         {result += "        engineLoad: " + String(describing: self.engineLoad!) + "\n"}
+        if coolantTemperature != nil {result += "coolantTemperature: " + String(describing: self.coolantTemperature!) + "\n"}
+        if ambientTemperature != nil {result += "ambientTemperature: " + String(describing: self.ambientTemperature!) + "\n"}
+        if throttlePosition != nil   {result += "  throttlePosition: " + String(describing: self.throttlePosition!) + "\n"}
+        if cadence != nil            {result += "           cadence: " + String(describing: self.cadence!) + "\n"}
+        if power != nil              {result += "             power: " + String(describing: self.power!) + "\n"}
+        return result
     }
 }
