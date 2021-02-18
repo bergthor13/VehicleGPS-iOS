@@ -103,9 +103,13 @@ class PulleyEditorViewController: PulleyViewController {
     func split(track:VGTrack, at timestamp:Date) -> (VGTrack?, VGTrack?) {
         let newTrack = VGTrack()
         var pointIndex = -1
-        for (index, dataPoint) in track.trackPoints.enumerated() {
-            if dataPoint.timestamp! < timestamp {
+        for (index, (dataPoint1,dataPoint2)) in zip(track.trackPoints, track.trackPoints.dropFirst()).enumerated() {
+            if dataPoint1.timestamp! < timestamp {
                 pointIndex = index
+                
+            }
+            if abs(dataPoint1.timestamp!.timeIntervalSince(timestamp)) > abs(dataPoint2.timestamp!.timeIntervalSince(timestamp)) {
+                pointIndex += 1
             }
         }
         
@@ -113,6 +117,9 @@ class PulleyEditorViewController: PulleyViewController {
             return (nil, nil)
         }
         
+        if pointIndex >= track.trackPoints.count {
+            return (nil, nil)
+        }
         let leftSplit = track.trackPoints[0 ... pointIndex]
         let rightSplit = track.trackPoints[pointIndex ..< track.trackPoints.count]
         
@@ -206,8 +213,6 @@ extension PulleyEditorViewController: VGEditorToolbarDelegate  {
             break
         case .split:
             split()
-            break
-        default:
             break
         }
         //mapViewController.editorMapView

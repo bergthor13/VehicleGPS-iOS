@@ -18,17 +18,6 @@ class VGHistoryTableViewController: UITableViewController {
             DispatchQueue.main.async {
                 self.segmentChanged(id: self.historyHeader.sortingSegment.selectedSegmentIndex)
             }
-//            let selTracks: [VGTrack] = [tracks[3], tracks[6]]
-//            let editor = VGEditor(parentViewController: self)
-//            for (index, track) in selTracks.enumerated() {
-//                dataStore.getDataPointsForTrack(with: track.id!) { (points) in
-//                    selTracks[index].trackPoints = points
-//                    editor.tracks = selTracks
-//                } onFailure: { (error) in
-//                    print(error)
-//                }
-//
-//            }
         }
     }
     let dateFormatter = DateFormatter()
@@ -38,6 +27,8 @@ class VGHistoryTableViewController: UITableViewController {
     var historyHeader: VGHistoryHeader!
     var allTracksDataSource: VGHistoryAllTracksDataSource!
     let vgGPXGenerator = VGGPXGenerator()
+    
+    var importTapRecognizer: UITapGestureRecognizer!
     
     // MARK: Toolbar Buttons
     var toolbarButtonShare: UIBarButtonItem!
@@ -75,12 +66,20 @@ class VGHistoryTableViewController: UITableViewController {
     
     fileprivate func configureEmptyListLabel() {
         if let delegate = UIApplication.shared.delegate as? AppDelegate {
-            emptyLabel = VGListEmptyLabel(text: Strings.noLogs,
+            
+            emptyLabel = VGListEmptyLabel(text: Strings.noLogs + "\n\nÝttu hér til að flytja inn ferla.",
                                           containerView: self.view,
                                           navigationBar: navigationController!.navigationBar,
                                           tabBar: delegate.tabController.tabBar)
+            emptyLabel.numberOfLines = 0
         }
         view.addSubview(emptyLabel)
+        emptyLabel.isEnabled = true
+        importTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(importFilesasdf(_:)))
+        importTapRecognizer.numberOfTapsRequired = 1
+        emptyLabel.isUserInteractionEnabled = true
+        emptyLabel.addGestureRecognizer(importTapRecognizer)
+
     }
     
     
@@ -119,7 +118,6 @@ class VGHistoryTableViewController: UITableViewController {
                                   image: Icons.history,
                                   tag: 0)
         allTracksDataSource = VGHistoryAllTracksDataSource(parentViewController: self)
-        allTracksDataSource.tracks = self.tracks
     }
     
     override func viewDidLoad() {
@@ -156,19 +154,20 @@ class VGHistoryTableViewController: UITableViewController {
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(image:Icons.moreActions, primaryAction: nil, menu: createMenu()), UIBarButtonItem(image:Icons.filter, primaryAction: nil, menu: createFilterMenu())]
         self.navigationItem.leftBarButtonItem = editButtonItem
         addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
+
         
         tableView.allowsMultipleSelection = true
         tableView.allowsMultipleSelectionDuringEditing = true
     }
     
     func createFilterMenu() -> UIMenu {
-        let tagFilter = UIAction(title: "Tags", image: Icons.tag) { (action) in
+        let tagFilter = UIAction(title: Strings.filterByTags, image: Icons.tag) { (action) in
             
         }
-        let dateFilter = UIAction(title: "Date", image: Icons.calendar) { (action) in
+        let dateFilter = UIAction(title: Strings.filterByDate, image: Icons.calendar) { (action) in
             
         }
-        return UIMenu(title: "Filter by...", children: [tagFilter, dateFilter])
+        return UIMenu(title: Strings.filterBy, children: [tagFilter, dateFilter])
 
     }
     
@@ -182,6 +181,11 @@ class VGHistoryTableViewController: UITableViewController {
     @objc func deleteTracks(_ sender:UIBarButtonItem) {
         print("DELETING SELECTED TRACKS")
     }
+    
+    @objc func importFilesasdf(_ sender:Any) {
+        importFiles()
+    }
+    
     
     @objc func startEditor(_ sender:UIBarButtonItem) {
         let selTracks = getSelectedTracks()
@@ -395,6 +399,15 @@ class VGHistoryTableViewController: UITableViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.tableHeaderView?.frame.size = CGSize(width: tableView.frame.width, height: 50)
+        var height: CGFloat = 0.0
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+            height = view.frame.height-(navigationController?.navigationBar.frame.height)!
+            return
+        }
+        height = view.frame.height-(navigationController?.navigationBar.frame.height)!-delegate.tabController.tabBar.frame.height
+        let frame = CGRect(x: 0.0, y: 0.0, width: view.frame.width, height: height)
+        
+        emptyLabel.frame = frame
     }
     
     
@@ -548,7 +561,6 @@ class VGHistoryTableViewController: UITableViewController {
                 case SegmentType.year.rawValue:
                     self.historySections = self.getYearDictionary(tracks: self.tracks)
                 case SegmentType.allTracks.rawValue:
-                    self.allTracksDataSource.tracks = self.tracks
                     break
                 default:
                     break
@@ -558,6 +570,7 @@ class VGHistoryTableViewController: UITableViewController {
                     self.tableView.dataSource = self.allTracksDataSource
                     self.tableView.delegate = self.allTracksDataSource
                     self.allTracksDataSource.tableView = self.tableView
+                    (self.allTracksDataSource.sections, self.allTracksDataSource.tracksDictionary) = LogDateSplitter.splitLogsByDate(trackList: self.tracks)
 
                 } else {
                     self.tableView.dataSource = self
@@ -575,7 +588,12 @@ class VGHistoryTableViewController: UITableViewController {
         return historySections[section].dateDescription
     }
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return historySections.count
+        if self.historySections.count > 0 {
+            self.emptyLabel.isHidden = true
+        } else {
+            self.emptyLabel.isHidden = false
+        }
+        return self.historySections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -652,6 +670,7 @@ class VGHistoryTableViewController: UITableViewController {
 
         }
     }
+    
 }
 
 extension VGHistoryTableViewController: UIDocumentPickerDelegate {

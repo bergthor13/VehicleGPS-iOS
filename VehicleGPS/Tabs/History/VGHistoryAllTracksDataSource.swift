@@ -10,32 +10,31 @@ import UIKit
 
 class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableViewDelegate {
     
-    var tracks = [VGTrack]() {
-        didSet {
-            (self.sections, self.tracksDictionary) = LogDateSplitter.splitLogsByDate(trackList: tracks)
-        }
-    }
-    
     var tableView: UITableView!
     
     let vgFileManager = VGFileManager()
     let dataStore = VGDataStore()
     let vgGPXGenerator = VGGPXGenerator()
 
-    private var tracksDictionary = [String: [VGTrack]]()
-    private var sections = [String]()
+    var tracksDictionary = [String: [VGTrack]]()
+    var sections = [String]()
     
     let headerDateFormatter = VGHeaderDateFormatter()
     let dateParsingFormatter = VGDateParsingFormatter()
-    var parentViewController: UITableViewController!
+    var parentViewController: VGHistoryTableViewController!
     
     init(parentViewController:UITableViewController) {
         super.init()
-        self.parentViewController = parentViewController
+        self.parentViewController = (parentViewController as! VGHistoryTableViewController)
         self.addObservers()
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
+        if sections.count > 0 {
+            parentViewController.emptyLabel.isHidden = true
+        } else {
+            parentViewController.emptyLabel.isHidden = false
+        }
         return sections.count
     }
     
@@ -174,17 +173,22 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
             }
         }
         
+        let selectTags = UIAction(title: Strings.selectTags, image: Icons.tag, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+            let cell = tableView.cellForRow(at: indexPath) as! VGLogsTableViewCell
+            self.didTapTags(track: track, tappedView: cell.btnVehicle)
+        }
+        
         let exportMenu = UIMenu(title: Strings.share, image: Icons.share, identifier: .none, options: .init(), children: [exportGPX, exportOriginal])
         
         if vgFileManager.fileForTrackExists(track: track) {
             return UIContextMenuConfiguration(identifier: nil,
                                               previewProvider: nil) { _ in
-                UIMenu(title: "", children: [selectVehicle, exportMenu, delete])
+                UIMenu(title: "", children: [selectTags, selectVehicle, exportMenu, delete])
             }
         } else {
             return UIContextMenuConfiguration(identifier: nil,
                                               previewProvider: nil) { _ in
-                UIMenu(title: "", children: [selectVehicle, exportGPX, delete])
+                UIMenu(title: "", children: [selectTags, selectVehicle, exportGPX, delete])
             }
         }
         
@@ -208,7 +212,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         self.vgFileManager.deleteFile(for: track)
 
         self.dataStore.delete(trackWith: track.id!, onSuccess: {
-            
+            self.parentViewController.tracks.remove(at: self.parentViewController.tracks.firstIndex(of: track)!)
         }) { (error) in
             //self.display(error: error)
         }
@@ -344,10 +348,9 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
             }
             (self.sections, self.tracksDictionary) = LogDateSplitter.splitLogsByDate(trackList: self.combineLists(localList: list, remoteList: newTracks))
             self.parentViewController.tableView.reloadData()
+            
 
         }
-        
-        
     }
     
     @objc func onLogUpdated(_ notification:Notification) {
@@ -419,6 +422,23 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
 extension VGHistoryAllTracksDataSource: DisplaySelectVehicleProtocol {
     func didTapVehicle(track: VGTrack, tappedView:UIView?) {
         let selectionVC = VGVehiclesSelectionTableViewController(style: .insetGrouped)
+        selectionVC.track = track
+        
+        let navController = UINavigationController(rootViewController: selectionVC)
+        navController.modalPresentationStyle = .popover
+        navController.preferredContentSize = CGSize(width: 414, height: 600)
+        
+        let popover: UIPopoverPresentationController = navController.popoverPresentationController!
+        popover.sourceView = tappedView
+
+        self.parentViewController.present(navController, animated: true, completion: nil)
+    }
+}
+
+
+extension VGHistoryAllTracksDataSource: DisplaySelectTagsProtocol {
+    func didTapTags(track: VGTrack, tappedView:UIView?) {
+        let selectionVC = VGTagsTableViewController(style: .insetGrouped)
         selectionVC.track = track
         
         let navController = UINavigationController(rootViewController: selectionVC)

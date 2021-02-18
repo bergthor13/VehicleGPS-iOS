@@ -816,11 +816,16 @@ class VGLogsTableViewController: UITableViewController {
             self.didTapVehicle(track: track!, tappedView: cell.btnVehicle)
         }
         
+        let selectTags = UIAction(title: Strings.selectTags, image: Icons.tag, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+            let cell = tableView.cellForRow(at: indexPath) as! VGLogsTableViewCell
+            self.didTapVehicle(track: track!, tappedView: cell.btnVehicle)
+        }
+        
         let exportMenu = UIMenu(title: Strings.share, image: Icons.share, identifier: .none, options: .init(), children: [exportGPX, exportOriginal])
         
         return UIContextMenuConfiguration(identifier: nil,
                                           previewProvider: nil) { _ in
-            UIMenu(title: "", children: [selectVehicle, exportMenu, delete])
+            UIMenu(title: "", children: [selectTags, selectVehicle, exportMenu, delete])
         }
     }
     

@@ -21,13 +21,33 @@ class VGVehicle {
         self.id = vehicle.id
         self.name = vehicle.name
         self.mapColor = vehicle.mapColor as? UIColor
+        self.order = Int(vehicle.order)
     }
     
     init() {
         
     }
     
+
+}
+
+
+extension VGVehicle: Equatable {
     static func == (lhs: VGVehicle, rhs: VGVehicle) -> Bool {
         return lhs.id == rhs.id
+    }
+}
+
+extension VGVehicle: Comparable {
+    static func < (lhs: VGVehicle, rhs: VGVehicle) -> Bool {
+        guard let lhsOrder = lhs.order else {
+            return false
+        }
+        
+        guard let rhsOrder = rhs.order else {
+            return false
+        }
+        
+        return lhsOrder < rhsOrder
     }
 }

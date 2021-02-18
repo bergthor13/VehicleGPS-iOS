@@ -310,7 +310,7 @@ public class TrackGraphView: UIView {
         self.addSubview(self.graphSeparatorRight!)
         self.addSubview(self.graphSeparatorLeft!)
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressed))
-        longPressGesture.minimumPressDuration = TimeInterval(0.5)
+        longPressGesture.minimumPressDuration = TimeInterval(0.3)
         self.addGestureRecognizer(longPressGesture)
         
         if let selectedPoint = selectedPoint {

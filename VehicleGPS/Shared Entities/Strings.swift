@@ -35,6 +35,7 @@ struct Strings {
         static let history = NSLocalizedString("Saga", comment: "History Title")
         static let journeys = NSLocalizedString("Ferðalög", comment: "Journeys Title")
         static let vehicles = NSLocalizedString("Farartæki", comment: "Vehicles Title")
+        static let tags = NSLocalizedString("Merki", comment: "Tags Title")
         static let settings = NSLocalizedString("Stillingar", comment: "Settings Title")
         static let database = NSLocalizedString("Gagnagrunnur", comment: "Database Title")
         static let vgpsDevice = NSLocalizedString("VehicleGPS tæki", comment: "")
@@ -66,6 +67,10 @@ struct Strings {
     static let noHistory = NSLocalizedString("Engin saga", comment: "")
     static let noJourneys = NSLocalizedString("Engin ferðalög", comment: "")
     static let noVehicles = NSLocalizedString("Engin farartæki", comment: "")
+    static let noTags = NSLocalizedString("Engin merki", comment: "")
+    
+    static let addTracksHint = NSLocalizedString("Bættu við ferlum með því að ýta á", comment: "")
+    static let topRightHint = NSLocalizedString("efst til hægri", comment: "")
 
 
     static let map = NSLocalizedString("Kort", comment: "")
@@ -115,6 +120,7 @@ struct Strings {
 
     static let logs = NSLocalizedString("ferlar", comment: "")
     static let selectVehicle = NSLocalizedString("Velja farartæki", comment: "")
+    static let selectTags = NSLocalizedString("Velja merki", comment: "")
     static let share = NSLocalizedString("Deila", comment: "")
     static let importFile = NSLocalizedString("Flytja inn", comment: "")
     
@@ -137,6 +143,8 @@ struct Strings {
     static let photoLibrary = NSLocalizedString("Myndasafn", comment: "")
     static let searchForLogs = NSLocalizedString("Leita að nýjum ferlum", comment: "")
     static let exportMapAsImage = NSLocalizedString("Flytja kort út sem mynd", comment: "")
-        
+    static let filterBy = NSLocalizedString("Sía eftir...", comment: "")
+    static let filterByTags = NSLocalizedString("Merkjum", comment: "")
+    static let filterByDate = NSLocalizedString("Dagsetningum", comment: "")
     static let dummyIdentifier = "dummy"
 }

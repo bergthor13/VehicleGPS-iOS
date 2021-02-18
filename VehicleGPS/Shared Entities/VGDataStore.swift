@@ -79,6 +79,20 @@ class VGDataStore {
         }
     }
     
+    fileprivate func getTags(in context:NSManagedObjectContext, forTrackWith id:UUID) -> [Tag] {
+        guard let fetchedTrack = getTrack(in: context, with: id) else {
+            return []
+        }
+        do {
+            let tagFetchRequest = Tag.fetchRequest() as NSFetchRequest<Tag>
+            tagFetchRequest.predicate = NSPredicate(format: "ANY tracks == %@", fetchedTrack)
+            return try context.fetch(tagFetchRequest)
+        } catch let error {
+            print(error)
+            return []
+        }
+    }
+    
     fileprivate func getTrack(in context:NSManagedObjectContext, with id: UUID) -> Track? {
         let trackFetchRequest = Track.fetchRequest() as NSFetchRequest<Track>
         trackFetchRequest.predicate = self.getPredicate(for: id)
@@ -111,6 +125,22 @@ class VGDataStore {
         }
     }
     
+    fileprivate func getTag(in context:NSManagedObjectContext, with id: UUID) -> Tag? {
+        let tagFetchRequest = Tag.fetchRequest() as NSFetchRequest<Tag>
+        tagFetchRequest.predicate = self.getPredicate(for: id)
+        do {
+            guard let fetchedTag = try context.fetch(tagFetchRequest).first else {
+                print("Fetching tag failed")
+                return nil
+            }
+            return fetchedTag
+        } catch let error {
+            print(error)
+            print("Fetching tag failed")
+            return nil
+        }
+    }
+    
     fileprivate func getAllTracks(in context: NSManagedObjectContext, forVehicleWith id:UUID, onSuccess:@escaping([VGTrack])->(), onFailure:@escaping(Error)->()) {
         let predicate = NSPredicate(format: "vehicle.id = %@", argumentArray: [id])
         getTracks(in: context, with: predicate, onSuccess: { (tracks) in
@@ -126,6 +156,7 @@ class VGDataStore {
         fetchRequest.predicate = predicate
             do {
                 for track in try context.fetch(fetchRequest) {
+                    track.tags?.addingObjects(from: getTags(in: context, forTrackWith: track.id!))
                     result.append(VGTrack(track: track))
                 }
             } catch let error {
@@ -559,6 +590,7 @@ class VGDataStore {
         }
     }
     
+    // MARK: - DownloadedFile
     func getDownloadedFiles(onSuccess:@escaping([DownloadedFile])->(), onFailure:@escaping(Error)->()) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
@@ -611,6 +643,159 @@ class VGDataStore {
                     bla.name = file.name
                     bla.size = Int64(file.size!)
                 }
+                try context.save()
+                DispatchQueue.main.async {
+                    onSuccess()
+                }
+                
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Tags
+    func getTags(onSuccess:@escaping([VGTag])->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let fetchRequest = Tag.fetchRequest() as NSFetchRequest<Tag>
+            do {
+                let result = try context.fetch(fetchRequest) as [Tag]
+                var tags = [VGTag]()
+                for tag in result {
+                    tags.append(VGTag(tag: tag))
+                }
+                onSuccess(tags)
+                
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+    
+    func add(tag:VGTag, onSuccess:@escaping(UUID)->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let entityDescription = NSEntityDescription.entity(forEntityName: "Tag", in: context)!
+            let tagEntity = Tag.init(entity: entityDescription, insertInto: context)
+            tagEntity.name = tag.name
+            tagEntity.id = UUID()
+            context.insert(tagEntity)
+            do {
+                let tagID = tagEntity.id!
+                try context.save()
+                DispatchQueue.main.async {
+                    onSuccess(tagID)
+                }
+                
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+    
+    func update(tag:VGTag, onSuccess:@escaping()->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let fetchRequest = Tag.fetchRequest() as NSFetchRequest<Tag>
+            fetchRequest.predicate = NSPredicate(format: "name = %@", tag.name!)
+            
+            do {
+                if let bla = try context.fetch(fetchRequest).first {
+                    bla.name = tag.name
+                }
+                try context.save()
+                DispatchQueue.main.async {
+                    onSuccess()
+                }
+                
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+    
+    func delete(tagWith id:UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            let fetchRequest = Tag.fetchRequest() as NSFetchRequest<Tag>
+            fetchRequest.predicate = self.getPredicate(for: id)
+            do {
+                let test = try context.fetch(fetchRequest)
+                if test.count > 0 {
+                    context.delete(test[0])
+                    try context.save()
+                    DispatchQueue.main.async {
+                        onSuccess()
+                    }
+                }
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+    
+    func add(tagWith tagId:UUID, toTrackWith trackId:UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            // Get the track in question
+            guard let tag = self.getTag(in: context, with: tagId) else {
+                return
+            }
+            
+            guard let track = self.getTrack(in: context, with: trackId) else {
+                return
+            }
+            
+            track.addToTags(tag)
+            do {
+                try context.save()
+                let vgTag = VGTag(tag:tag)
+                let vgTrack = VGTrack(track: track)
+                vgTrack.tags.append(vgTag)
+
+                DispatchQueue.main.async {
+                    onSuccess()
+                }
+                
+            } catch let error {
+                DispatchQueue.main.async {
+                    onFailure(error)
+                }
+            }
+        }
+    }
+    
+    func remove(tagWith tagId:UUID, fromTrackWith trackId:UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = self.storeCoordinator
+        context.perform {
+            // Get the track in question
+            guard let tag = self.getTag(in: context, with: tagId) else {
+                return
+            }
+            
+            guard let track = self.getTrack(in: context, with: trackId) else {
+                return
+            }
+            
+            track.removeFromTags(tag)
+            do {
                 try context.save()
                 DispatchQueue.main.async {
                     onSuccess()

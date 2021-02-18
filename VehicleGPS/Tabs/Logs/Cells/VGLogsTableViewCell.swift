@@ -12,6 +12,10 @@ protocol DisplaySelectVehicleProtocol {
     func didTapVehicle(track:VGTrack, tappedView:UIView?)
 }
 
+protocol DisplaySelectTagsProtocol {
+    func didTapTags(track:VGTrack, tappedView:UIView?)
+}
+
 class VGLogsTableViewCell: UITableViewCell {
 
     @IBOutlet weak var recDotView: UIView!

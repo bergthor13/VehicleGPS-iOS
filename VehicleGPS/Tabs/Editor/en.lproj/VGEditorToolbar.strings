@@ -1,0 +1,15 @@
+
+/* Class = "UILabel"; text = "Combine"; ObjectID = "N2n-dM-abc"; */
+"N2n-dM-abc.text" = "Combine";
+
+/* Class = "UILabel"; text = "Prev."; ObjectID = "Pfr-CG-jLr"; */
+"Pfr-CG-jLr.text" = "Prev.";
+
+/* Class = "UILabel"; text = "Points"; ObjectID = "hDQ-wB-sgM"; */
+"hDQ-wB-sgM.text" = "Points";
+
+/* Class = "UILabel"; text = "Next"; ObjectID = "hnI-0u-Dqe"; */
+"hnI-0u-Dqe.text" = "Next";
+
+/* Class = "UILabel"; text = "Split"; ObjectID = "k6s-Ep-VhR"; */
+"k6s-Ep-VhR.text" = "Split";

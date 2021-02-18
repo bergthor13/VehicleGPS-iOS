@@ -94,6 +94,8 @@ class VGTrack {
         }
     }
     
+    var tags:[VGTag]
+    
     init(track:Track) {
         // Database stored values
         self.duration = track.duration
@@ -117,6 +119,12 @@ class VGTrack {
 
         trackPoints = [VGDataPoint]()
         mapPoints = [VGMapPoint]()
+        tags = [VGTag]()
+        
+        for tag in track.tags! {
+            let myTag = tag as! Tag
+            tags.append(VGTag(tag: myTag))
+        }
 
         // Memory stored values
         self.isRemote = false
@@ -141,6 +149,7 @@ class VGTrack {
 
         trackPoints = [VGDataPoint]()
         mapPoints = [VGMapPoint]()
+        tags = [VGTag]()
     }
     
     func setEntity(track:Track) -> Track {

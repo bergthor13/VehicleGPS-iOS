@@ -26,6 +26,7 @@ class VGMapViewController: UIViewController {
         let layoutBottom = NSLayoutConstraint(item: bigMap, attribute: .bottom, relatedBy: .equal, toItem: self.view, attribute: .bottom, multiplier: 1, constant: 0)
         self.view.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
         bigMap.tracks = tracks
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(image:Icons.moreActions, primaryAction: nil, menu: createMenu())
 
         bigMap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(mapTapped)))

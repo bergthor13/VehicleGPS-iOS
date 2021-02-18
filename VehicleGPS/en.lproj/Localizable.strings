@@ -17,9 +17,12 @@
 "Ár" = "Year";
 
 "Engir ferlar" = "No Tracks";
+"Bættu við ferlum með því að ýta á" = "Add tracks by tapping";
+"efst til hægri" = "in the top right";
 "Engin saga" = "No History";
 "Engin ferðalög" = "No Journeys";
 "Engin farartæki" = "No Vehicles";
+"Engin merki" = "No Tags";
 
 "Almennt" = "General";
 "Tengjast við VehicleGPS" = "Connect to VehicleGPS";
@@ -101,3 +104,8 @@
 "Allir ferlar" = "All Tracks";
 
 "Flytja inn skrár" = "Import files";
+"Sía eftir..." = "Filter by...";
+"Merkjum" = "Tags";
+"Dagsetningum" = "Dates";
+"Velja merki" = "Select Tags";
+"Merki" = "Tags";

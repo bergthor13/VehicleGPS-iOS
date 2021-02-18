@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Wte-o2-7nD" customClass="VGAddTagTableViewCell" customModule="VehicleGPS" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Wte-o2-7nD" id="UaB-5f-dQb">
+                <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Nýtt merki" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mgL-HJ-zg4">
+                        <rect key="frame" x="20" y="0.0" width="374" height="44"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                        <textInputTraits key="textInputTraits"/>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="mgL-HJ-zg4" secondAttribute="bottom" id="5a0-KH-Hxu"/>
+                    <constraint firstItem="mgL-HJ-zg4" firstAttribute="top" secondItem="UaB-5f-dQb" secondAttribute="top" id="Jqt-11-u3c"/>
+                    <constraint firstAttribute="trailing" secondItem="mgL-HJ-zg4" secondAttribute="trailing" constant="20" symbolic="YES" id="Ra4-Hi-KwV"/>
+                    <constraint firstItem="mgL-HJ-zg4" firstAttribute="leading" secondItem="UaB-5f-dQb" secondAttribute="leading" constant="20" symbolic="YES" id="h6l-aF-9aL"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="txtName" destination="mgL-HJ-zg4" id="Whm-mN-5YI"/>
+            </connections>
+            <point key="canvasLocation" x="-449" y="35"/>
+        </tableViewCell>
+    </objects>
+</document>

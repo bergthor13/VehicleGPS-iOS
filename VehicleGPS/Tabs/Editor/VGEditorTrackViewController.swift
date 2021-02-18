@@ -23,16 +23,6 @@ class VGEditorTrackViewController: UIViewController {
         }
     }
     
-    func getHomeBarHeight() -> CGFloat {
-       if #available(iOS 11.0, *) {
-           let window = UIApplication.shared.keyWindow
-           if let bottomPadding = window?.safeAreaInsets.bottom {
-               return bottomPadding
-           }
-       
-       }
-       return 0.0
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -67,6 +57,9 @@ extension VGEditorTrackViewController: PulleyDrawerViewControllerDelegate {
                 tvcontroller.tableView.contentInset = UIEdgeInsets(top: toolbar.frame.height-20, left: 0, bottom: content, right: 0)
                 tvcontroller.tableView.scrollIndicatorInsets = UIEdgeInsets(top: toolbar.frame.height, left: 0, bottom: content+20, right: 0)
                 pulley.mapViewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: distance-bottomSafeArea, right: 0)
+            } else if pulley.currentDisplayMode == .panel {
+                tvcontroller.tableView.contentInset = UIEdgeInsets(top: toolbar.frame.height-20, left: 0, bottom: 0, right: 0)
+                tvcontroller.tableView.scrollIndicatorInsets = UIEdgeInsets(top: toolbar.frame.height, left: 0, bottom: 0, right: 0)
             }
         }
     }

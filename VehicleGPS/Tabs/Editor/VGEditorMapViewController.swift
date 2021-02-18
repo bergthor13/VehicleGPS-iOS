@@ -21,7 +21,7 @@ class VGEditorMapViewController: UIViewController {
         }
     }
 
-    override func viewDidLoad() {
+    override func viewDidLoad(){
         super.viewDidLoad()
         editorMapView = VGMapView()
         editorMapView.fill(parentView: self.view, with: .zero)

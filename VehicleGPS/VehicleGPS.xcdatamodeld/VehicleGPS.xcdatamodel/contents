@@ -33,6 +33,11 @@
         <attribute name="timeStamp" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="track" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Track" inverseName="mapPoints" inverseEntity="Track" syncable="YES"/>
     </entity>
+    <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="tracks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Track" inverseName="tags" inverseEntity="Track" syncable="YES"/>
+    </entity>
     <entity name="Track" representedClassName="Track" syncable="YES" codeGenerationType="class">
         <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="dataPointCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -51,6 +56,7 @@
         <attribute name="timeStart" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="vehicleID" optional="YES" attributeType="UUID" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="mapPoints" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MapPoint" inverseName="track" inverseEntity="MapPoint" syncable="YES"/>
+        <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="tracks" inverseEntity="Tag" syncable="YES"/>
         <relationship name="trackPoints" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DataPoint" inverseName="track" inverseEntity="DataPoint" syncable="YES"/>
         <relationship name="vehicle" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Vehicle" inverseName="tracks" inverseEntity="Vehicle" syncable="YES"/>
     </entity>
@@ -73,7 +79,8 @@
         <element name="DataPoint" positionX="196.8671875" positionY="-25.84765625" width="128" height="358"/>
         <element name="DownloadedFile" positionX="144" positionY="126" width="128" height="73"/>
         <element name="MapPoint" positionX="144" positionY="126" width="128" height="89"/>
-        <element name="Track" positionX="-63" positionY="-18" width="128" height="314"/>
+        <element name="Tag" positionX="153" positionY="144" width="128" height="74"/>
+        <element name="Track" positionX="-63" positionY="-18" width="128" height="329"/>
         <element name="Vehicle" positionX="462.3125" positionY="89.34375" width="128" height="134"/>
         <element name="VehicleType" positionX="144" positionY="108" width="128" height="89"/>
     </elements>

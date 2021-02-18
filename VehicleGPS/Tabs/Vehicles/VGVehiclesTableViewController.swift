@@ -10,7 +10,10 @@ import UIKit
 
 class VGVehiclesTableViewController: UITableViewController {
 
-    var vehicles = [VGVehicle]()
+    var vehicles = [VGVehicle]() {
+        didSet {
+        }
+    }
     let dataStore = VGDataStore()
     
     var fileManager = VGFileManager()
@@ -34,7 +37,7 @@ class VGVehiclesTableViewController: UITableViewController {
                                   image: Icons.vehicle,
                                   tag: 0)
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.add, primaryAction: nil, menu: createMenu())
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.add, style: .plain, target: self, action: #selector(didTapAddVehicle(_:)))
         self.navigationItem.leftBarButtonItem = editButtonItem
 
 
@@ -52,6 +55,7 @@ class VGVehiclesTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         reloadVehicles(shouldReloadTableView: true)
+        
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     fileprivate func registerCells() {
@@ -73,6 +77,7 @@ class VGVehiclesTableViewController: UITableViewController {
                 for vehicle in vehicles {
                     vehicle.image = self.fileManager.getImage(for: vehicle)
                 }
+                self.vehicles.sort()
             },
             onFailure:  { (error) in
                 print(error)
@@ -81,6 +86,15 @@ class VGVehiclesTableViewController: UITableViewController {
         
     }
     
+    @objc func didTapAddVehicle(_:Any) {
+        let newVehicleVC = VGNewVehicleTableViewController(style: .grouped)
+        newVehicleVC.vehiclesController = self
+        let navController = UINavigationController(rootViewController: newVehicleVC)
+        if self.popoverPresentationController != nil {
+            navController.modalPresentationStyle = .currentContext
+        }
+        self.present(navController, animated: true, completion: nil)
+    }
     func addVehicle(_ vehicle:VGVehicle) {
         self.tableView.beginUpdates()
         if self.vehicles.count == 0 {
@@ -129,23 +143,6 @@ class VGVehiclesTableViewController: UITableViewController {
 
         
         actions.append(UIAction(title: Strings.titles.newVehicle, image:Icons.vehicle, handler: { (action) in
-            let newVehicleVC = VGNewVehicleTableViewController(style: .grouped)
-            newVehicleVC.vehiclesController = self
-            let navController = UINavigationController(rootViewController: newVehicleVC)
-            if self.popoverPresentationController != nil {
-                navController.modalPresentationStyle = .currentContext
-            }
-            self.present(navController, animated: true, completion: nil)
-        }))
-        
-        actions.append(UIAction(title: Strings.titles.newVehicleType, image:Icons.vehicle, handler: { (action) in
-            let newVehicleVC = VGNewVehicleTableViewController(style: .grouped)
-            newVehicleVC.vehiclesController = self
-            let navController = UINavigationController(rootViewController: newVehicleVC)
-            if self.popoverPresentationController != nil {
-                navController.modalPresentationStyle = .currentContext
-            }
-            self.present(navController, animated: true, completion: nil)
         }))
         
         return UIMenu(title: "", children: actions)
@@ -213,6 +210,27 @@ class VGVehiclesTableViewController: UITableViewController {
     }
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         return true
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let vehicleToMove = vehicles[sourceIndexPath.row]
+        vehicles.remove(at: sourceIndexPath.row)
+        vehicles.insert(vehicleToMove, at: destinationIndexPath.row)
+        
+        for (index, _) in vehicles.enumerated() {
+            vehicles[index].order = index
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.dataStore.update(vgVehicle: self.vehicles[index]) {
+                    
+                } onFailure: { (error) in
+                    print(error)
+                }
+            }
+
+        }
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -293,6 +311,8 @@ class VGVehiclesTableViewController: UITableViewController {
         detailsVC.tracksSummary?.tracks = tracks
         navigationController?.pushViewController(detailsVC, animated: true)
     }
+    
+    
     
     override func tableView(_ tableView: UITableView,
       contextMenuConfigurationForRowAt indexPath: IndexPath,
