@@ -14,7 +14,6 @@ class VGSplitViewController: UIViewController {
     private var secondaryViewControllers = [
         VGLogsTableViewController(style: .plain),
         VGHistoryTableViewController(style: .grouped),
-        VGJourneyTableViewController(style: .grouped),
         VGVehiclesTableViewController(style: .grouped),
         VGSettingsTableViewController(style: .grouped)
     ]

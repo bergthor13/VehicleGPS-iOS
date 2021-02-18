@@ -67,7 +67,7 @@ class VGHistoryTableViewController: UITableViewController {
     fileprivate func configureEmptyListLabel() {
         if let delegate = UIApplication.shared.delegate as? AppDelegate {
             
-            emptyLabel = VGListEmptyLabel(text: Strings.noLogs + "\n\nÝttu hér til að flytja inn ferla.",
+            emptyLabel = VGListEmptyLabel(text: Strings.noLogs + "\n\n" + Strings.tapHereImport,
                                           containerView: self.view,
                                           navigationBar: navigationController!.navigationBar,
                                           tabBar: delegate.tabController.tabBar)
