@@ -19,8 +19,8 @@ class VGDatabaseTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = Strings.titles.database
-        dataTypes = ["Track", "DataPoint", "MapPoint", "Vehicle", "DownloadedFile"]
-        fileTypes = [Strings.settings.logFiles, Strings.settings.previewImages]
+        dataTypes = ["Track", "DataPoint", "MapPoint", "Vehicle", "Tag"]
+        fileTypes = [Strings.settings.previewImages]
         
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
@@ -52,7 +52,7 @@ class VGDatabaseTableViewController: UITableViewController {
         if section == 0 {
             return dataTypes.count
         } else if section == 1 {
-            return 2
+            return 1
         } else {
             return 0
         }
@@ -73,7 +73,7 @@ class VGDatabaseTableViewController: UITableViewController {
                     cell.detailTextLabel!.text = nf.string(from: NSNumber(value: count))
                 },
                 onFailure: { (error) in
-                    print(error)
+                    self.appDelegate.display(error: error)
                 }
             )
         
@@ -86,8 +86,6 @@ class VGDatabaseTableViewController: UITableViewController {
             cell.textLabel?.text = fileTypes[indexPath.row]
             
             if indexPath.row == 0 {
-                cell.detailTextLabel?.text = String(fileManager.getTrackFileCount())
-            } else if indexPath.row == 1 {
                 cell.detailTextLabel?.text = String(fileManager.getTrackImageCount())
             }
 
@@ -121,7 +119,7 @@ class VGDatabaseTableViewController: UITableViewController {
                     },
                     onFailure:  { (error) in
                         hud.hide(animated: true)
-                        print(error)
+                        self.appDelegate.display(error: error)
                     }
                 )
             }))
@@ -129,8 +127,33 @@ class VGDatabaseTableViewController: UITableViewController {
             alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel, handler: nil))
             present(alert, animated: true, completion: nil)
         }
-        if indexPath.section == 2 {
-            
+        if indexPath.section == 1 {
+            if indexPath.row == 0 {
+                let alert = UIAlertController(
+                    title: "Eyða öllum yfirlitsmyndunum",
+                    message: "Ertu viss um að þú viljir eyða öllum yfirlitsmyndunum?",
+                    preferredStyle: .actionSheet
+                )
+                
+                alert.addAction(UIAlertAction(title: Strings.delete, style: .destructive, handler: { (_) in
+                    
+                    let hud = MBProgressHUD.showAdded(to: self.parent!.view, animated: true)
+                    hud.mode = .indeterminate
+                    hud.label.text = "Deleting..."
+                    self.fileManager.deleteAllPreviewImages {
+                        hud.hide(animated: true)
+                        tableView.reloadData()
+                    } onFailure: { error in
+                        hud.hide(animated: true)
+                        self.appDelegate.display(error: error)
+                    }
+
+
+                
+                }))
+                alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
         }
     }
 }

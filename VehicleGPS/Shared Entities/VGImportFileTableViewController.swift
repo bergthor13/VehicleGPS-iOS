@@ -57,7 +57,7 @@ class VGImportFileTableViewController: UITableViewController {
                         }
 
                     }, onFailure: { (error) in
-                        print(error)
+                        self.appDelegate.display(error: error)
                     })
                 }
                 
@@ -103,7 +103,7 @@ class VGImportFileTableViewController: UITableViewController {
                         track.id = id
                     },
                     onFailure:  { (error) in
-                        print(error)
+                        self.appDelegate.display(error: error)
                     }
                 )
             }

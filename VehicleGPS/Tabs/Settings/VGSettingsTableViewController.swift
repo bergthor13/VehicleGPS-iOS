@@ -34,12 +34,11 @@ class VGSettingsTableViewController: UITableViewController {
                                   image: Icons.settings,
                                   tag: 0)
     }
-    
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -48,7 +47,7 @@ class VGSettingsTableViewController: UITableViewController {
         return ""
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 { return 2 }
+        if section == 0 { return 1 }
         if section == 1 { return 1 }
         return 0
     }
@@ -76,7 +75,6 @@ class VGSettingsTableViewController: UITableViewController {
 
             }
         }
-
         return cell
     }
 
@@ -98,10 +96,7 @@ class VGSettingsTableViewController: UITableViewController {
                 configuration.hidden = true
                 NEHotspotConfigurationManager.shared.apply(configuration) { (error) in
                     if error == nil {
-                        if let delegate = UIApplication.shared.delegate as? AppDelegate {
-                            delegate.deviceCommunicator.reconnectToVehicleGPS()
-                        }
-
+                        self.appDelegate.deviceCommunicator.reconnectToVehicleGPS()
                     }
                 }
                 tableView.deselectRow(at: indexPath, animated: true)
@@ -110,7 +105,7 @@ class VGSettingsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if section == 1 {
+        if section == tableView.numberOfSections-1 {
             let name: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
             let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
             let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String

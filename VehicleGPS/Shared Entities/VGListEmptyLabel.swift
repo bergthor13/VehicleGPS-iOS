@@ -25,14 +25,20 @@ class VGListEmptyLabel: UILabel {
         self.navigationBar = navigationBar
         self.tabBar = tabBar
         self.containerView = containerView
-        
         let height = containerView.frame.height - navigationBar.frame.height - tabBar.frame.height
         let width = containerView.frame.width
         let newFrame = CGRect(x: 0.0, y: 0.0, width: width, height: height)
-        
         super.init(frame: newFrame)
         self.text = text
         self.configure()
+    }
+    
+    func setFrame() {
+        let height = containerView.frame.height - navigationBar.frame.height - tabBar.frame.height
+        let width = containerView.frame.width
+        let newFrame = CGRect(x: 16.0, y: 0.0, width: width-32, height: height)
+        self.frame = newFrame
+
     }
     
     required init?(coder: NSCoder) {
@@ -40,10 +46,7 @@ class VGListEmptyLabel: UILabel {
         self.configure()
     }
     @objc func preferredContentSizeChanged(_ notification: Notification) {
-        let height = containerView.frame.height - navigationBar.frame.height - tabBar.frame.height
-        let width = containerView.frame.width
-        let newFrame = CGRect(x: 0.0, y: 0.0, width: width, height: height)
-        self.frame = newFrame
+        setFrame()
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

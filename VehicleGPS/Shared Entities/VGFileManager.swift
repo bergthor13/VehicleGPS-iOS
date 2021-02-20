@@ -286,12 +286,57 @@ class VGFileManager {
         return nil
     }
     
-    func deletePreviewImage(for track: VGTrack) {
-        
+    func deletePreviewImage(for track: VGTrack, onSuccess:@escaping()->(), onFailure:@escaping(Error)->()) {
+        for style in [UIUserInterfaceStyle.light, UIUserInterfaceStyle.dark] {
+            guard let pathUrl = getPreviewPath(for: track, with: style) else {
+                return
+            }
+            do {
+                try fileManager.removeItem(at:pathUrl)
+            } catch let error {
+                onFailure(error)
+                return
+            }
+        }
+        onSuccess()
+        return
     }
     
-    func deleteAllPreviewImages() {
+    func deleteAllPreviewImages(onSuccess:@escaping()->(), onFailure:@escaping(Error)->()) {
         
+        var darkFileList = [String]()
+        var lightFileList = [String]()
+        let logPathDark = getImageFolder(style: .dark)?.path
+        let logPathLight = getImageFolder(style: .light)?.path
+        do {
+            darkFileList = try fileManager.contentsOfDirectory(atPath: (logPathDark)!)
+        } catch let error {
+            print(error)
+        }
+        
+        do {
+            lightFileList = try fileManager.contentsOfDirectory(atPath: (logPathLight)!)
+        } catch let error {
+            print(error)
+        }
+        
+        for dFile in darkFileList {
+            do {
+                try fileManager.removeItem(at: getImageFolder(style: .dark)!.appendingPathComponent(dFile))
+            } catch let error {
+                print(error)
+            }
+            
+        }
+        
+        for lFile in lightFileList {
+            do {
+                try fileManager.removeItem(at: getImageFolder(style: .light)!.appendingPathComponent(lFile))
+            } catch let error {
+                print(error)
+            }
+        }
+        onSuccess()
     }
     
     // MARK: - Vehicle Images

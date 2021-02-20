@@ -31,7 +31,7 @@ class VGEditVehicleTableViewController: VGNewVehicleTableViewController {
 
             self.dismiss(animated: true)
         }) { (error) in
-            print(error)
+            self.appDelegate.display(error: error)
         }
 
     }

@@ -71,7 +71,7 @@ class VGLogsTableViewController: UITableViewController {
                     track.trackPoints = dataPoints
                     dpGroup.leave()
                 } onFailure: { (error) in
-                    print(error)
+                    self.appDelegate.display(error: error)
                     dpGroup.leave()
                 }
             }
@@ -89,10 +89,6 @@ class VGLogsTableViewController: UITableViewController {
 
     
     @objc func downloadFiles() {
-        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
-        }
-
         self.headerView.displayProgressBar()
         let group1 = DispatchGroup()
         let group2 = DispatchGroup()
@@ -121,7 +117,7 @@ class VGLogsTableViewController: UITableViewController {
             }
             for (index, file) in self.undownloadedFiles.enumerated() {
                 group2.enter()
-                delegate.deviceCommunicator.downloadTrackFile(file: file, progress: { (current, total) in
+                self.appDelegate.deviceCommunicator.downloadTrackFile(file: file, progress: { (current, total) in
                     downloadProgress[index] = Double(current)/Double(total)
                 }, onSuccess: { (fileUrl) in
                     downloadProgress[index] = 1
@@ -179,7 +175,7 @@ class VGLogsTableViewController: UITableViewController {
                                     }
                                 }) { (error) in
                                     parseProgress[index] = 1
-                                    self.display(error: error)
+                                    self.appDelegate.display(error: error)
                                     group2.leave()
                                 }
                             } else {
@@ -197,7 +193,7 @@ class VGLogsTableViewController: UITableViewController {
                                     
                                 }) { (error) in
                                     parseProgress[index] = 1
-                                    self.display(error: error)
+                                    self.appDelegate.display(error: error)
                                     group2.leave()
                                 }
 
@@ -206,7 +202,7 @@ class VGLogsTableViewController: UITableViewController {
                             
                         }, onFailure: {error in
                             parseProgress[index] = 1
-                            self.display(error: error)
+                            self.appDelegate.display(error: error)
                             group2.leave()
                             
                         })
@@ -214,7 +210,7 @@ class VGLogsTableViewController: UITableViewController {
                     }
                 }, onFailure: { error in
                     downloadProgress[index] = 1
-                    self.display(error: error)
+                    self.appDelegate.display(error: error)
                     group2.leave()
                 })
             }
@@ -432,19 +428,16 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     fileprivate func initializeClasses() {
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            self.dataStore = appDelegate.dataStore
-            self.vgFileManager = appDelegate.fileManager
-        }
+        self.dataStore = appDelegate.dataStore
+        self.vgFileManager = appDelegate.fileManager
     }
     
     fileprivate func configureEmptyListLabel() {
-        if let delegate = UIApplication.shared.delegate as? AppDelegate {
-            emptyLabel = VGListEmptyLabel(text: Strings.noLogs,
-                                          containerView: self.tableView,
-                                          navigationBar: navigationController!.navigationBar,
-                                          tabBar: delegate.tabController.tabBar)
-        }
+        emptyLabel = VGListEmptyLabel(text: Strings.noLogs,
+                                      containerView: self.tableView,
+                                      navigationBar: navigationController!.navigationBar,
+                                      tabBar: appDelegate.tabController.tabBar)
+
 
         view.addSubview(emptyLabel)
     }
@@ -472,32 +465,15 @@ class VGLogsTableViewController: UITableViewController {
         navigationController?.setToolbarHidden(true, animated: true)
 
     }
-        
-    func display(error:Error) {
-        display(error: error.localizedDescription)
-    }
-    
-    func display(error:String) {
-        DispatchQueue.main.async {
-            let alert = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: Strings.ok, style: .default))
-            self.present(alert, animated: true)
-        }
-        
-    }
     
     @objc func searchForNewLogsAndDownload() {
         searchForNewLogs(shouldDownloadFiles: true)
     }
     
     func searchForNewLogs(shouldDownloadFiles:Bool) {
-        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
-             return
-        }
-        
         self.headerView.searchingForLogs()
         DispatchQueue.global(qos: .utility).async {
-            delegate.deviceCommunicator.getAvailableFiles(onSuccess: { (filesOnDevice) in
+            self.appDelegate.deviceCommunicator.getAvailableFiles(onSuccess: { (filesOnDevice) in
                 self.undownloadedFiles.removeAll()
                 self.filesOnDevice = filesOnDevice
                 self.dataStore.getDownloadedFiles(onSuccess: { (downloadedFiles) in
@@ -542,10 +518,10 @@ class VGLogsTableViewController: UITableViewController {
                     }
 
                 }) { (error) in
-                    self.display(error: error)
+                    self.appDelegate.display(error: error)
                 }
             }) { (error) in
-                self.display(error: error)
+                self.appDelegate.display(error: error)
             }
         }
     }
@@ -611,7 +587,7 @@ class VGLogsTableViewController: UITableViewController {
                 self.navigationController?.pushViewController(dlViewController, animated: true)
             },
             onFailure: { (error) in
-                self.display(error: error)
+                self.appDelegate.display(error: error)
             }
         )
 
@@ -639,7 +615,7 @@ class VGLogsTableViewController: UITableViewController {
                 }
             },
             onFailure: { (error) in
-                self.display(error: error)
+                self.appDelegate.display(error: error)
             }
         )
     }
@@ -806,7 +782,7 @@ class VGLogsTableViewController: UITableViewController {
 
                     }
                 }) { (error) in
-                    self.display(error: error)
+                    self.appDelegate.display(error: error)
                 }
             }
         }
@@ -855,7 +831,7 @@ class VGLogsTableViewController: UITableViewController {
         self.dataStore.delete(trackWith: track.id!, onSuccess: {
             
         }) { (error) in
-            self.display(error: error)
+            self.appDelegate.display(error: error)
         }
     }
 }

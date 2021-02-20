@@ -70,6 +70,9 @@ struct Strings {
     static let noTags = NSLocalizedString("Engin merki", comment: "")
     
     static let tapHereImport = NSLocalizedString("Ýttu hér til að flytja inn ferla", comment: "")
+    static let tapHereVehicles = NSLocalizedString("Ýttu hér til að bæta við farartæki", comment: "")
+    
+    static let vehiclesHint = NSLocalizedString("Farartæki hjálpa þér við að halda utan um tíma og vegalengd hvaða ferðamáta sem er.", comment: "")
 
 
     static let map = NSLocalizedString("Kort", comment: "")

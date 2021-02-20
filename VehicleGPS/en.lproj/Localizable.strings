@@ -18,6 +18,7 @@
 
 "Engir ferlar" = "No Tracks";
 "Ýttu hér til að flytja inn ferla" = "Tap here to import tracks";
+"Ýttu hér til að bæta við farartæki" = "Tap here to add a vehicle";
 "Engin saga" = "No History";
 "Engin ferðalög" = "No Journeys";
 "Engin farartæki" = "No Vehicles";
@@ -108,3 +109,5 @@
 "Dagsetningum" = "Dates";
 "Velja merki" = "Select Tags";
 "Merki" = "Tags";
+
+"Farartæki hjálpa þér við að halda utan um tíma og vegalengd hvaða ferðamáta sem er."="Vehicles help you keep track of mileage and time of any transportation method of your choosing.";

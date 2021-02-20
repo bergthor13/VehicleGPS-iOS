@@ -141,7 +141,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
                         vehiclesController.addVehicle(self.vehicle)
                     }
                 }, onFailure: { (error) in
-                    print(error)
+                    self.appDelegate.display(error: error)
                 }
             )
 

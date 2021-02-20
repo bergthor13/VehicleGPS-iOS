@@ -18,7 +18,9 @@ class VGVehiclesTableViewController: UITableViewController {
     
     var fileManager = VGFileManager()
     
-    var emptyLabel: UILabel!
+    var emptyLabel: VGListEmptyLabel!
+    
+    var addVehicleTapRecognizer: UITapGestureRecognizer!
     
     override init(style: UITableView.Style) {
         super.init(style: style)
@@ -80,7 +82,7 @@ class VGVehiclesTableViewController: UITableViewController {
                 self.vehicles.sort()
             },
             onFailure:  { (error) in
-                print(error)
+                self.appDelegate.display(error: error)
             }
         )
         
@@ -127,38 +129,23 @@ class VGVehiclesTableViewController: UITableViewController {
     
     fileprivate func configureEmptyListLabel() {
         if let delegate = UIApplication.shared.delegate as? AppDelegate {
-            emptyLabel = VGListEmptyLabel(text: Strings.noVehicles,
+            emptyLabel = VGListEmptyLabel(text: Strings.noVehicles + "\n\n" + Strings.tapHereVehicles + "\n\n" + Strings.vehiclesHint,
                                             containerView: self.view,
                                             navigationBar: navigationController!.navigationBar,
                                             tabBar: delegate.tabController.tabBar)
           }
         view.addSubview(emptyLabel)
-    }
-    
-    @objc func didTapAddVehicle() {
-    }
-    
-    func createMenu() -> UIMenu {
-        var actions = [UIAction]()
-
-        
-        actions.append(UIAction(title: Strings.titles.newVehicle, image:Icons.vehicle, handler: { (action) in
-        }))
-        
-        return UIMenu(title: "", children: actions)
+        emptyLabel.isEnabled = true
+        emptyLabel.numberOfLines = 0
+        addVehicleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapAddVehicle(_:)))
+        addVehicleTapRecognizer.numberOfTapsRequired = 1
+        emptyLabel.isUserInteractionEnabled = true
+        emptyLabel.addGestureRecognizer(addVehicleTapRecognizer)
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        var height: CGFloat = 0.0
-        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
-            height = view.frame.height-(navigationController?.navigationBar.frame.height)!
-            return
-        }
-        height = view.frame.height-(navigationController?.navigationBar.frame.height)!-delegate.tabController.tabBar.frame.height
-        let frame = CGRect(x: 0.0, y: 0.0, width: view.frame.width, height: height)
-        
-        emptyLabel.frame = frame
+        emptyLabel.setFrame()
     }
     
     @objc func onVehicleUpdated(_ notification:Notification) {
@@ -204,7 +191,7 @@ class VGVehiclesTableViewController: UITableViewController {
             self.tableView.deleteRows(at: [indexPath], with: .top)
             self.reloadVehicles(shouldReloadTableView: false)
         }) { (error) in
-            print(error)
+            self.appDelegate.display(error: error)
         }
 
     }
@@ -226,7 +213,7 @@ class VGVehiclesTableViewController: UITableViewController {
                 self.dataStore.update(vgVehicle: self.vehicles[index]) {
                     
                 } onFailure: { (error) in
-                    print(error)
+                    self.appDelegate.display(error: error)
                 }
             }
 

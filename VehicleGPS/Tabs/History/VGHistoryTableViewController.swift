@@ -75,7 +75,7 @@ class VGHistoryTableViewController: UITableViewController {
         }
         view.addSubview(emptyLabel)
         emptyLabel.isEnabled = true
-        importTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(importFilesasdf(_:)))
+        importTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapImportFiles(_:)))
         importTapRecognizer.numberOfTapsRequired = 1
         emptyLabel.isUserInteractionEnabled = true
         emptyLabel.addGestureRecognizer(importTapRecognizer)
@@ -182,7 +182,7 @@ class VGHistoryTableViewController: UITableViewController {
         print("DELETING SELECTED TRACKS")
     }
     
-    @objc func importFilesasdf(_ sender:Any) {
+    @objc func didTapImportFiles(_ sender:Any) {
         importFiles()
     }
     
@@ -194,7 +194,7 @@ class VGHistoryTableViewController: UITableViewController {
                 selTracks[index].trackPoints = points
                 //editor.tracks = selTracks
             } onFailure: { (error) in
-                print(error)
+                self.appDelegate.display(error: error)
             }
 
         }
@@ -315,7 +315,7 @@ class VGHistoryTableViewController: UITableViewController {
                     track.trackPoints = dataPoints
                     dpGroup.leave()
                 } onFailure: { (error) in
-                    print(error)
+                    self.appDelegate.display(error: error)
                     dpGroup.leave()
                 }
             }
@@ -390,7 +390,7 @@ class VGHistoryTableViewController: UITableViewController {
                 }
             },
             onFailure: { (error) in
-                print(error)
+                self.appDelegate.display(error: error)
             }
         )
         super.viewWillAppear(animated)

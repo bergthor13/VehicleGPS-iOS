@@ -76,4 +76,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
         
     }
+    
+    func display(error:Error) {
+        display(error: error.localizedDescription)
+    }
+    
+    func display(error:String) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: Strings.ok, style: .default))
+            self.window?.rootViewController?.present(alert, animated: true)
+        }
+        
+    }
 }

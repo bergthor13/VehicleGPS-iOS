@@ -68,7 +68,7 @@ class VGVehiclesSelectionTableViewController: VGVehiclesTableViewController {
             self.dismiss(animated: true, completion: nil)
         }) { (error) in
             self.dismiss(animated: true, completion: nil)
-            print(error)
+            self.appDelegate.display(error: error)
         }
     }
 }

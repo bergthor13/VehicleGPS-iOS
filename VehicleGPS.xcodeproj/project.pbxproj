@@ -131,6 +131,7 @@
 		F2F77DF024E96B6600C2F09D /* VGGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F77DEF24E96B6600C2F09D /* VGGraphGenerator.swift */; };
 		F2F77DF224E96B8000C2F09D /* VGSpeedGraphGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F77DF124E96B8000C2F09D /* VGSpeedGraphGenerator.swift */; };
 		F2F9627825DF29E100ECC752 /* VGVehicleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F9627725DF29E100ECC752 /* VGVehicleTableViewCell.swift */; };
+		F2F9627A25E0951A00ECC752 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F9627925E0951A00ECC752 /* UIViewController+Extensions.swift */; };
 		F2FDA85E23C646B3000B8B76 /* VGDatabaseTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FDA85D23C646B3000B8B76 /* VGDatabaseTableViewController.swift */; };
 		F2FF02382442815000502869 /* VGDownloadedFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FF02372442815000502869 /* VGDownloadedFile.swift */; };
 /* End PBXBuildFile section */
@@ -281,6 +282,7 @@
 		F2F77DEF24E96B6600C2F09D /* VGGraphGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGraphGenerator.swift; sourceTree = "<group>"; };
 		F2F77DF124E96B8000C2F09D /* VGSpeedGraphGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGSpeedGraphGenerator.swift; sourceTree = "<group>"; };
 		F2F9627725DF29E100ECC752 /* VGVehicleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGVehicleTableViewCell.swift; sourceTree = "<group>"; };
+		F2F9627925E0951A00ECC752 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		F2FDA85D23C646B3000B8B76 /* VGDatabaseTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDatabaseTableViewController.swift; sourceTree = "<group>"; };
 		F2FF02372442815000502869 /* VGDownloadedFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDownloadedFile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -380,6 +382,7 @@
 				F26B2C0D24B28E1D00E9F22C /* VGSplitViewController.swift */,
 				F26B2C2724B3570A00E9F22C /* SidebarCollectionViewController.swift */,
 				F2647BE42434F8B500283B38 /* UIColor+Extensions.swift */,
+				F2F9627925E0951A00ECC752 /* UIViewController+Extensions.swift */,
 				F2D8AB0724E05AA8009E0925 /* Double+Extensions.swift */,
 				F2647BE82435029900283B38 /* UIView+Extensions.swift */,
 				F2647BE62435024600283B38 /* String+Extensions.swift */,
@@ -843,6 +846,7 @@
 				F255E85F24E98239003DF00F /* VGEngineLoadGraphGenerator.swift in Sources */,
 				F255E85324E96E46003DF00F /* VGElevationGraphGenerator.swift in Sources */,
 				F247550223DDBC43007E0DF8 /* VGAvailableLogsTableViewCell.swift in Sources */,
+				F2F9627A25E0951A00ECC752 /* UIViewController+Extensions.swift in Sources */,
 				F28D752D248D512D0060DFD6 /* VGFileNameDateFormatter.swift in Sources */,
 				F215AC8723DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift in Sources */,
 				F2542E9825C2FCD900E0E588 /* PulleyEditorViewController.swift in Sources */,
@@ -1077,7 +1081,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bergtor05.VehicleGPS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bergtor05.TrackDiary;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
@@ -1103,7 +1107,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bergtor05.VehicleGPS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bergtor05.TrackDiary;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;

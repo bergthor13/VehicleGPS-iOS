@@ -36,6 +36,7 @@ class VGLogsTableViewCell: UITableViewCell {
     static let nib = UINib(nibName: VGLogsTableViewCell.nibName, bundle: nil)
     var delegate: DisplaySelectVehicleProtocol!
     var vgFileManager: VGFileManager!
+    var vgDataStore: VGDataStore!
     var currentTrack: VGTrack?
     let formatter = DateFormatter()
     let form = VGDurationFormatter()
@@ -59,6 +60,7 @@ class VGLogsTableViewCell: UITableViewCell {
         // Initialization code
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.vgFileManager = appDelegate.fileManager
+            self.vgDataStore = appDelegate.dataStore
         }
         recView.layer.cornerRadius = recView.frame.width/2.0
         recDotView.layer.cornerRadius = recView.frame.width/2.0
@@ -117,6 +119,9 @@ class VGLogsTableViewCell: UITableViewCell {
         self.lblDuration.attributedText = styleString(unstyledString: formattedDuration!, substrings: ["h", "m", "s"])
 
         trackView.image = vgFileManager.getPreviewImage(for: track, with: self.traitCollection.userInterfaceStyle)
+        if trackView.image == nil {
+            loadPreviewImage(for: track)
+        }
         trackView.layer.borderWidth = 0.5
         trackView.layer.borderColor = UIColor.secondaryLabel.cgColor
         if let vehicle = track.vehicle {
@@ -137,6 +142,28 @@ class VGLogsTableViewCell: UITableViewCell {
             self.recView.isHidden = true
             self.recDotView.isHidden = true
         }
+    }
+    
+    func loadPreviewImage(for track:VGTrack) {
+        if track.mapPoints.count == 0 {
+            vgDataStore.getMapPointsForTrack(with: track.id!) { mapPoints in
+                track.mapPoints = mapPoints
+                VGSnapshotMaker(fileManager: self.vgFileManager, dataStore: self.vgDataStore).drawTrack(vgTrack: track) { image, style in
+                    DispatchQueue.main.async {
+                        if style == self.traitCollection.userInterfaceStyle {
+                            self.trackView.image = image
+                        }
+                    }
+
+                    return nil
+                }
+
+            } onFailure: { error in
+                print(error)
+            }
+
+        }
+
     }
     
     func animateRecording() {

@@ -74,7 +74,7 @@ class VGLogDetailsViewController: UIViewController {
                     self.mapView.tracks = [track]
                 }
             }) { (error) in
-                print(error)
+                self.appDelegate.display(error: error)
             }
         } else {
             if self.mapView != nil {
@@ -89,7 +89,7 @@ class VGLogDetailsViewController: UIViewController {
                 track.trackPoints = dataPoints
                 self.trackDataTableViewController.track = track
             }) { (error) in
-                print(error)
+                self.appDelegate.display(error: error)
             }
         }
 
@@ -183,7 +183,7 @@ class VGLogDetailsViewController: UIViewController {
                 print("UPDATED SUCCESSFULLY: \(id)")
             }) { (error) in
                 print("ERROR UPDATING")
-                print(error)
+                self.appDelegate.display(error: error)
             }
             
             rightTrack.process()
@@ -191,7 +191,7 @@ class VGLogDetailsViewController: UIViewController {
                 print("ADDED SUCCESSFULLY \(id)")
             }) { (error) in
                 print("ERROR ADDING")
-                print(error)
+                self.appDelegate.display(error: error)
             }
             
         }))
@@ -200,7 +200,7 @@ class VGLogDetailsViewController: UIViewController {
             self.dataStore.delete(trackWith: self.track.id!) {
                 self.navigationController?.popViewController(animated: true)
             } onFailure: { (error) in
-                print(error)
+                self.appDelegate.display(error: error)
             }
         }))
         

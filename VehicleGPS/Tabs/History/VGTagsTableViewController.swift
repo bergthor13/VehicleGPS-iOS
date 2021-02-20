@@ -21,6 +21,7 @@ class VGTagsTableViewController: UITableViewController {
         title = Strings.titles.tags
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.leftBarButtonItem = editButtonItem
+        
         VGDataStore().getTags { (tags) in
             self.tags = tags
             for tag in self.tags {
@@ -33,8 +34,10 @@ class VGTagsTableViewController: UITableViewController {
             }
             
         } onFailure: { (error) in
-            print(error)
+            self.appDelegate.display(error: error)
         }
+        
+        tableView.isEditing = true
 
     }
     
@@ -46,6 +49,10 @@ class VGTagsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tags.count+1
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        return "Merki hjálpa þér að flokka ferla saman. Til dæmis er hægt að nota merki til að sameina ferðalög."
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -93,7 +100,7 @@ class VGTagsTableViewController: UITableViewController {
                 cell.accessoryType = .none
                 tag.tracks!.remove(at: tag.tracks!.firstIndex(of: self.track!)!)
             } onFailure: { (error) in
-                print(error)
+                self.appDelegate.display(error: error)
             }
 
         } else {
@@ -101,7 +108,7 @@ class VGTagsTableViewController: UITableViewController {
                 cell.accessoryType = .checkmark
                 tag.tracks!.append(self.track!)
             } onFailure: { (error) in
-                print(error)
+                self.appDelegate.display(error: error)
             }
         }
         
@@ -120,10 +127,14 @@ class VGTagsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? VGAddTagTableViewCell else {
+            return
+        }
+        
         if editingStyle == .insert {
             if indexPath.row == tags.count {
                 addTag(at: indexPath)
-                
+                cell.txtName.text = ""
             }
         } else if editingStyle == .delete {
             deleteTag(at: indexPath)
@@ -155,7 +166,7 @@ class VGTagsTableViewController: UITableViewController {
             self.tags.remove(at: indexPath.row)
             self.tableView.endUpdates()
         } onFailure: { (error) in
-            print(error)
+            self.appDelegate.display(error: error)
         }
 
     }
@@ -186,7 +197,7 @@ class VGTagsTableViewController: UITableViewController {
                     self.tags.append(tag)
                     self.tableView.endUpdates()
                 } onFailure: { (error) in
-                    print(error)
+                    self.appDelegate.display(error: error)
                 }
 
             }

@@ -28,7 +28,7 @@ class PulleyEditorViewController: PulleyViewController {
                 self.mapViewController.tracks = [self.track!]
                 self.summaryViewController.tracks = [self.track!]
             } onFailure: { (error) in
-                print(error)
+                self.appDelegate.display(error: error)
             }
 
             
@@ -93,7 +93,7 @@ class PulleyEditorViewController: PulleyViewController {
             self.dataStore.delete(trackWith: track.id!) {
                 self.navigationController?.popViewController(animated: true)
             } onFailure: { (error) in
-                print(error)
+                self.appDelegate.display(error: error)
             }
         }))
         
@@ -168,18 +168,18 @@ class PulleyEditorViewController: PulleyViewController {
                     trackViewController.tracks = [leftTrack]
                     
                 } onFailure: { (error) in
-                    print(error)
+                    self.appDelegate.display(error: error)
                 }
 
                 mapViewController.tracks = [oldTrack!]
                 trackViewController.tracks = [oldTrack!]
             }) { (error) in
                 print("ERROR UPDATING")
-                print(error)
+                self.appDelegate.display(error: error)
             }
         }) { (error) in
             print("ERROR ADDING")
-            print(error)
+            self.appDelegate.display(error: error)
         }
 
 
