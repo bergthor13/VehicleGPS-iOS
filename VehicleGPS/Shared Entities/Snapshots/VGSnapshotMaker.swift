@@ -105,64 +105,73 @@ class VGSnapshotMaker {
     
     
     func drawTrack(vgTrack:VGTrack, imageCallback:(@escaping(UIImage?,UIUserInterfaceStyle?)->Void?)) {
-        let coordinateList = vgTrack.getMapPoints()
-        var snapshotter:MKMapSnapshotter?
-        
-        for style in [UIUserInterfaceStyle.light, UIUserInterfaceStyle.dark] {
-            if coordinateList.count == 0 {
-                snapshotter = VGZeroMapSnapshotter(style: style)
-            } else {
-                snapshotter = VGTrackMapSnapshotter(style: style, coordinates: coordinateList)
-            }
-            
-            snapshotter?.start(completionHandler: { (snapshot, error) in
-                DispatchQueue.global(qos: .utility).async {
-                    guard let snapshot = snapshot else {
-                        imageCallback(nil,style)
-                        return
+        if vgTrack.mapPoints.count == 0 {
+            vgDataStore.getMapPointsForTrack(with: vgTrack.id!) { mapPoints in
+                vgTrack.mapPoints = mapPoints
+                let coordinateList = vgTrack.getMapPoints()
+                var snapshotter:MKMapSnapshotter?
+                for style in [UIUserInterfaceStyle.light, UIUserInterfaceStyle.dark] {
+                    if coordinateList.count == 0 {
+                        snapshotter = VGZeroMapSnapshotter(style: style)
+                    } else {
+                        snapshotter = VGTrackMapSnapshotter(style: style, coordinates: coordinateList)
                     }
                     
-                    let finalImage = UIGraphicsImageRenderer(size: snapshot.image.size).image { _ in
-                        if coordinateList.count == 0 {
-                            self.vgFileManager.savePreview(image: snapshot.image, for: vgTrack, with: style)
-                            imageCallback(snapshot.image, style)
-                            return
+                    snapshotter?.start(completionHandler: { (snapshot, error) in
+                        DispatchQueue.global(qos: .utility).async {
+                            guard let snapshot = snapshot else {
+                                imageCallback(nil,style)
+                                return
+                            }
+                            
+                            let finalImage = UIGraphicsImageRenderer(size: snapshot.image.size).image { _ in
+                                if coordinateList.count == 0 {
+                                    self.vgFileManager.savePreview(image: snapshot.image, for: vgTrack, with: style)
+                                    imageCallback(snapshot.image, style)
+                                    return
+                                }
+                                
+                                // Draw the map.
+                                snapshot.image.draw(at: .zero)
+                                
+                                // Convert [CLLocationCoordinate2D] to a [CGPoint].
+                                let points = coordinateList.map { coordinate in
+                                    snapshot.point(for: coordinate)
+                                }
+                                
+                                // Go to the first point in the Bezier Path.
+                                let path = UIBezierPath()
+                                path.move(to: points[0])
+                                
+                                // Create a path from the first CGPoint to the last.
+                                for point in points.dropFirst() {
+                                    path.addLine(to: point)
+                                }
+                                
+                                // Create a line with the Bezier Path.
+                                path.lineWidth = 3
+                                if let mapColor = vgTrack.vehicle?.mapColor {
+                                    mapColor.setStroke()
+                                } else {
+                                    UIColor.red.setStroke()
+                                }
+                                
+                                path.stroke()
+                            }
+                            if coordinateList.count > 0 {
+                                self.vgFileManager.savePreview(image: finalImage, for: vgTrack, with: style)
+                                imageCallback(finalImage, style)
+                            }
                         }
-                        
-                        // Draw the map.
-                        snapshot.image.draw(at: .zero)
-                        
-                        // Convert [CLLocationCoordinate2D] to a [CGPoint].
-                        let points = coordinateList.map { coordinate in
-                            snapshot.point(for: coordinate)
-                        }
-                        
-                        // Go to the first point in the Bezier Path.
-                        let path = UIBezierPath()
-                        path.move(to: points[0])
-                        
-                        // Create a path from the first CGPoint to the last.
-                        for point in points.dropFirst() {
-                            path.addLine(to: point)
-                        }
-                        
-                        // Create a line with the Bezier Path.
-                        path.lineWidth = 3
-                        if let mapColor = vgTrack.vehicle?.mapColor {
-                            mapColor.setStroke()
-                        } else {
-                            UIColor.red.setStroke()
-                        }
-                        
-                        path.stroke()
-                    }
-                    if coordinateList.count > 0 {
-                        self.vgFileManager.savePreview(image: finalImage, for: vgTrack, with: style)
-                        imageCallback(finalImage, style)
-                    }
+                    })
                 }
-            })
+
+            } onFailure: { error in
+                print(error)
+            }
+
         }
+        
     }
     
     func drawTracks(vgTracks:[VGTrack], imageCallback:(@escaping(UIImage?,UIUserInterfaceStyle?)->Void?)) {

@@ -146,24 +146,15 @@ class VGLogsTableViewCell: UITableViewCell {
     
     func loadPreviewImage(for track:VGTrack) {
         if track.mapPoints.count == 0 {
-            vgDataStore.getMapPointsForTrack(with: track.id!) { mapPoints in
-                track.mapPoints = mapPoints
-                VGSnapshotMaker(fileManager: self.vgFileManager, dataStore: self.vgDataStore).drawTrack(vgTrack: track) { image, style in
-                    DispatchQueue.main.async {
-                        if style == self.traitCollection.userInterfaceStyle {
-                            self.trackView.image = image
-                        }
+            VGSnapshotMaker(fileManager: self.vgFileManager, dataStore: self.vgDataStore).drawTrack(vgTrack: track) { image, style in
+                DispatchQueue.main.async {
+                    if style == self.traitCollection.userInterfaceStyle {
+                        self.trackView.image = image
                     }
-
-                    return nil
                 }
-
-            } onFailure: { error in
-                print(error)
+                return nil
             }
-
         }
-
     }
     
     func animateRecording() {

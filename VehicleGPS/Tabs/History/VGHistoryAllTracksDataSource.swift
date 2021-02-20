@@ -200,7 +200,6 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         guard let track = self.getTrackAt(indexPath: indexPath) else {
             return
         }
-        
         self.tracksDictionary[self.sections[indexPath.section]]?.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: .fade)
 
@@ -210,6 +209,8 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
             tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
         }
         self.vgFileManager.deleteFile(for: track)
+        self.vgFileManager.deletePreviewImage(for: track)
+
 
         self.dataStore.delete(trackWith: track.id!, onSuccess: {
             self.parentViewController.tracks.remove(at: self.parentViewController.tracks.firstIndex(of: track)!)

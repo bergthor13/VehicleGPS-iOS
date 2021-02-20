@@ -286,7 +286,7 @@ class VGFileManager {
         return nil
     }
     
-    func deletePreviewImage(for track: VGTrack, onSuccess:@escaping()->(), onFailure:@escaping(Error)->()) {
+    func deletePreviewImage(for track: VGTrack, onSuccess:(()->())? = nil, onFailure:((Error)->())? = nil) {
         for style in [UIUserInterfaceStyle.light, UIUserInterfaceStyle.dark] {
             guard let pathUrl = getPreviewPath(for: track, with: style) else {
                 return
@@ -294,11 +294,16 @@ class VGFileManager {
             do {
                 try fileManager.removeItem(at:pathUrl)
             } catch let error {
-                onFailure(error)
+                if let onFailure = onFailure {
+                    onFailure(error)
+                }
                 return
             }
         }
-        onSuccess()
+        if let onSuccess = onSuccess {
+            onSuccess()
+        }
+        
         return
     }
     
