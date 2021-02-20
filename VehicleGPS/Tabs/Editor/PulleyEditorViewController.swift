@@ -97,6 +97,10 @@ class PulleyEditorViewController: PulleyViewController {
             }
         }))
         
+        actions.append(UIAction(title: Strings.exportMapAsImage, image: Icons.photo) { (action) in
+            self.mapToImage()
+        })
+        
         return UIMenu(title: "", children: actions)
     }
     
@@ -218,4 +222,42 @@ extension PulleyEditorViewController: VGEditorToolbarDelegate  {
         //mapViewController.editorMapView
         
     }
+    
+    func mapToImage() {
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
+        }
+        guard let track = self.track else {
+            return
+        }
+        self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
+            track.mapPoints = mapPoints
+            
+            var drawnTracks = [VGTrack]()
+        
+            if track.distance != 0.0 {
+                drawnTracks.append(track)
+            }
+        
+            delegate.snapshotter.drawTracks(vgTracks: drawnTracks) { (image, style) -> Void? in
+                if let image = image {
+                    guard let pngImageData = image.pngData() else {
+                        return nil
+                    }
+                    let vc = UIActivityViewController(activityItems: [pngImageData], applicationActivities: [])
+                    DispatchQueue.main.async {
+                        self.present(vc, animated: true)
+                    }
+                }
+                return nil
+            }
+
+
+        }) { (error) in
+            print(error)
+        }
+
+    }
+
+
 }
