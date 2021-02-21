@@ -88,7 +88,7 @@ class DeviceCommunicator {
     }
     
     func tryToAuthenticate(session: NMSSHSession) -> Bool {
-        if !session.authenticate(byPassword: Constants.sftp.password) {
+        if !session.authenticate(byPassword: Constants.Sftp.password) {
             DispatchQueue.main.async {
                 // TODO: Maybe display an error to the user
                 //self.displayErrorAlert(title: Strings.authorizationError, message: self.session?.lastError?.localizedDescription)

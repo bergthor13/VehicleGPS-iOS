@@ -112,9 +112,9 @@ class VGHistoryTableViewController: UITableViewController {
     }
 
     func initializeTableViewController() {
-        title = Strings.titles.logs
+        title = Strings.Titles.logs
         self.navigationController?.navigationBar.prefersLargeTitles = false
-        tabBarItem = UITabBarItem(title: Strings.titles.logs,
+        tabBarItem = UITabBarItem(title: Strings.Titles.logs,
                                   image: Icons.history,
                                   tag: 0)
         allTracksDataSource = VGHistoryAllTracksDataSource(parentViewController: self)
@@ -341,7 +341,7 @@ class VGHistoryTableViewController: UITableViewController {
     }
     
     func createMenu() -> UIMenu {
-        let mapAction = UIAction(title: Strings.titles.importFiles, image: Icons.importFiles) { (action) in
+        let mapAction = UIAction(title: Strings.Titles.importFiles, image: Icons.importFiles) { (action) in
             self.importFiles()
         }
         return UIMenu(title: "", children: [mapAction])

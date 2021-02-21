@@ -105,7 +105,6 @@
 		F286124C24C0DA920029F34A /* VGMapSnapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F286124B24C0DA920029F34A /* VGMapSnapshotter.swift */; };
 		F28D752D248D512D0060DFD6 /* VGFileNameDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F28D752C248D512D0060DFD6 /* VGFileNameDateFormatter.swift */; };
 		F2919B12257E86AA001E7934 /* VGTrackEditorHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2919B11257E86AA001E7934 /* VGTrackEditorHeaderView.swift */; };
-		F2919B16257EA047001E7934 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2919B15257EA047001E7934 /* FlowLayout.swift */; };
 		F297DD032439445B00431472 /* DeviceCommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F297DD022439445B00431472 /* DeviceCommunicator.swift */; };
 		F29FA819256B12CB00170CE8 /* VGEditorMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F29FA818256B12CB00170CE8 /* VGEditorMapViewController.swift */; };
 		F2AB17572428F658003240C1 /* VGNewVehicleTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F2AB17592428F658003240C1 /* VGNewVehicleTableViewCell.xib */; };
@@ -255,7 +254,6 @@
 		F286124B24C0DA920029F34A /* VGMapSnapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGMapSnapshotter.swift; sourceTree = "<group>"; };
 		F28D752C248D512D0060DFD6 /* VGFileNameDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGFileNameDateFormatter.swift; sourceTree = "<group>"; };
 		F2919B11257E86AA001E7934 /* VGTrackEditorHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGTrackEditorHeaderView.swift; sourceTree = "<group>"; };
-		F2919B15257EA047001E7934 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		F297DD022439445B00431472 /* DeviceCommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCommunicator.swift; sourceTree = "<group>"; };
 		F29FA818256B12CB00170CE8 /* VGEditorMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGEditorMapViewController.swift; sourceTree = "<group>"; };
 		F2AB175C2428F68B003240C1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/VGNewVehicleTableViewCell.xib; sourceTree = "<group>"; };
@@ -612,7 +610,6 @@
 				F2678C3E2579262C00BD6E93 /* VGTrackCollectionViewController.swift */,
 				F2919B11257E86AA001E7934 /* VGTrackEditorHeaderView.swift */,
 				F2542E9725C2FCD900E0E588 /* PulleyEditorViewController.swift */,
-				F2919B15257EA047001E7934 /* FlowLayout.swift */,
 			);
 			path = Editor;
 			sourceTree = "<group>";
@@ -629,6 +626,7 @@
 				F23BE8B722A5E4B9008FD50C /* Sources */,
 				F23BE8B922A5E4B9008FD50C /* Resources */,
 				73324A3AF290B093A55A79C2 /* [CP] Embed Pods Frameworks */,
+				F277D66A25E204EE0072B2CF /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -778,6 +776,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		F277D66A25E204EE0072B2CF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -842,7 +857,6 @@
 				F215AC7E23DB38D90001AF24 /* VGVehiclesTableViewController.swift in Sources */,
 				F27CB77E23D38C50002BF28F /* VGDeviceConnectedHeaderView.swift in Sources */,
 				F23BE8F922A5E5BB008FD50C /* VGSFTPManager.swift in Sources */,
-				F2919B16257EA047001E7934 /* FlowLayout.swift in Sources */,
 				F2797D5723CD1AC500207650 /* VGHistoryDetailsTableViewController.swift in Sources */,
 				F22235FF23E21216008EF8E5 /* VGVehicleDetailsTableViewController.swift in Sources */,
 				F255E85F24E98239003DF00F /* VGEngineLoadGraphGenerator.swift in Sources */,

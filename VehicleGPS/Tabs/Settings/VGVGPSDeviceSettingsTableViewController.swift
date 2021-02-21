@@ -7,7 +7,7 @@ class VGVGPSDeviceSettingsTableViewController: UITableViewController {
     var txtPassword: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = Strings.titles.vgpsDevice
+        title = Strings.Titles.vgpsDevice
         tableView.allowsSelection = false
         
     }
@@ -54,7 +54,7 @@ class VGVGPSDeviceSettingsTableViewController: UITableViewController {
             txtPassword = textField
             textField.textContentType = .password
             textField.isSecureTextEntry = true
-            textField.text = Constants.sftp.password
+            textField.text = Constants.Sftp.password
             cell.contentView.addSubview(textField)
         }
         textField.translatesAutoresizingMaskIntoConstraints = false

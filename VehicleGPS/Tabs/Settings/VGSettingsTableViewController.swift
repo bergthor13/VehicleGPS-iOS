@@ -29,8 +29,8 @@ class VGSettingsTableViewController: UITableViewController {
 
     func initializeTableViewController() {
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.title = Strings.titles.settings
-        tabBarItem = UITabBarItem(title: Strings.titles.settings,
+        self.title = Strings.Titles.settings
+        tabBarItem = UITabBarItem(title: Strings.Titles.settings,
                                   image: Icons.settings,
                                   tag: 0)
     }
@@ -42,7 +42,7 @@ class VGSettingsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 { return Strings.settings.general }
+        if section == 0 { return Strings.Settings.general }
         if section == 1 { return nil }
         return ""
     }
@@ -58,12 +58,12 @@ class VGSettingsTableViewController: UITableViewController {
             if indexPath.row == 0 {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: Strings.dummyIdentifier)
                 cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = Strings.titles.database
+                cell.textLabel?.text = Strings.Titles.database
             }
             if indexPath.row == 1 {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: Strings.dummyIdentifier)
                 cell.accessoryType = .disclosureIndicator
-                cell.textLabel?.text = Strings.titles.vgpsDevice
+                cell.textLabel?.text = Strings.Titles.vgpsDevice
             }
 
         }
@@ -71,7 +71,7 @@ class VGSettingsTableViewController: UITableViewController {
             if indexPath.row == 0 {
                 cell = UITableViewCell.init(style: .default, reuseIdentifier: Strings.dummyIdentifier)
                 cell.textLabel?.textColor = view.tintColor
-                cell.textLabel?.text = Strings.settings.connectToVGPS
+                cell.textLabel?.text = Strings.Settings.connectToVGPS
 
             }
         }
@@ -91,7 +91,7 @@ class VGSettingsTableViewController: UITableViewController {
         }
         if indexPath.section == 1 {
             if indexPath.row == 0 {
-                let configuration = NEHotspotConfiguration(ssid: Constants.wireless.ssid, passphrase: Constants.wireless.password, isWEP: false)
+                let configuration = NEHotspotConfiguration(ssid: Constants.Wireless.ssid, passphrase: Constants.Wireless.password, isWEP: false)
                 configuration.joinOnce = true
                 configuration.hidden = true
                 NEHotspotConfigurationManager.shared.apply(configuration) { (error) in
@@ -104,11 +104,23 @@ class VGSettingsTableViewController: UITableViewController {
         }
     }
     
+    func isLast(section: Int) -> Bool {
+        return section == tableView.numberOfSections-1
+    }
+    
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if section == tableView.numberOfSections-1 {
-            let name: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
-            let version: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-            let build: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+        if isLast(section: section) {
+            
+            guard let name = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String else {
+                return nil
+            }
+            
+            guard let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String else {
+                return nil
+            }
+            guard let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String else {
+                return nil
+            }
             return "\(name) \(version) (\(build))"
         }
         return nil

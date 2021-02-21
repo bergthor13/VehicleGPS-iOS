@@ -150,11 +150,11 @@ struct Item: Hashable {
     private let identifier = UUID()
 }
 
-let tabsItems = [Item(title: Strings.titles.logs, image: Icons.log),
-                 Item(title: Strings.titles.logs, image: Icons.history),
-                 Item(title: Strings.titles.journeys, image: Icons.journeys),
-                 Item(title: Strings.titles.vehicles, image: Icons.vehicle),
-                 Item(title: Strings.titles.settings, image: Icons.settings)]
+let tabsItems = [Item(title: Strings.Titles.logs, image: Icons.log),
+                 Item(title: Strings.Titles.logs, image: Icons.history),
+                 Item(title: Strings.Titles.journeys, image: Icons.journeys),
+                 Item(title: Strings.Titles.vehicles, image: Icons.vehicle),
+                 Item(title: Strings.Titles.settings, image: Icons.settings)]
 
 let libraryItems = [Item]()
 

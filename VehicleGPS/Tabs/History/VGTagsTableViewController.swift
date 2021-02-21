@@ -18,7 +18,7 @@ class VGTagsTableViewController: UITableViewController {
         super.viewDidLoad()
         tableView.delegate = self
         self.tableView.register(VGAddTagTableViewCell.nib, forCellReuseIdentifier: VGAddTagTableViewCell.identifier)
-        title = Strings.titles.tags
+        title = Strings.Titles.tags
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.leftBarButtonItem = editButtonItem
         
@@ -143,7 +143,10 @@ class VGTagsTableViewController: UITableViewController {
     
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
-        for cell in tableView.visibleCells as! [VGAddTagTableViewCell] {
+        guard let visibleCells = tableView.visibleCells as? [VGAddTagTableViewCell] else {
+            return
+        }
+        for cell in visibleCells {
             if editing {
                 cell.txtName.isEnabled = true
             } else {
@@ -156,7 +159,7 @@ class VGTagsTableViewController: UITableViewController {
         }
     }
     
-    func deleteTag(at indexPath:IndexPath) {
+    func deleteTag(at indexPath: IndexPath) {
         guard let id = tags[indexPath.row].id else {
             return
         }

@@ -371,7 +371,11 @@ class VGLogsTableViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        for cell in tableView!.visibleCells as! [VGLogsTableViewCell] {
+        guard let visibleCells = tableView.visibleCells as? [VGLogsTableViewCell] else {
+            return
+        }
+        
+        for cell in visibleCells {
             if cell.currentTrack!.isRecording {
                 cell.animateRecording()
             }
@@ -419,10 +423,10 @@ class VGLogsTableViewController: UITableViewController {
     
     func initializeTableViewController() {
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        title = Strings.titles.vgpsDevice
+        title = Strings.Titles.vgpsDevice
         self.toolbarButtonShare = UIBarButtonItem(title: Strings.share, style: .plain, target: self, action: #selector(exportTracks(_:)))
         self.toolbarButtonDelete = UIBarButtonItem(title: Strings.delete, style: .plain, target: self, action: #selector(deleteTracks(_:)))
-        tabBarItem = UITabBarItem(title: Strings.titles.vgps,
+        tabBarItem = UITabBarItem(title: Strings.Titles.vgps,
                                   image: Icons.device,
                                   tag: 0)
     }
@@ -788,12 +792,16 @@ class VGLogsTableViewController: UITableViewController {
         }
         
         let selectVehicle = UIAction(title: Strings.selectVehicle, image: Icons.vehicle, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
-            let cell = tableView.cellForRow(at: indexPath) as! VGLogsTableViewCell
+            guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+                return
+            }
             self.didTapVehicle(track: track!, tappedView: cell.btnVehicle)
         }
         
         let selectTags = UIAction(title: Strings.selectTags, image: Icons.tag, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
-            let cell = tableView.cellForRow(at: indexPath) as! VGLogsTableViewCell
+            guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+                return
+            }
             self.didTapVehicle(track: track!, tappedView: cell.btnVehicle)
         }
         
@@ -805,7 +813,7 @@ class VGLogsTableViewController: UITableViewController {
         }
     }
     
-    func deleteTrack(at indexPath:IndexPath) {
+    func deleteTrack(at indexPath: IndexPath) {
         // Delete the row from the data source
         guard let track = self.getTrackAt(indexPath: indexPath) else {
             return

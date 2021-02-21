@@ -17,7 +17,7 @@ class VGDataStore {
     
     
     func initializeContainer() {
-        let container = NSPersistentContainer(name: Constants.persistentContainer.name)
+        let container = NSPersistentContainer(name: Constants.PersistentContainer.name)
         
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             self.storeCoordinator.addPersistentStore(with: storeDescription, completionHandler: { (storedescr, error) in

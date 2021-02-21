@@ -294,7 +294,9 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         }
         
         let selectVehicle = UIAction(title: Strings.selectVehicle, image: Icons.vehicle, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
-            let cell = tableView.cellForRow(at: indexPath) as! VGLogsTableViewCell
+            guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+                return
+            }
             self.didTapVehicle(track: track!, tappedView: cell.btnVehicle)
         }
         

@@ -9,12 +9,12 @@
 import Foundation
 
 struct Constants {
-    struct wireless {
+    struct Wireless {
         static let ssid = "VehicleGPS"
         static let password = "easyprintsequence"
     }
     
-    struct sftp {
+    struct Sftp {
         static let host = "cargps.local"
         static let username = "gps"
         static let password = "easyprintsequence"
@@ -22,7 +22,7 @@ struct Constants {
         static let deleteFolder = "/home/pi/DeletedTracks/"
     }
     
-    struct persistentContainer {
+    struct PersistentContainer {
         static let name = "VehicleGPS"
     }
 }

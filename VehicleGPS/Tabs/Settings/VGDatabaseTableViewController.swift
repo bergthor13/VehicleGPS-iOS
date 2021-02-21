@@ -18,9 +18,9 @@ class VGDatabaseTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = Strings.titles.database
+        title = Strings.Titles.database
         dataTypes = ["Track", "DataPoint", "MapPoint", "Vehicle", "Tag"]
-        fileTypes = [Strings.settings.previewImages]
+        fileTypes = [Strings.Settings.previewImages]
         
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
@@ -37,9 +37,9 @@ class VGDatabaseTableViewController: UITableViewController {
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-            return Strings.settings.objects
+            return Strings.Settings.objects
         } else if section == 1 {
-            return Strings.settings.files
+            return Strings.Settings.files
         } else {
             return nil
         }

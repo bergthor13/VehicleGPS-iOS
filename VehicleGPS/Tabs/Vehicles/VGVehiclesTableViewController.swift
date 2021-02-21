@@ -34,8 +34,8 @@ class VGVehiclesTableViewController: UITableViewController {
     }
 
     func initializeTableViewController() {
-        title = Strings.titles.vehicles
-        tabBarItem = UITabBarItem(title: Strings.titles.vehicles,
+        title = Strings.Titles.vehicles
+        tabBarItem = UITabBarItem(title: Strings.Titles.vehicles,
                                   image: Icons.vehicle,
                                   tag: 0)
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -114,7 +114,9 @@ class VGVehiclesTableViewController: UITableViewController {
         tableView.beginUpdates()
         for (index, vehicle) in vehicles.enumerated() {
             if vehicle == editedVehicle {
-                let bla = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as! VGVehicleTableViewCell
+                guard let bla = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? VGVehicleTableViewCell else {
+                    continue
+                }
                 bla.lblName.text = editedVehicle.name
                 bla.colorBanner.backgroundColor = editedVehicle.mapColor
                 vehicles.remove(at: index)
@@ -173,7 +175,9 @@ class VGVehiclesTableViewController: UITableViewController {
         let visibleVehicles = tableView.indexPathsForVisibleRows
         
         for visVehicleIndexPath in visibleVehicles! {
-            let cell = tableView.cellForRow(at: visVehicleIndexPath) as! VGVehicleTableViewCell
+            guard let cell = tableView.cellForRow(at: visVehicleIndexPath) as? VGVehicleTableViewCell else {
+                continue
+            }
             if vehicle.id == self.vehicles[visVehicleIndexPath.row].id {
                 cell.defaultViewBackground.isHidden = false
                 cell.defaultStarView.isHidden = false
@@ -244,10 +248,11 @@ class VGVehiclesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return vehicles.count
     }
-
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: VGVehicleTableViewCell.identifier, for: indexPath) as! VGVehicleTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: VGVehicleTableViewCell.identifier, for: indexPath) as? VGVehicleTableViewCell else {
+            return UITableViewCell()
+        }
         let vehicle = vehicles[indexPath.row]
         cell.lblName.text = vehicle.name
         cell.imgVehicle?.image = vehicle.image

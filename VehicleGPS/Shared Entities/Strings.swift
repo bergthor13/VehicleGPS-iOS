@@ -19,7 +19,7 @@ struct Strings {
     static let month = NSLocalizedString("Mánuður", comment: "")
     static let year = NSLocalizedString("Ár", comment: "")
     
-    struct colors {
+    struct Colors {
         static let red = NSLocalizedString("Rauður", comment: "Name for the color red")
         static let green = NSLocalizedString("Grænn", comment: "Name for the color green")
         static let black = NSLocalizedString("Svartur", comment: "Name for the color black")
@@ -30,7 +30,7 @@ struct Strings {
         static let orange = NSLocalizedString("Appelsínugulur", comment: "Name for the color orange")
     }
     
-    struct titles {
+    struct Titles {
         static let logs = NSLocalizedString("Ferlar", comment: "Logs Title")
         static let history = NSLocalizedString("Saga", comment: "History Title")
         static let journeys = NSLocalizedString("Ferðalög", comment: "Journeys Title")
@@ -41,17 +41,14 @@ struct Strings {
         static let vgpsDevice = NSLocalizedString("VehicleGPS tæki", comment: "")
         static let vgps = NSLocalizedString("VehicleGPS", comment: "")
 
-
         static let importFiles = NSLocalizedString("Flytja inn skrár", comment: "")
         
         static let newVehicle = NSLocalizedString("Nýtt farartæki", comment: "")
         static let newVehicleType = NSLocalizedString("Nýr farartækjahópur", comment: "")
         static let newJourney = NSLocalizedString("Nýtt ferðalag", comment: "")
-        
-        
     }
     
-    struct settings {
+    struct Settings {
         static let general = NSLocalizedString("Almennt", comment: "")
         static let connectToVGPS = NSLocalizedString("Tengjast við VehicleGPS", comment: "")
         static let objects = NSLocalizedString("Hlutir", comment: "")

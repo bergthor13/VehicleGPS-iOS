@@ -122,7 +122,9 @@ class VGTrack {
         tags = [VGTag]()
         
         for tag in track.tags! {
-            let myTag = tag as! Tag
+            guard let myTag = tag as? Tag else {
+                continue
+            }
             tags.append(VGTag(tag: myTag))
         }
 

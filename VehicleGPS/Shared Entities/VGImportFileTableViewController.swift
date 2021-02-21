@@ -12,7 +12,7 @@ class VGImportFileTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = Strings.titles.importFiles
+        title = Strings.Titles.importFiles
         tableView.register(VGImportTableViewCell.nib, forCellReuseIdentifier: VGImportTableViewCell.identifier)
         importBarButton = UIBarButtonItem(title: Strings.importFile, style: .done, target: self, action: #selector(tappedImport))
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.cancel, style: .plain, target: self, action: #selector(tappedCancel))

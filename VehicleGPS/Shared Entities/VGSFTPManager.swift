@@ -19,7 +19,7 @@ class VGSFTPManager {
     
     func downloadFile(filename: String, progress: @escaping (UInt, UInt) -> Bool, callback:@escaping (Data?) -> Void) {
         self.semaphore.wait()
-        let data = self.session.contents(atPath: Constants.sftp.remoteFolder+filename, progress: { (got, totalBytes) -> Bool in
+        let data = self.session.contents(atPath: Constants.Sftp.remoteFolder+filename, progress: { (got, totalBytes) -> Bool in
             return progress(got, totalBytes)
         })
         self.semaphore.signal()
@@ -29,7 +29,7 @@ class VGSFTPManager {
     func getRemoteFiles() -> [NMSFTPFile]? {
         var result = [NMSFTPFile]()
 
-        guard let files = self.session.contentsOfDirectory(atPath: Constants.sftp.remoteFolder) else {
+        guard let files = self.session.contentsOfDirectory(atPath: Constants.Sftp.remoteFolder) else {
             return nil
         }
         
@@ -65,13 +65,13 @@ class VGSFTPManager {
                 return
             }
             
-            var isCopySuccess = self.session.writeContents(data, toFileAtPath: Constants.sftp.deleteFolder + filename)
+            var isCopySuccess = self.session.writeContents(data, toFileAtPath: Constants.Sftp.deleteFolder + filename)
             if data.count == 0 {
                 isCopySuccess = true
             }
             
             if isCopySuccess {
-                let isRemoveSuccess = self.session.removeFile(atPath: Constants.sftp.remoteFolder + filename)
+                let isRemoveSuccess = self.session.removeFile(atPath: Constants.Sftp.remoteFolder + filename)
                 callback(isRemoveSuccess)
             } else {
 

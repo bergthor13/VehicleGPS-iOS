@@ -43,7 +43,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = Strings.titles.newVehicle
+        title = Strings.Titles.newVehicle
         if vehicle.mapColor == nil {
             vehicle.mapColor = .red
         }

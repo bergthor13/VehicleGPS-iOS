@@ -25,7 +25,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
     
     init(parentViewController:UITableViewController) {
         super.init()
-        self.parentViewController = (parentViewController as! VGHistoryTableViewController)
+        self.parentViewController = (parentViewController as? VGHistoryTableViewController)
         self.addObservers()
     }
 
@@ -167,14 +167,18 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         }
         
         let selectVehicle = UIAction(title: Strings.selectVehicle, image: Icons.vehicle, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
-            let cell = tableView.cellForRow(at: indexPath) as! VGLogsTableViewCell
+            guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+                return
+            }
             if !tableView.isEditing {
                 self.didTapVehicle(track: track, tappedView: cell.btnVehicle)
             }
         }
         
         let selectTags = UIAction(title: Strings.selectTags, image: Icons.tag, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
-            let cell = tableView.cellForRow(at: indexPath) as! VGLogsTableViewCell
+            guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
+                return
+            }
             self.didTapTags(track: track, tappedView: cell.btnVehicle)
         }
         
