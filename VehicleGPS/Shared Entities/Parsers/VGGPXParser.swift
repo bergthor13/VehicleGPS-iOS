@@ -66,13 +66,24 @@ class VGGPXParser: NSObject, IVGLogParser, XMLParserDelegate {
     
     var currPoint = VGDataPoint()
     var foundCharacters = String()
+    
+    func getDouble(from key:String, in dict:[String:String]) -> Double? {
+        guard let value = dict[key] else {
+            return nil
+        }
+        guard let doubleValue = Double(value) else {
+            return nil
+        }
+        return doubleValue
+    }
 
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
 
         if elementName == "trkpt" || elementName == "wpt" {
             currPoint = VGDataPoint()
-            currPoint.latitude = Double(attributeDict["lat"]!)!
-            currPoint.longitude = Double(attributeDict["lon"]!)!
+            
+            currPoint.latitude = getDouble(from: "lat", in: attributeDict)
+            currPoint.longitude = getDouble(from: "lon", in: attributeDict)
         }
         if elementName == "trk" {
             currTrack = VGTrack()

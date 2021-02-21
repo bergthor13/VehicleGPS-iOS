@@ -107,7 +107,11 @@
 "Sía eftir..." = "Filter by...";
 "Merkjum" = "Tags";
 "Dagsetningum" = "Dates";
+"Farartækjum"="Vehicles";
 "Velja merki" = "Select Tags";
 "Merki" = "Tags";
 
 "Farartæki hjálpa þér við að halda utan um tíma og vegalengd hvaða ferðamáta sem er."="Vehicles help you keep track of mileage and time of any transportation method of your choosing.";
+"Merki hjálpa þér að flokka ferla saman. Til dæmis er hægt að nota merki til að sameina ferðalög."="Tags help you group tracks together. For example, you can use tags to group your last vacation.";
+
+"Nýtt merki"="New Tag";

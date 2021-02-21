@@ -20,6 +20,7 @@ class VGAddTagTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        txtName.placeholder = Strings.newTagPlaceholder
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

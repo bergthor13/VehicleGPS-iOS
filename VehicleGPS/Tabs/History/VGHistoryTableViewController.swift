@@ -167,7 +167,10 @@ class VGHistoryTableViewController: UITableViewController {
         let dateFilter = UIAction(title: Strings.filterByDate, image: Icons.calendar) { (action) in
             
         }
-        return UIMenu(title: Strings.filterBy, children: [tagFilter, dateFilter])
+        let vehicleFilter = UIAction(title: Strings.filterByVehicle, image: Icons.vehicle) { (action) in
+            
+        }
+        return UIMenu(title: Strings.filterBy, children: [tagFilter, dateFilter, vehicleFilter])
 
     }
     

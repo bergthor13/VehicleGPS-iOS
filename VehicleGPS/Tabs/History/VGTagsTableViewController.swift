@@ -52,7 +52,7 @@ class VGTagsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return "Merki hjálpa þér að flokka ferla saman. Til dæmis er hægt að nota merki til að sameina ferðalög."
+        return Strings.tagsHint
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

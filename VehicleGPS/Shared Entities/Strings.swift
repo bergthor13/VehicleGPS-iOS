@@ -73,6 +73,7 @@ struct Strings {
     static let tapHereVehicles = NSLocalizedString("Ýttu hér til að bæta við farartæki", comment: "")
     
     static let vehiclesHint = NSLocalizedString("Farartæki hjálpa þér við að halda utan um tíma og vegalengd hvaða ferðamáta sem er.", comment: "")
+    static let tagsHint = NSLocalizedString("Merki hjálpa þér að flokka ferla saman. Til dæmis er hægt að nota merki til að sameina ferðalög.", comment: "")
 
 
     static let map = NSLocalizedString("Kort", comment: "")
@@ -148,5 +149,7 @@ struct Strings {
     static let filterBy = NSLocalizedString("Sía eftir...", comment: "")
     static let filterByTags = NSLocalizedString("Merkjum", comment: "")
     static let filterByDate = NSLocalizedString("Dagsetningum", comment: "")
+    static let filterByVehicle = NSLocalizedString("Farartækjum", comment: "")
+    static let newTagPlaceholder = NSLocalizedString("Nýtt merki", comment: "")
     static let dummyIdentifier = "dummy"
 }

@@ -242,6 +242,7 @@
 		F26B2C0D24B28E1D00E9F22C /* VGSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGSplitViewController.swift; sourceTree = "<group>"; };
 		F26B2C2724B3570A00E9F22C /* SidebarCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCollectionViewController.swift; sourceTree = "<group>"; };
 		F26CCB6C23DBB44600697EFA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F277D66225E1E0EF0072B2CF /* NMSSH.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = NMSSH.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2797D5623CD1AC500207650 /* VGHistoryDetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGHistoryDetailsTableViewController.swift; sourceTree = "<group>"; };
 		F27CB77B23D38A3D002BF28F /* VGDeviceConnectedHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VGDeviceConnectedHeaderView.xib; sourceTree = "<group>"; };
 		F27CB77D23D38C50002BF28F /* VGDeviceConnectedHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDeviceConnectedHeaderView.swift; sourceTree = "<group>"; };
@@ -319,6 +320,7 @@
 		DBFBC654E6716F74B4F5BEFF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F277D66225E1E0EF0072B2CF /* NMSSH.framework */,
 				F24A6FCD22F8521F00C8D372 /* NetworkExtension.framework */,
 				91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */,
 			);
@@ -1070,6 +1072,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VehicleGPS/VehicleGPS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = NJU97Y2JX6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1096,6 +1099,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VehicleGPS/VehicleGPS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = NJU97Y2JX6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
