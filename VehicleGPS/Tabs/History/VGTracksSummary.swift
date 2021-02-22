@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 class VGTracksSummary {
     var summaryID: String = ""
     var distance: Double = 0.0
@@ -16,7 +15,7 @@ class VGTracksSummary {
     var dateDescription: String = ""
     var tracks = [VGTrack]()
     
-    init(title:String) {
+    init(title: String) {
         self.summaryID = title
     }
 }

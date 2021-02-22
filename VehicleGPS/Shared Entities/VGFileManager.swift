@@ -10,8 +10,8 @@ import Foundation
 import UIKit
 
 class VGFileManager {
-    var fileManager:FileManager
-    var dataStore:VGDataStore!
+    var fileManager: FileManager
+    var dataStore: VGDataStore!
     var LOG_DIRECTORY = "OriginalLogs"
     var IMAGE_DIRECTORY_LIGHT = "OverviewSnapsLight"
     var IMAGE_DIRECTORY_DARK = "OverviewSnapsDark"
@@ -28,7 +28,7 @@ class VGFileManager {
         createDirectory(directoryName: VEHICLE_IMAGE_DIRECTORY, in: getAppSupportFolder()!)
     }
     
-    func createDirectory(directoryName:String, in folder:URL) {
+    func createDirectory(directoryName: String, in folder: URL) {
         let logFolder = folder.appendingPathComponent(directoryName)
         let urls = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask) as [NSURL]
         if let applicationSupportURL = urls.last {
@@ -42,7 +42,6 @@ class VGFileManager {
             }
         }
         
-        
         if !fileManager.fileExists(atPath: logFolder.path) {
             do {
                 try fileManager.createDirectory(atPath: logFolder.path,
@@ -55,7 +54,7 @@ class VGFileManager {
         }
     }
     
-    func getParser(for url:URL) -> IVGLogParser? {
+    func getParser(for url: URL) -> IVGLogParser? {
         let fileExtension = url.lastPathComponent.split(separator: ".").last?.lowercased()
         
         if fileExtension == "gpx" {
@@ -213,8 +212,6 @@ class VGFileManager {
         return nil
     }
     
-
-    
     func fileForTrackExists(track: VGTrack) -> Bool {
         if track.fileName == "" {
             return false
@@ -240,7 +237,6 @@ class VGFileManager {
         
     }
     
-    
     // MARK: - Track Previews
     func getPreviewPath(for track: VGTrack, with style: UIUserInterfaceStyle) -> URL? {
         let imageFolder = self.getImageFolder(style: style)
@@ -251,7 +247,6 @@ class VGFileManager {
             }
             return nil
         }
-        
         
         let fileNameWithoutExt = track.fileName.split(separator: ".")[0]
         
@@ -286,13 +281,13 @@ class VGFileManager {
         return nil
     }
     
-    func deletePreviewImage(for track: VGTrack, onSuccess:(()->())? = nil, onFailure:((Error)->())? = nil) {
+    func deletePreviewImage(for track: VGTrack, onSuccess: (() -> Void)? = nil, onFailure: ((Error) -> Void)? = nil) {
         for style in [UIUserInterfaceStyle.light, UIUserInterfaceStyle.dark] {
             guard let pathUrl = getPreviewPath(for: track, with: style) else {
                 return
             }
             do {
-                try fileManager.removeItem(at:pathUrl)
+                try fileManager.removeItem(at: pathUrl)
             } catch let error {
                 if let onFailure = onFailure {
                     onFailure(error)
@@ -307,7 +302,7 @@ class VGFileManager {
         return
     }
     
-    func deleteAllPreviewImages(onSuccess:@escaping()->(), onFailure:@escaping(Error)->()) {
+    func deleteAllPreviewImages(onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         
         var darkFileList = [String]()
         var lightFileList = [String]()
@@ -345,7 +340,7 @@ class VGFileManager {
     }
     
     // MARK: - Vehicle Images
-    func getImage(for vehicle:VGVehicle) -> UIImage? {
+    func getImage(for vehicle: VGVehicle) -> UIImage? {
         let path = getImagePath(for: vehicle)
         guard let pathString = path?.path else {
             return nil
@@ -360,7 +355,7 @@ class VGFileManager {
         return path
     }
     
-    func save(image:UIImage, for vehicle:VGVehicle) -> URL? {
+    func save(image: UIImage, for vehicle: VGVehicle) -> URL? {
         let path = getImagePath(for: vehicle)
 
         do {
@@ -372,7 +367,7 @@ class VGFileManager {
         return nil
     }
     
-    func deleteImage(for vehicle:VGVehicle) -> Bool{
+    func deleteImage(for vehicle: VGVehicle) -> Bool {
         let path = getImagePath(for: vehicle)
         do {
             try fileManager.removeItem(atPath: path!.path)

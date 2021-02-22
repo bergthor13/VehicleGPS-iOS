@@ -52,7 +52,7 @@ class VGDeviceConnectedHeaderView: UIView {
         
     }
     
-    func deviceConnected(hostname:String) {
+    func deviceConnected(hostname: String) {
         self.lblLogsAvailable.isHidden = false
         self.lblConnectedToGPS.isHidden = false
         self.imgIcon.isHidden = false
@@ -60,7 +60,7 @@ class VGDeviceConnectedHeaderView: UIView {
 
     }
     
-    func newLogsAvailable(count:Int) {
+    func newLogsAvailable(count: Int) {
         if count == 0 {
             self.lblLogsAvailable.text = Strings.noNewLogs
         } else if count == 1 {
@@ -83,11 +83,11 @@ class VGDeviceConnectedHeaderView: UIView {
         self.lblLogsAvailable.text = Strings.searchForLogs
     }
     
-    func setDownloadProgress(percentage:Double) {
+    func setDownloadProgress(percentage: Double) {
         self.downloadWidthConstraint.constant = progressBar.frame.width*(CGFloat(percentage))
     }
     
-    func setParseProgress(percentage:Double) {
+    func setParseProgress(percentage: Double) {
         self.parseWidthConstraint.constant = progressBar.frame.width*(CGFloat(percentage))
     }
     

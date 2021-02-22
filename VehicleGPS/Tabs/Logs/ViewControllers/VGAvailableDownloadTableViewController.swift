@@ -39,7 +39,6 @@ class VGAvailableDownloadTableViewController: UITableViewController {
         return tracksForSection.count
     }
 
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: VGAvailableLogsTableViewCell.identifier, for: indexPath) as? VGAvailableLogsTableViewCell else {
             return UITableViewCell()
@@ -57,7 +56,7 @@ class VGAvailableDownloadTableViewController: UITableViewController {
         return 50
     }
     
-    func getTrackAt(indexPath:IndexPath) -> VGTrack {
+    func getTrackAt(indexPath: IndexPath) -> VGTrack {
         let dayFileList = tracksDict[sectionKeys[indexPath.section]]
         let file = dayFileList![indexPath.row]
         return file

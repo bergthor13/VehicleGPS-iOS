@@ -11,7 +11,7 @@ import UIKit
 
 class VGRPMGraphGenerator: VGGraphGenerator {
     
-    func generate(from track:VGTrack) -> TrackGraphViewConfig {
+    func generate(from track: VGTrack) -> TrackGraphViewConfig {
         let configuration = TrackGraphViewConfig()
         configuration.name = Strings.rpm
         for point in track.trackPoints {

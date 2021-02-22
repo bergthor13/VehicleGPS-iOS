@@ -27,11 +27,10 @@ class VGMapViewController: UIViewController {
         self.view.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
         bigMap.tracks = tracks
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image:Icons.moreActions, primaryAction: nil, menu: createMenu())
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.moreActions, primaryAction: nil, menu: createMenu())
 
         bigMap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(mapTapped)))
     }
-    
     
     override var prefersStatusBarHidden: Bool {
         return barsHidden
@@ -114,10 +113,8 @@ class VGMapViewController: UIViewController {
         
         dpGroup.notify(queue: .main) {
             var drawnTracks = [VGTrack]()
-            for track in self.tracks {
-                if track.distance != 0.0 {
-                    drawnTracks.append(track)
-                }
+            for track in self.tracks where track.distance != 0.0{
+                drawnTracks.append(track)
             }
             delegate.snapshotter.drawTracks(vgTracks: drawnTracks) { (image, style) -> Void? in
                 if let image = image {

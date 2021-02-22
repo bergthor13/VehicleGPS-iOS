@@ -11,7 +11,7 @@ import NMSSH
 
 class VGSFTPManager {
     let session: NMSFTP
-    init(session:NMSFTP) {
+    init(session: NMSFTP) {
         self.session = session
         self.session.connect()
     }
@@ -78,7 +78,5 @@ class VGSFTPManager {
                 callback(isCopySuccess)
             }
         })
-            
-        
     }
 }

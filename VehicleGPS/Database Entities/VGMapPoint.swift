@@ -10,24 +10,24 @@ import Foundation
 import CoreLocation
 
 class VGMapPoint {
-    var latitude:Double
-    var longitude:Double
-    var timestamp:Date
+    var latitude: Double
+    var longitude: Double
+    var timestamp: Date
     var relatedTrack: VGTrack?
 
-    init(point:MapPoint) {
+    init(point: MapPoint) {
         self.latitude = point.latitude
         self.longitude = point.longitude
         self.timestamp = point.timeStamp!
     }
     
-    init(point:CLLocationCoordinate2D, timestamp:Date) {
+    init(point: CLLocationCoordinate2D, timestamp: Date) {
         self.latitude = point.latitude
         self.longitude = point.longitude
         self.timestamp = timestamp
     }
     
-    func setEntity(mapPoint:MapPoint, track:Track) -> MapPoint{
+    func setEntity(mapPoint: MapPoint, track: Track) -> MapPoint {
         mapPoint.latitude = latitude
         mapPoint.longitude = longitude
         mapPoint.timeStamp = timestamp

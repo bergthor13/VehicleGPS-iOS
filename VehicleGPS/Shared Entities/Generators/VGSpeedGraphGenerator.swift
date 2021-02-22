@@ -12,7 +12,7 @@ import CoreLocation
 
 class VGSpeedGraphGenerator: VGGraphGenerator {
     
-    func generate(from track:VGTrack) -> TrackGraphViewConfig {
+    func generate(from track: VGTrack) -> TrackGraphViewConfig {
         let configuration = TrackGraphViewConfig()
         configuration.type = .speed
         configuration.name = Strings.speed

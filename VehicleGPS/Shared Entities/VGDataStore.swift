@@ -15,7 +15,6 @@ class VGDataStore {
     let vgFileManager = VGFileManager()
     let semaphore = DispatchSemaphore(value: 1)
     
-    
     func initializeContainer() {
         let container = NSPersistentContainer(name: Constants.PersistentContainer.name)
         
@@ -33,7 +32,7 @@ class VGDataStore {
     }
     
     init() {
-        guard let modelURL = Bundle.main.url(forResource: "VehicleGPS", withExtension:"momd") else {
+        guard let modelURL = Bundle.main.url(forResource: "VehicleGPS", withExtension: "momd") else {
             fatalError("Error loading model from bundle")
         }
         
@@ -46,9 +45,8 @@ class VGDataStore {
         initializeContainer()
     }
     
-    
     // MARK: - Private Functions
-    fileprivate func getDataPoints(in context:NSManagedObjectContext, forTrackWith id:UUID) -> [DataPoint] {
+    fileprivate func getDataPoints(in context: NSManagedObjectContext, forTrackWith id: UUID) -> [DataPoint] {
         guard let fetchedTrack = getTrack(in: context, with: id) else {
             return [DataPoint]()
         }
@@ -64,7 +62,7 @@ class VGDataStore {
         }
     }
     
-    fileprivate func getMapPoints(in context:NSManagedObjectContext, forTrackWith id:UUID) -> [MapPoint] {
+    fileprivate func getMapPoints(in context: NSManagedObjectContext, forTrackWith id: UUID) -> [MapPoint] {
         guard let fetchedTrack = getTrack(in: context, with: id) else {
             return [MapPoint]()
         }
@@ -79,7 +77,7 @@ class VGDataStore {
         }
     }
     
-    fileprivate func getTags(in context:NSManagedObjectContext, forTrackWith id:UUID) -> [Tag] {
+    fileprivate func getTags(in context: NSManagedObjectContext, forTrackWith id: UUID) -> [Tag] {
         guard let fetchedTrack = getTrack(in: context, with: id) else {
             return []
         }
@@ -93,7 +91,7 @@ class VGDataStore {
         }
     }
     
-    fileprivate func getTrack(in context:NSManagedObjectContext, with id: UUID) -> Track? {
+    fileprivate func getTrack(in context: NSManagedObjectContext, with id: UUID) -> Track? {
         let trackFetchRequest = Track.fetchRequest() as NSFetchRequest<Track>
         trackFetchRequest.predicate = self.getPredicate(for: id)
         do {
@@ -109,7 +107,7 @@ class VGDataStore {
         }
     }
     
-    fileprivate func getVehicle(in context:NSManagedObjectContext, with id: UUID) -> Vehicle? {
+    fileprivate func getVehicle(in context: NSManagedObjectContext, with id: UUID) -> Vehicle? {
         let vehicleFetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
         vehicleFetchRequest.predicate = self.getPredicate(for: id)
         do {
@@ -125,7 +123,7 @@ class VGDataStore {
         }
     }
     
-    fileprivate func getTag(in context:NSManagedObjectContext, with id: UUID) -> Tag? {
+    fileprivate func getTag(in context: NSManagedObjectContext, with id: UUID) -> Tag? {
         let tagFetchRequest = Tag.fetchRequest() as NSFetchRequest<Tag>
         tagFetchRequest.predicate = self.getPredicate(for: id)
         do {
@@ -141,7 +139,7 @@ class VGDataStore {
         }
     }
     
-    fileprivate func getAllTracks(in context: NSManagedObjectContext, forVehicleWith id:UUID, onSuccess:@escaping([VGTrack])->(), onFailure:@escaping(Error)->()) {
+    fileprivate func getAllTracks(in context: NSManagedObjectContext, forVehicleWith id: UUID, onSuccess: @escaping([VGTrack]) -> Void, onFailure: @escaping(Error) -> Void) {
         let predicate = NSPredicate(format: "vehicle.id = %@", argumentArray: [id])
         getTracks(in: context, with: predicate, onSuccess: { (tracks) in
             onSuccess(tracks)
@@ -150,7 +148,7 @@ class VGDataStore {
         }
     }
     
-    func getTracks(in context: NSManagedObjectContext, with predicate:NSPredicate?, onSuccess:@escaping([VGTrack])->(), onFailure:@escaping(Error)->()) {
+    func getTracks(in context: NSManagedObjectContext, with predicate: NSPredicate?, onSuccess: @escaping([VGTrack]) -> Void, onFailure: @escaping(Error) -> Void) {
         var result = [VGTrack]()
         let fetchRequest = Track.fetchRequest() as NSFetchRequest<Track>
         fetchRequest.predicate = predicate
@@ -166,40 +164,40 @@ class VGDataStore {
             onSuccess(result)
     }
     
-    fileprivate func add(vgDataPoint:VGDataPoint, to track: Track, in context:NSManagedObjectContext) {
+    fileprivate func add(vgDataPoint: VGDataPoint, to track: Track, in context: NSManagedObjectContext) {
         let entity = NSEntityDescription.entity(forEntityName: "DataPoint", in: context)!
-        var dataPoint = DataPoint(entity:entity, insertInto: context)
+        var dataPoint = DataPoint(entity: entity, insertInto: context)
         dataPoint = vgDataPoint.setEntity(dataPoint: dataPoint, track: track)
     }
     
-    fileprivate func add(vgMapPoint:VGMapPoint, to track: Track, in context:NSManagedObjectContext) {
+    fileprivate func add(vgMapPoint: VGMapPoint, to track: Track, in context: NSManagedObjectContext) {
         let entity = NSEntityDescription.entity(forEntityName: "MapPoint", in: context)!
-        var mapPoint = MapPoint(entity:entity, insertInto: context)
+        var mapPoint = MapPoint(entity: entity, insertInto: context)
         mapPoint = vgMapPoint.setEntity(mapPoint: mapPoint, track: track)
         
     }
     
-    fileprivate func removeAllDataPoints(from track: Track, in context:NSManagedObjectContext) {
+    fileprivate func removeAllDataPoints(from track: Track, in context: NSManagedObjectContext) {
         let dataPoints = getDataPoints(in: context, forTrackWith: track.id!)
         for dataPoint in dataPoints {
             context.delete(dataPoint)
         }
     }
     
-    fileprivate func removeAllMapPoints(from track: Track, in context:NSManagedObjectContext) {
+    fileprivate func removeAllMapPoints(from track: Track, in context: NSManagedObjectContext) {
         let mapPoints = getMapPoints(in: context, forTrackWith: track.id!)
         for mapPoint in mapPoints {
             context.delete(mapPoint)
         }
     }
     
-    fileprivate func getPredicate(for id:UUID) -> NSPredicate {
+    fileprivate func getPredicate(for id: UUID) -> NSPredicate {
         return NSPredicate(format: "id = %@", argumentArray: [id])
     }
     
     // MARK: - Public Functions
     // MARK: Database Functions
-    func deleteAllData(entity:String, onSuccess: @escaping()->(), onFailure: @escaping(Error)->()) {
+    func deleteAllData(entity: String, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         
@@ -234,7 +232,7 @@ class VGDataStore {
         }
     }
     
-    func countAllData(entity:String, onSuccess:@escaping(Int)->(), onFailure:@escaping(Error)->()) {
+    func countAllData(entity: String, onSuccess: @escaping(Int) -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -259,7 +257,7 @@ class VGDataStore {
     }
     
     // MARK: Track
-    func getAllTracks(onSuccess: @escaping([VGTrack])->(), onFailure:@escaping(Error)->()) {
+    func getAllTracks(onSuccess: @escaping([VGTrack]) -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -277,14 +275,14 @@ class VGDataStore {
 
     }
     
-    func add(vgTrack: VGTrack, onSuccess: @escaping(UUID)->(), onFailure:@escaping(Error)->()) {
+    func add(vgTrack: VGTrack, onSuccess: @escaping(UUID) -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
             let entity = NSEntityDescription.entity(forEntityName: "Track", in: context)!
             var newTrack = Track(entity: entity, insertInto: context)
             
-            newTrack = vgTrack.setEntity(track:newTrack)
+            newTrack = vgTrack.setEntity(track: newTrack)
             newTrack.id = UUID()
             let newID = newTrack.id!
             for point in vgTrack.trackPoints {
@@ -327,7 +325,6 @@ class VGDataStore {
         }
     }
     
-    
     /// Returns the magnitude of a vector in three dimensions
     /// from the given components.
     ///
@@ -336,17 +333,17 @@ class VGDataStore {
     ///     - onSuccess: The *y* component of the vector.
     ///     - onFailure: The *z* component of the vector.
 
-    func update(vgTrack: VGTrack, onSuccess: @escaping(UUID)->(), onFailure:@escaping(Error)->()) {
+    func update(vgTrack: VGTrack, onSuccess: @escaping(UUID) -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
             guard var oldTrack = self.getTrack(in: context, with: vgTrack.id!) else {
-                let error = NSError(domain: "", code: 123, userInfo: ["NSLocalizedDescriptionKey":"Can't find old track"])
+                let error = NSError(domain: "", code: 123, userInfo: ["NSLocalizedDescriptionKey": "Can't find old track"])
                 onFailure(error)
                 return
             }
             // Update the track with new information.
-            oldTrack = vgTrack.setEntity(track:oldTrack)
+            oldTrack = vgTrack.setEntity(track: oldTrack)
             
             // Remove all map and data points from the track.
             self.removeAllDataPoints(from: oldTrack, in: context)
@@ -379,7 +376,7 @@ class VGDataStore {
         }
     }
     
-    func delete(trackWith id: UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
+    func delete(trackWith id: UUID, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -405,8 +402,7 @@ class VGDataStore {
         
     }
     
-    
-    func getDataPointsForTrack(with id:UUID, onSuccess: @escaping([VGDataPoint])->(), onFailure:@escaping(Error)->())  {
+    func getDataPointsForTrack(with id: UUID, onSuccess: @escaping([VGDataPoint]) -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -418,12 +414,10 @@ class VGDataStore {
             }
             fetchedDataPoints = []
             onSuccess(result.sorted())
-
-            
         }
     }
     
-    func getMapPointsForTrack(with id:UUID, onSuccess: @escaping([VGMapPoint])->(), onFailure:@escaping(Error)->()) {
+    func getMapPointsForTrack(with id: UUID, onSuccess: @escaping([VGMapPoint]) -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -441,7 +435,7 @@ class VGDataStore {
     }
     
     // MARK: Vehicle
-    func getAllVehicles(onSuccess: @escaping([VGVehicle])->(), onFailure: @escaping(Error)->()) {
+    func getAllVehicles(onSuccess: @escaping([VGVehicle]) -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -475,7 +469,7 @@ class VGDataStore {
         }
     }
     
-    func add(vgVehicle:VGVehicle, onSuccess: @escaping(UUID)->(), onFailure:@escaping(Error)->()) {
+    func add(vgVehicle: VGVehicle, onSuccess: @escaping(UUID) -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -491,7 +485,6 @@ class VGDataStore {
                 newVehicle.image = self.vgFileManager.save(image: image, for: vgVehicle)
             }
             
-            
             context.insert(newVehicle)
             do {
                 try context.save()
@@ -506,7 +499,7 @@ class VGDataStore {
         }
     }
     
-    func update(vgVehicle:VGVehicle, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
+    func update(vgVehicle: VGVehicle, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         guard let newVehicle = getVehicle(in: context, with: vgVehicle.id!) else {
@@ -534,7 +527,7 @@ class VGDataStore {
         }
     }
     
-    func delete(vehicleWith id:UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
+    func delete(vehicleWith id: UUID, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -557,7 +550,7 @@ class VGDataStore {
         }
     }
     
-    func add(vehicleWith vehicleId:UUID, toTrackWith trackId:UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
+    func add(vehicleWith vehicleId: UUID, toTrackWith trackId: UUID, onSuccess: @escaping() -> Void, onFailure:@escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -573,7 +566,7 @@ class VGDataStore {
             track.setValue(vehicle, forKey: "vehicle")
             do {
                 try context.save()
-                let vgVehicle = VGVehicle(vehicle:vehicle)
+                let vgVehicle = VGVehicle(vehicle: vehicle)
                 let vgTrack = VGTrack(track: track)
                 vgTrack.vehicle = vgVehicle
 
@@ -591,7 +584,7 @@ class VGDataStore {
     }
     
     // MARK: - DownloadedFile
-    func getDownloadedFiles(onSuccess:@escaping([DownloadedFile])->(), onFailure:@escaping(Error)->()) {
+    func getDownloadedFiles(onSuccess:@escaping([DownloadedFile]) -> Void, onFailure:@escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -608,7 +601,7 @@ class VGDataStore {
         }
     }
     
-    func add(file:VGDownloadedFile, onSuccess:@escaping()->(), onFailure:@escaping(Error)->()) {
+    func add(file: VGDownloadedFile, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -631,7 +624,7 @@ class VGDataStore {
         }
     }
     
-    func update(file:VGDownloadedFile, onSuccess:@escaping()->(), onFailure:@escaping(Error)->()) {
+    func update(file: VGDownloadedFile, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -657,7 +650,7 @@ class VGDataStore {
     }
     
     // MARK: - Tags
-    func getTags(onSuccess:@escaping([VGTag])->(), onFailure:@escaping(Error)->()) {
+    func getTags(onSuccess: @escaping([VGTag]) -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -678,7 +671,7 @@ class VGDataStore {
         }
     }
     
-    func add(tag:VGTag, onSuccess:@escaping(UUID)->(), onFailure:@escaping(Error)->()) {
+    func add(tag: VGTag, onSuccess: @escaping(UUID) -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -702,7 +695,7 @@ class VGDataStore {
         }
     }
     
-    func update(tag:VGTag, onSuccess:@escaping()->(), onFailure:@escaping(Error)->()) {
+    func update(tag: VGTag, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -726,7 +719,7 @@ class VGDataStore {
         }
     }
     
-    func delete(tagWith id:UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
+    func delete(tagWith id: UUID, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -749,7 +742,7 @@ class VGDataStore {
         }
     }
     
-    func add(tagWith tagId:UUID, toTrackWith trackId:UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
+    func add(tagWith tagId: UUID, toTrackWith trackId: UUID, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -765,7 +758,7 @@ class VGDataStore {
             track.addToTags(tag)
             do {
                 try context.save()
-                let vgTag = VGTag(tag:tag)
+                let vgTag = VGTag(tag: tag)
                 let vgTrack = VGTrack(track: track)
                 vgTrack.tags.append(vgTag)
 
@@ -781,7 +774,7 @@ class VGDataStore {
         }
     }
     
-    func remove(tagWith tagId:UUID, fromTrackWith trackId:UUID, onSuccess: @escaping()->(), onFailure:@escaping(Error)->()) {
+    func remove(tagWith tagId: UUID, fromTrackWith trackId: UUID, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = self.storeCoordinator
         context.perform {
@@ -821,7 +814,7 @@ class VGDataStore {
         return nil
     }
     
-    func setDefaultVehicleID(id:UUID) {
+    func setDefaultVehicleID(id: UUID) {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(id) {
             UserDefaults.standard.set(encoded, forKey: "DefaultVehicle")
@@ -836,11 +829,11 @@ class VGDataStore {
         return UserDefaults.standard.string(forKey: "SftpUsername")
     }
     
-    func setHost(host:String) {
+    func setHost(host: String) {
         UserDefaults.standard.setValue(host, forKey: "SftpHost")
     }
     
-    func setUsername(username:String) {
+    func setUsername(username: String) {
         UserDefaults.standard.setValue(username, forKey: "SftpUsername")
     }
 }

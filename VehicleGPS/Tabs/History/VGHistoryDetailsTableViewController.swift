@@ -35,7 +35,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
     var sections = [String]()
     var logDict = [String: [VGTrack]]()
     
-    func addObserver(selector:Selector, name:Notification.Name) {
+    func addObserver(selector: Selector, name: Notification.Name) {
         NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
     }
     
@@ -57,7 +57,6 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         self.tableView.register(VGLogsTableViewCell.nib, forCellReuseIdentifier: VGLogsTableViewCell.identifier)
         navigationController?.navigationBar.prefersLargeTitles = false
         
-        
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
             self.vgFileManager = appDelegate.fileManager
@@ -78,7 +77,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
 
     }
     
-    @objc func previewImageStarting(_ notification:Notification) {
+    @objc func previewImageStarting(_ notification: Notification) {
         guard let newTrack = notification.object as? VGTrack else {
             return
         }
@@ -96,7 +95,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
 
     }
     
-    @objc func previewImageStopping(_ notification:Notification) {
+    @objc func previewImageStopping(_ notification: Notification) {
         guard let updatedNotification = notification.object as? ImageUpdatedNotification else {
             return
         }
@@ -114,11 +113,9 @@ class VGHistoryDetailsTableViewController: UITableViewController {
                 cell.trackView.image = updatedNotification.image
             }
         }
-
-
     }
     
-    @objc func onVehicleAddedToLog(_ notification:Notification) {
+    @objc func onVehicleAddedToLog(_ notification: Notification) {
         guard let newTrack = notification.object as? VGTrack else {
             return
         }
@@ -136,7 +133,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         cell.lblVehicle.text = vehicle.name
     }
     
-    @objc func onLogUpdated(_ notification:Notification) {
+    @objc func onLogUpdated(_ notification: Notification) {
         guard let updatedTrack = notification.object as? VGTrack else {
             return
         }
@@ -158,33 +155,27 @@ class VGHistoryDetailsTableViewController: UITableViewController {
             self.logDict[self.sections[indexPath.section]]![indexPath.row] = updatedTrack
             cell.show(track: updatedTrack)
         }
-        
-        
     }
     
-    func getIndexPath(for track:VGTrack) -> IndexPath? {
+    func getIndexPath(for track: VGTrack) -> IndexPath? {
         for (sectionIndex, section) in sections.enumerated() {
             guard let sectionList = logDict[section] else {
                 continue
             }
-            for (rowIndex, trk) in sectionList.enumerated() {
-                if track.id == trk.id {
-                    return IndexPath(row: rowIndex, section: sectionIndex)
-                }
+            for (rowIndex, trk) in sectionList.enumerated() where track.id == trk.id {
+                return IndexPath(row: rowIndex, section: sectionIndex)
             }
         }
         return nil
     }
     
-    func getIndexPath(for fileName:String) -> IndexPath? {
+    func getIndexPath(for fileName: String) -> IndexPath? {
         for (sectionIndex, section) in sections.enumerated() {
             guard let sectionList = logDict[section] else {
                 continue
             }
-            for (rowIndex, trk) in sectionList.enumerated() {
-                if fileName == trk.fileName {
-                    return IndexPath(row: rowIndex, section: sectionIndex)
-                }
+            for (rowIndex, trk) in sectionList.enumerated() where fileName == trk.fileName {
+                return IndexPath(row: rowIndex, section: sectionIndex)
             }
         }
         return nil
@@ -254,13 +245,11 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         }
         cell.delegate = self
         if let track = getTrackAt(indexPath: indexPath) {
-            cell.show(track:track)
+            cell.show(track: track)
         }
         return cell
     }
-    
-    
-    
+
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         if indexPath.section == 0 {
             return nil
@@ -308,7 +297,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         }
     }
     
-    func deleteTrack(at indexPath:IndexPath) {
+    func deleteTrack(at indexPath: IndexPath) {
         // Delete the row from the data source
         guard let track = self.getTrackAt(indexPath: indexPath) else {
             return
@@ -338,7 +327,7 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         }
     }
     
-    func getTrackAt(indexPath:IndexPath) -> VGTrack? {
+    func getTrackAt(indexPath: IndexPath) -> VGTrack? {
         guard let dayFileList = logDict[sections[indexPath.section-1]] else {
             return nil
         }
@@ -356,10 +345,10 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         if section == 0 {
             return UIView()
         }
-        return getViewForHeader(section: section-1, view:nil)
+        return getViewForHeader(section: section-1, view: nil)
     }
     
-    func getViewForHeader(section:Int, view:VGLogHeaderView?) -> VGLogHeaderView {
+    func getViewForHeader(section: Int, view: VGLogHeaderView?) -> VGLogHeaderView {
         var hdrView = view
         
         if hdrView == nil {
@@ -392,7 +381,6 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
         
-        
         var frame1 = view.dateLabel.frame
         frame1.size.height = dateString.height(withConstrainedWidth: view.bounds.width-40, font: view.dateLabel.font)
         view.dateLabel.frame = frame1
@@ -402,13 +390,12 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         frame2.size.height = durationString.height(withConstrainedWidth: view.bounds.width-40, font: view.detailsLabel.font)
         view.detailsLabel.frame = frame2
         
-        
         return view
     }
 }
 
 extension VGHistoryDetailsTableViewController: DisplaySelectVehicleProtocol {
-    func didTapVehicle(track: VGTrack, tappedView:UIView?) {
+    func didTapVehicle(track: VGTrack, tappedView: UIView?) {
         let selectionVC = VGVehiclesSelectionTableViewController(style: .insetGrouped)
         selectionVC.track = track
         

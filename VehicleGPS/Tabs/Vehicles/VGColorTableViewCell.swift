@@ -16,7 +16,6 @@ class VGColorTableViewCell: UITableViewCell {
     static let nibName = "VGColorTableViewCell"
     static let nib = UINib(nibName: VGColorTableViewCell.nibName, bundle: nil)
 
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

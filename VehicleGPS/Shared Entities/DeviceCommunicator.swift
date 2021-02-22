@@ -19,7 +19,7 @@ class DeviceCommunicator {
         }
     }
     
-    func connectToVehicleGPS(session:NMSSHSession) -> Bool {
+    func connectToVehicleGPS(session: NMSSHSession) -> Bool {
         if tryToConnectSSH(session: session) != true {
             return false
         }
@@ -116,7 +116,7 @@ class DeviceCommunicator {
         return true
     }
     
-    func getAvailableFiles(onSuccess:@escaping([NMSFTPFile])->(), onFailure:@escaping(String)->()) {
+    func getAvailableFiles(onSuccess: @escaping([NMSFTPFile]) -> Void, onFailure: @escaping(String) -> Void) {
         // Reconnect if not connected.
         if self.downloadManager == nil {
             self.reconnectToVehicleGPS(session: self.session!)
@@ -145,7 +145,7 @@ class DeviceCommunicator {
         }
     }
     
-    func downloadTrackFile(file:NMSFTPFile, progress:@escaping(UInt,UInt)->(), onSuccess:@escaping(URL?)->(), onFailure:@escaping(String)->()) {
+    func downloadTrackFile(file: NMSFTPFile, progress: @escaping(UInt, UInt) -> Void, onSuccess: @escaping(URL?) -> Void, onFailure: @escaping(String) -> Void) {
         self.downloadManager?.downloadFile(filename: file.filename, progress: { (received, total) -> Bool in
             progress(received, total)
             return true
@@ -158,6 +158,3 @@ class DeviceCommunicator {
         })
     }
 }
-
-
-

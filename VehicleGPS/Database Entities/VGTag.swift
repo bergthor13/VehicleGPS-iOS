@@ -13,7 +13,7 @@ class VGTag {
     public var name: String?
     public var tracks: [VGTrack]!
     
-    init(tag:Tag) {
+    init(tag: Tag) {
         self.id = tag.id
         self.name = tag.name
         self.tracks = [VGTrack]()

@@ -11,7 +11,7 @@ import UIKit
 
 class VGPowerGraphGenerator: VGGraphGenerator {
     
-    func generate(from track:VGTrack) -> TrackGraphViewConfig {
+    func generate(from track: VGTrack) -> TrackGraphViewConfig {
         let configuration = TrackGraphViewConfig()
         configuration.name = Strings.power
         for point in track.trackPoints {

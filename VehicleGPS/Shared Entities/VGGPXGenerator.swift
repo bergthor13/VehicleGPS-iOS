@@ -10,8 +10,8 @@ import Foundation
 import UIKit
 
 class VGGPXGenerator {
-    var dateFormatter:DateFormatter
-    var vgFileManager:VGFileManager!
+    var dateFormatter: DateFormatter
+    var vgFileManager: VGFileManager!
     init() {
         dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
@@ -38,7 +38,7 @@ class VGGPXGenerator {
         return "</gpx>"
     }
     
-    func getTrackPointGPX(point:VGDataPoint) -> String {
+    func getTrackPointGPX(point: VGDataPoint) -> String {
         var trackPointString = ""
         guard let timestamp = point.timestamp else {
             return ""
@@ -55,7 +55,6 @@ class VGGPXGenerator {
         trackPointString += "<trkpt lat=\"\(latitude)\" lon=\"\(longitude)\">"
         trackPointString += "<time>\(dateFormatter.string(from: timestamp))</time>"
 
-        
         if let elevation = point.elevation {
             trackPointString += "<ele>\(elevation)</ele>"
         }

@@ -45,8 +45,6 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
         super.viewDidLoad()
         self.tableView.register(VGGraphTableViewCell.self, forCellReuseIdentifier: VGGraphTableViewCell.identifier)
         self.tableView.allowsSelection = false
-
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {

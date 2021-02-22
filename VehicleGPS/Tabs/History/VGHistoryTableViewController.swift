@@ -11,7 +11,6 @@ import UniformTypeIdentifiers
 import Pulley
 import EventKit
 
-
 class VGHistoryTableViewController: UITableViewController {
     var tracks = [VGTrack]() {
         didSet {
@@ -36,7 +35,6 @@ class VGHistoryTableViewController: UITableViewController {
     var toolbarButtonSelectVehicle: UIBarButtonItem!
     var toolbarButtonStartEditor: UIBarButtonItem!
 
-    
     var historySections = [VGHistorySection]() {
         didSet {
             for section in historySections {
@@ -81,8 +79,6 @@ class VGHistoryTableViewController: UITableViewController {
         emptyLabel.addGestureRecognizer(importTapRecognizer)
 
     }
-    
-    
     
     override init(style: UITableView.Style) {
         super.init(style: style)
@@ -131,9 +127,7 @@ class VGHistoryTableViewController: UITableViewController {
         self.toolbarButtonSelectVehicle = UIBarButtonItem(image: Icons.vehicle, style: .plain, target: self, action: #selector(selectVehicle(_:)))
         self.toolbarButtonStartEditor = UIBarButtonItem(image: Icons.editor, style: .plain, target: self, action: #selector(startEditor(_:)))
 
-        
         configureToolbar()
-        
         
         historyHeader = VGHistoryHeader(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         historyHeader.historyTableViewController = self
@@ -151,23 +145,22 @@ class VGHistoryTableViewController: UITableViewController {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
         }
-        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(image:Icons.moreActions, primaryAction: nil, menu: createMenu()), UIBarButtonItem(image:Icons.filter, primaryAction: nil, menu: createFilterMenu())]
+        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(image: Icons.moreActions, primaryAction: nil, menu: createMenu()), UIBarButtonItem(image: Icons.filter, primaryAction: nil, menu: createFilterMenu())]
         self.navigationItem.leftBarButtonItem = editButtonItem
         addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
 
-        
         tableView.allowsMultipleSelection = true
         tableView.allowsMultipleSelectionDuringEditing = true
     }
     
     func createFilterMenu() -> UIMenu {
-        let tagFilter = UIAction(title: Strings.filterByTags, image: Icons.tag) { (action) in
+        let tagFilter = UIAction(title: Strings.filterByTags, image: Icons.tag) { (_) in
             
         }
-        let dateFilter = UIAction(title: Strings.filterByDate, image: Icons.calendar) { (action) in
+        let dateFilter = UIAction(title: Strings.filterByDate, image: Icons.calendar) { (_) in
             
         }
-        let vehicleFilter = UIAction(title: Strings.filterByVehicle, image: Icons.vehicle) { (action) in
+        let vehicleFilter = UIAction(title: Strings.filterByVehicle, image: Icons.vehicle) { (_) in
             
         }
         return UIMenu(title: Strings.filterBy, children: [tagFilter, dateFilter, vehicleFilter])
@@ -177,20 +170,19 @@ class VGHistoryTableViewController: UITableViewController {
     // MARK: - Button Actions
     // MARK: Toolbar
     
-    @objc func selectVehicle(_ sender:UIBarButtonItem) {
+    @objc func selectVehicle(_ sender: UIBarButtonItem) {
         print("Selecting Vehicle")
     }
     
-    @objc func deleteTracks(_ sender:UIBarButtonItem) {
+    @objc func deleteTracks(_ sender: UIBarButtonItem) {
         print("DELETING SELECTED TRACKS")
     }
     
-    @objc func didTapImportFiles(_ sender:Any) {
+    @objc func didTapImportFiles(_ sender: Any) {
         importFiles()
     }
     
-    
-    @objc func startEditor(_ sender:UIBarButtonItem) {
+    @objc func startEditor(_ sender: UIBarButtonItem) {
         let selTracks = getSelectedTracks()
         for (index, track) in selTracks.enumerated() {
             dataStore.getDataPointsForTrack(with: track.id!) { (points) in
@@ -204,7 +196,7 @@ class VGHistoryTableViewController: UITableViewController {
         
     }
     
-    func getSelectedTracks() -> [VGTrack]{
+    func getSelectedTracks() -> [VGTrack] {
         guard let dataSource = tableView.dataSource as? VGHistoryAllTracksDataSource else {
             return []
         }
@@ -247,7 +239,7 @@ class VGHistoryTableViewController: UITableViewController {
                 guard let track = dataSource.getTrackAt(indexPath: indexPath) else {
                     continue
                 }
-                let event:EKEvent = EKEvent(eventStore: store)
+                let event: EKEvent = EKEvent(eventStore: store)
                 let startDate = track.timeStart
                 let endDate = startDate!.addingTimeInterval(track.duration)
                 event.title = "Track"
@@ -265,8 +257,6 @@ class VGHistoryTableViewController: UITableViewController {
 
             }
         }
-        
-        
     }
     
     func exportToCalendar() {
@@ -281,8 +271,7 @@ class VGHistoryTableViewController: UITableViewController {
                     print("Access denied")
                 case .notDetermined:
                 // 3
-                    eventStore.requestAccess(to: .event, completion:
-                      {[weak self] (granted: Bool, error: Error?) -> Void in
+                    eventStore.requestAccess(to: .event, completion: { [weak self] (granted: Bool, error: Error?) -> Void in
                           if granted {
                             self!.insertEvent(store: eventStore)
                           } else {
@@ -294,7 +283,7 @@ class VGHistoryTableViewController: UITableViewController {
             }
     }
     
-    @objc func exportTracks(_ sender:UIBarButtonItem? = nil) {
+    @objc func exportTracks(_ sender: UIBarButtonItem? = nil) {
         guard let dataSource = tableView.dataSource as? VGHistoryAllTracksDataSource else {
             return
         }
@@ -347,11 +336,11 @@ class VGHistoryTableViewController: UITableViewController {
         return UIMenu(title: "", children: [mapAction])
     }
     
-    func addObserver(selector:Selector, name:Notification.Name) {
+    func addObserver(selector: Selector, name: Notification.Name) {
         NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
     }
     
-    @objc func onLogsAdded(_ notification:Notification) {
+    @objc func onLogsAdded(_ notification: Notification) {
         guard let newTracks = notification.object as? [VGTrack] else {
             return
         }
@@ -360,7 +349,6 @@ class VGHistoryTableViewController: UITableViewController {
             self.tracks.append(track)
         }
         
-
 //        DispatchQueue.main.async {
 //            self.tableView.reloadData()
 //            if self.tracks.count > 0 {
@@ -371,11 +359,8 @@ class VGHistoryTableViewController: UITableViewController {
 //                self.tableView.separatorStyle = .none
 //            }
 //        }
-        
-        
     }
 
-    
     func importFiles() {
         let supportedTypes: [UTType] = [UTType(filenameExtension: "gpx")!, UTType(filenameExtension: "csv")!]
         let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
@@ -413,7 +398,6 @@ class VGHistoryTableViewController: UITableViewController {
         emptyLabel.frame = frame
     }
     
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = false
@@ -441,7 +425,7 @@ class VGHistoryTableViewController: UITableViewController {
                 }).first
             
             if summary == nil {
-                summary = VGTracksSummary(title:summaryKey)
+                summary = VGTracksSummary(title: summaryKey)
                 dateFormatter.dateFormat = "yyyy"
                 let date = dateFormatter.date(from: summaryKey)
                 dateFormatter.dateFormat = "yyyy"
@@ -471,14 +455,13 @@ class VGHistoryTableViewController: UITableViewController {
             }.first
             
             if section == nil {
-                section = VGHistorySection(title:sectionKey)
+                section = VGHistorySection(title: sectionKey)
                 dateFormatter.dateFormat = "yyyy"
                 let date = dateFormatter.date(from: sectionKey)
                 dateFormatter.dateFormat = "yyyy"
                 if let date = date {
                     section!.dateDescription = dateFormatter.string(from: date)
                 }
-                
 
                 result.append(section!)
             }
@@ -526,7 +509,6 @@ class VGHistoryTableViewController: UITableViewController {
                     section!.dateDescription = dateFormatter.string(from: date)
                 }
                 
-
                 result.append(section!)
             }
             
@@ -557,16 +539,16 @@ class VGHistoryTableViewController: UITableViewController {
         
         DispatchQueue.global(qos: .userInitiated).async {
             switch id {
-                case SegmentType.day.rawValue:
-                    self.historySections = self.getDayDictionary(tracks: self.tracks)
-                case SegmentType.month.rawValue:
-                    self.historySections = self.getMonthDictionary(tracks: self.tracks)
-                case SegmentType.year.rawValue:
-                    self.historySections = self.getYearDictionary(tracks: self.tracks)
-                case SegmentType.allTracks.rawValue:
-                    break
-                default:
-                    break
+            case SegmentType.day.rawValue:
+                self.historySections = self.getDayDictionary(tracks: self.tracks)
+            case SegmentType.month.rawValue:
+                self.historySections = self.getMonthDictionary(tracks: self.tracks)
+            case SegmentType.year.rawValue:
+                self.historySections = self.getYearDictionary(tracks: self.tracks)
+            case SegmentType.allTracks.rawValue:
+                break
+            default:
+                break
             }
             DispatchQueue.main.async {
                 if id == SegmentType.allTracks.rawValue {
@@ -585,7 +567,6 @@ class VGHistoryTableViewController: UITableViewController {
 
     }
     
-
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return historySections[section].dateDescription

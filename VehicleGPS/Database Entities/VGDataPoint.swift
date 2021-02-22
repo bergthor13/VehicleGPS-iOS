@@ -10,25 +10,25 @@ import Foundation
 import CoreData
 
 class VGDataPoint {
-    var timestamp:Date?
-    var latitude:Double?
-    var longitude:Double?
-    var elevation:Double?
-    var satellites:Int?
-    var horizontalAccuracy:Double?
-    var verticalAccuracy:Double?
-    var pdop:Double?
-    var fixType:Int?
-    var gnssFixOk:Bool?
-    var fullyResolved:Bool?
-    var rpm:Double?
-    var engineLoad:Double?
-    var coolantTemperature:Double?
-    var ambientTemperature:Double?
-    var throttlePosition:Double?
-    var cadence:Int?
-    var power:Double?
-    var heartRate:Int?
+    var timestamp: Date?
+    var latitude: Double?
+    var longitude: Double?
+    var elevation: Double?
+    var satellites: Int?
+    var horizontalAccuracy: Double?
+    var verticalAccuracy: Double?
+    var pdop: Double?
+    var fixType: Int?
+    var gnssFixOk: Bool?
+    var fullyResolved: Bool?
+    var rpm: Double?
+    var engineLoad: Double?
+    var coolantTemperature: Double?
+    var ambientTemperature: Double?
+    var throttlePosition: Double?
+    var cadence: Int?
+    var power: Double?
+    var heartRate: Int?
     
     var hasOBDData: Bool {
         return (rpm != nil || engineLoad != nil || coolantTemperature != nil || ambientTemperature != nil || throttlePosition != nil)
@@ -40,7 +40,7 @@ class VGDataPoint {
         
     }
     
-    init(dataPoint:DataPoint) {
+    init(dataPoint: DataPoint) {
         self.timestamp = dataPoint.value(forKey: "timeStamp") as? Date
         self.latitude = dataPoint.value(forKey: "latitude") as? Double
         self.longitude = dataPoint.value(forKey: "longitude") as? Double
@@ -62,7 +62,7 @@ class VGDataPoint {
         self.heartRate = dataPoint.value(forKey: "heartRate") as? Int
     }
     
-    func setEntity(dataPoint:DataPoint, track:Track) -> DataPoint{
+    func setEntity(dataPoint: DataPoint, track: Track) -> DataPoint {
         if let timestamp = self.timestamp {
             dataPoint.timeStamp = timestamp
         }
@@ -158,7 +158,6 @@ extension VGDataPoint: Equatable {
     }
 }
 
-
 extension VGDataPoint: Comparable {
     static func < (lhs: VGDataPoint, rhs: VGDataPoint) -> Bool {
         guard let leftTimeStamp = lhs.timestamp, let rightTimeStamp = rhs.timestamp else {
@@ -168,28 +167,29 @@ extension VGDataPoint: Comparable {
     }
 }
 
-
 extension VGDataPoint: CustomStringConvertible {
     var description: String {
         var result = ""
-        if timestamp != nil          {result += "         timestamp: " + String(describing: self.timestamp!) + "\n"}
-        if latitude != nil           {result += "          latitude: " + String(describing: self.latitude!) + "\n"}
-        if longitude != nil          {result += "         longitude: " + String(describing: self.longitude!) + "\n"}
-        if elevation != nil          {result += "         elevation: " + String(describing: self.elevation!) + "\n"}
-        if satellites != nil         {result += "        satellites: " + String(describing: self.satellites!) + "\n"}
-        if horizontalAccuracy != nil {result += "horizontalAccuracy: " + String(describing: self.horizontalAccuracy!) + "\n"}
-        if verticalAccuracy != nil   {result += "  verticalAccuracy: " + String(describing: self.verticalAccuracy!) + "\n"}
-        if pdop != nil               {result += "              pdop: " + String(describing: self.pdop!) + "\n"}
-        if fixType != nil            {result += "           fixType: " + String(describing: self.fixType!) + "\n"}
-        if gnssFixOk != nil          {result += "         gnssFixOk: " + String(describing: self.gnssFixOk!) + "\n"}
-        if fullyResolved != nil      {result += "     fullyResolved: " + String(describing: self.fullyResolved!) + "\n"}
-        if rpm != nil                {result += "               rpm: " + String(describing: self.rpm!) + "\n"}
-        if engineLoad != nil         {result += "        engineLoad: " + String(describing: self.engineLoad!) + "\n"}
-        if coolantTemperature != nil {result += "coolantTemperature: " + String(describing: self.coolantTemperature!) + "\n"}
-        if ambientTemperature != nil {result += "ambientTemperature: " + String(describing: self.ambientTemperature!) + "\n"}
-        if throttlePosition != nil   {result += "  throttlePosition: " + String(describing: self.throttlePosition!) + "\n"}
-        if cadence != nil            {result += "           cadence: " + String(describing: self.cadence!) + "\n"}
-        if power != nil              {result += "             power: " + String(describing: self.power!) + "\n"}
+        // swiftlint:disable opening_brace
+        if timestamp != nil          { result += "         timestamp: " + String(describing: self.timestamp!) + "\n"}
+        if latitude != nil           { result += "          latitude: " + String(describing: self.latitude!) + "\n"}
+        if longitude != nil          { result += "         longitude: " + String(describing: self.longitude!) + "\n"}
+        if elevation != nil          { result += "         elevation: " + String(describing: self.elevation!) + "\n"}
+        if satellites != nil         { result += "        satellites: " + String(describing: self.satellites!) + "\n"}
+        if horizontalAccuracy != nil { result += "horizontalAccuracy: " + String(describing: self.horizontalAccuracy!) + "\n"}
+        if verticalAccuracy != nil   { result += "  verticalAccuracy: " + String(describing: self.verticalAccuracy!) + "\n"}
+        if pdop != nil               { result += "              pdop: " + String(describing: self.pdop!) + "\n"}
+        if fixType != nil            { result += "           fixType: " + String(describing: self.fixType!) + "\n"}
+        if gnssFixOk != nil          { result += "         gnssFixOk: " + String(describing: self.gnssFixOk!) + "\n"}
+        if fullyResolved != nil      { result += "     fullyResolved: " + String(describing: self.fullyResolved!) + "\n"}
+        if rpm != nil                { result += "               rpm: " + String(describing: self.rpm!) + "\n"}
+        if engineLoad != nil         { result += "        engineLoad: " + String(describing: self.engineLoad!) + "\n"}
+        if coolantTemperature != nil { result += "coolantTemperature: " + String(describing: self.coolantTemperature!) + "\n"}
+        if ambientTemperature != nil { result += "ambientTemperature: " + String(describing: self.ambientTemperature!) + "\n"}
+        if throttlePosition != nil   { result += "  throttlePosition: " + String(describing: self.throttlePosition!) + "\n"}
+        if cadence != nil            { result += "           cadence: " + String(describing: self.cadence!) + "\n"}
+        if power != nil              { result += "             power: " + String(describing: self.power!) + "\n"}
+        // swiftlint:enable opening_brace
         return result
     }
 }

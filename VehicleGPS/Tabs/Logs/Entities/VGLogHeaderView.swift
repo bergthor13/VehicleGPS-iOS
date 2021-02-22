@@ -18,7 +18,6 @@ class VGLogHeaderView: UITableViewHeaderFooterView {
     static let nibName = "VGLogHeaderView"
     static let nib = UINib(nibName: VGLogHeaderView.nibName, bundle: nil)
 
-
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         initializeBackground()

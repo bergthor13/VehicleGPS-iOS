@@ -41,9 +41,8 @@ class VGVehiclesTableViewController: UITableViewController {
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.add, style: .plain, target: self, action: #selector(didTapAddVehicle(_:)))
         self.navigationItem.leftBarButtonItem = editButtonItem
-
-
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -64,7 +63,7 @@ class VGVehiclesTableViewController: UITableViewController {
         self.tableView.register(VGVehicleTableViewCell.nib, forCellReuseIdentifier: VGVehicleTableViewCell.identifier)
     }
     
-    func reloadVehicles(shouldReloadTableView:Bool) {
+    func reloadVehicles(shouldReloadTableView: Bool) {
         dataStore.getAllVehicles(
             onSuccess: { (vehicles) in
                 self.vehicles = vehicles
@@ -81,7 +80,7 @@ class VGVehiclesTableViewController: UITableViewController {
                 }
                 self.vehicles.sort()
             },
-            onFailure:  { (error) in
+            onFailure: { (error) in
                 self.appDelegate.display(error: error)
             }
         )
@@ -97,7 +96,7 @@ class VGVehiclesTableViewController: UITableViewController {
         }
         self.present(navController, animated: true, completion: nil)
     }
-    func addVehicle(_ vehicle:VGVehicle) {
+    func addVehicle(_ vehicle: VGVehicle) {
         self.tableView.beginUpdates()
         if self.vehicles.count == 0 {
             self.tableView.insertRows(at: [IndexPath(row: self.vehicles.count, section: 0)], with: .automatic)
@@ -110,19 +109,16 @@ class VGVehiclesTableViewController: UITableViewController {
         self.tableView.endUpdates()
     }
     
-    func editVehicle(_ editedVehicle:VGVehicle) {
+    func editVehicle(_ editedVehicle: VGVehicle) {
         tableView.beginUpdates()
-        for (index, vehicle) in vehicles.enumerated() {
-            if vehicle == editedVehicle {
-                guard let bla = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? VGVehicleTableViewCell else {
-                    continue
-                }
-                bla.lblName.text = editedVehicle.name
-                bla.colorBanner.backgroundColor = editedVehicle.mapColor
-                vehicles.remove(at: index)
-                vehicles.insert(editedVehicle, at: index)
-                
+        for (index, vehicle) in vehicles.enumerated() where vehicle == editedVehicle {
+            guard let bla = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? VGVehicleTableViewCell else {
+                continue
             }
+            bla.lblName.text = editedVehicle.name
+            bla.colorBanner.backgroundColor = editedVehicle.mapColor
+            vehicles.remove(at: index)
+            vehicles.insert(editedVehicle, at: index)
         }
         
         reloadVehicles(shouldReloadTableView: false)
@@ -150,23 +146,21 @@ class VGVehiclesTableViewController: UITableViewController {
         emptyLabel.setFrame()
     }
     
-    @objc func onVehicleUpdated(_ notification:Notification) {
+    @objc func onVehicleUpdated(_ notification: Notification) {
         guard let updatedVehicle = notification.object as? VGVehicle else {
             return
         }
         
-        for (index, vehicle) in vehicles.enumerated() {
-            if vehicle.id == updatedVehicle.id {
-                vehicles[index] = updatedVehicle
-                break
-            }
+        for (index, vehicle) in vehicles.enumerated() where vehicle.id == updatedVehicle.id {
+            vehicles[index] = updatedVehicle
+            break
         }
         tableView.reloadData()
     }
 
     // MARK: - Table view data source
     
-    fileprivate func setVehicleAsDefault(at indexPath:IndexPath) {
+    fileprivate func setVehicleAsDefault(at indexPath: IndexPath) {
         let vehicle = self.vehicles[indexPath.row]
         if let vehicleID = vehicle.id {
             self.dataStore.setDefaultVehicleID(id: vehicleID)
@@ -188,7 +182,7 @@ class VGVehiclesTableViewController: UITableViewController {
         }
     }
     
-    fileprivate func deleteVehicle(at indexPath:IndexPath) {
+    fileprivate func deleteVehicle(at indexPath: IndexPath) {
         let vehicle = self.vehicles[indexPath.row]
         self.dataStore.delete(vehicleWith: vehicle.id!, onSuccess: {
             self.vehicles.remove(at: indexPath.row)
@@ -225,8 +219,6 @@ class VGVehiclesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        
-        
         let setDefaultAction = UIContextualAction(style: .normal, title: Strings.setAsDefault) { (action, view, completion) in
             self.setVehicleAsDefault(at: indexPath)
             completion(true)
@@ -304,8 +296,6 @@ class VGVehiclesTableViewController: UITableViewController {
         navigationController?.pushViewController(detailsVC, animated: true)
     }
     
-    
-    
     override func tableView(_ tableView: UITableView,
       contextMenuConfigurationForRowAt indexPath: IndexPath,
       point: CGPoint) -> UIContextMenuConfiguration? {
@@ -314,13 +304,12 @@ class VGVehiclesTableViewController: UITableViewController {
         }
         edit.image = Icons.edit
 
-        
         let favorite = UIAction(title: Strings.setAsDefault) { _ in
             self.setVehicleAsDefault(at: indexPath)
 
         }
+        
         favorite.image = UIImage(systemName: "star.fill")
-
         
         let delete = UIAction(title: Strings.delete) {_ in
             self.deleteVehicle(at: indexPath)
@@ -337,7 +326,7 @@ class VGVehiclesTableViewController: UITableViewController {
       }
     }
     
-    func editVehicle(at indexPath:IndexPath) {
+    func editVehicle(at indexPath: IndexPath) {
         let editVehicleVC = VGEditVehicleTableViewController(style: .grouped)
         editVehicleVC.vehicle = vehicles[indexPath.row]
         let navController = UINavigationController(rootViewController: editVehicleVC)
@@ -346,8 +335,4 @@ class VGVehiclesTableViewController: UITableViewController {
         }
         self.present(navController, animated: true, completion: nil)
     }
-    
-
 }
-
-

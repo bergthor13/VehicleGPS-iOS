@@ -11,7 +11,7 @@ import UIKit
 
 class VGCadenceGraphGenerator: VGGraphGenerator {
     
-    func generate(from track:VGTrack) -> TrackGraphViewConfig {
+    func generate(from track: VGTrack) -> TrackGraphViewConfig {
         let configuration = TrackGraphViewConfig()
         configuration.name = Strings.cadence
         for point in track.trackPoints {

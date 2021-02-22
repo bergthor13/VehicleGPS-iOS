@@ -12,7 +12,7 @@ import fastCSV
 
 class VGShortCSVParser: VGCSVParser {
 
-    override func isValid(row:[String]) -> Bool {
+    override func isValid(row: [String]) -> Bool {
         if row.count < 15 {
             return false
         }
@@ -68,5 +68,3 @@ class VGShortCSVParser: VGCSVParser {
     }
     
 }
-
-

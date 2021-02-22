@@ -1,7 +1,7 @@
 import UIKit
 
 class VGVehicleDetailsTableViewController: VGHistoryDetailsTableViewController {
-    var vehicle:VGVehicle?
+    var vehicle: VGVehicle?
     override func viewDidLoad() {
         super.viewDidLoad()
         if let vehicle = vehicle {
@@ -29,12 +29,12 @@ class VGVehicleDetailsTableViewController: VGHistoryDetailsTableViewController {
         
         if let track = getTrackAt(indexPath: indexPath) {
             cell.showVehicle = false
-            cell.show(track:track)
+            cell.show(track: track)
         }
         return cell
     }
     
-    @objc func onVehicleUpdated(_ notification:Notification) {
+    @objc func onVehicleUpdated(_ notification: Notification) {
         guard let updatedVehicle = notification.object as? VGVehicle else {
             return
         }

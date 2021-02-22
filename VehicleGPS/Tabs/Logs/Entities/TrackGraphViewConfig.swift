@@ -42,6 +42,4 @@ class TrackGraphViewConfig {
     
     var startTime: Date?
     var endTime: Date?
-
-
 }

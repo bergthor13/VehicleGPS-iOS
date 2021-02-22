@@ -11,7 +11,7 @@ import UIKit
 
 class VGCoolantTemperatureGraphGenerator: VGGraphGenerator {
     
-    func generate(from track:VGTrack) -> TrackGraphViewConfig {
+    func generate(from track: VGTrack) -> TrackGraphViewConfig {
         let configuration = TrackGraphViewConfig()
         configuration.name = Strings.coolTemp
         for point in track.trackPoints {

@@ -71,8 +71,7 @@ struct Strings {
     
     static let vehiclesHint = NSLocalizedString("Farartæki hjálpa þér við að halda utan um tíma og vegalengd hvaða ferðamáta sem er.", comment: "")
     static let tagsHint = NSLocalizedString("Merki hjálpa þér að flokka ferla saman. Til dæmis er hægt að nota merki til að sameina ferðalög.", comment: "")
-
-
+    
     static let map = NSLocalizedString("Kort", comment: "")
     static let statistics = NSLocalizedString("Tölfræði", comment: "")
     
@@ -112,7 +111,6 @@ struct Strings {
     static let newLogSingular = NSLocalizedString("%i nýr ferill í boði", comment: "")
     static let newLogPlural = NSLocalizedString("%i nýjir ferlar í boði", comment: "")
 
-
     static let downloadingLeft = NSLocalizedString("Hleður niður. %i ferlar eftir.", comment: "")
     static let connectedTo = NSLocalizedString("Tengt við %@", comment: "")
 
@@ -138,7 +136,6 @@ struct Strings {
     static let noTrack = NSLocalizedString("Enginn ferill", comment: "")
     static let noStartTime = NSLocalizedString("Enginn byrjunartími", comment: "")
 
-    
     static let takePicture = NSLocalizedString("Taka mynd", comment: "")
     static let photoLibrary = NSLocalizedString("Myndasafn", comment: "")
     static let searchForLogs = NSLocalizedString("Leita að nýjum ferlum", comment: "")

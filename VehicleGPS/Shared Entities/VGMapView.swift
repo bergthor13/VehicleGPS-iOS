@@ -12,15 +12,14 @@ import UIKit
 
 class VGMapView: MKMapView {
     var activity: UIActivityIndicatorView!
-    var vehicleColor:UIColor = .red
+    var vehicleColor: UIColor = .red
     var dataStore = VGDataStore()
 
-    
     var tracks = [VGTrack]() {
         didSet {
             DispatchQueue.main.async {
                 self.activity.startAnimating()
-                guard let region = self.getRegion(for:self.tracks) else {
+                guard let region = self.getRegion(for: self.tracks) else {
                     self.activity.stopAnimating()
                     return
                 }
@@ -58,8 +57,6 @@ class VGMapView: MKMapView {
             dpGroup.notify(queue: .main) {
                 self.activity.stopAnimating()
             }
-            
-
         }
     }
     
@@ -75,8 +72,6 @@ class VGMapView: MKMapView {
         let activityLayoutCenterX = NSLayoutConstraint(item: activity!, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0)
         let activityLayoutCenterY = NSLayoutConstraint(item: activity!, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0)
         self.addConstraints([activityLayoutCenterX, activityLayoutCenterY])
-
-        
     }
     
     required init?(coder: NSCoder) {
@@ -167,7 +162,6 @@ class VGMapView: MKMapView {
     }
 
 }
-
 
 extension VGMapView: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {

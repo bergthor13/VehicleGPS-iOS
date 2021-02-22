@@ -4,36 +4,35 @@ import CoreData
 
 class VGTrack {
     /// The ID of the track.
-    var id:UUID?
+    var id: UUID?
     
     /// The name of the track.
-    var name:String?
+    var name: String?
     
     /// A comment for the track.
-    var comment:String?
+    var comment: String?
     
     /// The duration of the track. The time between the first and last point of the track.
     /// Measured in seconds.
-    var duration:Double
+    var duration: Double
     
     /// The distance between all points of the track.
     /// Measured in kilometers
-    var distance:Double
+    var distance: Double
     
-    
-    var fileName:String
-    var fileSize:Int // In bytes
-    var timeStart:Date?
-    var trackPoints:[VGDataPoint]
-    var mapPoints:[VGMapPoint]
-    var minLat:Double
-    var maxLat:Double
-    var minLon:Double
-    var maxLon:Double
-    var processed:Bool
-    var isRemote:Bool
-    var isLocal:Bool
-    var isRecording:Bool
+    var fileName: String
+    var fileSize: Int // In bytes
+    var timeStart: Date?
+    var trackPoints: [VGDataPoint]
+    var mapPoints: [VGMapPoint]
+    var minLat: Double
+    var maxLat: Double
+    var minLon: Double
+    var maxLon: Double
+    var processed: Bool
+    var isRemote: Bool
+    var isLocal: Bool
+    var isRecording: Bool
     var beingProcessed = false
     var dataPointCount = 0
     var graphTypes: [VGGraphGenerator?] {
@@ -84,19 +83,19 @@ class VGTrack {
     }
     
     /// The vehicle associated with the track
-    var vehicle:VGVehicle?
+    var vehicle: VGVehicle?
     
     /// Returns the average speed of the track.
     /// Unit in km/h
-    var averageSpeed:Double {
+    var averageSpeed: Double {
         get {
             return distance/(duration/60/60)
         }
     }
     
-    var tags:[VGTag]
+    var tags: [VGTag]
     
-    init(track:Track) {
+    init(track: Track) {
         // Database stored values
         self.duration = track.duration
         self.distance = track.distance
@@ -114,7 +113,7 @@ class VGTrack {
         self.processed = track.processed
         
         if let vehicle = track.vehicle {
-            self.vehicle = VGVehicle(vehicle:vehicle)
+            self.vehicle = VGVehicle(vehicle: vehicle)
         }
 
         trackPoints = [VGDataPoint]()
@@ -154,7 +153,7 @@ class VGTrack {
         tags = [VGTag]()
     }
     
-    func setEntity(track:Track) -> Track {
+    func setEntity(track: Track) -> Track {
         track.fileName = self.fileName
         track.fileSize = Int64(self.fileSize)
         track.duration = self.duration
@@ -168,15 +167,12 @@ class VGTrack {
         return track
     }
     
-    
     var hasOBDData: Bool {
         if self.trackPoints.count == 0 {
             return false
         }
-        for point in self.trackPoints {
-            if point.hasOBDData {
-                return true
-            }
+        for point in self.trackPoints where point.hasOBDData {
+            return true
         }
         return false
     }
@@ -205,8 +201,6 @@ class VGTrack {
     }
     
     func getCoordinateList() -> [CLLocationCoordinate2D] {
-        
-        
         guard let firstPoint = trackPoints.first else {
             return []
         }
@@ -234,7 +228,7 @@ class VGTrack {
         return list
     }
     
-    static func getFilteredPointList(list:[VGDataPoint]) -> [VGMapPoint] {
+    static func getFilteredPointList(list: [VGDataPoint]) -> [VGMapPoint] {
         let maxDurationBetweenPoints = 60.0 // in seconds
         let minDurationBetweenPoints = 1.0
         
@@ -258,7 +252,6 @@ class VGTrack {
             }
             let bearing = VGTrack.getBearingBetween(point1: p1, point2: p2)
 
-            
             if lastAddedPoint == nil {
                 let newPoint = VGMapPoint(point: p1, timestamp: point1.timestamp!)
                 mapPoints.append(newPoint)
@@ -295,7 +288,7 @@ class VGTrack {
     static func degreesToRadians(degrees: Double) -> Double { return degrees * .pi / 180.0 }
     static func radiansToDegrees(radians: Double) -> Double { return radians * 180.0 / .pi }
 
-    static func getBearingBetween(point1 : CLLocationCoordinate2D, point2 : CLLocationCoordinate2D) -> Double {
+    static func getBearingBetween(point1: CLLocationCoordinate2D, point2: CLLocationCoordinate2D) -> Double {
         let lat1 = degreesToRadians(degrees: point1.latitude)
         let lon1 = degreesToRadians(degrees: point1.longitude)
 
@@ -311,7 +304,7 @@ class VGTrack {
         return radiansToDegrees(radians: radiansBearing)
     }
     
-    static func getSpeedBetween(point1:VGDataPoint, point2:VGDataPoint) -> Double {
+    static func getSpeedBetween(point1: VGDataPoint, point2: VGDataPoint) -> Double {
         guard let timestamp1 = point1.timestamp, let timestamp2 = point2.timestamp else {
             return 0.0
         }
@@ -414,7 +407,7 @@ class VGTrack {
 
 extension VGTrack: Equatable {
     static func == (lhs: VGTrack, rhs: VGTrack) -> Bool {
-        if rhs.id == nil || lhs.id == nil{
+        if rhs.id == nil || lhs.id == nil {
             return false
         }
         return lhs.id == rhs.id

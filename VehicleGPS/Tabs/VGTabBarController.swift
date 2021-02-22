@@ -27,18 +27,18 @@ class VGTabBarController: UITabBarController {
         addObserver(selector: #selector(deviceDisconnected(_:)), name: .deviceDisconnected)
     }
     
-    func addObserver(selector:Selector, name:Notification.Name) {
+    func addObserver(selector: Selector, name: Notification.Name) {
         NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
     }
     
-    @objc func deviceConnected(_ notification:Notification) {
+    @objc func deviceConnected(_ notification: Notification) {
         DispatchQueue.main.async {
             self.controllers.insert(UINavigationController(rootViewController: self.logsTableViewController), at: 0)
             self.setViewControllers(self.controllers, animated: true)
         }
     }
     
-    @objc func deviceDisconnected(_ notification:Notification) {
+    @objc func deviceDisconnected(_ notification: Notification) {
         DispatchQueue.main.async {
             if self.controllers.first?.children.first is VGLogsTableViewController {
                 self.controllers = Array(self.controllers.dropFirst())

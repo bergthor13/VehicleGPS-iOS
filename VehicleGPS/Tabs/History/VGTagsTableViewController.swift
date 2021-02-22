@@ -60,7 +60,6 @@ class VGTagsTableViewController: UITableViewController {
             return UITableViewCell()
         }
         
-        
         cell.txtName.delegate = self
         
         if indexPath.row == tags.count {
@@ -73,7 +72,6 @@ class VGTagsTableViewController: UITableViewController {
         guard let track = track else {
             return cell
         }
-        
         
         let tagInTrack = track.tags.contains { (tag) -> Bool in
             return tag.id == cellTag.id
@@ -111,9 +109,6 @@ class VGTagsTableViewController: UITableViewController {
                 self.appDelegate.display(error: error)
             }
         }
-        
-
-
     }
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         if indexPath.row == tags.count {
@@ -182,13 +177,8 @@ class VGTagsTableViewController: UITableViewController {
         }
         return true
     }
-
     
-//    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-//
-//    }
-    
-    func addTag(at indexPath:IndexPath) {
+    func addTag(at indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) as? VGAddTagTableViewCell {
             if cell.txtName.text != "" {
                 let tag = VGTag()

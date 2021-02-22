@@ -9,6 +9,6 @@
 import Foundation
 
 struct VGDownloadedFile {
-    var name:String
-    var size:Int?
+    var name: String
+    var size: Int?
 }

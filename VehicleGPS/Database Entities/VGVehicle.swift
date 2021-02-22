@@ -17,7 +17,7 @@ class VGVehicle {
     public var tracks: [VGTrack]?
     public var order: Int?
     
-    init(vehicle:Vehicle) {
+    init(vehicle: Vehicle) {
         self.id = vehicle.id
         self.name = vehicle.name
         self.mapColor = vehicle.mapColor as? UIColor
@@ -27,10 +27,7 @@ class VGVehicle {
     init() {
         
     }
-    
-
 }
-
 
 extension VGVehicle: Equatable {
     static func == (lhs: VGVehicle, rhs: VGVehicle) -> Bool {

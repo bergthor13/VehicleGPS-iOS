@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum SegmentType:Int {
+enum SegmentType: Int {
     case allTracks = 0
     case day = 1
     case month = 2
@@ -21,7 +21,7 @@ class VGHistoryHeader: UIView {
     var historyTableViewController: VGHistoryTableViewController?
     
     struct SegmentItem {
-        var title:String
+        var title: String
         var type: SegmentType
     }
     
@@ -59,7 +59,7 @@ class VGHistoryHeader: UIView {
         configure()
     }
     
-    @objc func valueChanged(sender:UISegmentedControl) {
+    @objc func valueChanged(sender: UISegmentedControl) {
         guard let htvc = historyTableViewController else {
             return
         }

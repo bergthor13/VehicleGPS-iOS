@@ -1,8 +1,8 @@
 import Foundation
 
 class LogDateSplitter {
-    static func splitLogsByDate(trackList:[VGTrack]) -> ([String], [String: [VGTrack]]){
-        var result = Dictionary<String, [VGTrack]>()
+    static func splitLogsByDate(trackList: [VGTrack]) -> ([String], [String: [VGTrack]]) {
+        var result = [String: [VGTrack]]()
         var sectionKeys = [String]()
         for track in trackList {
             var day = ""
@@ -35,6 +35,4 @@ class LogDateSplitter {
         
         return (sectionKeys, result)
     }
-
-
 }

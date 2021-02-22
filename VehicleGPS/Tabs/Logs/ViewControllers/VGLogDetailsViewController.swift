@@ -24,7 +24,7 @@ class VGLogDetailsViewController: UIViewController {
             if trackDataTableViewController == nil {
                 initializeTrackDataView()
             }
-            getTrackPoints(for:track)
+            getTrackPoints(for: track)
         }
     }
     var dataStore: VGDataStore!
@@ -50,7 +50,7 @@ class VGLogDetailsViewController: UIViewController {
         }
         self.view.backgroundColor = .systemBackground
                 
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image:Icons.moreActions, primaryAction: nil, menu: createMenu())
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.moreActions, primaryAction: nil, menu: createMenu())
 
         detailSegment = UISegmentedControl(items: [Strings.map, Strings.statistics])
         detailSegment!.addTarget(self, action: #selector(segmentedControlValueChanged), for: .valueChanged)
@@ -63,10 +63,10 @@ class VGLogDetailsViewController: UIViewController {
         guard let track = track else {
             return
         }
-        getTrackPoints(for:track)
+        getTrackPoints(for: track)
     }
     
-    func getTrackPoints(for track:VGTrack) {
+    func getTrackPoints(for track: VGTrack) {
         if track.mapPoints.count == 0 {
             self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
                 track.mapPoints = mapPoints
@@ -147,26 +147,26 @@ class VGLogDetailsViewController: UIViewController {
             return nil
         }
         if vgFileManager.fileForTrackExists(track: track) {
-            actions.append(UIAction(title: Strings.shareCSV, image:Icons.share, handler: { (action) in
+            actions.append(UIAction(title: Strings.shareCSV, image: Icons.share, handler: { (_) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: self.track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
         }
         
-        actions.append(UIAction(title: Strings.shareGPX, image:Icons.share, handler: { (action) in
+        actions.append(UIAction(title: Strings.shareGPX, image: Icons.share, handler: { (_) in
             //self.track.trackPoints = self.dataStore.getDataPointsForTrack(vgTrack: self.track)
             let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(tracks: [self.track])!], applicationActivities: nil)
             self.present(activityVC, animated: true, completion: nil)
         }))
         
-        actions.append(UIAction(title: Strings.selectVehicle, image:Icons.vehicle, handler: { (action) in
+        actions.append(UIAction(title: Strings.selectVehicle, image: Icons.vehicle, handler: { (_) in
             let vehCont = VGVehiclesSelectionTableViewController(style: .insetGrouped)
             vehCont.track = self.track
             let navCont = UINavigationController(rootViewController: vehCont)
             self.present(navCont, animated: true, completion: nil)
         }))
         
-        actions.append(UIAction(title: Strings.splitLog, image:Icons.split, handler: { (action) in
+        actions.append(UIAction(title: Strings.splitLog, image: Icons.split, handler: { (_) in
             guard let selectedTime = self.trackDataTableViewController?.dlpTime else {
                 return
             }
@@ -176,7 +176,6 @@ class VGLogDetailsViewController: UIViewController {
             guard let leftTrack = oldTrack, let rightTrack = newTrack else {
                 return
             }
-            
 
             leftTrack.process()
             self.dataStore.update(vgTrack: leftTrack, onSuccess: { (id) in
@@ -196,7 +195,7 @@ class VGLogDetailsViewController: UIViewController {
             
         }))
         
-        actions.append(UIAction(title: Strings.delete, image:Icons.delete, attributes: .destructive, handler: { (action) in
+        actions.append(UIAction(title: Strings.delete, image: Icons.delete, attributes: .destructive, handler: { (action) in
             self.dataStore.delete(trackWith: self.track.id!) {
                 self.navigationController?.popViewController(animated: true)
             } onFailure: { (error) in
@@ -278,13 +277,11 @@ class VGLogDetailsViewController: UIViewController {
         trackDataTableViewController!.didMove(toParent: self)
     }
     
-    func split(track:VGTrack, at timestamp:Date) -> (VGTrack?, VGTrack?) {
+    func split(track: VGTrack, at timestamp: Date) -> (VGTrack?, VGTrack?) {
         let newTrack = VGTrack()
         var pointIndex = -1
-        for (index, dataPoint) in track.trackPoints.enumerated() {
-            if dataPoint.timestamp! < timestamp {
-                pointIndex = index
-            }
+        for (index, dataPoint) in track.trackPoints.enumerated() where dataPoint.timestamp! < timestamp {
+            pointIndex = index
         }
         
         if pointIndex == -1 {

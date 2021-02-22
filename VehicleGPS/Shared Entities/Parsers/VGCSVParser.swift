@@ -4,9 +4,9 @@ import fastCSV
 
 class VGCSVParser: IVGLogParser {
     let progress_update_delay = TimeInterval(0.1)
-    let PNG_PADDING:CGFloat = 0.9
+    let PNG_PADDING: CGFloat = 0.9
     
-    func isValid(row:[String]) -> Bool {
+    func isValid(row: [String]) -> Bool {
         if row.count < 16 {
             return false
         }
@@ -15,7 +15,7 @@ class VGCSVParser: IVGLogParser {
     
     var csv: CSV?
     
-    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, onSuccess: @escaping (VGTrack) -> (), onFailure:@escaping(Error)->()) {
+    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, onSuccess: @escaping(VGTrack) -> Void, onFailure:@escaping(Error) -> Void) {
         
         var lastProgressUpdate = Date()
         
@@ -42,12 +42,11 @@ class VGCSVParser: IVGLogParser {
         }
         fileUrl.stopAccessingSecurityScopedResource()
         
-        
         autoreleasepool {
             csv = CSV(string: fileString, column: ",", line: "\n")
         }
         let lineCount = csv!.rows.count
-        for (index,row) in csv!.rows.enumerated() {
+        for (index, row) in csv!.rows.enumerated() {
             if abs(lastProgressUpdate.timeIntervalSinceNow) > self.progress_update_delay {
                 progress(UInt(index), UInt(lineCount))
                 lastProgressUpdate = Date()
@@ -59,19 +58,16 @@ class VGCSVParser: IVGLogParser {
             track.trackPoints.append(dataPoint)
         }
         
-        
         track.process()
         
         let mapPoints = track.trackPoints.filter { (point) -> Bool in
             return point.hasGoodFix()
         }
-        track.mapPoints = VGTrack.getFilteredPointList(list:mapPoints)
+        track.mapPoints = VGTrack.getFilteredPointList(list: mapPoints)
         track.name = "Track"
         onSuccess(track)
         fileString = ""
         csv = nil
-        
-        
     }
     
     func rowToDataPoint(row: [String]) -> VGDataPoint {
@@ -125,7 +121,6 @@ class VGCSVParser: IVGLogParser {
     
 }
 
-
 class ISO8601DateParser {
     
     static var calendar = Calendar(identifier: .gregorian)
@@ -174,7 +169,6 @@ class ISO8601DateParser {
             }
         }
         
-        
         components.year   = year
         components.month  = month
         components.day    = day
@@ -185,7 +179,7 @@ class ISO8601DateParser {
         return date
     }
     
-    static private func getItem(string:String, startIndex:Int, count:Int) -> Int? {
+    static private func getItem(string: String, startIndex: Int, count: Int) -> Int? {
         if string.count < startIndex+count {
             return nil
         }

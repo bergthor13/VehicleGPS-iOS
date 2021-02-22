@@ -19,7 +19,7 @@ class PulleyEditorViewController: PulleyViewController {
                 return
             }
             title = VGFullDateFormatter().string(for: track?.timeStart)
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image:Icons.moreActions, primaryAction: nil, menu: self.createMenu())
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.moreActions, primaryAction: nil, menu: self.createMenu())
             if track!.trackPoints.count != 0 {
                 return
             }
@@ -30,8 +30,6 @@ class PulleyEditorViewController: PulleyViewController {
             } onFailure: { (error) in
                 self.appDelegate.display(error: error)
             }
-
-            
         }
     }
     
@@ -70,26 +68,26 @@ class PulleyEditorViewController: PulleyViewController {
             return nil
         }
         if vgFileManager.fileForTrackExists(track: track) {
-            actions.append(UIAction(title: Strings.shareCSV, image:Icons.share, handler: { (action) in
+            actions.append(UIAction(title: Strings.shareCSV, image: Icons.share, handler: { (action) in
                 let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: track)!], applicationActivities: nil)
                 self.present(activityVC, animated: true, completion: nil)
             }))
         }
         
-        actions.append(UIAction(title: Strings.shareGPX, image:Icons.share, handler: { (action) in
+        actions.append(UIAction(title: Strings.shareGPX, image: Icons.share, handler: { (action) in
             //self.track.trackPoints = self.dataStore.getDataPointsForTrack(vgTrack: self.track)
             let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(tracks: [track])!], applicationActivities: nil)
             self.present(activityVC, animated: true, completion: nil)
         }))
         
-        actions.append(UIAction(title: Strings.selectVehicle, image:Icons.vehicle, handler: { (action) in
+        actions.append(UIAction(title: Strings.selectVehicle, image: Icons.vehicle, handler: { (action) in
             let vehCont = VGVehiclesSelectionTableViewController(style: .insetGrouped)
             vehCont.track = track
             let navCont = UINavigationController(rootViewController: vehCont)
             self.present(navCont, animated: true, completion: nil)
         }))
         
-        actions.append(UIAction(title: Strings.delete, image:Icons.delete, attributes: .destructive, handler: { (action) in
+        actions.append(UIAction(title: Strings.delete, image: Icons.delete, attributes: .destructive, handler: { (action) in
             self.dataStore.delete(trackWith: track.id!) {
                 self.navigationController?.popViewController(animated: true)
             } onFailure: { (error) in
@@ -104,10 +102,10 @@ class PulleyEditorViewController: PulleyViewController {
         return UIMenu(title: "", children: actions)
     }
     
-    func split(track:VGTrack, at timestamp:Date) -> (VGTrack?, VGTrack?) {
+    func split(track: VGTrack, at timestamp: Date) -> (VGTrack?, VGTrack?) {
         let newTrack = VGTrack()
         var pointIndex = -1
-        for (index, (dataPoint1,dataPoint2)) in zip(track.trackPoints, track.trackPoints.dropFirst()).enumerated() {
+        for (index, (dataPoint1, dataPoint2)) in zip(track.trackPoints, track.trackPoints.dropFirst()).enumerated() {
             if dataPoint1.timestamp! < timestamp {
                 pointIndex = index
                 
@@ -185,13 +183,10 @@ class PulleyEditorViewController: PulleyViewController {
             print("ERROR ADDING")
             self.appDelegate.display(error: error)
         }
-
-
     }
-
 }
 
-extension PulleyEditorViewController: VGEditorToolbarDelegate  {
+extension PulleyEditorViewController: VGEditorToolbarDelegate {
     func didTap(button: ButtonType) {
         guard let track = track else {
             return
@@ -204,7 +199,6 @@ extension PulleyEditorViewController: VGEditorToolbarDelegate  {
                 selectedDataPointIndex += 1
             }
             print(track.trackPoints[selectedDataPointIndex])
-            break
         case .previous:
             if selectedDataPointIndex == -1 {
                 selectedDataPointIndex = track.trackPoints.count-1
@@ -214,10 +208,8 @@ extension PulleyEditorViewController: VGEditorToolbarDelegate  {
                 selectedDataPointIndex -= 1
             }
             print(track.trackPoints[selectedDataPointIndex])
-            break
         case .split:
             split()
-            break
         }
         //mapViewController.editorMapView
         
@@ -251,13 +243,9 @@ extension PulleyEditorViewController: VGEditorToolbarDelegate  {
                 }
                 return nil
             }
-
-
         }) { (error) in
             print(error)
         }
 
     }
-
-
 }

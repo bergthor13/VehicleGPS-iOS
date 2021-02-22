@@ -10,7 +10,6 @@ import UIKit
 
 class VGAddTagTableViewCell: UITableViewCell {
 
-    
     @IBOutlet weak var txtName: UITextField!
     
     static let identifier = "AddTagCell"

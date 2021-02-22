@@ -23,7 +23,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
     let dateParsingFormatter = VGDateParsingFormatter()
     var parentViewController: VGHistoryTableViewController!
     
-    init(parentViewController:UITableViewController) {
+    init(parentViewController: UITableViewController) {
         super.init()
         self.parentViewController = (parentViewController as? VGHistoryTableViewController)
         self.addObservers()
@@ -46,7 +46,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
     }
     
-    func addObserver(selector:Selector, name:Notification.Name) {
+    func addObserver(selector: Selector, name: Notification.Name) {
         NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
     }
     
@@ -62,7 +62,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return getViewForHeader(tableView, section: section, view:nil)
+        return getViewForHeader(tableView, section: section, view: nil)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -74,7 +74,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         }
         cell.delegate = self
         if let track = getTrackAt(indexPath: indexPath) {
-            cell.show(track:track)
+            cell.show(track: track)
         }
         
         return cell
@@ -132,7 +132,6 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         }
     }
     
-    
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         guard let track = getTrackAt(indexPath: indexPath) else {
@@ -140,7 +139,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         }
         
         let delete = UIAction(title: Strings.delete, image: Icons.delete, identifier: .none, discoverabilityTitle: nil, attributes: .destructive, state: .off) {_ in
-            self.deleteTrack(at: indexPath, in:tableView)
+            self.deleteTrack(at: indexPath, in: tableView)
         }
         
         let exportOriginal = UIAction(title: Strings.shareCSV, image: Icons.share, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
@@ -195,11 +194,9 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
                 UIMenu(title: "", children: [selectTags, selectVehicle, exportGPX, delete])
             }
         }
-        
-
     }
     
-    func deleteTrack(at indexPath:IndexPath, in tableView:UITableView) {
+    func deleteTrack(at indexPath: IndexPath, in tableView: UITableView) {
         // Delete the row from the data source
         guard let track = self.getTrackAt(indexPath: indexPath) else {
             return
@@ -215,7 +212,6 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         self.vgFileManager.deleteFile(for: track)
         self.vgFileManager.deletePreviewImage(for: track)
 
-
         self.dataStore.delete(trackWith: track.id!, onSuccess: {
             self.parentViewController.tracks.remove(at: self.parentViewController.tracks.firstIndex(of: track)!)
         }) { (error) in
@@ -223,7 +219,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         }
     }
     
-    func getTrackAt(indexPath:IndexPath) -> VGTrack? {
+    func getTrackAt(indexPath: IndexPath) -> VGTrack? {
         guard let dayFileList = tracksDictionary[sections[indexPath.section]] else {
             return nil
         }
@@ -231,7 +227,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         return file
     }
     
-    func getViewForHeader(_ tableView:UITableView, section:Int, view:VGLogHeaderView?) -> VGLogHeaderView {
+    func getViewForHeader(_ tableView: UITableView, section: Int, view: VGLogHeaderView?) -> VGLogHeaderView {
         var hdrView = view
         
         if hdrView == nil {
@@ -266,7 +262,6 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
         
-        
         var frame1 = view.dateLabel.frame
         frame1.size.height = dateString.height(withConstrainedWidth: view.bounds.width-40, font: view.dateLabel.font)
         view.dateLabel.frame = frame1
@@ -276,12 +271,10 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         frame2.size.height = durationString.height(withConstrainedWidth: view.bounds.width-40, font: view.detailsLabel.font)
         view.detailsLabel.frame = frame2
         
-        
         return view
     }
     
-    
-    @objc func previewImageStarting(_ notification:Notification) {
+    @objc func previewImageStarting(_ notification: Notification) {
         guard let newTrack = notification.object as? VGTrack else {
             return
         }
@@ -299,7 +292,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
 
     }
     
-    @objc func previewImageStopping(_ notification:Notification) {
+    @objc func previewImageStopping(_ notification: Notification) {
         guard let updatedNotification = notification.object as? ImageUpdatedNotification else {
             return
         }
@@ -317,11 +310,9 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
                 cell.trackView.image = updatedNotification.image
             }
         }
-
-
     }
     
-    @objc func onVehicleAddedToLog(_ notification:Notification) {
+    @objc func onVehicleAddedToLog(_ notification: Notification) {
         guard let newTrack = notification.object as? VGTrack else {
             return
         }
@@ -339,7 +330,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
         cell.lblVehicle.text = vehicle.name
     }
     
-    @objc func onLogsAdded(_ notification:Notification) {
+    @objc func onLogsAdded(_ notification: Notification) {
         guard let newTracks = notification.object as? [VGTrack] else {
             return
         }
@@ -353,12 +344,10 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
             }
             (self.sections, self.tracksDictionary) = LogDateSplitter.splitLogsByDate(trackList: self.combineLists(localList: list, remoteList: newTracks))
             self.parentViewController.tableView.reloadData()
-            
-
         }
     }
     
-    @objc func onLogUpdated(_ notification:Notification) {
+    @objc func onLogUpdated(_ notification: Notification) {
         guard let updatedTrack = notification.object as? VGTrack else {
             return
         }
@@ -380,33 +369,27 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
             self.tracksDictionary[self.sections[indexPath.section]]![indexPath.row] = updatedTrack
             cell.show(track: updatedTrack)
         }
-        
-        
     }
     
-    func getIndexPath(for track:VGTrack) -> IndexPath? {
+    func getIndexPath(for track: VGTrack) -> IndexPath? {
         for (sectionIndex, section) in sections.enumerated() {
             guard let sectionList = tracksDictionary[section] else {
                 continue
             }
-            for (rowIndex, trk) in sectionList.enumerated() {
-                if track.id == trk.id {
-                    return IndexPath(row: rowIndex, section: sectionIndex)
-                }
+            for (rowIndex, trk) in sectionList.enumerated() where track.id == trk.id {
+                return IndexPath(row: rowIndex, section: sectionIndex)
             }
         }
         return nil
     }
     
-    func getIndexPath(for fileName:String) -> IndexPath? {
+    func getIndexPath(for fileName: String) -> IndexPath? {
         for (sectionIndex, section) in sections.enumerated() {
             guard let sectionList = tracksDictionary[section] else {
                 continue
             }
-            for (rowIndex, trk) in sectionList.enumerated() {
-                if fileName == trk.fileName {
-                    return IndexPath(row: rowIndex, section: sectionIndex)
-                }
+            for (rowIndex, trk) in sectionList.enumerated() where fileName == trk.fileName {
+                return IndexPath(row: rowIndex, section: sectionIndex)
             }
         }
         return nil
@@ -425,7 +408,7 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
 }
 
 extension VGHistoryAllTracksDataSource: DisplaySelectVehicleProtocol {
-    func didTapVehicle(track: VGTrack, tappedView:UIView?) {
+    func didTapVehicle(track: VGTrack, tappedView: UIView?) {
         let selectionVC = VGVehiclesSelectionTableViewController(style: .insetGrouped)
         selectionVC.track = track
         
@@ -440,9 +423,8 @@ extension VGHistoryAllTracksDataSource: DisplaySelectVehicleProtocol {
     }
 }
 
-
 extension VGHistoryAllTracksDataSource: DisplaySelectTagsProtocol {
-    func didTapTags(track: VGTrack, tappedView:UIView?) {
+    func didTapTags(track: VGTrack, tappedView: UIView?) {
         let selectionVC = VGTagsTableViewController(style: .insetGrouped)
         selectionVC.track = track
         

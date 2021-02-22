@@ -60,14 +60,12 @@ class VGImportFileTableViewController: UITableViewController {
                         self.appDelegate.display(error: error)
                     })
                 }
-                
-
             }
         }
     }
     
-    init(style: UITableView.Style, fileUrls:[URL]) {
-        super.init(style:style)
+    init(style: UITableView.Style, fileUrls: [URL]) {
+        super.init(style: style)
         self.fileUrls = fileUrls
     }
     
@@ -80,7 +78,6 @@ class VGImportFileTableViewController: UITableViewController {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             return
         }
-        
         
         let hud = MBProgressHUD.showAdded(to: appDelegate.window!, animated: true)
         hud.mode = .determinateHorizontalBar
@@ -102,7 +99,7 @@ class VGImportFileTableViewController: UITableViewController {
                         }
                         track.id = id
                     },
-                    onFailure:  { (error) in
+                    onFailure: { (error) in
                         self.appDelegate.display(error: error)
                     }
                 )
@@ -125,7 +122,6 @@ class VGImportFileTableViewController: UITableViewController {
         return importedTracks[section].count
     }
 
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: VGImportTableViewCell.identifier, for: indexPath) as? VGImportTableViewCell else {

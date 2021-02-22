@@ -11,7 +11,7 @@ import MapKit
 
 class VGTrackMapSnapshotter: MKMapSnapshotter {
     
-    init(style:UIUserInterfaceStyle, coordinates:[CLLocationCoordinate2D]) {
+    init(style: UIUserInterfaceStyle, coordinates: [CLLocationCoordinate2D]) {
         let mapSnapshotOptions = MKMapSnapshotter.Options()
         
         var maxLat = -200.0, minLat = 200.0, maxLon = -200.0, minLon = 200.0
@@ -44,11 +44,11 @@ class VGTrackMapSnapshotter: MKMapSnapshotter {
         // longitude, which is more complicated, anyway.
         let MINIMUM_VISIBLE_LATITUDE = 0.005
 
-        var latitudeDelta = abs(maxLat - minLat) * MAP_PADDING;
+        var latitudeDelta = abs(maxLat - minLat) * MAP_PADDING
         
         latitudeDelta = (latitudeDelta < MINIMUM_VISIBLE_LATITUDE)
             ? MINIMUM_VISIBLE_LATITUDE
-            : latitudeDelta;
+            : latitudeDelta
         
         let longitudeDelta = abs((maxLon - minLon) * MAP_PADDING)
 
@@ -61,7 +61,6 @@ class VGTrackMapSnapshotter: MKMapSnapshotter {
         
         // Set the size of the image output.
         mapSnapshotOptions.size = CGSize(width: 110, height: 110)
-        
         
         // Show buildings and Points of Interest on the snapshot
         mapSnapshotOptions.showsBuildings = true

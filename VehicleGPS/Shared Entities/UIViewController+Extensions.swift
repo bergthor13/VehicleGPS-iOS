@@ -11,6 +11,8 @@ import UIKit
 
 extension UIViewController {
     var appDelegate: AppDelegate {
+        // swiftlint:disable force_cast
         return UIApplication.shared.delegate as! AppDelegate
+        // swiftlint:enable force_cast
    }
 }

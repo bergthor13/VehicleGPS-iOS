@@ -27,8 +27,8 @@ class VGHeaderDateFormatter: DateFormatter {
         self.doesRelativeDateFormatting = true
     }
     
-    func sectionKeyToDateString(sectionKey:String) -> String {
-        guard let date = parsingFormatter.date(from:sectionKey) else {
+    func sectionKeyToDateString(sectionKey: String) -> String {
+        guard let date = parsingFormatter.date(from: sectionKey) else {
             return ""
         }
         return self.string(from: date)

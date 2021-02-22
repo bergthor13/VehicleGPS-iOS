@@ -21,7 +21,6 @@ class VGNewVehicleTableViewCell: UITableViewCell {
     static let nibName = "VGNewVehicleTableViewCell"
     static let nib = UINib(nibName: VGNewVehicleTableViewCell.nibName, bundle: nil)
 
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         colorWell = VGColorWell(frame: self.colorBox.frame)

@@ -17,7 +17,7 @@ public class TrackGraphView: UIView {
     private var graphSeparatorRight: UIView?
     private var graphSeparatorLeft: UIView?
     
-    private var scrollView:UIScrollView!
+    private var scrollView: UIScrollView!
     private var pinchRecognizer: UIPinchGestureRecognizer!
     
     private var maxLabel: UILabel?
@@ -102,7 +102,7 @@ public class TrackGraphView: UIView {
         }
     }
     
-    func addDLP(listener:DisplayLineProtocol) {
+    func addDLP(listener: DisplayLineProtocol) {
         if dlpList == nil {
             dlpList = [DisplayLineProtocol]()
         }
@@ -115,7 +115,6 @@ public class TrackGraphView: UIView {
     }
     
     private var elePoints = [(Date, CGFloat)]()
-    
     
     public func displayVerticalLine(at point: CGPoint) {
         graphSelectLayer.sublayers?.removeAll()
@@ -139,13 +138,10 @@ public class TrackGraphView: UIView {
         if elePoints.count == 0 {
             return
         }
-        for view in self.graphFrame.subviews {
-            if view.tag == 300 {
-                view.removeFromSuperview()
-            }
+        for view in self.graphFrame.subviews where view.tag == 300 {
+            view.removeFromSuperview()
         }
         
-
         topLine.tag = 300
         bottomLine.tag = 300
         if traitCollection.userInterfaceStyle == .light {
@@ -191,7 +187,7 @@ public class TrackGraphView: UIView {
         return id
     }
     
-    public func getTimeOfTouched(point:CGPoint) -> Date? {
+    public func getTimeOfTouched(point: CGPoint) -> Date? {
         guard let startTime = configuration.startTime else {return nil}
         guard let endTime = configuration.endTime else {return nil}
         
@@ -247,13 +243,13 @@ public class TrackGraphView: UIView {
     var oldFinger2: CGFloat = 0.0
     var oldLocation: CGFloat = 0.0
     
-    @objc private func didPinch(_ sender:UIPinchGestureRecognizer) {
+    @objc private func didPinch(_ sender: UIPinchGestureRecognizer) {
         if sender.numberOfTouches != 2 {
             return
         }
         let finger1 = sender.location(ofTouch: 0, in: scrollView)
         let finger2 = sender.location(ofTouch: 1, in: scrollView)
-        let deltaX:CGFloat = abs(finger1.x - finger2.x)
+        let deltaX: CGFloat = abs(finger1.x - finger2.x)
         
         if sender.state == .began {
             oldDelta = deltaX
@@ -485,9 +481,7 @@ public class TrackGraphView: UIView {
         // Add the clipping path to the context
         clippingPath.addClip()
         
-        
         graphClipLayer.fillColor = configuration.color.cgColor
-        
         
         let rectPath = UIBezierPath(rect: self.graphFrame.frame)
         rectPath.fill()
@@ -505,8 +499,6 @@ extension TrackGraphView: UIScrollViewDelegate {
     public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.graphFrame
     }
-    
-    
 }
 
 extension TrackGraphView: UIGestureRecognizerDelegate {

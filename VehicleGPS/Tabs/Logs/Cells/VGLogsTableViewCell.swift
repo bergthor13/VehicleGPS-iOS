@@ -9,11 +9,11 @@
 import UIKit
 
 protocol DisplaySelectVehicleProtocol {
-    func didTapVehicle(track:VGTrack, tappedView:UIView?)
+    func didTapVehicle(track: VGTrack, tappedView: UIView?)
 }
 
 protocol DisplaySelectTagsProtocol {
-    func didTapTags(track:VGTrack, tappedView:UIView?)
+    func didTapTags(track: VGTrack, tappedView: UIView?)
 }
 
 class VGLogsTableViewCell: UITableViewCell {
@@ -68,11 +68,9 @@ class VGLogsTableViewCell: UITableViewCell {
         NotificationCenter.default.addObserver(self, selector: #selector(preferredContentSizeChanged(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated, object: nil)
-
-
     }
     
-    @objc func onVehicleUpdated(_ notification:Notification) {
+    @objc func onVehicleUpdated(_ notification: Notification) {
         guard let updatedVehicle = notification.object as? VGVehicle else {
             return
         }
@@ -91,9 +89,7 @@ class VGLogsTableViewCell: UITableViewCell {
         
     }
 
-    
-    
-    @objc func preferredContentSizeChanged(_ sender:Any) {
+    @objc func preferredContentSizeChanged(_ sender: Any) {
         lblVehicle.sizeToFit()
     }
     
@@ -144,7 +140,7 @@ class VGLogsTableViewCell: UITableViewCell {
         }
     }
     
-    func loadPreviewImage(for track:VGTrack) {
+    func loadPreviewImage(for track: VGTrack) {
         if track.mapPoints.count == 0 {
             VGSnapshotMaker(fileManager: self.vgFileManager, dataStore: self.vgDataStore).drawTrack(vgTrack: track) { image, style in
                 DispatchQueue.main.async {
@@ -163,8 +159,6 @@ class VGLogsTableViewCell: UITableViewCell {
         self.recView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         self.recView.alpha = 1
         
-        
-
         UIView.animate(withDuration: 2.0, delay: 0.0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.curveEaseOut, .repeat], animations: {
             self.recView.transform = CGAffineTransform(scaleX: 3, y: 3)
             self.recView.alpha = 0

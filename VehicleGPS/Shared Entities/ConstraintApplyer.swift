@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIView {
-    func fill(parentView:UIView, with insets:UIEdgeInsets) {
+    func fill(parentView: UIView, with insets: UIEdgeInsets) {
         parentView.addSubview(self)
         self.translatesAutoresizingMaskIntoConstraints = false
         parentView.translatesAutoresizingMaskIntoConstraints = false
@@ -20,7 +20,7 @@ extension UIView {
         parentView.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
     }
     
-    func fill(parentView:UIView, layoutGuide:UILayoutGuide, with insets:UIEdgeInsets) {
+    func fill(parentView: UIView, layoutGuide: UILayoutGuide, with insets: UIEdgeInsets) {
         parentView.addSubview(self)
         let layoutLeft = NSLayoutConstraint(item: self, attribute: .leading, relatedBy: .equal, toItem: layoutGuide, attribute: .leading, multiplier: 1, constant: insets.left)
         let layoutRight = NSLayoutConstraint(item: self, attribute: .trailing, relatedBy: .equal, toItem: layoutGuide, attribute: .trailing, multiplier: 1, constant: -insets.right)

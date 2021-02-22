@@ -2,7 +2,7 @@ import MapKit
 
 class VGMapSnapshotter: MKMapSnapshotter {
     
-    init(style:UIUserInterfaceStyle, coordinates:[CLLocationCoordinate2D]) {
+    init(style: UIUserInterfaceStyle, coordinates: [CLLocationCoordinate2D]) {
         let mapSnapshotOptions = MKMapSnapshotter.Options()
         
         var maxLat = -200.0, minLat = 200.0, maxLon = -200.0, minLon = 200.0
@@ -39,7 +39,7 @@ class VGMapSnapshotter: MKMapSnapshotter {
         
         latitudeDelta = (latitudeDelta < MINIMUM_VISIBLE_LATITUDE)
             ? MINIMUM_VISIBLE_LATITUDE
-            : latitudeDelta;
+            : latitudeDelta
         
         let longitudeDelta = abs(maxLon - minLon) * MAP_PADDING
         // Set the region of the map that is rendered.
@@ -56,8 +56,6 @@ class VGMapSnapshotter: MKMapSnapshotter {
         } else {
             mapSnapshotOptions.size = CGSize(width: 2500, height: 2500)
         }
-        
-        
         
         // Show buildings and Points of Interest on the snapshot
         mapSnapshotOptions.showsBuildings = true

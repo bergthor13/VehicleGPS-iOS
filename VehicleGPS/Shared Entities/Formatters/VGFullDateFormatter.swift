@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 class VGFullDateFormatter: DateFormatter {
     override init() {
         super.init()

@@ -21,7 +21,7 @@ class VGListEmptyLabel: UILabel {
     var tabBar: UITabBar!
     var containerView: UIView!
     
-    init(text:String, containerView:UIView, navigationBar:UINavigationBar, tabBar:UITabBar) {
+    init(text: String, containerView: UIView, navigationBar: UINavigationBar, tabBar: UITabBar) {
         self.navigationBar = navigationBar
         self.tabBar = tabBar
         self.containerView = containerView
@@ -59,7 +59,6 @@ class VGListEmptyLabel: UILabel {
         }
     }
 
-    
     func configure() {
         self.textAlignment = .center
         let scaledFont = UIFont.systemFont(ofSize: 20)

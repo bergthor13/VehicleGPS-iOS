@@ -15,7 +15,7 @@ class VGVehicleType {
     public var icon: UIImage?
     public var order: Int?
     
-    init(type:VehicleType) {
+    init(type: VehicleType) {
         self.id = type.id
         self.name = type.name
         self.order = Int(type.order)

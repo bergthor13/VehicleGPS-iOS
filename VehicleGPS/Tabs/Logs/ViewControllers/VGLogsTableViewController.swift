@@ -13,7 +13,7 @@ class VGLogsTableViewController: UITableViewController {
     // MARK: Classes
     var vgFileManager: VGFileManager?
     var vgLogParser: IVGLogParser?
-    var dataStore:VGDataStore!
+    var dataStore: VGDataStore!
     let vgGPXGenerator = VGGPXGenerator()
     
     // MARK: Views
@@ -47,11 +47,11 @@ class VGLogsTableViewController: UITableViewController {
     
     // MARK: - Button Actions
     // MARK: Toolbar
-    @objc func deleteTracks(_ sender:UIBarButtonItem) {
+    @objc func deleteTracks(_ sender: UIBarButtonItem) {
         print("DELETING SELECTED TRACKS")
     }
     
-    @objc func exportTracks(_ sender:UIBarButtonItem) {
+    @objc func exportTracks(_ sender: UIBarButtonItem) {
         var tracks = [VGTrack]()
         guard let indexPaths = tableView.indexPathsForSelectedRows else {
             return
@@ -67,13 +67,13 @@ class VGLogsTableViewController: UITableViewController {
         for track in tracks {
             dpGroup.enter()
             DispatchQueue.global(qos: .userInitiated).async {
-                self.dataStore.getDataPointsForTrack(with: track.id!) { (dataPoints) in
+                self.dataStore.getDataPointsForTrack(with: track.id!, onSuccess: { (dataPoints) in
                     track.trackPoints = dataPoints
                     dpGroup.leave()
-                } onFailure: { (error) in
+                }, onFailure: { (error) in
                     self.appDelegate.display(error: error)
                     dpGroup.leave()
-                }
+                })
             }
         }
         dpGroup.wait()
@@ -85,8 +85,6 @@ class VGLogsTableViewController: UITableViewController {
             displayErrorAlert(title: "Could not generate GPX", message: "An error occurred and generating a GPX file failed.")
         }
     }
-    
-
     
     @objc func downloadFiles() {
         self.headerView.displayProgressBar()
@@ -196,17 +194,13 @@ class VGLogsTableViewController: UITableViewController {
                                     self.appDelegate.display(error: error)
                                     group2.leave()
                                 }
-
                             }
-                            
-                            
                         }, onFailure: {error in
                             parseProgress[index] = 1
                             self.appDelegate.display(error: error)
                             group2.leave()
                             
                         })
-                        
                     }
                 }, onFailure: { error in
                     downloadProgress[index] = 1
@@ -230,7 +224,7 @@ class VGLogsTableViewController: UITableViewController {
     }
 
     // MARK: Notifications    
-    @objc func previewImageStarting(_ notification:Notification) {
+    @objc func previewImageStarting(_ notification: Notification) {
         guard let newTrack = notification.object as? VGTrack else {
             return
         }
@@ -248,7 +242,7 @@ class VGLogsTableViewController: UITableViewController {
 
     }
     
-    @objc func previewImageStopping(_ notification:Notification) {
+    @objc func previewImageStopping(_ notification: Notification) {
         guard let updatedNotification = notification.object as? ImageUpdatedNotification else {
             return
         }
@@ -266,11 +260,9 @@ class VGLogsTableViewController: UITableViewController {
                 cell.trackView.image = updatedNotification.image
             }
         }
-
-
     }
     
-    @objc func onVehicleAddedToLog(_ notification:Notification) {
+    @objc func onVehicleAddedToLog(_ notification: Notification) {
         guard let newTrack = notification.object as? VGTrack else {
             return
         }
@@ -288,7 +280,7 @@ class VGLogsTableViewController: UITableViewController {
         cell.lblVehicle.text = vehicle.name
     }
     
-    @objc func onLogsAdded(_ notification:Notification) {
+    @objc func onLogsAdded(_ notification: Notification) {
         guard let newTracks = notification.object as? [VGTrack] else {
             return
         }
@@ -311,11 +303,9 @@ class VGLogsTableViewController: UITableViewController {
                 self.tableView.separatorStyle = .none
             }
         }
-        
-        
     }
     
-    @objc func onLogUpdated(_ notification:Notification) {
+    @objc func onLogUpdated(_ notification: Notification) {
         guard let updatedTrack = notification.object as? VGTrack else {
             return
         }
@@ -337,8 +327,6 @@ class VGLogsTableViewController: UITableViewController {
             self.tracksDictionary[self.sections[indexPath.section]]![indexPath.row] = updatedTrack
             cell.show(track: updatedTrack)
         }
-        
-        
     }
         
     // MARK: - Overrides
@@ -375,10 +363,8 @@ class VGLogsTableViewController: UITableViewController {
             return
         }
         
-        for cell in visibleCells {
-            if cell.currentTrack!.isRecording {
-                cell.animateRecording()
-            }
+        for cell in visibleCells where cell.currentTrack!.isRecording {
+            cell.animateRecording()
         }
     }
     
@@ -416,10 +402,9 @@ class VGLogsTableViewController: UITableViewController {
         addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
     }
     
-    func addObserver(selector:Selector, name:Notification.Name) {
+    func addObserver(selector: Selector, name: Notification.Name) {
         NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
     }
-    
     
     func initializeTableViewController() {
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -441,8 +426,6 @@ class VGLogsTableViewController: UITableViewController {
                                       containerView: self.tableView,
                                       navigationBar: navigationController!.navigationBar,
                                       tabBar: appDelegate.tabController.tabBar)
-
-
         view.addSubview(emptyLabel)
     }
     
@@ -474,7 +457,7 @@ class VGLogsTableViewController: UITableViewController {
         searchForNewLogs(shouldDownloadFiles: true)
     }
     
-    func searchForNewLogs(shouldDownloadFiles:Bool) {
+    func searchForNewLogs(shouldDownloadFiles: Bool) {
         self.headerView.searchingForLogs()
         DispatchQueue.global(qos: .utility).async {
             self.appDelegate.deviceCommunicator.getAvailableFiles(onSuccess: { (filesOnDevice) in
@@ -484,14 +467,12 @@ class VGLogsTableViewController: UITableViewController {
                     self.downloadedFiles = downloadedFiles
                     for deviceFile in filesOnDevice {
                         var fileFoundOnPhone = false
-                        for downFile in downloadedFiles {
-                            if downFile.name == deviceFile.filename {
-                                fileFoundOnPhone = true
-                                if Int(downFile.size) != Int(truncating: deviceFile.fileSize!) {
-                                    self.undownloadedFiles.append(deviceFile)
-                                }
-                                continue
+                        for downFile in downloadedFiles where downFile.name == deviceFile.filename {
+                            fileFoundOnPhone = true
+                            if Int(downFile.size) != Int(truncating: deviceFile.fileSize!) {
+                                self.undownloadedFiles.append(deviceFile)
                             }
+                            continue
                         }
                         if !fileFoundOnPhone {
                             self.undownloadedFiles.append(deviceFile)
@@ -505,7 +486,6 @@ class VGLogsTableViewController: UITableViewController {
                         }
                     }
                     
-                                        
                     let recordingFileNames = self.getRecordingFile()
                     for recordingFileName in recordingFileNames {
                         guard let recordingIndexPath = self.getIndexPath(for: recordingFileName.filename) else {
@@ -543,29 +523,25 @@ class VGLogsTableViewController: UITableViewController {
         return files
     }
     
-    func getIndexPath(for track:VGTrack) -> IndexPath? {
+    func getIndexPath(for track: VGTrack) -> IndexPath? {
         for (sectionIndex, section) in sections.enumerated() {
             guard let sectionList = tracksDictionary[section] else {
                 continue
             }
-            for (rowIndex, trk) in sectionList.enumerated() {
-                if track.id == trk.id {
-                    return IndexPath(row: rowIndex, section: sectionIndex)
-                }
+            for (rowIndex, trk) in sectionList.enumerated() where track.id == trk.id {
+                return IndexPath(row: rowIndex, section: sectionIndex)
             }
         }
         return nil
     }
     
-    func getIndexPath(for fileName:String) -> IndexPath? {
+    func getIndexPath(for fileName: String) -> IndexPath? {
         for (sectionIndex, section) in sections.enumerated() {
             guard let sectionList = tracksDictionary[section] else {
                 continue
             }
-            for (rowIndex, trk) in sectionList.enumerated() {
-                if fileName == trk.fileName {
-                    return IndexPath(row: rowIndex, section: sectionIndex)
-                }
+            for (rowIndex, trk) in sectionList.enumerated() where fileName == trk.fileName {
+                return IndexPath(row: rowIndex, section: sectionIndex)
             }
         }
         return nil
@@ -603,7 +579,6 @@ class VGLogsTableViewController: UITableViewController {
         self.present(alert, animated: true)
     }
     
-    
     // MARK: - List Manipulation
     func updateData() {
         self.dataStore.getAllTracks(
@@ -624,7 +599,7 @@ class VGLogsTableViewController: UITableViewController {
         )
     }
     
-    func getTrackAt(indexPath:IndexPath) -> VGTrack? {
+    func getTrackAt(indexPath: IndexPath) -> VGTrack? {
         guard let dayFileList = tracksDictionary[sections[indexPath.section]] else {
             return nil
         }
@@ -632,7 +607,7 @@ class VGLogsTableViewController: UITableViewController {
         return file
     }
     
-    func getViewForHeader(section:Int, view:VGLogHeaderView?) -> VGLogHeaderView {
+    func getViewForHeader(section: Int, view: VGLogHeaderView?) -> VGLogHeaderView {
         var hdrView = view
         
         if hdrView == nil {
@@ -667,7 +642,6 @@ class VGLogsTableViewController: UITableViewController {
         view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
         
-        
         var frame1 = view.dateLabel.frame
         frame1.size.height = dateString.height(withConstrainedWidth: view.bounds.width-40, font: view.dateLabel.font)
         view.dateLabel.frame = frame1
@@ -676,7 +650,6 @@ class VGLogsTableViewController: UITableViewController {
         frame2.origin.y = frame1.size.height+2+2
         frame2.size.height = durationString.height(withConstrainedWidth: view.bounds.width-40, font: view.detailsLabel.font)
         view.detailsLabel.frame = frame2
-        
         
         return view
     }
@@ -694,9 +667,8 @@ class VGLogsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return getViewForHeader(section: section, view:nil)
+        return getViewForHeader(section: section, view: nil)
     }
-
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
@@ -707,7 +679,7 @@ class VGLogsTableViewController: UITableViewController {
         }
         cell.delegate = self
         if let track = getTrackAt(indexPath: indexPath) {
-            cell.show(track:track)
+            cell.show(track: track)
         }
         
         return cell
@@ -755,8 +727,6 @@ class VGLogsTableViewController: UITableViewController {
         }
     }
     
-
-    
     override func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
         return Strings.delete
     }
@@ -783,7 +753,6 @@ class VGLogsTableViewController: UITableViewController {
                     let activityVC = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
                     DispatchQueue.main.async {
                         self.present(activityVC, animated: true, completion: nil)
-
                     }
                 }) { (error) in
                     self.appDelegate.display(error: error)
@@ -846,7 +815,7 @@ class VGLogsTableViewController: UITableViewController {
 
 // MARK: - Extensions
 extension VGLogsTableViewController: DisplaySelectVehicleProtocol {
-    func didTapVehicle(track: VGTrack, tappedView:UIView?) {
+    func didTapVehicle(track: VGTrack, tappedView: UIView?) {
         if tableView.isEditing {
             return
         }
@@ -863,6 +832,3 @@ extension VGLogsTableViewController: DisplaySelectVehicleProtocol {
         present(navController, animated: true, completion: nil)
     }
 }
-
-
-

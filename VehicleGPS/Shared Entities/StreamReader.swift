@@ -8,14 +8,14 @@
 
 import Foundation
 
-class StreamReader  {
+class StreamReader {
 
-    let encoding : String.Encoding
-    let chunkSize : Int
-    var fileHandle : FileHandle!
-    let delimData : Data
-    var buffer : Data
-    var atEof : Bool
+    let encoding: String.Encoding
+    let chunkSize: Int
+    var fileHandle: FileHandle!
+    let delimData: Data
+    var buffer: Data
+    var atEof: Bool
 
     init?(path: URL, delimiter: String = "\n", encoding: String.Encoding = .utf8,
           chunkSize: Int = 4096) {
@@ -74,20 +74,20 @@ class StreamReader  {
     }
 
     /// Start reading from the beginning of file.
-    func rewind() -> Void {
+    func rewind() {
         fileHandle.seek(toFileOffset: 0)
         buffer.count = 0
         atEof = false
     }
 
     /// Close the underlying file. No reading must be done after calling this method.
-    func close() -> Void {
+    func close() {
         fileHandle?.closeFile()
         fileHandle = nil
     }
 }
 
-extension StreamReader : Sequence {
+extension StreamReader: Sequence {
     func makeIterator() -> AnyIterator<String> {
         return AnyIterator {
             return self.nextLine()

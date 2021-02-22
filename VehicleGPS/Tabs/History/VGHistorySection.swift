@@ -13,8 +13,7 @@ class VGHistorySection {
     var summaries = [VGTracksSummary]()
     var dateDescription: String = ""
 
-    
-    init(title:String) {
+    init(title: String) {
         self.sectionID = title
     }
 }

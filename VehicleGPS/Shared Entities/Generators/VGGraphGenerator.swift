@@ -9,5 +9,5 @@
 import Foundation
 
 protocol VGGraphGenerator {
-    func generate(from track:VGTrack) -> TrackGraphViewConfig
+    func generate(from track: VGTrack) -> TrackGraphViewConfig
 }

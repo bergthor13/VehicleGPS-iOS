@@ -22,7 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var trackDetailsViewController = VGLogDetailsViewController()
 //    var splitViewController = UISplitViewController(style: .tripleColumn)
 
-    
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -40,7 +39,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        splitViewController.setViewController(trackDetailsViewController, for: .secondary)
 //        splitViewController.setViewController(tabController, for: .compact)
         
-
         self.window?.rootViewController = tabController
         self.window?.makeKeyAndVisible()
         return true
@@ -68,8 +66,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ app: UIApplication,
-                       open url: URL,
-                       options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+                     open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         let importController = VGImportFileTableViewController(style: .insetGrouped, fileUrls: [url])
         let navController = UINavigationController(rootViewController: importController)
         tabController.present(navController, animated: true)
@@ -77,11 +75,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
-    func display(error:Error) {
+    func display(error: Error) {
         display(error: error.localizedDescription)
     }
     
-    func display(error:String) {
+    func display(error: String) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: Strings.ok, style: .default))

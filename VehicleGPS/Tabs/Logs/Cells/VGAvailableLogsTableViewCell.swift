@@ -20,7 +20,6 @@ class VGAvailableLogsTableViewCell: UITableViewCell {
     static let nibName = "VGAvailableLogsTableViewCell"
     static let nib = UINib(nibName: VGAvailableLogsTableViewCell.nibName, bundle: nil)
 
-    
     var vgFileManager: VGFileManager!
     var currentTrack: VGTrack?
     let formatter = DateFormatter()

@@ -11,7 +11,7 @@ import UIKit
 
 class VGEngineLoadGraphGenerator: VGGraphGenerator {
     
-    func generate(from track:VGTrack) -> TrackGraphViewConfig {
+    func generate(from track: VGTrack) -> TrackGraphViewConfig {
         let configuration = TrackGraphViewConfig()
         configuration.name = Strings.engineLoad
         for point in track.trackPoints {

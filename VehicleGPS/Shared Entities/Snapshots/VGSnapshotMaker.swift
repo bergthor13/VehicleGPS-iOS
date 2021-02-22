@@ -17,17 +17,17 @@ struct ImageUpdatedNotification {
 }
 
 class VGSnapshotMaker {
-    let vgFileManager:VGFileManager
-    let vgDataStore:VGDataStore
-    init(fileManager:VGFileManager, dataStore:VGDataStore) {
+    let vgFileManager: VGFileManager
+    let vgDataStore: VGDataStore
+    init(fileManager: VGFileManager, dataStore: VGDataStore) {
         vgFileManager = fileManager
         vgDataStore = dataStore
-        NotificationCenter.default.addObserver(self, selector: #selector(addedToTrack(_:)), name: .vehicleAddedToTrack , object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(addedToTrack(_:)), name: .vehicleAddedToTrack, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(generateImagesForTracks(_:)), name: .logsAdded, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(generateImagesForTrack(_:)), name: .logUpdated, object: nil)
     }
     
-    func generateImageFor(track:VGTrack) {
+    func generateImageFor(track: VGTrack) {
         if track.mapPoints.count == 0 {
             vgDataStore.getMapPointsForTrack(
                 with: track.id!,
@@ -57,7 +57,7 @@ class VGSnapshotMaker {
         }
     }
     
-    @objc func generateImagesForTracks(_ notification:Notification) {
+    @objc func generateImagesForTracks(_ notification: Notification) {
         guard let newTracks = notification.object as? [VGTrack] else {
             return
         }
@@ -67,7 +67,7 @@ class VGSnapshotMaker {
         }
     }
     
-    @objc func generateImagesForTrack(_ notification:Notification) {
+    @objc func generateImagesForTrack(_ notification: Notification) {
         guard let newTrack = notification.object as? VGTrack else {
             return
         }
@@ -75,7 +75,7 @@ class VGSnapshotMaker {
         generateImageFor(track: newTrack)
     }
     
-    @objc func addedToTrack(_ notification:Notification) {
+    @objc func addedToTrack(_ notification: Notification) {
         guard let newTrack = notification.object as? VGTrack else {
             return
         }
@@ -101,15 +101,13 @@ class VGSnapshotMaker {
 
         }
     }
-    
-    
-    
-    func drawTrack(vgTrack:VGTrack, imageCallback:(@escaping(UIImage?,UIUserInterfaceStyle?)->Void?)) {
+
+    func drawTrack(vgTrack: VGTrack, imageCallback: (@escaping(UIImage?, UIUserInterfaceStyle?)->Void?)) {
         if vgTrack.mapPoints.count == 0 {
             vgDataStore.getMapPointsForTrack(with: vgTrack.id!) { mapPoints in
                 vgTrack.mapPoints = mapPoints
                 let coordinateList = vgTrack.getMapPoints()
-                var snapshotter:MKMapSnapshotter?
+                var snapshotter: MKMapSnapshotter?
                 for style in [UIUserInterfaceStyle.light, UIUserInterfaceStyle.dark] {
                     if coordinateList.count == 0 {
                         snapshotter = VGZeroMapSnapshotter(style: style)
@@ -120,7 +118,7 @@ class VGSnapshotMaker {
                     snapshotter?.start(completionHandler: { (snapshot, error) in
                         DispatchQueue.global(qos: .utility).async {
                             guard let snapshot = snapshot else {
-                                imageCallback(nil,style)
+                                imageCallback(nil, style)
                                 return
                             }
                             
@@ -174,12 +172,12 @@ class VGSnapshotMaker {
         
     }
     
-    func drawTracks(vgTracks:[VGTrack], imageCallback:(@escaping(UIImage?,UIUserInterfaceStyle?)->Void?)) {
+    func drawTracks(vgTracks: [VGTrack], imageCallback: (@escaping(UIImage?, UIUserInterfaceStyle?) -> Void?)) {
         
         let coordList = vgTracks.flatMap { (track) -> [CLLocationCoordinate2D] in
             return track.getMapPoints()
         }
-        var snapshotter:MKMapSnapshotter?
+        var snapshotter: MKMapSnapshotter?
         if coordList.count == 0 {
             snapshotter = VGZeroMapSnapshotter(style: .dark)
         } else {
@@ -191,7 +189,7 @@ class VGSnapshotMaker {
             DispatchQueue.global(qos: .utility).async {
                 
                 guard let snapshot = snapshot else {
-                    imageCallback(nil,.dark)
+                    imageCallback(nil, .dark)
                     return
                 }
                 

@@ -32,7 +32,7 @@ class VGDownloadLogsViewController: UIViewController {
         setupTableView()
     }
     
-    @objc func segmentedControlChanged(sender:UISegmentedControl) {
+    @objc func segmentedControlChanged(sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 0 {
             availableLogsTVC.sectionKeys = availableSectionKeys
             availableLogsTVC.tracksDict = availableLogs

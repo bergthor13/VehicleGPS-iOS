@@ -117,7 +117,7 @@ class VGDatabaseTableViewController: UITableViewController {
                         hud.hide(animated: true)
                         tableView.reloadData()
                     },
-                    onFailure:  { (error) in
+                    onFailure: { (error) in
                         hud.hide(animated: true)
                         self.appDelegate.display(error: error)
                     }
@@ -140,16 +140,13 @@ class VGDatabaseTableViewController: UITableViewController {
                     let hud = MBProgressHUD.showAdded(to: self.parent!.view, animated: true)
                     hud.mode = .indeterminate
                     hud.label.text = "Deleting..."
-                    self.fileManager.deleteAllPreviewImages {
+                    self.fileManager.deleteAllPreviewImages(onSuccess: {
                         hud.hide(animated: true)
                         tableView.reloadData()
-                    } onFailure: { error in
+                    }, onFailure: { error in
                         hud.hide(animated: true)
                         self.appDelegate.display(error: error)
-                    }
-
-
-                
+                    })
                 }))
                 alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel, handler: nil))
                 self.present(alert, animated: true, completion: nil)

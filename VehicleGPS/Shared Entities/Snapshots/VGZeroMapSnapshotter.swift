@@ -10,7 +10,7 @@ import Foundation
 import MapKit
 
 class VGZeroMapSnapshotter: MKMapSnapshotter {
-    init(style:UIUserInterfaceStyle) {
+    init(style: UIUserInterfaceStyle) {
         let options = MKMapSnapshotter.Options()
         let location = CLLocationCoordinate2DMake(64.9, -18.9)
         let latitudeDelta = 4.0

@@ -9,7 +9,7 @@
 import Foundation
 
 protocol VGEditorToolbarDelegate {
-    func didTap(button:ButtonType)
+    func didTap(button: ButtonType)
 }
 
 enum ButtonType {
@@ -17,7 +17,3 @@ enum ButtonType {
     case previous
     case split
 }
-
-
-
-

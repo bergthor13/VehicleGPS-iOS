@@ -35,9 +35,9 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
     var vehiclesController: VGVehiclesTableViewController!
     var vehicle = VGVehicle()
     var imagePicker: UIImagePickerController!
-    var selectedImage:UIImage?
+    var selectedImage: UIImage?
     
-    @objc func nameDidChange(_ sender:UITextField) {
+    @objc func nameDidChange(_ sender: UITextField) {
         enableDisableSave(button: self.navigationItem.rightBarButtonItem!, string: sender.text!)
     }
     
@@ -55,7 +55,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.cancel, style: .plain, target: self, action: #selector(tappedCancel))
     }
     
-    func enableDisableSave(button:UIBarButtonItem, string:String) {
+    func enableDisableSave(button: UIBarButtonItem, string: String) {
         if string.count == 0 {
             button.isEnabled = false
         } else {
@@ -63,7 +63,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         }
     }
     
-    //MARK: - Add image to Library
+    // MARK: - Add image to Library
     func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
         if let error = error {
             // we got back an error!
@@ -77,8 +77,8 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         }
     }
 
-    //MARK: - Done image capture here
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]){
+    // MARK: - Done image capture here
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         imagePicker.dismiss(animated: true, completion: nil)
         guard let selectedImage = info[.editedImage] as? UIImage else {
             print("Image not found!")
@@ -166,7 +166,7 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         return cell
     }
     
-    @objc func colorWellChanged(_ colorWell:VGColorWell) {
+    @objc func colorWellChanged(_ colorWell: VGColorWell) {
         let color = cell.colorWell.selectedColor
         self.cell.colorWell.selectedColor = color
         vehicle.mapColor = color

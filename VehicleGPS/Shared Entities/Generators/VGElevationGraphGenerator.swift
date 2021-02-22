@@ -12,7 +12,7 @@ import CoreLocation
 
 class VGElevationGraphGenerator: VGGraphGenerator {
     
-    func generate(from track:VGTrack) -> TrackGraphViewConfig {
+    func generate(from track: VGTrack) -> TrackGraphViewConfig {
         let configuration = TrackGraphViewConfig()
         configuration.name = Strings.elevation
         for point in track.trackPoints {
