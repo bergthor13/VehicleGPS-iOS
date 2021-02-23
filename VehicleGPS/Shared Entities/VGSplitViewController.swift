@@ -87,8 +87,7 @@ extension VGSplitViewController {
 
         // Creating the datasource
 
-        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) {
-            (collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
+        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) {(collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
             if indexPath.item == 0 && indexPath.section != 0 {
                 return collectionView.dequeueConfiguredReusableCell(using: headerRegistration, for: indexPath, item: item)
             } else {

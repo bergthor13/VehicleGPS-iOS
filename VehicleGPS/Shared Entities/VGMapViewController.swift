@@ -113,7 +113,7 @@ class VGMapViewController: UIViewController {
         
         dpGroup.notify(queue: .main) {
             var drawnTracks = [VGTrack]()
-            for track in self.tracks where track.distance != 0.0{
+            for track in self.tracks where track.distance != 0.0 {
                 drawnTracks.append(track)
             }
             delegate.snapshotter.drawTracks(vgTracks: drawnTracks) { (image, style) -> Void? in

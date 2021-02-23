@@ -33,7 +33,7 @@ class TrackGraphViewConfig {
     var name = ""
     var color = UIColor(red: 0, green: 0.8, blue: 0, alpha: 0.3)
     var showMinMaxValue = true
-    var numbersList = [(Date,Double)]()
+    var numbersList = [(Date, Double)]()
     var horizontalLineMarkers = [Double]()
     var verticalLineMarkers = [(Date, Double)]()
     var graphMinValue: Double?

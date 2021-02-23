@@ -11,7 +11,6 @@
 		F20574B524379A1F0044282B /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20574B424379A1F0044282B /* Icons.swift */; };
 		F20574B724379C720044282B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20574B624379C720044282B /* Constants.swift */; };
 		F215AC6423DB1AA40001AF24 /* VGVehicle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC6323DB1AA40001AF24 /* VGVehicle.swift */; };
-		F215AC6623DB1AAC0001AF24 /* VGJourney.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC6523DB1AAC0001AF24 /* VGJourney.swift */; };
 		F215AC7E23DB38D90001AF24 /* VGVehiclesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC7D23DB38D90001AF24 /* VGVehiclesTableViewController.swift */; };
 		F215AC8323DB3BC50001AF24 /* VGNewVehicleTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC8223DB3BC50001AF24 /* VGNewVehicleTableViewController.swift */; };
 		F215AC8723DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC8623DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift */; };
@@ -93,6 +92,7 @@
 		F26B2C0E24B28E1D00E9F22C /* VGSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26B2C0D24B28E1D00E9F22C /* VGSplitViewController.swift */; };
 		F26B2C2824B3570A00E9F22C /* SidebarCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26B2C2724B3570A00E9F22C /* SidebarCollectionViewController.swift */; };
 		F26CCB6B23DBB44600697EFA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F26CCB6D23DBB44600697EFA /* Localizable.strings */; };
+		F276B15F25E5616000E3B165 /* VGContextMenuActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F276B15E25E5616000E3B165 /* VGContextMenuActions.swift */; };
 		F2797D5723CD1AC500207650 /* VGHistoryDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2797D5623CD1AC500207650 /* VGHistoryDetailsTableViewController.swift */; };
 		F27CB77C23D38A3D002BF28F /* VGDeviceConnectedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F27CB77B23D38A3D002BF28F /* VGDeviceConnectedHeaderView.xib */; };
 		F27CB77E23D38C50002BF28F /* VGDeviceConnectedHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27CB77D23D38C50002BF28F /* VGDeviceConnectedHeaderView.swift */; };
@@ -152,7 +152,6 @@
 		F20574B424379A1F0044282B /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		F20574B624379C720044282B /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F215AC6323DB1AA40001AF24 /* VGVehicle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGVehicle.swift; sourceTree = "<group>"; };
-		F215AC6523DB1AAC0001AF24 /* VGJourney.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGJourney.swift; sourceTree = "<group>"; };
 		F215AC7D23DB38D90001AF24 /* VGVehiclesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGVehiclesTableViewController.swift; sourceTree = "<group>"; };
 		F215AC8223DB3BC50001AF24 /* VGNewVehicleTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGNewVehicleTableViewController.swift; sourceTree = "<group>"; };
 		F215AC8623DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGNewVehicleTableViewCell.swift; sourceTree = "<group>"; };
@@ -241,6 +240,7 @@
 		F26B2C0D24B28E1D00E9F22C /* VGSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGSplitViewController.swift; sourceTree = "<group>"; };
 		F26B2C2724B3570A00E9F22C /* SidebarCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCollectionViewController.swift; sourceTree = "<group>"; };
 		F26CCB6C23DBB44600697EFA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F276B15E25E5616000E3B165 /* VGContextMenuActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGContextMenuActions.swift; sourceTree = "<group>"; };
 		F277D66225E1E0EF0072B2CF /* NMSSH.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = NMSSH.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2797D5623CD1AC500207650 /* VGHistoryDetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGHistoryDetailsTableViewController.swift; sourceTree = "<group>"; };
 		F27CB77B23D38A3D002BF28F /* VGDeviceConnectedHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VGDeviceConnectedHeaderView.xib; sourceTree = "<group>"; };
@@ -331,7 +331,6 @@
 				F23BE8EB22A5E5BB008FD50C /* VGDataPoint.swift */,
 				F215AC6323DB1AA40001AF24 /* VGVehicle.swift */,
 				F25AC44724EB1BC300C3CFA1 /* VGVehicleType.swift */,
-				F215AC6523DB1AAC0001AF24 /* VGJourney.swift */,
 				F23BE8E922A5E5BB008FD50C /* VGTrack.swift */,
 				F2AC170123F0094C00516498 /* VGMapPoint.swift */,
 				F2FF02372442815000502869 /* VGDownloadedFile.swift */,
@@ -405,6 +404,7 @@
 				F280AC8E24C2773500509C5E /* LogDateSplitter.swift */,
 				F280AC9224C3352C00509C5E /* VGMapViewController.swift */,
 				F281E0B4250953C100BDC9E5 /* ConstraintApplyer.swift */,
+				F276B15E25E5616000E3B165 /* VGContextMenuActions.swift */,
 			);
 			path = "Shared Entities";
 			sourceTree = "<group>";
@@ -627,6 +627,7 @@
 				F23BE8B722A5E4B9008FD50C /* Sources */,
 				F23BE8B922A5E4B9008FD50C /* Resources */,
 				73324A3AF290B093A55A79C2 /* [CP] Embed Pods Frameworks */,
+				F276B16225E58DE000E3B165 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -776,6 +777,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		F276B16225E58DE000E3B165 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Running CPD\npmd cpd --files ${EXECUTABLE_NAME} --minimum-tokens 50 --language swift --encoding UTF-8 --format net.sourceforge.pmd.cpd.XMLRenderer > cpd-output.xml --failOnViolation true\n# Running script\nphp ./cpd_script.php -cpd-xml cpd-output.xml\n";
+		};
 		F277D66A25E204EE0072B2CF /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -809,6 +827,7 @@
 				F24754FC23DDAE26007E0DF8 /* VGDurationFormatter.swift in Sources */,
 				F22F37C2243AAB60005E80C1 /* VGDateParsingFormatter.swift in Sources */,
 				F2678C4325792E0100BD6E93 /* GraphCollectionViewCell.swift in Sources */,
+				F276B15F25E5616000E3B165 /* VGContextMenuActions.swift in Sources */,
 				F25839D723A680D400E76B54 /* VGHistoryTableViewController.swift in Sources */,
 				F2F77DF024E96B6600C2F09D /* VGGraphGenerator.swift in Sources */,
 				F2F9627825DF29E100ECC752 /* VGVehicleTableViewCell.swift in Sources */,
@@ -903,7 +922,6 @@
 				F2D0249325CA026B00336574 /* VGTagsTableViewController.swift in Sources */,
 				F23BE8BF22A5E4B9008FD50C /* AppDelegate.swift in Sources */,
 				F228B30F243CED3A00D79D5E /* VGMapView.swift in Sources */,
-				F215AC6623DB1AAC0001AF24 /* VGJourney.swift in Sources */,
 				F23BE8FB22A5E5BB008FD50C /* VGLogsTableViewController.swift in Sources */,
 				F23BE8DE22A5E596008FD50C /* VGSettingsTableViewController.swift in Sources */,
 			);

@@ -52,7 +52,7 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
         dlpTime = nil
         dlpPoint = nil
         track = nil
-        for (index, _) in self.tableView.visibleCells.enumerated() {
+        for index in self.tableView.visibleCells.indices {
             let cell = self.tableView.visibleCells[index] as? VGGraphTableViewCell
             cell?.graphView.removeAllDLPListeners()
         }
@@ -85,9 +85,11 @@ class VGLogDetailsTrackTableViewController: UITableViewController {
         }
         
         cell!.graphView.addDLP(listener: self)
+        
         guard let _ = track else {
             return cell!
         }
+        
         if trackConfigs.count == 0 {
             return cell!
         }

@@ -157,7 +157,7 @@ class VGHistoryTableViewController: UITableViewController {
         let tagFilter = UIAction(title: Strings.filterByTags, image: Icons.tag) { (_) in
             
         }
-        let dateFilter = UIAction(title: Strings.filterByDate, image: Icons.calendar) { (_) in
+        let dateFilter = UIAction(title: Strings.filterByDate, image: Icons.calendarAdd) { (_) in
             
         }
         let vehicleFilter = UIAction(title: Strings.filterByVehicle, image: Icons.vehicle) { (_) in
@@ -219,7 +219,7 @@ class VGHistoryTableViewController: UITableViewController {
         let exportGPX = UIAction(title: "Export to GPX file", image: Icons.share, identifier: nil, discoverabilityTitle: nil, attributes: .init(), state: .off) { (action) in
             self.exportTracks()
         }
-        let addToCalendar = UIAction(title: "Add to Calendar", image: Icons.calendar, identifier: nil, discoverabilityTitle: nil, attributes: .init(), state: .off) { (action) in
+        let addToCalendar = UIAction(title: "Add to Calendar", image: Icons.calendarAdd, identifier: nil, discoverabilityTitle: nil, attributes: .init(), state: .off) { (action) in
             self.exportToCalendar()
         }
 

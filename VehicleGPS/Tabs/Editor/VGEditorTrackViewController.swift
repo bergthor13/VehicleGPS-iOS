@@ -38,7 +38,7 @@ class VGEditorTrackViewController: UIViewController {
         let top = NSLayoutConstraint(item: toolbar!, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1, constant: 0)
         let left = NSLayoutConstraint(item: toolbar!, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1, constant: 0)
         let right = NSLayoutConstraint(item: toolbar!, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1, constant: 0)
-        view.addConstraints([top,left,right])
+        view.addConstraints([top, left, right])
     }
 }
 

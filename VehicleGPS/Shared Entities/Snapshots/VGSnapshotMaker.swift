@@ -102,7 +102,7 @@ class VGSnapshotMaker {
         }
     }
 
-    func drawTrack(vgTrack: VGTrack, imageCallback: (@escaping(UIImage?, UIUserInterfaceStyle?)->Void?)) {
+    func drawTrack(vgTrack: VGTrack, imageCallback: (@escaping(UIImage?, UIUserInterfaceStyle?) -> Void?)) {
         if vgTrack.mapPoints.count == 0 {
             vgDataStore.getMapPointsForTrack(with: vgTrack.id!) { mapPoints in
                 vgTrack.mapPoints = mapPoints

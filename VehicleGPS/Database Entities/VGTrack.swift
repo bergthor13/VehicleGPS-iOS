@@ -88,9 +88,7 @@ class VGTrack {
     /// Returns the average speed of the track.
     /// Unit in km/h
     var averageSpeed: Double {
-        get {
-            return distance/(duration/60/60)
-        }
+        return distance/(duration/60/60)
     }
     
     var tags: [VGTag]
@@ -213,9 +211,10 @@ class VGTrack {
         }
         
         for (point1, point2) in zip(trackPoints, trackPoints.dropFirst()) {
-            guard let _ = point1.latitude, let _ = point1.longitude else {
+            if point1.latitude == nil || point1.longitude ==  nil {
                 continue
             }
+            
             guard let latitude2 = point2.latitude, let longitude2 = point2.longitude else {
                 continue
             }
@@ -430,4 +429,3 @@ extension VGTrack: CustomStringConvertible {
         return "fileName: \(self.fileName), timeStart: \(String(describing: timeStart)), maxLat: \(self.maxLat), maxLon: \(self.maxLon), minLat: \(self.minLat), minLon: \(self.minLon)"
     }
 }
-

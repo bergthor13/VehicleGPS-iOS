@@ -23,13 +23,13 @@ class PulleyEditorViewController: PulleyViewController {
             if track!.trackPoints.count != 0 {
                 return
             }
-            self.dataStore.getDataPointsForTrack(with: track!.id!) { (points) in
+            self.dataStore.getDataPointsForTrack(with: track!.id!, onSuccess: { (points) in
                 self.track!.trackPoints = points
                 self.mapViewController.tracks = [self.track!]
                 self.summaryViewController.tracks = [self.track!]
-            } onFailure: { (error) in
+            }, onFailure: { (error) in
                 self.appDelegate.display(error: error)
-            }
+            })
         }
     }
     
@@ -67,37 +67,16 @@ class PulleyEditorViewController: PulleyViewController {
         guard let track = track else {
             return nil
         }
+        let cma = VGContextMenuActions(viewController: self)
+        
         if vgFileManager.fileForTrackExists(track: track) {
-            actions.append(UIAction(title: Strings.shareCSV, image: Icons.share, handler: { (action) in
-                let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: track)!], applicationActivities: nil)
-                self.present(activityVC, animated: true, completion: nil)
-            }))
+            actions.append(cma.getFileAction(for: track))
         }
         
-        actions.append(UIAction(title: Strings.shareGPX, image: Icons.share, handler: { (action) in
-            //self.track.trackPoints = self.dataStore.getDataPointsForTrack(vgTrack: self.track)
-            let activityVC = UIActivityViewController(activityItems: [self.vgGPXGenerator.generateGPXFor(tracks: [track])!], applicationActivities: nil)
-            self.present(activityVC, animated: true, completion: nil)
-        }))
-        
-        actions.append(UIAction(title: Strings.selectVehicle, image: Icons.vehicle, handler: { (action) in
-            let vehCont = VGVehiclesSelectionTableViewController(style: .insetGrouped)
-            vehCont.track = track
-            let navCont = UINavigationController(rootViewController: vehCont)
-            self.present(navCont, animated: true, completion: nil)
-        }))
-        
-        actions.append(UIAction(title: Strings.delete, image: Icons.delete, attributes: .destructive, handler: { (action) in
-            self.dataStore.delete(trackWith: track.id!) {
-                self.navigationController?.popViewController(animated: true)
-            } onFailure: { (error) in
-                self.appDelegate.display(error: error)
-            }
-        }))
-        
-        actions.append(UIAction(title: Strings.exportMapAsImage, image: Icons.photo) { (action) in
-            self.mapToImage()
-        })
+        actions.append(cma.getGPXFileAction(for: track))
+        actions.append(cma.getSelectVehicleAction(for: track))
+        actions.append(cma.getDeleteAction(for: track))
+        actions.append(cma.getMapToImageAction(for: track))
         
         return UIMenu(title: "", children: actions)
     }
@@ -106,11 +85,15 @@ class PulleyEditorViewController: PulleyViewController {
         let newTrack = VGTrack()
         var pointIndex = -1
         for (index, (dataPoint1, dataPoint2)) in zip(track.trackPoints, track.trackPoints.dropFirst()).enumerated() {
-            if dataPoint1.timestamp! < timestamp {
-                pointIndex = index
-                
+            guard let timestamp1 = dataPoint1.timestamp, let timestamp2 = dataPoint2.timestamp else {
+                continue
             }
-            if abs(dataPoint1.timestamp!.timeIntervalSince(timestamp)) > abs(dataPoint2.timestamp!.timeIntervalSince(timestamp)) {
+            
+            if timestamp1 < timestamp {
+                pointIndex = index
+            }
+            
+            if abs(timestamp1.timeIntervalSince(timestamp)) > abs(timestamp2.timeIntervalSince(timestamp)) {
                 pointIndex += 1
             }
         }
@@ -158,31 +141,30 @@ class PulleyEditorViewController: PulleyViewController {
 
         leftTrack.process()
         rightTrack.process()
+        
         self.dataStore.add(vgTrack: rightTrack, onSuccess: { (id) in
-            print("ADDED SUCCESSFULLY \(id)")
             self.dataStore.update(vgTrack: leftTrack, onSuccess: { (id) in
-                print("UPDATED SUCCESSFULLY: \(id)")
-                self.dataStore.getDataPointsForTrack(with: track.id!) { (points) in
+                self.dataStore.getDataPointsForTrack(with: track.id!, onSuccess: { (points) in
                     leftTrack.trackPoints = points
                     trackViewController.tvcontroller.dlpTime = nil
                     trackViewController.tvcontroller.dlpPoint = nil
                     mapViewController.tracks = [leftTrack]
                     trackViewController.tracks = [leftTrack]
                     
-                } onFailure: { (error) in
+                }, onFailure: { (error) in
                     self.appDelegate.display(error: error)
-                }
+                })
 
                 mapViewController.tracks = [oldTrack!]
                 trackViewController.tracks = [oldTrack!]
-            }) { (error) in
+            }, onFailure: { (error) in
                 print("ERROR UPDATING")
                 self.appDelegate.display(error: error)
-            }
-        }) { (error) in
+            })
+        }, onFailure: { (error) in
             print("ERROR ADDING")
             self.appDelegate.display(error: error)
-        }
+        })
     }
 }
 
@@ -213,39 +195,5 @@ extension PulleyEditorViewController: VGEditorToolbarDelegate {
         }
         //mapViewController.editorMapView
         
-    }
-    
-    func mapToImage() {
-        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
-        }
-        guard let track = self.track else {
-            return
-        }
-        self.dataStore.getMapPointsForTrack(with: track.id!, onSuccess: { (mapPoints) in
-            track.mapPoints = mapPoints
-            
-            var drawnTracks = [VGTrack]()
-        
-            if track.distance != 0.0 {
-                drawnTracks.append(track)
-            }
-        
-            delegate.snapshotter.drawTracks(vgTracks: drawnTracks) { (image, style) -> Void? in
-                if let image = image {
-                    guard let pngImageData = image.pngData() else {
-                        return nil
-                    }
-                    let vc = UIActivityViewController(activityItems: [pngImageData], applicationActivities: [])
-                    DispatchQueue.main.async {
-                        self.present(vc, animated: true)
-                    }
-                }
-                return nil
-            }
-        }) { (error) in
-            print(error)
-        }
-
     }
 }
