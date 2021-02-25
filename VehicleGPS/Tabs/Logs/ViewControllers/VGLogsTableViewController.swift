@@ -707,7 +707,7 @@ class VGLogsTableViewController: UITableViewController {
             }
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
-            let logDetailsView = VGLogDetailsViewController(nibName: nil, bundle: nil)
+            let logDetailsView = PulleyEditorViewController()
             logDetailsView.dataStore = self.dataStore
             logDetailsView.track = track
             self.navigationController?.pushViewController(logDetailsView, animated: true)
