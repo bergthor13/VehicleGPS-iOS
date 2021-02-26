@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol DisplaySelectVehicleProtocol: class {
+protocol DisplaySelectVehicleProtocol: AnyObject {
     func didTapVehicle(track: VGTrack, tappedView: UIView?)
 }
 
-protocol DisplaySelectTagsProtocol: class {
+protocol DisplaySelectTagsProtocol: AnyObject {
     func didTapTags(track: VGTrack, tappedView: UIView?)
 }
 

@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol VGEditorToolbarDelegate: class {
+protocol VGEditorToolbarDelegate: AnyObject {
     func didTap(button: ButtonType)
 }
 
