@@ -622,12 +622,12 @@
 			buildConfigurationList = F23BE8D022A5E4BA008FD50C /* Build configuration list for PBXNativeTarget "VehicleGPS" */;
 			buildPhases = (
 				F277D66A25E204EE0072B2CF /* ShellScript */,
+				F276B16225E58DE000E3B165 /* ShellScript */,
 				668EE25938AB33E5D91A01DD /* [CP] Check Pods Manifest.lock */,
 				F23BE8B822A5E4B9008FD50C /* Frameworks */,
 				F23BE8B722A5E4B9008FD50C /* Sources */,
 				F23BE8B922A5E4B9008FD50C /* Resources */,
 				73324A3AF290B093A55A79C2 /* [CP] Embed Pods Frameworks */,
-				F276B16225E58DE000E3B165 /* ShellScript */,
 			);
 			buildRules = (
 			);

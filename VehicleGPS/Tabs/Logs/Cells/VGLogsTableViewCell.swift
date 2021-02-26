@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol DisplaySelectVehicleProtocol {
+protocol DisplaySelectVehicleProtocol: class {
     func didTapVehicle(track: VGTrack, tappedView: UIView?)
 }
 
-protocol DisplaySelectTagsProtocol {
+protocol DisplaySelectTagsProtocol: class {
     func didTapTags(track: VGTrack, tappedView: UIView?)
 }
 
@@ -34,7 +34,7 @@ class VGLogsTableViewCell: UITableViewCell {
     static let identifier = "LogsCell"
     static let nibName = "VGLogsTableViewCell"
     static let nib = UINib(nibName: VGLogsTableViewCell.nibName, bundle: nil)
-    var delegate: DisplaySelectVehicleProtocol!
+    weak var delegate: DisplaySelectVehicleProtocol!
     var vgFileManager: VGFileManager!
     var vgDataStore: VGDataStore!
     var currentTrack: VGTrack?
@@ -190,7 +190,7 @@ class VGLogsTableViewCell: UITableViewCell {
             let index = find(char: subs, in: unstyledString)
 
             if let index = index {
-                setStyle(text: styledText, range: NSMakeRange(index, subs.count))
+                setStyle(text: styledText, range: NSRange(location: index, length: subs.count))
             }
         }
         return styledText

@@ -42,9 +42,9 @@ class VGImportFileTableViewController: UITableViewController {
                             self.navigationItem.rightBarButtonItem = self.importBarButton
                             self.tableView.reloadData()
                         }
-                    }) { (track, style) in
+                    }, imageCallback: { (track, style) in
                         
-                    }
+                    })
                 } else {
                     parser?.fileToTrack(fileUrl: fileUrl, progress: { (curr, count) in
                         

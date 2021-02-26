@@ -143,9 +143,9 @@ class VGDataStore {
         let predicate = NSPredicate(format: "vehicle.id = %@", argumentArray: [id])
         getTracks(in: context, with: predicate, onSuccess: { (tracks) in
             onSuccess(tracks)
-        }) { (error) in
+        }, onFailure: { (error) in
             onFailure(error)
-        }
+        })
     }
     
     func getTracks(in context: NSManagedObjectContext, with predicate: NSPredicate?, onSuccess: @escaping([VGTrack]) -> Void, onFailure: @escaping(Error) -> Void) {
@@ -266,11 +266,11 @@ class VGDataStore {
                     onSuccess(tracks)
                 }
                 
-            }) { (error) in
+            }, onFailure: { (error) in
                 DispatchQueue.main.async {
                     onFailure(error)
                 }
-            }
+            })
         }
 
     }
@@ -452,10 +452,10 @@ class VGDataStore {
                         returnList.append(newVehicle)
                         tracksForVehicleRequests.leave()
 
-                    }) { (error) in
+                    }, onFailure: { (error) in
                         print(error)
                         tracksForVehicleRequests.leave()
-                    }
+                    })
                 }
                 tracksForVehicleRequests.notify(queue: .main) {
                     onSuccess(returnList)

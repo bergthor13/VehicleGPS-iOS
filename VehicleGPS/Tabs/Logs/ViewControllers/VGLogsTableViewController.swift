@@ -125,10 +125,10 @@ class VGLogsTableViewController: UITableViewController {
                             self.dataStore.add(file: downlFile, onSuccess: {
                                 parseProgress[index] = 1
                                 group2.leave()
-                            }) { (error) in
+                            }, onFailure: { (error) in
                                 parseProgress[index] = 1
                                 group2.leave()
-                            }
+                            })
                             return
                         }
                         guard let fileUrl = fileUrl else {
@@ -136,10 +136,10 @@ class VGLogsTableViewController: UITableViewController {
                             self.dataStore.add(file: downlFile, onSuccess: {
                                 parseProgress[index] = 1
                                 group2.leave()
-                            }) { (error) in
+                            }, onFailure: { (error) in
                                 parseProgress[index] = 1
                                 group2.leave()
-                            }
+                            })
                             return
                         }
                         guard let parser = fileManager.getParser(for: fileUrl) else {
@@ -147,10 +147,10 @@ class VGLogsTableViewController: UITableViewController {
                             self.dataStore.add(file: downlFile, onSuccess: {
                                 parseProgress[index] = 1
                                 group2.leave()
-                            }) { (error) in
+                            }, onFailure: { (error) in
                                 parseProgress[index] = 1
                                 group2.leave()
-                            }
+                            })
                             return
                         }
                         parser.fileToTrack(fileUrl: fileUrl, progress: { (current, total) in
@@ -167,15 +167,15 @@ class VGLogsTableViewController: UITableViewController {
                                     self.dataStore.update(file: downlFile, onSuccess: {
                                         parseProgress[index] = 1
                                         group2.leave()
-                                    }) { (error) in
+                                    }, onFailure: { (error) in
                                         parseProgress[index] = 1
                                         group2.leave()
-                                    }
-                                }) { (error) in
+                                    })
+                                }, onFailure: { (error) in
                                     parseProgress[index] = 1
                                     self.appDelegate.display(error: error)
                                     group2.leave()
-                                }
+                                })
                             } else {
                                 self.dataStore.add(vgTrack: track, onSuccess: { [unowned self] (id) in
                                     track.trackPoints = []
@@ -184,16 +184,16 @@ class VGLogsTableViewController: UITableViewController {
                                     self.dataStore.add(file: downlFile, onSuccess: {
                                         parseProgress[index] = 1
                                         group2.leave()
-                                    }) { (error) in
+                                    }, onFailure: { (error) in
                                         parseProgress[index] = 1
                                         group2.leave()
-                                    }
+                                    })
                                     
-                                }) { (error) in
+                                }, onFailure: { (error) in
                                     parseProgress[index] = 1
                                     self.appDelegate.display(error: error)
                                     group2.leave()
-                                }
+                                })
                             }
                         }, onFailure: {error in
                             parseProgress[index] = 1
@@ -501,12 +501,12 @@ class VGLogsTableViewController: UITableViewController {
                         }
                     }
 
-                }) { (error) in
+                }, onFailure: { (error) in
                     self.appDelegate.display(error: error)
-                }
-            }) { (error) in
+                })
+            }, onFailure: { (error) in
                 self.appDelegate.display(error: error)
-            }
+            })
         }
     }
     
@@ -715,15 +715,15 @@ class VGLogsTableViewController: UITableViewController {
         
     }
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        guard let _ = getTrackAt(indexPath: indexPath) else {
+        if getTrackAt(indexPath: indexPath) == nil {
             return
         }
+
         if tableView.isEditing {
-            guard let _ = tableView.indexPathsForSelectedRows else {
+            if tableView.indexPathsForSelectedRows == nil {
                 self.hideEditToolbar()
                 return
             }
-
         }
     }
     
@@ -754,9 +754,9 @@ class VGLogsTableViewController: UITableViewController {
                     DispatchQueue.main.async {
                         self.present(activityVC, animated: true, completion: nil)
                     }
-                }) { (error) in
+                }, onFailure: { (error) in
                     self.appDelegate.display(error: error)
-                }
+                })
             }
         }
         
@@ -807,9 +807,9 @@ class VGLogsTableViewController: UITableViewController {
 
         self.dataStore.delete(trackWith: track.id!, onSuccess: {
             
-        }) { (error) in
+        }, onFailure: { (error) in
             self.appDelegate.display(error: error)
-        }
+        })
     }
 }
 

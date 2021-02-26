@@ -67,7 +67,8 @@ class VGAvailableLogsTableViewCell: UITableViewCell {
             let index = find(char: subs, in: unstyledString)
 
             if let index = index {
-                setStyle(text: styledText, range: NSMakeRange(index, subs.count))
+                
+                setStyle(text: styledText, range: NSRange(location: index, length: subs.count))
             }
         }
         return styledText

@@ -72,7 +72,7 @@ class VGGPXGenerator {
         for track in tracks {
             result += getTrackBegin()
             for point in track.trackPoints {
-                guard let _ = point.latitude, let _ = point.longitude else {
+                if point.latitude == nil || point.longitude == nil {
                     continue
                 }
                 

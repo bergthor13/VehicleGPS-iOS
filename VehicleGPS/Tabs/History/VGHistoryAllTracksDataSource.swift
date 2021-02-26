@@ -120,15 +120,15 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        guard let _ = getTrackAt(indexPath: indexPath) else {
+        if getTrackAt(indexPath: indexPath) == nil {
             return
         }
+
         if tableView.isEditing {
-            guard let _ = tableView.indexPathsForSelectedRows else {
+            if tableView.indexPathsForSelectedRows == nil {
                 self.hideEditToolbar()
                 return
             }
-
         }
     }
     
@@ -159,9 +159,9 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
                         self.parentViewController.present(activityVC, animated: true, completion: nil)
 
                     }
-                }) { (error) in
+                }, onFailure: { (error) in
                     //self.parentViewController.display(error: error)
-                }
+                })
             }
         }
         
@@ -214,9 +214,9 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
 
         self.dataStore.delete(trackWith: track.id!, onSuccess: {
             self.parentViewController.tracks.remove(at: self.parentViewController.tracks.firstIndex(of: track)!)
-        }) { (error) in
+        }, onFailure: { (error) in
             //self.display(error: error)
-        }
+        })
     }
     
     func getTrackAt(indexPath: IndexPath) -> VGTrack? {

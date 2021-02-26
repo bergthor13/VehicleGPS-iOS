@@ -68,9 +68,9 @@ class VGVehiclesSelectionTableViewController: VGVehiclesTableViewController {
         dataStore.add(vehicleWith: vehicles[indexPath.row].id!, toTrackWith: track!.id!, onSuccess: {
             self.track?.vehicle = self.vehicles[indexPath.row]
             self.dismiss(animated: true, completion: nil)
-        }) { (error) in
+        }, onFailure: { (error) in
             self.dismiss(animated: true, completion: nil)
             self.appDelegate.display(error: error)
-        }
+        })
     }
 }

@@ -19,7 +19,7 @@ class VGImportTableViewCell: UITableViewCell {
     static let identifier = "ImportLogCell"
     static let nibName = "VGImportTableViewCell"
     static let nib = UINib(nibName: VGImportTableViewCell.nibName, bundle: nil)
-    var delegate: DisplaySelectVehicleProtocol!
+    weak var delegate: DisplaySelectVehicleProtocol!
     var vgFileManager: VGFileManager!
     var currentTrack: VGTrack?
     let formatter = VGFullDateFormatter()

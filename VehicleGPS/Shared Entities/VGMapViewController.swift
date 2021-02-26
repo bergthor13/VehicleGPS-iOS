@@ -102,11 +102,11 @@ class VGMapViewController: UIViewController {
                     dpGroup.leave()
                     semaphore.signal()
 
-                }) { (error) in
+                }, onFailure: { (error) in
                     print(error)
                     dpGroup.leave()
                     semaphore.signal()
-                }
+                })
             }
 
         }

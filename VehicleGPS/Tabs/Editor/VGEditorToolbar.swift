@@ -10,7 +10,7 @@ import UIKit
 
 class VGEditorToolbar: UIView {
     
-    var delegate: VGEditorToolbarDelegate?
+    weak var delegate: VGEditorToolbarDelegate?
 
     @IBOutlet weak var background: UIVisualEffectView!
     @IBOutlet weak var nextButtonView: UIView!

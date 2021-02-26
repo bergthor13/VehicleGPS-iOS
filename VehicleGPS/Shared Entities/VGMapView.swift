@@ -43,13 +43,13 @@ class VGMapView: MKMapView {
                         dpGroup.leave()
                         semaphore.signal()
                         
-                    }) { (error) in
+                    }, onFailure: { (error) in
                         print("Error")
                         print(error)
                         
                         dpGroup.leave()
                         semaphore.signal()
-                    }
+                    })
 
                 }
             }

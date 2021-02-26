@@ -30,9 +30,9 @@ class VGEditVehicleTableViewController: VGNewVehicleTableViewController {
             NotificationCenter.default.post(name: .vehicleUpdated, object: self.vehicle)
 
             self.dismiss(animated: true)
-        }) { (error) in
+        }, onFailure: { (error) in
             self.appDelegate.display(error: error)
-        }
+        })
 
     }
 }

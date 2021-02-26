@@ -88,9 +88,9 @@ class VGSnapshotMaker {
                     self.vgFileManager.savePreview(image: image!, for: newTrack, with: style!)
                     return nil
                 }
-            }) { (error) in
+            }, onFailure: { (error) in
                 print(error)
-            }
+            })
         } else {
             NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
             self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
@@ -104,7 +104,7 @@ class VGSnapshotMaker {
 
     func drawTrack(vgTrack: VGTrack, imageCallback: (@escaping(UIImage?, UIUserInterfaceStyle?) -> Void?)) {
         if vgTrack.mapPoints.count == 0 {
-            vgDataStore.getMapPointsForTrack(with: vgTrack.id!) { mapPoints in
+            vgDataStore.getMapPointsForTrack(with: vgTrack.id!, onSuccess: { mapPoints in
                 vgTrack.mapPoints = mapPoints
                 let coordinateList = vgTrack.getMapPoints()
                 var snapshotter: MKMapSnapshotter?
@@ -164,12 +164,10 @@ class VGSnapshotMaker {
                     })
                 }
 
-            } onFailure: { error in
+            }, onFailure: { error in
                 print(error)
-            }
-
+            })
         }
-        
     }
     
     func drawTracks(vgTracks: [VGTrack], imageCallback: (@escaping(UIImage?, UIUserInterfaceStyle?) -> Void?)) {

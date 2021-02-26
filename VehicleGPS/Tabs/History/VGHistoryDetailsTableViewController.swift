@@ -276,9 +276,9 @@ class VGHistoryDetailsTableViewController: UITableViewController {
                     DispatchQueue.main.async {
                         self.present(activityVC, animated: true, completion: nil)
                     }
-                }) { (error) in
+                }, onFailure: { (error) in
                     //self.display(error: error)
-                }
+                })
             }
         }
         
@@ -322,9 +322,9 @@ class VGHistoryDetailsTableViewController: UITableViewController {
 
         self.dataStore.delete(trackWith: track.id!, onSuccess: {
             
-        }) { (error) in
+        }, onFailure: { (error) in
             //self.display(error: error)
-        }
+        })
     }
     
     func getTrackAt(indexPath: IndexPath) -> VGTrack? {

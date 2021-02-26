@@ -22,7 +22,7 @@ class VGTagsTableViewController: UITableViewController {
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.leftBarButtonItem = editButtonItem
         
-        VGDataStore().getTags { (tags) in
+        VGDataStore().getTags(onSuccess: { (tags) in
             self.tags = tags
             for tag in self.tags {
                 if self.track!.tags.contains(tag) {
@@ -33,9 +33,9 @@ class VGTagsTableViewController: UITableViewController {
                 self.tableView.reloadData()
             }
             
-        } onFailure: { (error) in
+        }, onFailure: { (error) in
             self.appDelegate.display(error: error)
-        }
+        })
         
         tableView.isEditing = true
 
@@ -94,20 +94,20 @@ class VGTagsTableViewController: UITableViewController {
         }
         
         if tag.tracks!.contains(track!) {
-            VGDataStore().remove(tagWith: tag.id!, fromTrackWith: track!.id!) {
+            VGDataStore().remove(tagWith: tag.id!, fromTrackWith: track!.id!, onSuccess: {
                 cell.accessoryType = .none
                 tag.tracks!.remove(at: tag.tracks!.firstIndex(of: self.track!)!)
-            } onFailure: { (error) in
+            }, onFailure: { (error) in
                 self.appDelegate.display(error: error)
-            }
+            })
 
         } else {
-            VGDataStore().add(tagWith: tag.id!, toTrackWith: track!.id!) {
+            VGDataStore().add(tagWith: tag.id!, toTrackWith: track!.id!, onSuccess: {
                 cell.accessoryType = .checkmark
                 tag.tracks!.append(self.track!)
-            } onFailure: { (error) in
+            }, onFailure: { (error) in
                 self.appDelegate.display(error: error)
-            }
+            })
         }
     }
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
@@ -117,6 +117,7 @@ class VGTagsTableViewController: UITableViewController {
         
         return .delete
     }
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 44
     }
@@ -158,14 +159,14 @@ class VGTagsTableViewController: UITableViewController {
         guard let id = tags[indexPath.row].id else {
             return
         }
-        VGDataStore().delete(tagWith: id) {
+        VGDataStore().delete(tagWith: id, onSuccess: {
             self.tableView.beginUpdates()
             self.tableView.deleteRows(at: [indexPath], with: .automatic)
             self.tags.remove(at: indexPath.row)
             self.tableView.endUpdates()
-        } onFailure: { (error) in
+        }, onFailure: { (error) in
             self.appDelegate.display(error: error)
-        }
+        })
 
     }
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -183,15 +184,15 @@ class VGTagsTableViewController: UITableViewController {
             if cell.txtName.text != "" {
                 let tag = VGTag()
                 tag.name = cell.txtName.text
-                VGDataStore().add(tag: tag) {id in
+                VGDataStore().add(tag: tag, onSuccess: { id in
                     self.tableView.beginUpdates()
                     self.tableView.insertRows(at: [indexPath], with: .automatic)
                     tag.id = id
                     self.tags.append(tag)
                     self.tableView.endUpdates()
-                } onFailure: { (error) in
+                }, onFailure: { (error) in
                     self.appDelegate.display(error: error)
-                }
+                })
 
             }
         }

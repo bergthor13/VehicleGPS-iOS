@@ -39,4 +39,3 @@ class VGVehicleTableViewCell: UITableViewCell {
         imgVehicle.layer.borderColor = UIColor.secondaryLabel.cgColor
     }
 }
-

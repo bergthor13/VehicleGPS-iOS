@@ -185,12 +185,12 @@ class VGHistoryTableViewController: UITableViewController {
     @objc func startEditor(_ sender: UIBarButtonItem) {
         let selTracks = getSelectedTracks()
         for (index, track) in selTracks.enumerated() {
-            dataStore.getDataPointsForTrack(with: track.id!) { (points) in
+            dataStore.getDataPointsForTrack(with: track.id!, onSuccess: { (points) in
                 selTracks[index].trackPoints = points
                 //editor.tracks = selTracks
-            } onFailure: { (error) in
+            }, onFailure: { (error) in
                 self.appDelegate.display(error: error)
-            }
+            })
 
         }
         
@@ -267,19 +267,19 @@ class VGHistoryTableViewController: UITableViewController {
             switch EKEventStore.authorizationStatus(for: .event) {
             case .authorized:
                 insertEvent(store: eventStore)
-                case .denied:
-                    print("Access denied")
-                case .notDetermined:
-                // 3
-                    eventStore.requestAccess(to: .event, completion: { [weak self] (granted: Bool, error: Error?) -> Void in
-                          if granted {
-                            self!.insertEvent(store: eventStore)
-                          } else {
-                                print("Access denied")
-                          }
-                    })
-                    default:
-                        print("Case default")
+            case .denied:
+                print("Access denied")
+            case .notDetermined:
+            // 3
+                eventStore.requestAccess(to: .event, completion: { [weak self] (granted: Bool, error: Error?) -> Void in
+                      if granted {
+                        self!.insertEvent(store: eventStore)
+                      } else {
+                            print("Access denied")
+                      }
+                })
+            default:
+                print("Case default")
             }
     }
     
@@ -303,13 +303,13 @@ class VGHistoryTableViewController: UITableViewController {
         for track in tracks {
             dpGroup.enter()
             DispatchQueue.global(qos: .userInitiated).async {
-                self.dataStore.getDataPointsForTrack(with: track.id!) { (dataPoints) in
+                self.dataStore.getDataPointsForTrack(with: track.id!, onSuccess: { (dataPoints) in
                     track.trackPoints = dataPoints
                     dpGroup.leave()
-                } onFailure: { (error) in
+                }, onFailure: { (error) in
                     self.appDelegate.display(error: error)
                     dpGroup.leave()
-                }
+                })
             }
         }
         dpGroup.wait()
@@ -604,7 +604,7 @@ class VGHistoryTableViewController: UITableViewController {
 
         distanceText.setAttributes([NSAttributedString.Key.font: fontMetrics.scaledFont(for: scaledFont),
                                   NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel],
-                                   range: NSMakeRange(unformattedDistance.count-3, 3))
+                                   range: NSRange(location: unformattedDistance.count-3, length: 3))
         cell.lblDistance.attributedText = distanceText
         
         let localizedText = Strings.logs
@@ -617,7 +617,7 @@ class VGHistoryTableViewController: UITableViewController {
         
         distanceText.setAttributes([NSAttributedString.Key.font: fontTrackMetrics.scaledFont(for: scaledTrackFont),
                                   NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel],
-                                   range: NSMakeRange(unformattedDistance.count-localizedSize, localizedSize))
+                                   range: NSRange(location: unformattedDistance.count-localizedSize, length: localizedSize))
         cell.lblTripCount.attributedText = distanceText
         cell.lblDate.text = summary.dateDescription
         
@@ -647,14 +647,12 @@ class VGHistoryTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if tableView.isEditing {
-            guard let _ = tableView.indexPathsForSelectedRows else {
+            if tableView.indexPathsForSelectedRows == nil {
                 self.hideEditToolbar()
                 return
             }
-
         }
     }
-    
 }
 
 extension VGHistoryTableViewController: UIDocumentPickerDelegate {

@@ -188,9 +188,9 @@ class VGVehiclesTableViewController: UITableViewController {
             self.vehicles.remove(at: indexPath.row)
             self.tableView.deleteRows(at: [indexPath], with: .top)
             self.reloadVehicles(shouldReloadTableView: false)
-        }) { (error) in
+        }, onFailure: { (error) in
             self.appDelegate.display(error: error)
-        }
+        })
 
     }
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -205,14 +205,14 @@ class VGVehiclesTableViewController: UITableViewController {
         vehicles.remove(at: sourceIndexPath.row)
         vehicles.insert(vehicleToMove, at: destinationIndexPath.row)
         
-        for (index, _) in vehicles.enumerated() {
+        for index in vehicles.indices {
             vehicles[index].order = index
             DispatchQueue.global(qos: .userInitiated).async {
-                self.dataStore.update(vgVehicle: self.vehicles[index]) {
+                self.dataStore.update(vgVehicle: self.vehicles[index], onSuccess: {
                     
-                } onFailure: { (error) in
+                }, onFailure: { (error) in
                     self.appDelegate.display(error: error)
-                }
+                })
             }
 
         }
@@ -297,8 +297,8 @@ class VGVehiclesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView,
-      contextMenuConfigurationForRowAt indexPath: IndexPath,
-      point: CGPoint) -> UIContextMenuConfiguration? {
+                            contextMenuConfigurationForRowAt indexPath: IndexPath,
+                            point: CGPoint) -> UIContextMenuConfiguration? {
         let edit = UIAction(title: Strings.edit) { _ in
             self.editVehicle(at: indexPath)
         }

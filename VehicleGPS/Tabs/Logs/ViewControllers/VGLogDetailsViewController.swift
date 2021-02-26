@@ -73,9 +73,9 @@ class VGLogDetailsViewController: UIViewController {
                 if track.mapPoints.count != 0 {
                     self.mapView.tracks = [track]
                 }
-            }) { (error) in
+            }, onFailure: { (error) in
                 self.appDelegate.display(error: error)
-            }
+            })
         } else {
             if self.mapView != nil {
                 let overlays = mapView.overlays
@@ -88,9 +88,9 @@ class VGLogDetailsViewController: UIViewController {
             self.dataStore.getDataPointsForTrack(with: track.id!, onSuccess: { (dataPoints) in
                 track.trackPoints = dataPoints
                 self.trackDataTableViewController.track = track
-            }) { (error) in
+            }, onFailure: { (error) in
                 self.appDelegate.display(error: error)
-            }
+            })
         }
 
     }
@@ -180,30 +180,26 @@ class VGLogDetailsViewController: UIViewController {
             leftTrack.process()
             self.dataStore.update(vgTrack: leftTrack, onSuccess: { (id) in
                 print("UPDATED SUCCESSFULLY: \(id)")
-            }) { (error) in
-                print("ERROR UPDATING")
-                self.appDelegate.display(error: error)
-            }
+            }, onFailure: self.displayError)
             
             rightTrack.process()
             self.dataStore.add(vgTrack: rightTrack, onSuccess: { (id) in
                 print("ADDED SUCCESSFULLY \(id)")
-            }) { (error) in
-                print("ERROR ADDING")
-                self.appDelegate.display(error: error)
-            }
+            }, onFailure: self.displayError)
             
         }))
         
         actions.append(UIAction(title: Strings.delete, image: Icons.delete, attributes: .destructive, handler: { (action) in
-            self.dataStore.delete(trackWith: self.track.id!) {
+            self.dataStore.delete(trackWith: self.track.id!, onSuccess: {
                 self.navigationController?.popViewController(animated: true)
-            } onFailure: { (error) in
-                self.appDelegate.display(error: error)
-            }
+            }, onFailure: self.displayError)
         }))
         
         return UIMenu(title: "", children: actions)
+    }
+    
+    func displayError(error: Error) {
+        self.appDelegate.display(error: error)
     }
     
     @objc func displayShareSelection() {
