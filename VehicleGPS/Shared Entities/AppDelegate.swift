@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var tabController = VGTabBarController()
     var snapshotter: VGSnapshotMaker!
     var deviceCommunicator: DeviceCommunicator!
-    var trackDetailsViewController = VGLogDetailsViewController()
+    var trackDetailsViewController = PulleyEditorViewController()
 //    var splitViewController = UISplitViewController(style: .tripleColumn)
 
     func application(_ application: UIApplication,

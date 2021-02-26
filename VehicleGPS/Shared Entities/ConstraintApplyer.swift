@@ -12,7 +12,6 @@ extension UIView {
     func fill(parentView: UIView, with insets: UIEdgeInsets) {
         parentView.addSubview(self)
         self.translatesAutoresizingMaskIntoConstraints = false
-        parentView.translatesAutoresizingMaskIntoConstraints = false
         let layoutLeft = NSLayoutConstraint(item: self, attribute: .leading, relatedBy: .equal, toItem: parentView, attribute: .leading, multiplier: 1, constant: insets.left)
         let layoutRight = NSLayoutConstraint(item: self, attribute: .trailing, relatedBy: .equal, toItem: parentView, attribute: .trailing, multiplier: 1, constant: -insets.right)
         let layoutTop = NSLayoutConstraint(item: self, attribute: .top, relatedBy: .equal, toItem: parentView, attribute: .top, multiplier: 1, constant: insets.top)

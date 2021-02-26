@@ -67,16 +67,16 @@ class PulleyEditorViewController: PulleyViewController {
         guard let track = track else {
             return nil
         }
-        let cma = VGContextMenuActions(viewController: self)
+        let cma = VGMenuActions(viewController: self)
         
         if vgFileManager.fileForTrackExists(track: track) {
-            actions.append(cma.getFileAction(for: track))
+            actions.append(cma.getShareFileAction(for: track))
         }
         
         actions.append(cma.getGPXFileAction(for: track))
         actions.append(cma.getSelectVehicleAction(for: track))
         actions.append(cma.getDeleteAction(for: track))
-        actions.append(cma.getMapToImageAction(for: track))
+        actions.append(cma.getMapToImageAction(for: [track]))
         
         return UIMenu(title: "", children: actions)
     }
