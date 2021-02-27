@@ -38,8 +38,8 @@ class VGSnapshotMaker {
                         guard let image = image else {
                             return nil
                         }
-                        NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image, style: style!, track: track))
                         self.vgFileManager.savePreview(image: image, for: track, with: style!)
+                        NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image, style: style!, track: track))
                         return nil
                     }
                 }, onFailure: { (error) in
@@ -49,8 +49,8 @@ class VGSnapshotMaker {
         } else {
             NotificationCenter.default.post(name: .previewImageStartingUpdate, object: track)
             self.drawTrack(vgTrack: track) { (image, style) -> Void? in
-                NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: track))
                 self.vgFileManager.savePreview(image: image!, for: track, with: style!)
+                NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: track))
                 return nil
             }
 
@@ -82,9 +82,7 @@ class VGSnapshotMaker {
         if newTrack.mapPoints.count == 0 {
             vgDataStore.getMapPointsForTrack(with: newTrack.id!, onSuccess: { (mapPoints) in
                 newTrack.mapPoints = mapPoints
-                NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
                 self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
-                    NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
                     self.vgFileManager.savePreview(image: image!, for: newTrack, with: style!)
                     return nil
                 }
@@ -92,9 +90,7 @@ class VGSnapshotMaker {
                 print(error)
             })
         } else {
-            NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
             self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
-                NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
                 self.vgFileManager.savePreview(image: image!, for: newTrack, with: style!)
                 return nil
             }
@@ -103,103 +99,46 @@ class VGSnapshotMaker {
     }
 
     func drawTrack(vgTrack: VGTrack, imageCallback: (@escaping(UIImage?, UIUserInterfaceStyle?) -> Void?)) {
-        if vgTrack.mapPoints.count == 0 {
+        if vgTrack.mapPoints.count != 0 {
+            self.generateImage(vgTrack: vgTrack, imageCallback: imageCallback)
+        } else {
             vgDataStore.getMapPointsForTrack(with: vgTrack.id!, onSuccess: { mapPoints in
                 vgTrack.mapPoints = mapPoints
-                let coordinateList = vgTrack.getMapPoints()
-                var snapshotter: MKMapSnapshotter?
-                for style in [UIUserInterfaceStyle.light, UIUserInterfaceStyle.dark] {
-                    if coordinateList.count == 0 {
-                        snapshotter = VGZeroMapSnapshotter(style: style)
-                    } else {
-                        snapshotter = VGTrackMapSnapshotter(style: style, coordinates: coordinateList)
-                    }
-                    
-                    snapshotter?.start(completionHandler: { (snapshot, error) in
-                        DispatchQueue.global(qos: .utility).async {
-                            guard let snapshot = snapshot else {
-                                imageCallback(nil, style)
-                                return
-                            }
-                            
-                            let finalImage = UIGraphicsImageRenderer(size: snapshot.image.size).image { _ in
-                                if coordinateList.count == 0 {
-                                    self.vgFileManager.savePreview(image: snapshot.image, for: vgTrack, with: style)
-                                    imageCallback(snapshot.image, style)
-                                    return
-                                }
-                                
-                                // Draw the map.
-                                snapshot.image.draw(at: .zero)
-                                
-                                // Convert [CLLocationCoordinate2D] to a [CGPoint].
-                                let points = coordinateList.map { coordinate in
-                                    snapshot.point(for: coordinate)
-                                }
-                                
-                                // Go to the first point in the Bezier Path.
-                                let path = UIBezierPath()
-                                path.move(to: points[0])
-                                
-                                // Create a path from the first CGPoint to the last.
-                                for point in points.dropFirst() {
-                                    path.addLine(to: point)
-                                }
-                                
-                                // Create a line with the Bezier Path.
-                                path.lineWidth = 3
-                                if let mapColor = vgTrack.vehicle?.mapColor {
-                                    mapColor.setStroke()
-                                } else {
-                                    UIColor.red.setStroke()
-                                }
-                                
-                                path.stroke()
-                            }
-                            if coordinateList.count > 0 {
-                                self.vgFileManager.savePreview(image: finalImage, for: vgTrack, with: style)
-                                imageCallback(finalImage, style)
-                            }
-                        }
-                    })
-                }
-
+                self.generateImage(vgTrack: vgTrack, imageCallback: imageCallback)
             }, onFailure: { error in
                 print(error)
             })
         }
+
     }
     
-    func drawTracks(vgTracks: [VGTrack], imageCallback: (@escaping(UIImage?, UIUserInterfaceStyle?) -> Void?)) {
-        
-        let coordList = vgTracks.flatMap { (track) -> [CLLocationCoordinate2D] in
-            return track.getMapPoints()
-        }
+    func generateImage(vgTrack: VGTrack, imageCallback:@escaping(UIImage?, UIUserInterfaceStyle?) -> Void?) {
+        let coordinateList = vgTrack.getMapPoints()
         var snapshotter: MKMapSnapshotter?
-        if coordList.count == 0 {
-            snapshotter = VGZeroMapSnapshotter(style: .dark)
-        } else {
-            snapshotter = VGMapSnapshotter(style: .dark, coordinates: coordList)
-        }
-        
-        snapshotter?.start(completionHandler: { (snapshot, error) in
+        for style in [UIUserInterfaceStyle.light, UIUserInterfaceStyle.dark] {
+            if coordinateList.count == 0 {
+                snapshotter = VGZeroMapSnapshotter(style: style)
+            } else {
+                snapshotter = VGMapSnapshotter(style: style, coordinates: coordinateList, size: CGSize(width: 110, height: 110), scale: UIScreen.main.scale)
+            }
             
-            DispatchQueue.global(qos: .utility).async {
-                
-                guard let snapshot = snapshot else {
-                    imageCallback(nil, .dark)
-                    return
-                }
-                
-                let finalImage = UIGraphicsImageRenderer(size: snapshot.image.size).image { _ in
-                        // Draw the map.
-                        snapshot.image.draw(at: .zero)
-                    for vgTrack in vgTracks {
-                        let coordinateList = vgTrack.getMapPoints()
+            snapshotter?.start(completionHandler: { (snapshot, error) in
+                DispatchQueue.global(qos: .utility).async {
+                    guard let snapshot = snapshot else {
+                        imageCallback(nil, style)
+                        return
+                    }
+                    
+                    let finalImage = UIGraphicsImageRenderer(size: snapshot.image.size).image { _ in
                         if coordinateList.count == 0 {
-                            imageCallback(snapshot.image, .dark)
+                            self.vgFileManager.savePreview(image: snapshot.image, for: vgTrack, with: style)
+                            imageCallback(snapshot.image, style)
                             return
                         }
+                        
+                        // Draw the map.
+                        snapshot.image.draw(at: .zero)
+                        
                         // Convert [CLLocationCoordinate2D] to a [CGPoint].
                         let points = coordinateList.map { coordinate in
                             snapshot.point(for: coordinate)
@@ -224,11 +163,77 @@ class VGSnapshotMaker {
                         
                         path.stroke()
                     }
+                    if coordinateList.count > 0 {
+                        self.vgFileManager.savePreview(image: finalImage, for: vgTrack, with: style)
+                        NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: finalImage, style: style, track: vgTrack))
+
+                        imageCallback(finalImage, style)
+                    }
                 }
-                if coordList.count > 0 {
-                    imageCallback(finalImage, .dark)
+            })
+        }
+    }
+    
+    func drawTracks(vgTracks: [VGTrack], imageCallback: (@escaping(UIImage?, UIUserInterfaceStyle?) -> Void?)) {
+        let coordList = vgTracks.flatMap { (track) -> [CLLocationCoordinate2D] in
+            return track.getMapPoints()
+        }
+        var snapshotter: MKMapSnapshotter?
+        if coordList.count == 0 {
+            snapshotter = VGZeroMapSnapshotter(style: .dark)
+        } else {
+            snapshotter = VGMapSnapshotter(style: .dark, coordinates: coordList, size: CGSize(width: 1000, height: 1000), scale: 3)
+        }
+        snapshotter?.start(with: DispatchQueue.global(qos: .userInitiated), completionHandler: { snapshot, error in
+            if error != nil {
+                print(error!)
+                return
+            }
+            
+            guard let snapshot = snapshot else {
+                imageCallback(nil, .dark)
+                return
+            }
+            
+            let finalImage = UIGraphicsImageRenderer(size: snapshot.image.size).image { _ in
+                    // Draw the map.
+                    snapshot.image.draw(at: .zero)
+                for vgTrack in vgTracks {
+                    let coordinateList = vgTrack.getMapPoints()
+                    if coordinateList.count == 0 {
+                        imageCallback(snapshot.image, .dark)
+                        return
+                    }
+                    
+                    // Convert [CLLocationCoordinate2D] to a [CGPoint].
+                    let points = coordinateList.map { coordinate in
+                        snapshot.point(for: coordinate)
+                    }
+                    
+                    // Go to the first point in the Bezier Path.
+                    let path = UIBezierPath()
+                    path.move(to: points[0])
+                    
+                    // Create a path from the first CGPoint to the last.
+                    for point in points.dropFirst() {
+                        path.addLine(to: point)
+                    }
+                    
+                    // Create a line with the Bezier Path.
+                    path.lineWidth = 3
+                    if let mapColor = vgTrack.vehicle?.mapColor {
+                        mapColor.setStroke()
+                    } else {
+                        UIColor.red.setStroke()
+                    }
+                    
+                    path.stroke()
                 }
             }
+            if coordList.count > 0 {
+                imageCallback(finalImage, .dark)
+            }
+
         })
     }
 }

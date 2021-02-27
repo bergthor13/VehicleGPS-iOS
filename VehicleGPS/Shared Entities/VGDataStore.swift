@@ -573,6 +573,9 @@ class VGDataStore {
                 DispatchQueue.main.async {
                     onSuccess()
                     NotificationCenter.default.post(name: .vehicleAddedToTrack, object: vgTrack)
+                    self.vgFileManager.deletePreviewImage(for: vgTrack)
+                    let ssm = VGSnapshotMaker(fileManager: self.vgFileManager, dataStore: self)
+                    ssm.generateImageFor(track: vgTrack)
                 }
                 
             } catch let error {

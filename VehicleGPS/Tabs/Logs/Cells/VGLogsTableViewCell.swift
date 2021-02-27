@@ -64,10 +64,54 @@ class VGLogsTableViewCell: UITableViewCell {
         }
         recView.layer.cornerRadius = recView.frame.width/2.0
         recDotView.layer.cornerRadius = recView.frame.width/2.0
+            
+        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
+        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
+        addObserver(selector: #selector(preferredContentSizeChanged(_:)), name: UIContentSizeCategory.didChangeNotification)
+        addObserver(selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated)
+
+    }
     
-        NotificationCenter.default.addObserver(self, selector: #selector(preferredContentSizeChanged(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+    func addObserver(selector: Selector, name: Notification.Name) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
+    }
+    
+    @objc func previewImageStarting(_ notification: Notification) {
+        guard let track = notification.object as? VGTrack else {
+            return
+        }
+        if track.id != currentTrack?.id {
+            return
+        }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(onVehicleUpdated(_:)), name: .vehicleUpdated, object: nil)
+        DispatchQueue.main.async {
+            if let track = self.currentTrack {
+                track.beingProcessed = true
+            }
+            self.activityView.startAnimating()
+        }
+    }
+    
+    @objc func previewImageStopping(_ notification: Notification) {
+        guard let updatedNotification = notification.object as? ImageUpdatedNotification else {
+            return
+        }
+        if currentTrack?.id != updatedNotification.track.id {
+            return
+        }
+
+        DispatchQueue.main.async {
+            if self.traitCollection.userInterfaceStyle != updatedNotification.style {
+                return
+            }
+            
+            if let track = self.currentTrack {
+                track.beingProcessed = false
+            }
+            self.activityView.stopAnimating()
+            self.trackView.image = updatedNotification.image
+        }
+
     }
     
     @objc func onVehicleUpdated(_ notification: Notification) {
@@ -86,7 +130,6 @@ class VGLogsTableViewCell: UITableViewCell {
         if vehicle.id == updatedVehicle.id {
             lblVehicle.text = updatedVehicle.name
         }
-        
     }
 
     @objc func preferredContentSizeChanged(_ sender: Any) {

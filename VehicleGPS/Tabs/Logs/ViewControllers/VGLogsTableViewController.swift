@@ -223,44 +223,7 @@ class VGLogsTableViewController: UITableViewController {
         
     }
 
-    // MARK: Notifications    
-    @objc func previewImageStarting(_ notification: Notification) {
-        guard let newTrack = notification.object as? VGTrack else {
-            return
-        }
-        DispatchQueue.main.async {
-            guard let indexPath = self.getIndexPath(for: newTrack) else {
-                return
-            }
-            guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
-                return
-            }
-            let track = self.getTrackAt(indexPath: indexPath)
-            track?.beingProcessed = true
-            cell.activityView.startAnimating()
-        }
-
-    }
-    
-    @objc func previewImageStopping(_ notification: Notification) {
-        guard let updatedNotification = notification.object as? ImageUpdatedNotification else {
-            return
-        }
-        DispatchQueue.main.async {
-            if self.traitCollection.userInterfaceStyle == updatedNotification.style {
-                guard let indexPath = self.getIndexPath(for: updatedNotification.track) else {
-                    return
-                }
-                guard let cell = self.tableView.cellForRow(at: self.getIndexPath(for: updatedNotification.track)!) as? VGLogsTableViewCell else {
-                    return
-                }
-                let track = self.getTrackAt(indexPath: indexPath)
-                track?.beingProcessed = false
-                cell.activityView.stopAnimating()
-                cell.trackView.image = updatedNotification.image
-            }
-        }
-    }
+    // MARK: Notifications
     
     @objc func onVehicleAddedToLog(_ notification: Notification) {
         guard let newTrack = notification.object as? VGTrack else {
@@ -398,8 +361,6 @@ class VGLogsTableViewController: UITableViewController {
         addObserver(selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack)
         addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
         addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
-        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
-        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
     }
     
     func addObserver(selector: Selector, name: Notification.Name) {

@@ -35,16 +35,10 @@ class VGHistoryDetailsTableViewController: UITableViewController {
     var sections = [String]()
     var logDict = [String: [VGTrack]]()
     
-    func addObserver(selector: Selector, name: Notification.Name) {
-        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
-    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        addObserver(selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack)
-        addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
-        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
-        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
 
         if let tracksSummary = self.tracksSummary {
             title = tracksSummary.dateDescription
@@ -75,86 +69,6 @@ class VGHistoryDetailsTableViewController: UITableViewController {
         let layoutBottom = NSLayoutConstraint(item: mapView!, attribute: .bottom, relatedBy: .equal, toItem: mapCell.contentView, attribute: .bottom, multiplier: 1, constant: 0)
         mapCell.addConstraints([layoutLeft, layoutRight, layoutTop, layoutBottom])
 
-    }
-    
-    @objc func previewImageStarting(_ notification: Notification) {
-        guard let newTrack = notification.object as? VGTrack else {
-            return
-        }
-        DispatchQueue.main.async {
-            guard let indexPath = self.getIndexPath(for: newTrack) else {
-                return
-            }
-            guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
-                return
-            }
-            let track = self.getTrackAt(indexPath: indexPath)
-            track?.beingProcessed = true
-            cell.activityView.startAnimating()
-        }
-
-    }
-    
-    @objc func previewImageStopping(_ notification: Notification) {
-        guard let updatedNotification = notification.object as? ImageUpdatedNotification else {
-            return
-        }
-        DispatchQueue.main.async {
-            if self.traitCollection.userInterfaceStyle == updatedNotification.style {
-                guard let indexPath = self.getIndexPath(for: updatedNotification.track) else {
-                    return
-                }
-                guard let cell = self.tableView.cellForRow(at: self.getIndexPath(for: updatedNotification.track)!) as? VGLogsTableViewCell else {
-                    return
-                }
-                let track = self.getTrackAt(indexPath: indexPath)
-                track?.beingProcessed = false
-                cell.activityView.stopAnimating()
-                cell.trackView.image = updatedNotification.image
-            }
-        }
-    }
-    
-    @objc func onVehicleAddedToLog(_ notification: Notification) {
-        guard let newTrack = notification.object as? VGTrack else {
-            return
-        }
-        guard let vehicle = newTrack.vehicle else {
-            return
-        }
-        guard let indexPath = getIndexPath(for: newTrack) else {
-            return
-        }
-        guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
-            return
-        }
-        getTrackAt(indexPath: indexPath)?.vehicle = newTrack.vehicle
-        
-        cell.lblVehicle.text = vehicle.name
-    }
-    
-    @objc func onLogUpdated(_ notification: Notification) {
-        guard let updatedTrack = notification.object as? VGTrack else {
-            return
-        }
-
-        DispatchQueue.main.async {
-            
-            guard let indexPath = self.getIndexPath(for: updatedTrack) else {
-                return
-            }
-            
-            guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
-                return
-            }
-            
-            if self.logDict[self.sections[indexPath.section]] == nil {
-                return
-            }
-            
-            self.logDict[self.sections[indexPath.section]]![indexPath.row] = updatedTrack
-            cell.show(track: updatedTrack)
-        }
     }
     
     func getIndexPath(for track: VGTrack) -> IndexPath? {

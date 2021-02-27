@@ -49,7 +49,6 @@
 		F24D88C723D3CB0D0071F6BC /* VGAvailableDownloadTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88C623D3CB0D0071F6BC /* VGAvailableDownloadTableViewController.swift */; };
 		F24D88CB23D622300071F6BC /* VGSnapshotMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88CA23D622300071F6BC /* VGSnapshotMaker.swift */; };
 		F24D88CD23D631C00071F6BC /* VGZeroMapSnapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88CC23D631C00071F6BC /* VGZeroMapSnapshotter.swift */; };
-		F24D88CF23D632D60071F6BC /* VGTrackMapSnapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24D88CE23D632D60071F6BC /* VGTrackMapSnapshotter.swift */; };
 		F2542E9825C2FCD900E0E588 /* PulleyEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2542E9725C2FCD900E0E588 /* PulleyEditorViewController.swift */; };
 		F2542E9E25C338E700E0E588 /* VGEditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2542E9D25C338E700E0E588 /* VGEditorToolbar.swift */; };
 		F2542EA625C4C93000E0E588 /* VGEditorToolbarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2542EA525C4C93000E0E588 /* VGEditorToolbarDelegate.swift */; };
@@ -194,7 +193,6 @@
 		F24D88C623D3CB0D0071F6BC /* VGAvailableDownloadTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGAvailableDownloadTableViewController.swift; sourceTree = "<group>"; };
 		F24D88CA23D622300071F6BC /* VGSnapshotMaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGSnapshotMaker.swift; sourceTree = "<group>"; };
 		F24D88CC23D631C00071F6BC /* VGZeroMapSnapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGZeroMapSnapshotter.swift; sourceTree = "<group>"; };
-		F24D88CE23D632D60071F6BC /* VGTrackMapSnapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGTrackMapSnapshotter.swift; sourceTree = "<group>"; };
 		F2542E9725C2FCD900E0E588 /* PulleyEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulleyEditorViewController.swift; sourceTree = "<group>"; };
 		F2542E9D25C338E700E0E588 /* VGEditorToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGEditorToolbar.swift; sourceTree = "<group>"; };
 		F2542EA525C4C93000E0E588 /* VGEditorToolbarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGEditorToolbarDelegate.swift; sourceTree = "<group>"; };
@@ -541,7 +539,6 @@
 			children = (
 				F24D88CA23D622300071F6BC /* VGSnapshotMaker.swift */,
 				F24D88CC23D631C00071F6BC /* VGZeroMapSnapshotter.swift */,
-				F24D88CE23D632D60071F6BC /* VGTrackMapSnapshotter.swift */,
 				F286124B24C0DA920029F34A /* VGMapSnapshotter.swift */,
 			);
 			path = Snapshots;
@@ -856,7 +853,6 @@
 				F258F5E623FB02C70079C1EE /* VGColorTableViewCell.swift in Sources */,
 				F280AC9324C3352C00509C5E /* VGMapViewController.swift in Sources */,
 				F2C5151125D7274C00DD6535 /* VGAddTagTableViewCell.swift in Sources */,
-				F24D88CF23D632D60071F6BC /* VGTrackMapSnapshotter.swift in Sources */,
 				F2647BE72435024600283B38 /* String+Extensions.swift in Sources */,
 				F280ACD124C37DCB00509C5E /* VGColorWell.swift in Sources */,
 				F281D41724CBAFD800102B4B /* SpeedFormatter.swift in Sources */,

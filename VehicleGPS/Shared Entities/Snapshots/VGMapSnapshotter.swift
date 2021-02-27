@@ -2,7 +2,7 @@ import MapKit
 
 class VGMapSnapshotter: MKMapSnapshotter {
     
-    init(style: UIUserInterfaceStyle, coordinates: [CLLocationCoordinate2D]) {
+    init(style: UIUserInterfaceStyle, coordinates: [CLLocationCoordinate2D], size: CGSize, scale: CGFloat) {
         let mapSnapshotOptions = MKMapSnapshotter.Options()
         
         var maxLat = -200.0, minLat = 200.0, maxLon = -200.0, minLon = 200.0
@@ -47,16 +47,11 @@ class VGMapSnapshotter: MKMapSnapshotter {
         mapSnapshotOptions.region = region
         
         // Set the scale of the image. We'll just use the scale of the current device, which is 2x scale on Retina screens.
-        mapSnapshotOptions.scale = 3
+        mapSnapshotOptions.scale = scale
         
         // Set the size of the image output.
-        
-        if latitudeDelta >= longitudeDelta {
-            mapSnapshotOptions.size = CGSize(width: 2500, height: 2500)
-        } else {
-            mapSnapshotOptions.size = CGSize(width: 2500, height: 2500)
-        }
-        
+        mapSnapshotOptions.size = size
+
         // Show buildings and Points of Interest on the snapshot
         mapSnapshotOptions.showsBuildings = true
         let poiFilter = MKPointOfInterestFilter(excluding: [])
