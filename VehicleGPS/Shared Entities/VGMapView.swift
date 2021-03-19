@@ -62,20 +62,15 @@ class VGMapView: MKMapView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        delegate = self
-        activity = UIActivityIndicatorView()
-        activity.translatesAutoresizingMaskIntoConstraints = false
-        activity.style = .large
-        activity.hidesWhenStopped = true
-        activity.stopAnimating()
-        self.addSubview(activity)
-        let activityLayoutCenterX = NSLayoutConstraint(item: activity!, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0)
-        let activityLayoutCenterY = NSLayoutConstraint(item: activity!, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0)
-        self.addConstraints([activityLayoutCenterX, activityLayoutCenterY])
+        self.initialize()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        self.initialize()
+    }
+    
+    func initialize() {
         delegate = self
         activity = UIActivityIndicatorView()
         activity.translatesAutoresizingMaskIntoConstraints = false
@@ -86,6 +81,7 @@ class VGMapView: MKMapView {
         let activityLayoutCenterX = NSLayoutConstraint(item: activity!, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0)
         let activityLayoutCenterY = NSLayoutConstraint(item: activity!, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0)
         self.addConstraints([activityLayoutCenterX, activityLayoutCenterY])
+
     }
     
     func getRegion(for tracks: [VGTrack]) -> MKCoordinateRegion? {

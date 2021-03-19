@@ -12,6 +12,7 @@ struct Icons {
     static let history = UIImage(systemName: "memories")
     static let journeys = UIImage(systemName: "globe")
     static let vehicle = UIImage(systemName: "car")
+    static let vehicleiOS13 = UIImage(systemName: "car.fill")
     static let settings = UIImage(systemName: "gear")
     static let share = UIImage(systemName: "square.and.arrow.up")
     static let moreActions = UIImage(systemName: "ellipsis.circle")

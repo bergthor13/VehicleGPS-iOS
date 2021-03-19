@@ -8,6 +8,7 @@
 
 import UIKit
 
+@available(iOS 14.0, *)
 class VGColorWell: UIColorWell {
 
     override func tintColorDidChange() {

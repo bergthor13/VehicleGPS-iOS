@@ -8,18 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		09DD9ED3104045D6742E2711 /* Pods_VehicleGPS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */; };
+		F200F59325F3113F007C66E5 /* VGNewVehicleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F200F59225F3113F007C66E5 /* VGNewVehicleTableViewCell.swift */; };
 		F20574B524379A1F0044282B /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20574B424379A1F0044282B /* Icons.swift */; };
 		F20574B724379C720044282B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20574B624379C720044282B /* Constants.swift */; };
 		F215AC6423DB1AA40001AF24 /* VGVehicle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC6323DB1AA40001AF24 /* VGVehicle.swift */; };
 		F215AC7E23DB38D90001AF24 /* VGVehiclesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC7D23DB38D90001AF24 /* VGVehiclesTableViewController.swift */; };
 		F215AC8323DB3BC50001AF24 /* VGNewVehicleTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC8223DB3BC50001AF24 /* VGNewVehicleTableViewController.swift */; };
-		F215AC8723DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC8623DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift */; };
+		F215AC8723DB8E0D0001AF24 /* VGNewVehicleColorWellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215AC8623DB8E0D0001AF24 /* VGNewVehicleColorWellTableViewCell.swift */; };
 		F215ADFC2402799C000ECFFF /* VGCSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F215ADFB2402799C000ECFFF /* VGCSVParser.swift */; };
 		F22235FD23E1D9D5008EF8E5 /* VGVehiclesSelectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22235FC23E1D9D5008EF8E5 /* VGVehiclesSelectionTableViewController.swift */; };
 		F22235FF23E21216008EF8E5 /* VGVehicleDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22235FE23E21216008EF8E5 /* VGVehicleDetailsTableViewController.swift */; };
 		F228B30B243CB5EC00D79D5E /* VGImportTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F228B30A243CB5EC00D79D5E /* VGImportTableViewCell.xib */; };
 		F228B30F243CED3A00D79D5E /* VGMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F228B30E243CED3A00D79D5E /* VGMapView.swift */; };
 		F228C43C23D76A9700E5BBB7 /* IVGLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F228C43B23D76A9700E5BBB7 /* IVGLogParser.swift */; };
+		F22CF88625EB0F06005DE581 /* VGWGPSCSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22CF88525EB0F06005DE581 /* VGWGPSCSVParser.swift */; };
 		F22F37C2243AAB60005E80C1 /* VGDateParsingFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22F37C1243AAB60005E80C1 /* VGDateParsingFormatter.swift */; };
 		F231014925CA1BB7007E85FC /* VGEditorToolbar.xib in Resources */ = {isa = PBXBuildFile; fileRef = F231014B25CA1BB7007E85FC /* VGEditorToolbar.xib */; };
 		F23A32CF23DBA82100B21050 /* VGVehicleTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F23A32CE23DBA82100B21050 /* VGVehicleTableViewCell.xib */; };
@@ -98,6 +100,7 @@
 		F280AC8F24C2773500509C5E /* LogDateSplitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F280AC8E24C2773500509C5E /* LogDateSplitter.swift */; };
 		F280AC9324C3352C00509C5E /* VGMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F280AC9224C3352C00509C5E /* VGMapViewController.swift */; };
 		F280ACD124C37DCB00509C5E /* VGColorWell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F280ACD024C37DCB00509C5E /* VGColorWell.swift */; };
+		F280CBB9260530A4006D3302 /* VGNewVehicleColorWellTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F280CBB8260530A4006D3302 /* VGNewVehicleColorWellTableViewCell.xib */; };
 		F281D41724CBAFD800102B4B /* SpeedFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F281D41624CBAFD800102B4B /* SpeedFormatter.swift */; };
 		F281E0B5250953C100BDC9E5 /* ConstraintApplyer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F281E0B4250953C100BDC9E5 /* ConstraintApplyer.swift */; };
 		F286124C24C0DA920029F34A /* VGMapSnapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F286124B24C0DA920029F34A /* VGMapSnapshotter.swift */; };
@@ -119,6 +122,7 @@
 		F2D36DA722A71CB700FC0DDD /* VGDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */; };
 		F2D6A31422AE0504004DDF69 /* VGGPXGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */; };
 		F2D8AB0824E05AA8009E0925 /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D8AB0724E05AA8009E0925 /* Double+Extensions.swift */; };
+		F2D8AD1526043A1A00165EAE /* VGColorPickerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D8AD1426043A1A00165EAE /* VGColorPickerTableViewController.swift */; };
 		F2D8C30523FDD01500D77BF2 /* NotificationCenterNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D8C30423FDD01500D77BF2 /* NotificationCenterNames.swift */; };
 		F2DCA9442402E3BA00CA9CF1 /* VGArduinoCSVParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */; };
 		F2E34408250C2EAF00EC021B /* VGHistoryAllTracksDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2E34407250C2EAF00EC021B /* VGHistoryAllTracksDataSource.swift */; };
@@ -147,18 +151,20 @@
 		18EB1CD0499873B64661B1E0 /* Pods-VehicleGPS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.release.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.release.xcconfig"; sourceTree = "<group>"; };
 		91414370C2664EC28E073078 /* Pods_VehicleGPS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VehicleGPS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CB23282698EF0E65FC3BED1 /* Pods-VehicleGPS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VehicleGPS.debug.xcconfig"; path = "Target Support Files/Pods-VehicleGPS/Pods-VehicleGPS.debug.xcconfig"; sourceTree = "<group>"; };
+		F200F59225F3113F007C66E5 /* VGNewVehicleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGNewVehicleTableViewCell.swift; sourceTree = "<group>"; };
 		F20574B424379A1F0044282B /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		F20574B624379C720044282B /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F215AC6323DB1AA40001AF24 /* VGVehicle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGVehicle.swift; sourceTree = "<group>"; };
 		F215AC7D23DB38D90001AF24 /* VGVehiclesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGVehiclesTableViewController.swift; sourceTree = "<group>"; };
 		F215AC8223DB3BC50001AF24 /* VGNewVehicleTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGNewVehicleTableViewController.swift; sourceTree = "<group>"; };
-		F215AC8623DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGNewVehicleTableViewCell.swift; sourceTree = "<group>"; };
+		F215AC8623DB8E0D0001AF24 /* VGNewVehicleColorWellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGNewVehicleColorWellTableViewCell.swift; sourceTree = "<group>"; };
 		F215ADFB2402799C000ECFFF /* VGCSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGCSVParser.swift; sourceTree = "<group>"; };
 		F22235FC23E1D9D5008EF8E5 /* VGVehiclesSelectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGVehiclesSelectionTableViewController.swift; sourceTree = "<group>"; };
 		F22235FE23E21216008EF8E5 /* VGVehicleDetailsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGVehicleDetailsTableViewController.swift; sourceTree = "<group>"; };
 		F228B30A243CB5EC00D79D5E /* VGImportTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VGImportTableViewCell.xib; sourceTree = "<group>"; };
 		F228B30E243CED3A00D79D5E /* VGMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGMapView.swift; sourceTree = "<group>"; };
 		F228C43B23D76A9700E5BBB7 /* IVGLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IVGLogParser.swift; sourceTree = "<group>"; };
+		F22CF88525EB0F06005DE581 /* VGWGPSCSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGWGPSCSVParser.swift; sourceTree = "<group>"; };
 		F22F37C1243AAB60005E80C1 /* VGDateParsingFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDateParsingFormatter.swift; sourceTree = "<group>"; };
 		F231014A25CA1BB7007E85FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/VGEditorToolbar.xib; sourceTree = "<group>"; };
 		F231014F25CA1BBB007E85FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/VGEditorToolbar.strings; sourceTree = "<group>"; };
@@ -245,6 +251,7 @@
 		F280AC8E24C2773500509C5E /* LogDateSplitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogDateSplitter.swift; sourceTree = "<group>"; };
 		F280AC9224C3352C00509C5E /* VGMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGMapViewController.swift; sourceTree = "<group>"; };
 		F280ACD024C37DCB00509C5E /* VGColorWell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGColorWell.swift; sourceTree = "<group>"; };
+		F280CBB8260530A4006D3302 /* VGNewVehicleColorWellTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = VGNewVehicleColorWellTableViewCell.xib; sourceTree = "<group>"; };
 		F281D41624CBAFD800102B4B /* SpeedFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedFormatter.swift; sourceTree = "<group>"; };
 		F281E0B4250953C100BDC9E5 /* ConstraintApplyer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstraintApplyer.swift; sourceTree = "<group>"; };
 		F286124B24C0DA920029F34A /* VGMapSnapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGMapSnapshotter.swift; sourceTree = "<group>"; };
@@ -267,6 +274,7 @@
 		F2D36DA622A71CB700FC0DDD /* VGDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGDataStore.swift; sourceTree = "<group>"; };
 		F2D6A31322AE0504004DDF69 /* VGGPXGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGGPXGenerator.swift; sourceTree = "<group>"; };
 		F2D8AB0724E05AA8009E0925 /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
+		F2D8AD1426043A1A00165EAE /* VGColorPickerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VGColorPickerTableViewController.swift; sourceTree = "<group>"; };
 		F2D8C30423FDD01500D77BF2 /* NotificationCenterNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenterNames.swift; sourceTree = "<group>"; };
 		F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VGArduinoCSVParser.swift; sourceTree = "<group>"; };
 		F2DCA94524043FFC00CA9CF1 /* is */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = is; path = is.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -340,13 +348,16 @@
 			children = (
 				F2F9627725DF29E100ECC752 /* VGVehicleTableViewCell.swift */,
 				F23A32CE23DBA82100B21050 /* VGVehicleTableViewCell.xib */,
-				F2AB17592428F658003240C1 /* VGNewVehicleTableViewCell.xib */,
 				F215AC7D23DB38D90001AF24 /* VGVehiclesTableViewController.swift */,
+				F200F59225F3113F007C66E5 /* VGNewVehicleTableViewCell.swift */,
+				F2AB17592428F658003240C1 /* VGNewVehicleTableViewCell.xib */,
+				F280CBB8260530A4006D3302 /* VGNewVehicleColorWellTableViewCell.xib */,
+				F215AC8623DB8E0D0001AF24 /* VGNewVehicleColorWellTableViewCell.swift */,
 				F22235FC23E1D9D5008EF8E5 /* VGVehiclesSelectionTableViewController.swift */,
 				F215AC8223DB3BC50001AF24 /* VGNewVehicleTableViewController.swift */,
 				F2AC16FD23EDAFA400516498 /* VGEditVehicleTableViewController.swift */,
-				F215AC8623DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift */,
 				F280ACD024C37DCB00509C5E /* VGColorWell.swift */,
+				F2D8AD1426043A1A00165EAE /* VGColorPickerTableViewController.swift */,
 				F22235FE23E21216008EF8E5 /* VGVehicleDetailsTableViewController.swift */,
 				F258F5E523FB02C70079C1EE /* VGColorTableViewCell.swift */,
 				F258F5E723FB02DC0079C1EE /* VGColorTableViewCell.xib */,
@@ -360,6 +371,7 @@
 				F215ADFB2402799C000ECFFF /* VGCSVParser.swift */,
 				F2B50C2B24151C9D002ECCC6 /* VGShortCSVParser.swift */,
 				F2DCA9432402E3BA00CA9CF1 /* VGArduinoCSVParser.swift */,
+				F22CF88525EB0F06005DE581 /* VGWGPSCSVParser.swift */,
 				F27DFBA724194E330089DFF1 /* VGGPXParser.swift */,
 				F228C43B23D76A9700E5BBB7 /* IVGLogParser.swift */,
 			);
@@ -712,6 +724,7 @@
 				F2C5151725D72C8300DD6535 /* VGAddTagTableViewCell.xib in Resources */,
 				F26245E9243F7C8E001CB3E4 /* LaunchScreen.storyboard in Resources */,
 				F23BE8E122A5E596008FD50C /* messages.plist in Resources */,
+				F280CBB9260530A4006D3302 /* VGNewVehicleColorWellTableViewCell.xib in Resources */,
 				F258F5E823FB02DC0079C1EE /* VGColorTableViewCell.xib in Resources */,
 				F25839DF23A9801400E76B54 /* VGDetailsHeaderView.xib in Resources */,
 				F27CB77C23D38A3D002BF28F /* VGDeviceConnectedHeaderView.xib in Resources */,
@@ -786,7 +799,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Running CPD\npmd cpd --files ${EXECUTABLE_NAME} --minimum-tokens 50 --language swift --encoding UTF-8 --format net.sourceforge.pmd.cpd.XMLRenderer > cpd-output.xml --failOnViolation true\n# Running script\nphp ./cpd_script.php -cpd-xml cpd-output.xml\n";
+			shellScript = "# Running CPD\n#pmd cpd --files ${EXECUTABLE_NAME} --minimum-tokens 50 --language swift --encoding UTF-8 --format net.sourceforge.pmd.cpd.XMLRenderer > cpd-output.xml --failOnViolation true\n# Running script\n#php ./cpd_script.php -cpd-xml cpd-output.xml\n";
 		};
 		F277D66A25E204EE0072B2CF /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -833,6 +846,7 @@
 				F25839E323AAD1E000E76B54 /* VGHistoryHeader.swift in Sources */,
 				F2F77DF224E96B8000C2F09D /* VGSpeedGraphGenerator.swift in Sources */,
 				F20574B724379C720044282B /* Constants.swift in Sources */,
+				F2D8AD1526043A1A00165EAE /* VGColorPickerTableViewController.swift in Sources */,
 				F23BE8D422A5E566008FD50C /* VGTabBarController.swift in Sources */,
 				F2647BEB24352FBD00283B38 /* Strings.swift in Sources */,
 				F26B01E8244E009400220F43 /* DisplayLineProtocol.swift in Sources */,
@@ -876,7 +890,8 @@
 				F247550223DDBC43007E0DF8 /* VGAvailableLogsTableViewCell.swift in Sources */,
 				F2F9627A25E0951A00ECC752 /* UIViewController+Extensions.swift in Sources */,
 				F28D752D248D512D0060DFD6 /* VGFileNameDateFormatter.swift in Sources */,
-				F215AC8723DB8E0D0001AF24 /* VGNewVehicleTableViewCell.swift in Sources */,
+				F215AC8723DB8E0D0001AF24 /* VGNewVehicleColorWellTableViewCell.swift in Sources */,
+				F22CF88625EB0F06005DE581 /* VGWGPSCSVParser.swift in Sources */,
 				F2542E9825C2FCD900E0E588 /* PulleyEditorViewController.swift in Sources */,
 				F20574B524379A1F0044282B /* Icons.swift in Sources */,
 				F23BE8F822A5E5BB008FD50C /* VGLogsTableViewCell.swift in Sources */,
@@ -891,6 +906,7 @@
 				F255E86424E98239003DF00F /* VGPDOPGraphGenerator.swift in Sources */,
 				F2D8AB0824E05AA8009E0925 /* Double+Extensions.swift in Sources */,
 				F24D88CB23D622300071F6BC /* VGSnapshotMaker.swift in Sources */,
+				F200F59325F3113F007C66E5 /* VGNewVehicleTableViewCell.swift in Sources */,
 				F26B2C0E24B28E1D00E9F22C /* VGSplitViewController.swift in Sources */,
 				F2C73ABE24266148008069AE /* VGImportFileTableViewController.swift in Sources */,
 				F255E86524E98239003DF00F /* VGRPMGraphGenerator.swift in Sources */,
@@ -1103,7 +1119,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = VehicleGPS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1130,7 +1146,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = VehicleGPS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

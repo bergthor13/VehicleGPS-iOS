@@ -35,9 +35,16 @@ class VGVehiclesTableViewController: UITableViewController {
 
     func initializeTableViewController() {
         title = Strings.Titles.vehicles
-        tabBarItem = UITabBarItem(title: Strings.Titles.vehicles,
-                                  image: Icons.vehicle,
-                                  tag: 0)
+        if #available(iOS 14.0, *) {
+            tabBarItem = UITabBarItem(title: Strings.Titles.vehicles,
+                                      image: Icons.vehicle,
+                                      tag: 0)
+
+        } else {
+            tabBarItem = UITabBarItem(title: Strings.Titles.vehicles,
+                                      image: Icons.vehicleiOS13,
+                                      tag: 0)
+        }
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.add, style: .plain, target: self, action: #selector(didTapAddVehicle(_:)))
         self.navigationItem.leftBarButtonItem = editButtonItem

@@ -27,6 +27,8 @@ class VGHistoryTableViewController: UITableViewController {
     var allTracksDataSource: VGHistoryAllTracksDataSource!
     let vgGPXGenerator = VGGPXGenerator()
     
+    var documentPicker: UIDocumentPickerViewController?
+    
     var importTapRecognizer: UITapGestureRecognizer!
     
     // MARK: Toolbar Buttons
@@ -122,7 +124,11 @@ class VGHistoryTableViewController: UITableViewController {
         registerCells()
         configureFormatters()
         configureEmptyListLabel()
-        self.toolbarButtonShare = UIBarButtonItem(title: nil, image: Icons.share, primaryAction: nil, menu: shareTracks())
+        if #available(iOS 14.0, *) {
+            self.toolbarButtonShare = UIBarButtonItem(title: nil, image: Icons.share, primaryAction: nil, menu: shareTracks())
+        } else {
+            self.toolbarButtonShare = UIBarButtonItem(image: Icons.share, style: .plain, target: self, action: #selector(shareTracksAlert))
+        }
         self.toolbarButtonDelete = UIBarButtonItem(image: Icons.delete, style: .plain, target: self, action: #selector(deleteTracks(_:)))
         self.toolbarButtonSelectVehicle = UIBarButtonItem(image: Icons.vehicle, style: .plain, target: self, action: #selector(selectVehicle(_:)))
         self.toolbarButtonStartEditor = UIBarButtonItem(image: Icons.editor, style: .plain, target: self, action: #selector(startEditor(_:)))
@@ -145,12 +151,44 @@ class VGHistoryTableViewController: UITableViewController {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             self.dataStore = appDelegate.dataStore
         }
-        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(image: Icons.moreActions, primaryAction: nil, menu: createMenu()), UIBarButtonItem(image: Icons.filter, primaryAction: nil, menu: createFilterMenu())]
+        
+        if #available(iOS 14.0, *) {
+            self.navigationItem.rightBarButtonItems = [UIBarButtonItem(image: Icons.moreActions, primaryAction: nil, menu: createMenu()), UIBarButtonItem(image: Icons.filter, primaryAction: nil, menu: createFilterMenu())]
+        } else {
+            
+            self.navigationItem.rightBarButtonItems = [UIBarButtonItem(image: Icons.moreActions, style: .plain, target: self, action: #selector(displayMoreAlert)),
+                                                       UIBarButtonItem(image: Icons.filter, style: .plain, target: self, action: #selector(displayFilterAlert))]
+        }
         self.navigationItem.leftBarButtonItem = editButtonItem
         addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
 
         tableView.allowsMultipleSelection = true
         tableView.allowsMultipleSelectionDuringEditing = true
+        
+        if #available(iOS 14.0, *) {
+            let supportedTypes: [UTType] = [UTType(filenameExtension: "gpx")!, UTType(filenameExtension: "csv")!]
+            self.documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
+        } else {
+            self.documentPicker = UIDocumentPickerViewController(documentTypes: ["public.xml"], in: .open)
+        }
+    }
+    
+    @objc func displayFilterAlert() {
+        let alert = UIAlertController(title: Strings.filterBy, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: Strings.filterByTags, style: .default, handler: { ACTION in
+        
+        }))
+
+        alert.addAction(UIAlertAction(title: Strings.filterByDate, style: .default, handler: { ACTION in
+        
+        }))
+
+        alert.addAction(UIAlertAction(title: Strings.filterByVehicle, style: .default, handler: { ACTION in
+        
+        }))
+
+        alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel))
+        present(alert, animated: true)
     }
     
     func createFilterMenu() -> UIMenu {
@@ -164,7 +202,6 @@ class VGHistoryTableViewController: UITableViewController {
             
         }
         return UIMenu(title: Strings.filterBy, children: [tagFilter, dateFilter, vehicleFilter])
-
     }
     
     // MARK: - Button Actions
@@ -224,6 +261,14 @@ class VGHistoryTableViewController: UITableViewController {
         }
 
         return UIMenu(title: "Share tracks", image: nil, identifier: nil, options: .displayInline, children: [exportGPX, addToCalendar])
+    }
+    
+    @objc func shareTracksAlert() {
+        let alertController = UIAlertController()
+        alertController.addAction(UIAlertAction(title: "Export to GPX file", style: .default) { ACTION in
+            self.exportTracks()
+        })
+        present(alertController, animated: true)
     }
     
     func insertEvent(store: EKEventStore) {
@@ -329,6 +374,15 @@ class VGHistoryTableViewController: UITableViewController {
         
     }
     
+    @objc func displayMoreAlert() {
+        let alert = UIAlertController()
+        alert.addAction(UIAlertAction(title: Strings.Titles.importFiles, style: .default, handler: { ACTION in
+            self.importFiles()
+        }))
+        alert.addAction(UIAlertAction(title: Strings.cancel, style: .cancel))
+        present(alert, animated: true)
+    }
+    
     func createMenu() -> UIMenu {
         let mapAction = UIAction(title: Strings.Titles.importFiles, image: Icons.importFiles) { (action) in
             self.importFiles()
@@ -362,11 +416,11 @@ class VGHistoryTableViewController: UITableViewController {
     }
 
     func importFiles() {
-        let supportedTypes: [UTType] = [UTType(filenameExtension: "gpx")!, UTType(filenameExtension: "csv")!]
-        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
-        documentPicker.delegate = self
-        documentPicker.allowsMultipleSelection = true
-        present(documentPicker, animated: true)
+        
+        documentPicker!.delegate = self
+        documentPicker!.allowsMultipleSelection = true
+        present(documentPicker!, animated: true)
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -660,6 +714,10 @@ extension VGHistoryTableViewController: UIDocumentPickerDelegate {
         let importController = VGImportFileTableViewController(style: .insetGrouped, fileUrls: urls)
         let navController = UINavigationController(rootViewController: importController)
         present(navController, animated: true)
+    }
+    
+    public func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        documentPicker!.dismiss(animated: true)
     }
 }
 

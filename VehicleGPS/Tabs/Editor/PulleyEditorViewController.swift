@@ -19,7 +19,11 @@ class PulleyEditorViewController: PulleyViewController {
                 return
             }
             title = VGFullDateFormatter().string(for: track?.timeStart)
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.moreActions, primaryAction: nil, menu: self.createMenu())
+            if #available(iOS 14.0, *) {
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.moreActions, primaryAction: nil, menu: self.createMenu())
+            } else {
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.moreActions, style: .plain, target: self, action: #selector(displayMoreMenu))
+            }
             if track!.trackPoints.count != 0 {
                 return
             }
@@ -79,6 +83,26 @@ class PulleyEditorViewController: PulleyViewController {
         actions.append(cma.getMapToImageAction(for: [track]))
         
         return UIMenu(title: "", children: actions)
+    }
+    
+    @objc func displayMoreMenu() {
+        let alert = UIAlertController()
+        guard let track = track else {
+            return
+        }
+        let cma = VGMenuActions(viewController: self)
+        
+        if vgFileManager.fileForTrackExists(track: track) {
+            alert.addAction(cma.getShareFileAction(for: track))
+        }
+        
+        alert.addAction(cma.getGPXFileAction(for: track))
+        alert.addAction(cma.getSelectVehicleAction(for: track))
+        alert.addAction(cma.getDeleteAction(for: track))
+        alert.addAction(cma.getMapToImageAction(for: [track]))
+        alert.addAction(cma.getCancelAction())
+        
+        present(alert, animated: true)
     }
     
     func split(track: VGTrack, at timestamp: Date) -> (VGTrack?, VGTrack?) {

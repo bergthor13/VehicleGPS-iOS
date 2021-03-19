@@ -8,17 +8,20 @@
 
 import UIKit
 
+protocol ColorPickerDelegate {
+    func didPick(color: UIColor)
+}
+
 class VGNewVehicleTableViewController: UITableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     var cell: VGNewVehicleTableViewCell! {
         didSet {
             cell.txtName.text = vehicle.name
             cell.txtName.becomeFirstResponder()
-            cell.colorWell.selectedColor = vehicle.mapColor
             if vehicle.image != nil {
                 cell.imgProfile.image = vehicle.image
                 selectedImage = vehicle.image
             }
-            
+            cell.setColor(color: vehicle.mapColor ?? .red)
             self.cell.imgProfile.isUserInteractionEnabled = true
             let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapImage))
             self.cell.imgProfile?.addGestureRecognizer(imageTapGesture)
@@ -26,11 +29,24 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
             self.cell.txtName.addTarget(self, action: #selector(nameDidChange(_:)), for: .editingChanged)
             
             enableDisableSave(button: self.navigationItem.rightBarButtonItem!, string: self.cell.txtName.text!)
-            self.cell.colorWell.addTarget(self, action: #selector(colorWellChanged(_:)), for: .valueChanged)
+            
+            if #available(iOS 14.0, *) {
+                guard let cell = cell as? VGNewVehicleColorWellTableViewCell else {
+                    return
+                }
+                cell.colorWell.addTarget(self, action: #selector(colorWellChanged(_:)), for: .valueChanged)
+            } else {
+                let colorTapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapColor))
+                self.cell.colorContainer.addGestureRecognizer(colorTapGesture)
+
+                //tapGesture = UITapGestureRecognizer(target: self, action: #selector(colorChanged))
+                //cell.colorContainer.addGestureRecognizer(tapGesture)
+            }
             
         }
     }
     
+    var tapGesture: UITapGestureRecognizer!
     var dataStore: VGDataStore!
     var vehiclesController: VGVehiclesTableViewController!
     var vehicle = VGVehicle()
@@ -53,6 +69,13 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         tableView.tintColor = navigationController?.view.tintColor
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: Strings.save, style: .done, target: self, action: #selector(tappedSave))
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: Strings.cancel, style: .plain, target: self, action: #selector(tappedCancel))
+    }
+    
+    @objc func didTapColor() {
+        let colorPicker = VGColorPickerTableViewController(style: .insetGrouped)
+        colorPicker.delegate = self
+        
+        self.present(UINavigationController(rootViewController: colorPicker), animated: true, completion: nil)
     }
     
     func enableDisableSave(button: UIBarButtonItem, string: String) {
@@ -148,27 +171,50 @@ class VGNewVehicleTableViewController: UITableViewController, UINavigationContro
         }
     }
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return 1
     }
+    
     fileprivate func registerCells() {
-        self.tableView.register(VGNewVehicleTableViewCell.nib, forCellReuseIdentifier: VGNewVehicleTableViewCell.identifier)
+        if #available(iOS 14.0, *) {
+            self.tableView.register(UINib(nibName: "VGNewVehicleColorWellTableViewCell", bundle: nil), forCellReuseIdentifier: "NewVehicleColorWellCell")
+        } else {
+            self.tableView.register(VGNewVehicleTableViewCell.nib, forCellReuseIdentifier: VGNewVehicleTableViewCell.identifier)
+        }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: VGNewVehicleTableViewCell.identifier, for: indexPath)
-        self.cell = cell as? VGNewVehicleTableViewCell
+        if #available(iOS 14.0, *) {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "NewVehicleColorWellCell", for: indexPath)
+            self.cell = cell as? VGNewVehicleColorWellTableViewCell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: VGNewVehicleTableViewCell.identifier, for: indexPath)
+            self.cell = cell as? VGNewVehicleTableViewCell
+        }
         return cell
     }
     
+    @objc func colorChanged() {
+
+    }
+    
+    @available(iOS 14.0, *)
     @objc func colorWellChanged(_ colorWell: VGColorWell) {
+        guard let cell = cell as? VGNewVehicleColorWellTableViewCell else {
+            return
+        }
         let color = cell.colorWell.selectedColor
-        self.cell.colorWell.selectedColor = color
+        cell.colorWell.selectedColor = color
+        vehicle.mapColor = color
+    }
+}
+
+extension VGNewVehicleTableViewController: ColorPickerDelegate {
+    func didPick(color: UIColor) {
+        self.cell.colorBox.backgroundColor = color
         vehicle.mapColor = color
     }
 }

@@ -7,6 +7,7 @@
 
 import UIKit
 
+@available(iOS 14.0, *)
 class VGSplitViewController: UIViewController {
     
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
@@ -36,7 +37,7 @@ class VGSplitViewController: UIViewController {
 }
 
 // MARK: - Layout
-
+@available(iOS 14.0, *)
 extension VGSplitViewController {
 
     private func createLayout() -> UICollectionViewLayout {
@@ -50,7 +51,7 @@ extension VGSplitViewController {
 }
 
 // MARK: - Data
-
+@available(iOS 14.0, *)
 extension VGSplitViewController {
 
     private func configureHierarchy() {
@@ -131,7 +132,7 @@ extension VGSplitViewController {
 }
 
 // MARK: - UICollectionViewDelegate
-
+@available(iOS 14.0, *)
 extension VGSplitViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

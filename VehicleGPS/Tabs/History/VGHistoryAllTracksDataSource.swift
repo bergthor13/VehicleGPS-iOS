@@ -163,7 +163,15 @@ class VGHistoryAllTracksDataSource: NSObject, UITableViewDataSource, UITableView
             }
         }
         
-        let selectVehicle = UIAction(title: Strings.selectVehicle, image: Icons.vehicle, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
+        let icon: UIImage?
+        
+        if #available(iOS 14, *) {
+            icon = Icons.vehicle
+        } else {
+            icon = Icons.vehicleiOS13
+        }
+        
+        let selectVehicle = UIAction(title: Strings.selectVehicle, image: icon, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
                 return
             }

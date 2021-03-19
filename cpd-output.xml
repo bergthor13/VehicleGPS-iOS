@@ -1,74 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
-   <duplication lines="59" tokens="317">
-      <file column="5" endcolumn="14" endline="136" line="78"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="5" endcolumn="14" endline="283" line="224"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
-      <codefragment><![CDATA[    }
-    
-    @objc func previewImageStarting(_ notification: Notification) {
-        guard let newTrack = notification.object as? VGTrack else {
-            return
+   <duplication lines="68" tokens="394">
+      <file column="26" endcolumn="44" endline="86" line="19"
+            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGArduinoCSVParser.swift"/>
+      <file column="26" endcolumn="44" endline="86" line="19"
+            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGWGPSCSVParser.swift"/>
+      <codefragment><![CDATA[        if row.count < 5 {
+            return false
         }
-        DispatchQueue.main.async {
-            guard let indexPath = self.getIndexPath(for: newTrack) else {
-                return
-            }
-            guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
-                return
-            }
-            let track = self.getTrackAt(indexPath: indexPath)
-            track?.beingProcessed = true
-            cell.activityView.startAnimating()
-        }
-
+        return true
     }
     
-    @objc func previewImageStopping(_ notification: Notification) {
-        guard let updatedNotification = notification.object as? ImageUpdatedNotification else {
-            return
-        }
-        DispatchQueue.main.async {
-            if self.traitCollection.userInterfaceStyle == updatedNotification.style {
-                guard let indexPath = self.getIndexPath(for: updatedNotification.track) else {
-                    return
-                }
-                guard let cell = self.tableView.cellForRow(at: self.getIndexPath(for: updatedNotification.track)!) as? VGLogsTableViewCell else {
-                    return
-                }
-                let track = self.getTrackAt(indexPath: indexPath)
-                track?.beingProcessed = false
-                cell.activityView.stopAnimating()
-                cell.trackView.image = updatedNotification.image
-            }
-        }
-    }
-    
-    @objc func onVehicleAddedToLog(_ notification: Notification) {
-        guard let newTrack = notification.object as? VGTrack else {
-            return
-        }
-        guard let vehicle = newTrack.vehicle else {
-            return
-        }
-        guard let indexPath = getIndexPath(for: newTrack) else {
-            return
-        }
-        guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
-            return
-        }
-        getTrackAt(indexPath: indexPath)?.vehicle = newTrack.vehicle
+    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, onSuccess: @escaping (VGTrack) -> Void, onFailure:@escaping(Error) -> Void) {
+        var lastProgressUpdate = Date()
         
-        cell.lblVehicle.text = vehicle.name
+        let track = VGTrack()
+        track.fileName = fileUrl.lastPathComponent
+        do {
+            let resources = try fileUrl.resourceValues(forKeys: [.fileSizeKey])
+            if let fileSize = resources.fileSize {
+                track.fileSize = fileSize
+            }
+        } catch let error {
+            print(error)
+            onFailure(error)
+        }
+        
+        var fileData = Data()
+        var fileString = String()
+        
+        do {
+            _ = fileUrl.startAccessingSecurityScopedResource()
+            fileData = try Data(contentsOf: fileUrl)
+            fileString = String(data: fileData, encoding: .utf8)!
+        } catch let error {
+            print(error)
+            fileUrl.stopAccessingSecurityScopedResource()
+        }
+        fileUrl.stopAccessingSecurityScopedResource()
+
+        let csv = CSV(string: fileString, column: ";", line: "\r\n")
+        
+        let lineCount = csv.rows.count
+        for (index, row) in csv.rows.enumerated() {
+            if abs(lastProgressUpdate.timeIntervalSinceNow) > self.progress_update_delay {
+                progress(UInt(index), UInt(lineCount))
+                lastProgressUpdate = Date()
+            }
+            if !self.isValid(row: row) {
+                continue
+            }
+            let dataPoint = self.rowToDataPoint(row: row)
+            track.trackPoints.append(dataPoint)
+        }
+        
+        track.process()
+        
+        let mapPoints = track.trackPoints.filter { (point) -> Bool in
+            return point.hasGoodFix()
+        }
+        track.mapPoints = VGTrack.getFilteredPointList(list: mapPoints)
+        track.name = "Track"
+        onSuccess(track)
     }
     
-    @objc func onLogUpdated(_ notification: Notification) {]]></codefragment>
+    func rowToDataPoint(row: [String]) -> VGDataPoint {
+        // TIME,LATITUDE,LONGITUDE,ELEVATION,AMBIENT_TEMPERATURE
+        // 2015-07-26T21:10:00.0Z;64.04261779785156;-21.96710968017578;76.10;NULL
+        
+        let dataPoint = VGDataPoint()
+        dataPoint.timestamp = ISO8601DateParser.parse(String(row[0]))
+        dataPoint.latitude = Double(row[1])
+        dataPoint.longitude = Double(row[2])
+        dataPoint.elevation = Double(row[3])]]></codefragment>
    </duplication>
    <duplication lines="22" tokens="282">
-      <file column="9" endcolumn="42" endline="279" line="258"
+      <file column="9" endcolumn="42" endline="193" line="172"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="9" endcolumn="42" endline="757" line="736"
+      <file column="9" endcolumn="42" endline="718" line="697"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        let track = getTrackAt(indexPath: indexPath)
         
@@ -94,9 +103,9 @@
                 }, onFailure: { (error) in]]></codefragment>
    </duplication>
    <duplication lines="46" tokens="274">
-      <file column="53" endcolumn="5" endline="275" line="230"
+      <file column="53" endcolumn="5" endline="273" line="228"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="27" endcolumn="5" endline="655" line="610"
+      <file column="27" endcolumn="5" endline="616" line="571"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[    func getViewForHeader(_ tableView: UITableView, section: Int, view: VGLogHeaderView?) -> VGLogHeaderView {
         var hdrView = view
@@ -148,7 +157,7 @@
    <duplication lines="41" tokens="245">
       <file column="5" endcolumn="5" endline="101" line="61"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/Cells/VGAvailableLogsTableViewCell.swift"/>
-      <file column="5" endcolumn="5" endline="222" line="184"
+      <file column="5" endcolumn="5" endline="265" line="227"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/Cells/VGLogsTableViewCell.swift"/>
       <codefragment><![CDATA[    }
     
@@ -192,65 +201,10 @@
         return nil
     }]]></codefragment>
    </duplication>
-   <duplication lines="49" tokens="225">
-      <file column="5" endcolumn="31" endline="81" line="33"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGMapViewController.swift"/>
-      <file column="5" endcolumn="31" endline="144" line="96"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogDetailsViewController.swift"/>
-      <codefragment><![CDATA[    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return barsHidden
-    }
-    
-    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return .slide
-    }
-    
-    @objc func mapTapped() {
-        
-        if barsHidden {
-            self.navigationController?.setNavigationBarHidden(false, animated: true)
-            barsHidden = false
-            self.showTabBar()
-        } else {
-            self.navigationController?.setNavigationBarHidden(true, animated: true)
-            barsHidden = true
-            self.hideTabBar()
-
-        }
-        
-    }
-    
-    func hideTabBar() {
-        guard var frame = self.tabBarController?.tabBar.frame else {
-            return
-        }
-        frame.origin.y = self.view.frame.size.height + frame.size.height
-        UIView.animate(withDuration: 0.2, animations: {
-            self.tabBarController?.tabBar.frame = frame
-            self.setNeedsStatusBarAppearanceUpdate()
-        })
-
-    }
-
-    func showTabBar() {
-        guard var frame = self.tabBarController?.tabBar.frame else {
-            return
-        }
-        frame.origin.y = self.view.frame.size.height - frame.size.height
-        UIView.animate(withDuration: 0.2, animations: {
-            self.tabBarController?.tabBar.frame = frame
-            self.setNeedsStatusBarAppearanceUpdate()
-        })
-    }
-    
-    func createMenu() -> UIMenu {]]></codefragment>
-   </duplication>
    <duplication lines="36" tokens="198">
-      <file column="5" endcolumn="5" endline="407" line="372"
+      <file column="5" endcolumn="5" endline="366" line="331"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="5" endcolumn="5" endline="559" line="524"
+      <file column="5" endcolumn="5" endline="520" line="485"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[    }
     
@@ -290,7 +244,7 @@
     }]]></codefragment>
    </duplication>
    <duplication lines="25" tokens="165">
-      <file column="42" endcolumn="16" endline="320" line="296"
+      <file column="42" endcolumn="16" endline="337" line="313"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryTableViewController.swift"/>
       <file column="31" endcolumn="16" endline="84" line="60"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
@@ -320,79 +274,10 @@
             self.present(activityVC, animated: true, completion: nil)
         } else {]]></codefragment>
    </duplication>
-   <duplication lines="42" tokens="164">
-      <file column="23" endcolumn="33" endline="44" line="3"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Snapshots/VGMapSnapshotter.swift"/>
-      <file column="28" endcolumn="33" endline="53" line="12"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Snapshots/VGTrackMapSnapshotter.swift"/>
-      <codefragment><![CDATA[class VGMapSnapshotter: MKMapSnapshotter {
-    
-    init(style: UIUserInterfaceStyle, coordinates: [CLLocationCoordinate2D]) {
-        let mapSnapshotOptions = MKMapSnapshotter.Options()
-        
-        var maxLat = -200.0, minLat = 200.0, maxLon = -200.0, minLon = 200.0
-        
-        for coord in coordinates {
-            if coord.latitude > maxLat {
-                maxLat = coord.latitude
-            }
-            if coord.latitude < minLat {
-                minLat = coord.latitude
-            }
-            if coord.longitude > maxLon {
-                maxLon = coord.longitude
-            }
-            if coord.longitude < minLon {
-                minLon = coord.longitude
-            }
-        }
-        
-        let latCenter = (maxLat+minLat)/2
-        let lonCenter = (maxLon+minLon)/2
-        
-        let location = CLLocationCoordinate2DMake(latCenter, lonCenter)
-        
-        // pad our map by 10% around the farthest annotations
-        let MAP_PADDING = 1.1
-        
-        // we'll make sure that our minimum vertical span is about a kilometer
-        // there are ~111km to a degree of latitude. regionThatFits will take care of
-        // longitude, which is more complicated, anyway.
-        let MINIMUM_VISIBLE_LATITUDE = 0.005
-
-        var latitudeDelta = abs(maxLat - minLat) * MAP_PADDING
-        
-        latitudeDelta = (latitudeDelta < MINIMUM_VISIBLE_LATITUDE)
-            ? MINIMUM_VISIBLE_LATITUDE
-            : latitudeDelta
-        
-        let longitudeDelta = abs(maxLon - minLon) * MAP_PADDING]]></codefragment>
-   </duplication>
-   <duplication lines="15" tokens="133">
-      <file column="5" endcolumn="8" endline="53" line="39"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="5" endcolumn="8" endline="409" line="395"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
-      <codefragment><![CDATA[    }
-    
-    func addObservers() {
-        addObserver(selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack)
-        addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
-        addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
-        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
-        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)
-    }
-    
-    func addObserver(selector: Selector, name: Notification.Name) {
-        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {]]></codefragment>
-   </duplication>
    <duplication lines="22" tokens="131">
-      <file column="52" endcolumn="17" endline="346" line="325"
+      <file column="52" endcolumn="17" endline="306" line="285"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="26" endcolumn="17" endline="297" line="275"
+      <file column="26" endcolumn="17" endline="260" line="238"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        guard let cell = self.parentViewController.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
             return
@@ -418,9 +303,9 @@
             self.parentViewController.tableView.reloadData()]]></codefragment>
    </duplication>
    <duplication lines="14" tokens="127">
-      <file column="72" endcolumn="26" endline="212" line="199"
+      <file column="72" endcolumn="26" endline="210" line="197"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="45" endcolumn="26" endline="799" line="785"
+      <file column="45" endcolumn="26" endline="760" line="746"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[    func deleteTrack(at indexPath: IndexPath, in tableView: UITableView) {
         // Delete the row from the data source
@@ -438,11 +323,11 @@
         self.vgFileManager.deleteFile(for: track)]]></codefragment>
    </duplication>
    <duplication lines="14" tokens="122">
-      <file column="9" endcolumn="5" endline="275" line="262"
+      <file column="9" endcolumn="5" endline="273" line="260"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="9" endcolumn="5" endline="394" line="381"
+      <file column="9" endcolumn="5" endline="308" line="295"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="9" endcolumn="5" endline="655" line="642"
+      <file column="9" endcolumn="5" endline="616" line="603"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        view.dateLabel.text = dateString
         view.detailsLabel.text = distanceString + " - " + durationString
@@ -459,28 +344,10 @@
         return view
     }]]></codefragment>
    </duplication>
-   <duplication lines="12" tokens="121">
-      <file column="32" endcolumn="5" endline="75" line="64"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGMapView.swift"/>
-      <file column="32" endcolumn="5" endline="89" line="78"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGMapView.swift"/>
-      <codefragment><![CDATA[        super.init(frame: frame)
-        delegate = self
-        activity = UIActivityIndicatorView()
-        activity.translatesAutoresizingMaskIntoConstraints = false
-        activity.style = .large
-        activity.hidesWhenStopped = true
-        activity.stopAnimating()
-        self.addSubview(activity)
-        let activityLayoutCenterX = NSLayoutConstraint(item: activity!, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0)
-        let activityLayoutCenterY = NSLayoutConstraint(item: activity!, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0)
-        self.addConstraints([activityLayoutCenterX, activityLayoutCenterY])
-    }]]></codefragment>
-   </duplication>
    <duplication lines="12" tokens="120">
-      <file column="88" endcolumn="41" endline="296" line="285"
+      <file column="88" endcolumn="41" endline="210" line="199"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="78" endcolumn="41" endline="781" line="770"
+      <file column="78" endcolumn="41" endline="742" line="731"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        let selectVehicle = UIAction(title: Strings.selectVehicle, image: Icons.vehicle, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
@@ -500,6 +367,8 @@
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGArduinoCSVParser.swift"/>
       <file column="33" endcolumn="24" endline="68" line="49"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGCSVParser.swift"/>
+      <file column="32" endcolumn="24" endline="75" line="56"
+            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGWGPSCSVParser.swift"/>
       <codefragment><![CDATA[        for (index, row) in csv.rows.enumerated() {
             if abs(lastProgressUpdate.timeIntervalSinceNow) > self.progress_update_delay {
                 progress(UInt(index), UInt(lineCount))
@@ -520,36 +389,6 @@
         track.mapPoints = VGTrack.getFilteredPointList(list: mapPoints)
         track.name = "Track"
         onSuccess(track)]]></codefragment>
-   </duplication>
-   <duplication lines="22" tokens="116">
-      <file column="59" endcolumn="24" endline="325" line="304"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="38" endcolumn="24" endline="128" line="107"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="38" endcolumn="24" endline="275" line="254"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
-      <codefragment><![CDATA[                guard let cell = self.parentViewController.tableView.cellForRow(at: self.getIndexPath(for: updatedNotification.track)!) as? VGLogsTableViewCell else {
-                    return
-                }
-                let track = self.getTrackAt(indexPath: indexPath)
-                track?.beingProcessed = false
-                cell.activityView.stopAnimating()
-                cell.trackView.image = updatedNotification.image
-            }
-        }
-    }
-    
-    @objc func onVehicleAddedToLog(_ notification: Notification) {
-        guard let newTrack = notification.object as? VGTrack else {
-            return
-        }
-        guard let vehicle = newTrack.vehicle else {
-            return
-        }
-        guard let indexPath = getIndexPath(for: newTrack) else {
-            return
-        }
-        guard let cell = self.parentViewController.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {]]></codefragment>
    </duplication>
    <duplication lines="13" tokens="114">
       <file column="5" endcolumn="40" endline="85" line="73"
@@ -575,6 +414,8 @@
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGArduinoCSVParser.swift"/>
       <file column="5" endcolumn="11" endline="34" line="18"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGCSVParser.swift"/>
+      <file column="5" endcolumn="11" endline="40" line="25"
+            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGWGPSCSVParser.swift"/>
       <codefragment><![CDATA[    func fileToTrack(fileUrl: URL, progress: @escaping (UInt, UInt) -> Void, onSuccess: @escaping (VGTrack) -> Void, onFailure:@escaping(Error) -> Void) {
         var lastProgressUpdate = Date()
         
@@ -593,9 +434,9 @@
         var fileData = Data()]]></codefragment>
    </duplication>
    <duplication lines="23" tokens="105">
-      <file column="5" endcolumn="32" endline="371" line="349"
+      <file column="5" endcolumn="32" endline="285" line="263"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="5" endcolumn="32" endline="630" line="608"
+      <file column="5" endcolumn="32" endline="591" line="569"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[    }
     
@@ -622,9 +463,9 @@
         guard let trackSection = logDict[day] else {]]></codefragment>
    </duplication>
    <duplication lines="21" tokens="101">
-      <file column="53" endcolumn="32" endline="250" line="230"
+      <file column="53" endcolumn="32" endline="248" line="228"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="27" endcolumn="32" endline="371" line="351"
+      <file column="27" endcolumn="32" endline="285" line="265"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
       <codefragment><![CDATA[    func getViewForHeader(_ tableView: UITableView, section: Int, view: VGLogHeaderView?) -> VGLogHeaderView {
         var hdrView = view
@@ -648,52 +489,58 @@
         var durationString = ""
         guard let trackSection = tracksDictionary[day] else {]]></codefragment>
    </duplication>
-   <duplication lines="23" tokens="91">
-      <file column="33" endcolumn="29" endline="158" line="136"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Snapshots/VGSnapshotMaker.swift"/>
-      <file column="25" endcolumn="21" endline="226" line="204"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Snapshots/VGSnapshotMaker.swift"/>
-      <codefragment><![CDATA[                                let points = coordinateList.map { coordinate in
-                                    snapshot.point(for: coordinate)
-                                }
-                                
-                                // Go to the first point in the Bezier Path.
-                                let path = UIBezierPath()
-                                path.move(to: points[0])
-                                
-                                // Create a path from the first CGPoint to the last.
-                                for point in points.dropFirst() {
-                                    path.addLine(to: point)
-                                }
-                                
-                                // Create a line with the Bezier Path.
-                                path.lineWidth = 3
-                                if let mapColor = vgTrack.vehicle?.mapColor {
-                                    mapColor.setStroke()
-                                } else {
-                                    UIColor.red.setStroke()
-                                }
-                                
-                                path.stroke()
-                            }]]></codefragment>
+   <duplication lines="13" tokens="97">
+      <file column="5" endcolumn="8" endline="51" line="39"
+            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
+      <file column="5" endcolumn="8" endline="370" line="358"
+            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
+      <codefragment><![CDATA[    }
+    
+    func addObservers() {
+        addObserver(selector: #selector(onVehicleAddedToLog(_:)), name: .vehicleAddedToTrack)
+        addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
+        addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
+    }
+    
+    func addObserver(selector: Selector, name: Notification.Name) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {]]></codefragment>
    </duplication>
-   <duplication lines="7" tokens="87">
-      <file column="17" endcolumn="13" endline="91" line="85"
+   <duplication lines="23" tokens="91">
+      <file column="25" endcolumn="21" endline="165" line="143"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Snapshots/VGSnapshotMaker.swift"/>
-      <file column="13" endcolumn="9" endline="102" line="95"
+      <file column="21" endcolumn="17" endline="231" line="209"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Snapshots/VGSnapshotMaker.swift"/>
-      <codefragment><![CDATA[                NotificationCenter.default.post(name: .previewImageStartingUpdate, object: newTrack)
-                self.drawTrack(vgTrack: newTrack) { (image, style) -> Void? in
-                    NotificationCenter.default.post(name: .previewImageFinishingUpdate, object: ImageUpdatedNotification(image: image!, style: style!, track: newTrack))
-                    self.vgFileManager.savePreview(image: image!, for: newTrack, with: style!)
-                    return nil
-                }
-            }, onFailure: { (error) in]]></codefragment>
+      <codefragment><![CDATA[                        let points = coordinateList.map { coordinate in
+                            snapshot.point(for: coordinate)
+                        }
+                        
+                        // Go to the first point in the Bezier Path.
+                        let path = UIBezierPath()
+                        path.move(to: points[0])
+                        
+                        // Create a path from the first CGPoint to the last.
+                        for point in points.dropFirst() {
+                            path.addLine(to: point)
+                        }
+                        
+                        // Create a line with the Bezier Path.
+                        path.lineWidth = 3
+                        if let mapColor = vgTrack.vehicle?.mapColor {
+                            mapColor.setStroke()
+                        } else {
+                            UIColor.red.setStroke()
+                        }
+                        
+                        path.stroke()
+                    }]]></codefragment>
    </duplication>
    <duplication lines="14" tokens="87">
-      <file column="47" endcolumn="18" endline="758" line="745"
+      <file column="47" endcolumn="18" endline="761" line="748"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGDataStore.swift"/>
-      <file column="52" endcolumn="18" endline="790" line="777"
+      <file column="52" endcolumn="18" endline="793" line="780"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGDataStore.swift"/>
       <codefragment><![CDATA[    func add(tagWith tagId: UUID, toTrackWith trackId: UUID, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -711,9 +558,9 @@
             track.addToTags(tag)]]></codefragment>
    </duplication>
    <duplication lines="13" tokens="87">
-      <file column="50" endcolumn="13" endline="171" line="159"
+      <file column="50" endcolumn="13" endline="169" line="157"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="29" endcolumn="13" endline="288" line="277"
+      <file column="29" endcolumn="13" endline="202" line="191"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
       <codefragment><![CDATA[                        self.parentViewController.present(activityVC, animated: true, completion: nil)
 
@@ -730,9 +577,9 @@
             }]]></codefragment>
    </duplication>
    <duplication lines="23" tokens="81">
-      <file column="5" endcolumn="15" endline="115" line="93"
+      <file column="5" endcolumn="15" endline="113" line="91"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="14" endcolumn="15" endline="710" line="688"
+      <file column="14" endcolumn="15" endline="671" line="649"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let track = getTrackAt(indexPath: indexPath) else {
@@ -759,9 +606,9 @@
             let pulleyEditor = PulleyEditorViewController()]]></codefragment>
    </duplication>
    <duplication lines="12" tokens="81">
-      <file column="17" endcolumn="11" endline="292" line="281"
+      <file column="17" endcolumn="11" endline="206" line="195"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="17" endcolumn="11" endline="770" line="759"
+      <file column="17" endcolumn="11" endline="731" line="720"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[                })
             }
@@ -779,7 +626,7 @@
    <duplication lines="20" tokens="80">
       <file column="80" endcolumn="13" endline="553" line="534"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGDataStore.swift"/>
-      <file column="72" endcolumn="13" endline="745" line="726"
+      <file column="72" endcolumn="13" endline="748" line="729"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGDataStore.swift"/>
       <codefragment><![CDATA[            let fetchRequest = Vehicle.fetchRequest() as NSFetchRequest<Vehicle>
             fetchRequest.predicate = self.getPredicate(for: id)
@@ -803,11 +650,11 @@
     func add(vehicleWith vehicleId: UUID, toTrackWith trackId: UUID, onSuccess: @escaping() -> Void, onFailure:@escaping(Error) -> Void) {]]></codefragment>
    </duplication>
    <duplication lines="7" tokens="76">
-      <file column="38" endcolumn="64" endline="154" line="148"
+      <file column="38" endcolumn="64" endline="152" line="146"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="17" endcolumn="64" endline="272" line="266"
+      <file column="17" endcolumn="64" endline="186" line="180"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="17" endcolumn="64" endline="750" line="744"
+      <file column="17" endcolumn="64" endline="711" line="705"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[            self.parentViewController.present(activityVC, animated: true, completion: nil)
         }
@@ -817,34 +664,10 @@
             DispatchQueue.global(qos: .userInitiated).async {
                 self.dataStore.getDataPointsForTrack(with: track.id!, onSuccess: { (dataPoints) in]]></codefragment>
    </duplication>
-   <duplication lines="16" tokens="76">
-      <file column="55" endcolumn="20" endline="300" line="285"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="34" endcolumn="20" endline="103" line="88"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="34" endcolumn="20" endline="250" line="235"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
-      <codefragment><![CDATA[            guard let cell = self.parentViewController.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
-                return
-            }
-            let track = self.getTrackAt(indexPath: indexPath)
-            track?.beingProcessed = true
-            cell.activityView.startAnimating()
-        }
-
-    }
-    
-    @objc func previewImageStopping(_ notification: Notification) {
-        guard let updatedNotification = notification.object as? ImageUpdatedNotification else {
-            return
-        }
-        DispatchQueue.main.async {
-            if self.parentViewController.traitCollection.userInterfaceStyle == updatedNotification.style {]]></codefragment>
-   </duplication>
    <duplication lines="11" tokens="74">
-      <file column="39" endcolumn="39" endline="420" line="410"
+      <file column="39" endcolumn="39" endline="379" line="369"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="46" endcolumn="39" endline="407" line="397"
+      <file column="46" endcolumn="39" endline="321" line="311"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
       <codefragment><![CDATA[extension VGHistoryAllTracksDataSource: DisplaySelectVehicleProtocol {
     func didTapVehicle(track: VGTrack, tappedView: UIView?) {
@@ -885,11 +708,11 @@
                             } else {]]></codefragment>
    </duplication>
    <duplication lines="13" tokens="73">
-      <file column="53" endcolumn="35" endline="388" line="376"
+      <file column="53" endcolumn="35" endline="347" line="335"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="44" endcolumn="35" endline="174" line="162"
+      <file column="44" endcolumn="35" endline="88" line="76"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="53" endcolumn="35" endline="540" line="528"
+      <file column="53" endcolumn="35" endline="501" line="489"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[            guard let sectionList = tracksDictionary[section] else {
                 continue
@@ -906,9 +729,9 @@
             guard let sectionList = tracksDictionary[section] else {]]></codefragment>
    </duplication>
    <duplication lines="14" tokens="72">
-      <file column="5" endcolumn="5" endline="81" line="68"
+      <file column="5" endcolumn="5" endline="79" line="66"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="14" endcolumn="5" endline="686" line="673"
+      <file column="14" endcolumn="5" endline="647" line="634"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
@@ -926,9 +749,9 @@
     }]]></codefragment>
    </duplication>
    <duplication lines="13" tokens="72">
-      <file column="65" endcolumn="1" endline="424" line="412"
+      <file column="65" endcolumn="1" endline="383" line="371"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="52" endcolumn="1" endline="440" line="428"
+      <file column="52" endcolumn="1" endline="399" line="387"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
       <codefragment><![CDATA[        let selectionVC = VGVehiclesSelectionTableViewController(style: .insetGrouped)
         selectionVC.track = track
@@ -944,34 +767,10 @@
     }
 }]]></codefragment>
    </duplication>
-   <duplication lines="18" tokens="72">
-      <file column="5" endcolumn="20" endline="151" line="134"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="5" endcolumn="20" endline="323" line="306"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
-      <codefragment><![CDATA[    }
-    
-    @objc func onLogUpdated(_ notification: Notification) {
-        guard let updatedTrack = notification.object as? VGTrack else {
-            return
-        }
-
-        DispatchQueue.main.async {
-            
-            guard let indexPath = self.getIndexPath(for: updatedTrack) else {
-                return
-            }
-            
-            guard let cell = self.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
-                return
-            }
-            
-            if self.logDict[self.sections[indexPath.section]] == nil {]]></codefragment>
-   </duplication>
    <duplication lines="13" tokens="72">
-      <file column="9" endcolumn="1" endline="411" line="399"
+      <file column="9" endcolumn="1" endline="325" line="313"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="9" endcolumn="1" endline="834" line="822"
+      <file column="9" endcolumn="1" endline="795" line="783"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        let selectionVC = VGVehiclesSelectionTableViewController(style: .insetGrouped)
         selectionVC.track = track
@@ -988,9 +787,9 @@
 }]]></codefragment>
    </duplication>
    <duplication lines="14" tokens="72">
-      <file column="17" endcolumn="42" endline="475" line="462"
+      <file column="17" endcolumn="42" endline="496" line="483"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryTableViewController.swift"/>
-      <file column="17" endcolumn="42" endline="521" line="508"
+      <file column="17" endcolumn="42" endline="542" line="529"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryTableViewController.swift"/>
       <codefragment><![CDATA[                if let date = date {
                     section!.dateDescription = dateFormatter.string(from: date)
@@ -1096,29 +895,42 @@
         dataPoint.elevation = Double(row[3])
         dataPoint.ambientTemperature = Double(row[4])]]></codefragment>
    </duplication>
-   <duplication lines="13" tokens="67">
-      <file column="50" endcolumn="5" endline="117" line="105"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Editor/PulleyEditorViewController.swift"/>
-      <file column="29" endcolumn="5" endline="296" line="283"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogDetailsViewController.swift"/>
-      <codefragment><![CDATA[        if pointIndex >= track.trackPoints.count {
-            return (nil, nil)
-        }
-        let leftSplit = track.trackPoints[0 ... pointIndex]
-        let rightSplit = track.trackPoints[pointIndex ..< track.trackPoints.count]
+   <duplication lines="11" tokens="68">
+      <file column="5" endcolumn="44" endline="81" line="71"
+            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGCSVParser.swift"/>
+      <file column="5" endcolumn="44" endline="86" line="76"
+            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGWGPSCSVParser.swift"/>
+      <codefragment><![CDATA[    }
+    
+    func rowToDataPoint(row: [String]) -> VGDataPoint {
+        // TIME,LATITUDE,LONGITUDE,ELEVATION,SATELLITES,HORIZONTAL_ACCURACY,VERTICAL_ACCURACY,PDOP,FIX_TYPE,GNSS_FIX_OK,FULLY_RESOLVED,RPM,ENGINE_LOAD,COOLANT_TEMPERATURE,AMBIENT_TEMPERATURE,THROTTLE_POSITION
+        // 2019-04-24T17:46:17.599829,63.995643,-22.634326,41.482,7,0.994,1.484,3.48,3,True,False,1103.5,34.509803921568626,14,5,14.509803921568627
         
-        if rightSplit.count != 0 {
-            track.trackPoints = Array(leftSplit)
-            newTrack.trackPoints = Array(rightSplit)
-        }
-        
-        return (track, newTrack)
-    }]]></codefragment>
+        let dataPoint = VGDataPoint()
+        dataPoint.timestamp = ISO8601DateParser.parse(String(row[0]))
+        dataPoint.latitude = Double(row[1])
+        dataPoint.longitude = Double(row[2])
+        dataPoint.elevation = Double(row[3])]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="67">
+      <file column="14" endcolumn="44" endline="30" line="22"
+            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGShortCSVParser.swift"/>
+      <file column="5" endcolumn="44" endline="86" line="78"
+            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/Parsers/VGWGPSCSVParser.swift"/>
+      <codefragment><![CDATA[    override func rowToDataPoint(row: [String]) -> VGDataPoint {
+        // TIME,LATITUDE,LONGITUDE,ELEVATION,SATELLITES,HORIZONTAL_ACCURACY,VERTICAL_ACCURACY,PDOP,GNSS_FIX_OK,FULLY_RESOLVED,RPM,ENGINE_LOAD,COOLANT_TEMPERATURE,AMBIENT_TEMPERATURE,THROTTLE_POSITION
+        // 2019-04-24T17:46:17.599829,63.995643,-22.634326,41.482,7,0.994,1.484,3.48,True,False,1103.5,34.509803921568626,14,5,14.509803921568627
+
+        let dataPoint = VGDataPoint()
+        dataPoint.timestamp = ISO8601DateParser.parse(String(row[0]))
+        dataPoint.latitude = Double(row[1])
+        dataPoint.longitude = Double(row[2])
+        dataPoint.elevation = Double(row[3])]]></codefragment>
    </duplication>
    <duplication lines="12" tokens="66">
-      <file column="55" endcolumn="5" endline="372" line="361"
+      <file column="55" endcolumn="5" endline="331" line="320"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="34" endcolumn="5" endline="330" line="319"
+      <file column="34" endcolumn="5" endline="293" line="282"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[            guard let cell = self.parentViewController.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
                 return
@@ -1152,9 +964,9 @@
                             })]]></codefragment>
    </duplication>
    <duplication lines="14" tokens="65">
-      <file column="9" endcolumn="53" endline="253" line="240"
+      <file column="9" endcolumn="53" endline="167" line="154"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="9" endcolumn="53" endline="688" line="674"
+      <file column="9" endcolumn="53" endline="649" line="635"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        guard let cell = tableView.dequeueReusableCell(
             withIdentifier: VGLogsTableViewCell.identifier,
@@ -1188,9 +1000,9 @@
                 self.dataStore.deleteAllData(]]></codefragment>
    </duplication>
    <duplication lines="8" tokens="64">
-      <file column="17" endcolumn="13" endline="171" line="164"
+      <file column="17" endcolumn="13" endline="169" line="162"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="17" endcolumn="13" endline="766" line="759"
+      <file column="17" endcolumn="13" endline="727" line="720"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[                })
             }
@@ -1201,24 +1013,10 @@
                 return
             }]]></codefragment>
    </duplication>
-   <duplication lines="8" tokens="63">
-      <file column="34" endcolumn="33" endline="73" line="66"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGContextMenuActions.swift"/>
-      <file column="21" endcolumn="29" endline="126" line="119"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGMapViewController.swift"/>
-      <codefragment><![CDATA[                self.appDelegate!.snapshotter.drawTracks(vgTracks: drawnTracks) { (image, style) -> Void? in
-                    if let image = image {
-                        guard let pngImageData = image.pngData() else {
-                            return nil
-                        }
-                        let vc = UIActivityViewController(activityItems: [pngImageData], applicationActivities: [])
-                        DispatchQueue.main.async {
-                            self.viewController.present(vc, animated: true)]]></codefragment>
-   </duplication>
    <duplication lines="7" tokens="63">
-      <file column="9" endcolumn="17" endline="181" line="175"
+      <file column="9" endcolumn="17" endline="179" line="173"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="9" endcolumn="17" endline="774" line="768"
+      <file column="9" endcolumn="17" endline="735" line="729"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        }
         
@@ -1231,7 +1029,7 @@
    <duplication lines="13" tokens="61">
       <file column="5" endcolumn="1" endline="60" line="48"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGImportTableViewCell.swift"/>
-      <file column="5" endcolumn="1" endline="223" line="212"
+      <file column="5" endcolumn="1" endline="266" line="255"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/Cells/VGLogsTableViewCell.swift"/>
       <codefragment><![CDATA[    }
     
@@ -1248,11 +1046,11 @@
 }]]></codefragment>
    </duplication>
    <duplication lines="15" tokens="61">
-      <file column="17" endcolumn="8" endline="446" line="432"
+      <file column="17" endcolumn="8" endline="467" line="453"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryTableViewController.swift"/>
-      <file column="17" endcolumn="8" endline="492" line="478"
+      <file column="17" endcolumn="8" endline="513" line="499"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryTableViewController.swift"/>
-      <file column="17" endcolumn="8" endline="538" line="524"
+      <file column="17" endcolumn="8" endline="559" line="545"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryTableViewController.swift"/>
       <codefragment><![CDATA[                if let date = date {
                     summary!.dateDescription = dateFormatter.string(from: date)
@@ -1271,9 +1069,9 @@
     func getMonthDictionary(tracks: [VGTrack]) -> [VGHistorySection] {]]></codefragment>
    </duplication>
    <duplication lines="8" tokens="61">
-      <file column="88" endcolumn="11" endline="770" line="763"
+      <file column="88" endcolumn="11" endline="731" line="724"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
-      <file column="78" endcolumn="11" endline="777" line="770"
+      <file column="78" endcolumn="11" endline="738" line="731"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        let selectVehicle = UIAction(title: Strings.selectVehicle, image: Icons.vehicle, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             guard let cell = tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {
@@ -1302,9 +1100,9 @@
     }]]></codefragment>
    </duplication>
    <duplication lines="6" tokens="59">
-      <file column="27" endcolumn="36" endline="703" line="698"
+      <file column="27" endcolumn="36" endline="706" line="701"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGDataStore.swift"/>
-      <file column="33" endcolumn="36" endline="727" line="722"
+      <file column="33" endcolumn="36" endline="730" line="725"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGDataStore.swift"/>
       <codefragment><![CDATA[    func update(tag: VGTag, onSuccess: @escaping() -> Void, onFailure: @escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -1330,9 +1128,9 @@
 }]]></codefragment>
    </duplication>
    <duplication lines="9" tokens="58">
-      <file column="9" endcolumn="39" endline="420" line="412"
+      <file column="9" endcolumn="39" endline="379" line="371"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="9" endcolumn="39" endline="830" line="822"
+      <file column="9" endcolumn="39" endline="791" line="783"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        let selectionVC = VGVehiclesSelectionTableViewController(style: .insetGrouped)
         selectionVC.track = track
@@ -1359,24 +1157,10 @@
         self.vehicle.image = self.selectedImage
         self.dataStore.update(vgVehicle: self.vehicle, onSuccess: {]]></codefragment>
    </duplication>
-   <duplication lines="8" tokens="57">
-      <file column="34" endcolumn="35" endline="376" line="369"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="25" endcolumn="35" endline="162" line="155"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <codefragment><![CDATA[            self.tracksDictionary[self.sections[indexPath.section]]![indexPath.row] = updatedTrack
-            cell.show(track: updatedTrack)
-        }
-    }
-    
-    func getIndexPath(for track: VGTrack) -> IndexPath? {
-        for (sectionIndex, section) in sections.enumerated() {
-            guard let sectionList = tracksDictionary[section] else {]]></codefragment>
-   </duplication>
    <duplication lines="13" tokens="56">
-      <file column="9" endcolumn="5" endline="81" line="69"
+      <file column="9" endcolumn="5" endline="79" line="67"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="9" endcolumn="5" endline="251" line="240"
+      <file column="9" endcolumn="5" endline="165" line="154"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
       <codefragment><![CDATA[        guard let cell = tableView.dequeueReusableCell(
             withIdentifier: VGLogsTableViewCell.identifier,
@@ -1393,7 +1177,7 @@
     }]]></codefragment>
    </duplication>
    <duplication lines="13" tokens="56">
-      <file column="5" endcolumn="9" endline="245" line="233"
+      <file column="5" endcolumn="9" endline="159" line="147"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
       <file column="5" endcolumn="9" endline="28" line="16"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Vehicles/VGVehicleDetailsTableViewController.swift"/>
@@ -1411,22 +1195,29 @@
             return UITableViewCell()
         }]]></codefragment>
    </duplication>
-   <duplication lines="4" tokens="55">
-      <file column="75" endcolumn="102" endline="46" line="43"
+   <duplication lines="13" tokens="55">
+      <file column="5" endcolumn="24" endline="285" line="273"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="93" endcolumn="102" endline="47" line="44"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="75" endcolumn="102" endline="402" line="399"
+      <file column="5" endcolumn="24" endline="238" line="224"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
-      <codefragment><![CDATA[        addObserver(selector: #selector(onLogsAdded(_:)), name: .logsAdded)
-        addObserver(selector: #selector(onLogUpdated(_:)), name: .logUpdated)
-        addObserver(selector: #selector(previewImageStarting(_:)), name: .previewImageStartingUpdate)
-        addObserver(selector: #selector(previewImageStopping(_:)), name: .previewImageFinishingUpdate)]]></codefragment>
+      <codefragment><![CDATA[    }
+    
+    @objc func onVehicleAddedToLog(_ notification: Notification) {
+        guard let newTrack = notification.object as? VGTrack else {
+            return
+        }
+        guard let vehicle = newTrack.vehicle else {
+            return
+        }
+        guard let indexPath = getIndexPath(for: newTrack) else {
+            return
+        }
+        guard let cell = self.parentViewController.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {]]></codefragment>
    </duplication>
-   <duplication lines="15" tokens="55">
-      <file column="9" endcolumn="34" endline="361" line="347"
+   <duplication lines="14" tokens="55">
+      <file column="9" endcolumn="34" endline="320" line="307"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="9" endcolumn="34" endline="319" line="305"
+      <file column="9" endcolumn="34" endline="282" line="268"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        }
     }
@@ -1435,9 +1226,8 @@
         guard let updatedTrack = notification.object as? VGTrack else {
             return
         }
-
+        
         DispatchQueue.main.async {
-            
             guard let indexPath = self.getIndexPath(for: updatedTrack) else {
                 return
             }
@@ -1465,11 +1255,11 @@
         self.numberFormatter.minimumFractionDigits = 0]]></codefragment>
    </duplication>
    <duplication lines="5" tokens="54">
-      <file column="58" endcolumn="88" endline="146" line="142"
+      <file column="58" endcolumn="88" endline="144" line="140"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="43" endcolumn="88" endline="265" line="261"
+      <file column="43" endcolumn="88" endline="179" line="175"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="43" endcolumn="88" endline="743" line="739"
+      <file column="43" endcolumn="88" endline="704" line="700"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[            self.deleteTrack(at: indexPath, in: tableView)
         }
@@ -1477,51 +1267,12 @@
         let exportOriginal = UIAction(title: Strings.shareCSV, image: Icons.share, identifier: .none, discoverabilityTitle: nil, attributes: .init(), state: .off) {_ in
             let activityVC = UIActivityViewController(activityItems: [self.vgFileManager.getAbsoluteFilePathFor(track: track)!], applicationActivities: nil)]]></codefragment>
    </duplication>
-   <duplication lines="11" tokens="54">
-      <file column="5" endcolumn="34" endline="285" line="275"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="5" endcolumn="34" endline="88" line="78"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="5" endcolumn="34" endline="235" line="224"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
-      <codefragment><![CDATA[    }
-    
-    @objc func previewImageStarting(_ notification: Notification) {
-        guard let newTrack = notification.object as? VGTrack else {
-            return
-        }
-        DispatchQueue.main.async {
-            guard let indexPath = self.getIndexPath(for: newTrack) else {
-                return
-            }
-            guard let cell = self.parentViewController.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {]]></codefragment>
-   </duplication>
-   <duplication lines="14" tokens="54">
-      <file column="5" endcolumn="34" endline="361" line="348"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="5" endcolumn="34" endline="147" line="134"
-            path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <codefragment><![CDATA[    }
-    
-    @objc func onLogUpdated(_ notification: Notification) {
-        guard let updatedTrack = notification.object as? VGTrack else {
-            return
-        }
-
-        DispatchQueue.main.async {
-            
-            guard let indexPath = self.getIndexPath(for: updatedTrack) else {
-                return
-            }
-            
-            guard let cell = self.parentViewController.tableView.cellForRow(at: indexPath) as? VGLogsTableViewCell else {]]></codefragment>
-   </duplication>
    <duplication lines="9" tokens="54">
-      <file column="52" endcolumn="39" endline="436" line="428"
+      <file column="52" endcolumn="39" endline="395" line="387"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="65" endcolumn="39" endline="407" line="399"
+      <file column="65" endcolumn="39" endline="321" line="313"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryDetailsTableViewController.swift"/>
-      <file column="65" endcolumn="39" endline="830" line="822"
+      <file column="65" endcolumn="39" endline="791" line="783"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        let selectionVC = VGTagsTableViewController(style: .insetGrouped)
         selectionVC.track = track
@@ -1534,11 +1285,11 @@
         popover.sourceView = tappedView]]></codefragment>
    </duplication>
    <duplication lines="13" tokens="53">
-      <file column="9" endcolumn="15" endline="115" line="103"
+      <file column="9" endcolumn="15" endline="113" line="101"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryAllTracksDataSource.swift"/>
-      <file column="9" endcolumn="15" endline="641" line="629"
+      <file column="9" endcolumn="15" endline="662" line="650"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryTableViewController.swift"/>
-      <file column="9" endcolumn="15" endline="710" line="698"
+      <file column="9" endcolumn="15" endline="671" line="659"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[        if tableView.isEditing {
             guard let selectedIndexPaths = tableView.indexPathsForSelectedRows else {
@@ -1589,11 +1340,11 @@
 }]]></codefragment>
    </duplication>
    <duplication lines="10" tokens="52">
-      <file column="17" endcolumn="42" endline="429" line="420"
+      <file column="17" endcolumn="42" endline="450" line="441"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryTableViewController.swift"/>
-      <file column="17" endcolumn="42" endline="475" line="466"
+      <file column="17" endcolumn="42" endline="496" line="487"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryTableViewController.swift"/>
-      <file column="17" endcolumn="42" endline="521" line="512"
+      <file column="17" endcolumn="42" endline="542" line="533"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/History/VGHistoryTableViewController.swift"/>
       <codefragment><![CDATA[                result.append(section!)
             }
@@ -1618,9 +1369,9 @@
                                     self.dataStore.update(file: downlFile, onSuccess: {]]></codefragment>
    </duplication>
    <duplication lines="11" tokens="52">
-      <file column="154" endcolumn="9" endline="305" line="295"
+      <file column="154" endcolumn="9" endline="268" line="258"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
-      <file column="107" endcolumn="13" endline="595" line="586"
+      <file column="107" endcolumn="13" endline="556" line="547"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Tabs/Logs/ViewControllers/VGLogsTableViewController.swift"/>
       <codefragment><![CDATA[            (self.sections, self.tracksDictionary) = LogDateSplitter.splitLogsByDate(trackList: self.combineLists(localList: list, remoteList: newTracks))
 
@@ -1663,7 +1414,7 @@
    <duplication lines="6" tokens="51">
       <file column="35" endcolumn="21" endline="558" line="553"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGDataStore.swift"/>
-      <file column="27" endcolumn="21" endline="750" line="745"
+      <file column="27" endcolumn="21" endline="753" line="748"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGDataStore.swift"/>
       <codefragment><![CDATA[    func add(vehicleWith vehicleId: UUID, toTrackWith trackId: UUID, onSuccess: @escaping() -> Void, onFailure:@escaping(Error) -> Void) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -1673,9 +1424,9 @@
             guard let vehicle = self.getVehicle(in: context, with: vehicleId) else {]]></codefragment>
    </duplication>
    <duplication lines="5" tokens="50">
-      <file column="30" endcolumn="78" endline="197" line="193"
+      <file column="30" endcolumn="78" endline="201" line="197"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGFileManager.swift"/>
-      <file column="31" endcolumn="78" endline="388" line="384"
+      <file column="31" endcolumn="78" endline="392" line="388"
             path="/Users/bergthor/Dropbox/Forritun/Swift/VehicleGPS/VehicleGPS/Shared Entities/VGFileManager.swift"/>
       <codefragment><![CDATA[        var result = [VGTrack]()
         let docUrl = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first

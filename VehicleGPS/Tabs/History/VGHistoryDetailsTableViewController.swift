@@ -35,8 +35,6 @@ class VGHistoryDetailsTableViewController: UITableViewController {
     var sections = [String]()
     var logDict = [String: [VGTrack]]()
     
-
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 

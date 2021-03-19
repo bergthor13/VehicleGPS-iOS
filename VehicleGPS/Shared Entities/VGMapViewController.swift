@@ -20,7 +20,11 @@ class VGMapViewController: UIViewController {
         let bigMap = VGMapView(frame: self.view.frame)
         bigMap.fill(parentView: self.view, with: .zero)
         bigMap.tracks = tracks
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.moreActions, primaryAction: nil, menu: createMenu())
+        if #available(iOS 14.0, *) {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.moreActions, primaryAction: nil, menu: createMenu())
+        } else {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: Icons.moreActions, style: .plain, target: self, action: #selector(showMoreMenu))
+        }
         bigMap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(mapTapped)))
     }
     
@@ -71,5 +75,11 @@ class VGMapViewController: UIViewController {
     
     func createMenu() -> UIMenu {
         return UIMenu(title: "", children: [VGMenuActions(viewController: self).getMapToImageAction(for: tracks)])
+    }
+    
+    @objc func showMoreMenu() {
+        let alertController = UIAlertController()
+        alertController.addAction(VGMenuActions(viewController: self).getMapToImageAction(for: tracks))
+        present(alertController, animated: true)
     }
 }

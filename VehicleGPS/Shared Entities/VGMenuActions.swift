@@ -65,10 +65,23 @@ class VGMenuActions {
             return
         }
 
+        getMapPoints(for: tracks) { tracksWithMapPoints in
+            delegate.snapshotter.drawTracks(vgTracks: tracksWithMapPoints) { (image, style) -> Void? in
+                if let image = image {
+                    guard let pngImageData = image.pngData() else {
+                        return nil
+                    }
+                    self.share(files: [pngImageData])
+                }
+                return nil
+            }
+        }
+    }
+    
+    func getMapPoints(for tracks: [VGTrack], callback: @escaping([VGTrack]) -> Void) {
         let semaphore = DispatchSemaphore(value: 10)
         let dpGroup = DispatchGroup()
         for (index, track) in tracks.enumerated() {
-            
             DispatchQueue.global(qos: .userInitiated).async {
                 dpGroup.enter()
                 semaphore.wait()
@@ -83,7 +96,6 @@ class VGMenuActions {
                     semaphore.signal()
                 })
             }
-
         }
         
         dpGroup.notify(queue: .main) {
@@ -91,17 +103,8 @@ class VGMenuActions {
             for track in tracks where track.distance != 0.0 {
                 drawnTracks.append(track)
             }
-            delegate.snapshotter.drawTracks(vgTracks: drawnTracks) { (image, style) -> Void? in
-                if let image = image {
-                    guard let pngImageData = image.pngData() else {
-                        return nil
-                    }
-                    self.share(files: [pngImageData])
-                }
-                return nil
-            }
+            callback(drawnTracks)
         }
-
     }
     
     // MARK: - Actions
@@ -133,5 +136,40 @@ class VGMenuActions {
         return UIAction(title: Strings.exportMapAsImage, image: Icons.photo) { (action) in
             self.mapToImage(for: tracks)
         }
+    }
+    
+    // MARK: - Alert Actions
+    func getSelectVehicleAction(for track: VGTrack) -> UIAlertAction {
+        return UIAlertAction(title: Strings.selectVehicle, style: .default) { action in
+            self.selectVehicle(for: track)
+        }
+    }
+    
+    func getShareFileAction(for track: VGTrack) -> UIAlertAction {
+        return UIAlertAction(title: Strings.shareCSV, style: .default) { action in
+            self.share(files: [self.fileManager.getAbsoluteFilePathFor(track: track)!])
+        }
+    }
+    
+    func getGPXFileAction(for track: VGTrack) -> UIAlertAction {
+        return UIAlertAction(title: Strings.shareGPX, style: .default) { action in
+            self.share(files: [self.gpxGenerator.generateGPXFor(tracks: [track])!])
+        }
+    }
+    
+    func getDeleteAction(for track: VGTrack) -> UIAlertAction {
+        return UIAlertAction(title: Strings.delete, style: .destructive) { action in
+            self.delete(track: track)
+        }
+    }
+    
+    func getMapToImageAction(for tracks: [VGTrack]) -> UIAlertAction {
+        return UIAlertAction(title: Strings.exportMapAsImage, style: .default) { ACTION in
+            self.mapToImage(for: tracks)
+        }
+    }
+    
+    func getCancelAction() -> UIAlertAction {
+        return UIAlertAction(title: Strings.cancel, style: .cancel)
     }
 }

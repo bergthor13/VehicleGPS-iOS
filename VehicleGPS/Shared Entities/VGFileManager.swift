@@ -82,6 +82,10 @@ class VGFileManager {
                 return VGShortCSVParser()
             }
             
+            if colCount == 9 {
+                return VGWGPSCSVParser()
+            }
+            
             if colCount == 5 {
                 return VGArduinoCSVParser()
             }

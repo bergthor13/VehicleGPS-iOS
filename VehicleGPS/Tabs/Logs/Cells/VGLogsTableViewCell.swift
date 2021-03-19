@@ -137,6 +137,11 @@ class VGLogsTableViewCell: UITableViewCell {
     }
     
     func show(track: VGTrack) {
+        if #available(iOS 14, *) {
+            imgVehicle.image = Icons.vehicle
+        } else {
+            imgVehicle.image = Icons.vehicleiOS13
+        }
         currentTrack = track
         formatter.dateFormat = "HH:mm:ss"
         if track.timeStart == nil {
