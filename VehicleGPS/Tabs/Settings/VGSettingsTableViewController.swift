@@ -47,7 +47,7 @@ class VGSettingsTableViewController: UITableViewController {
         return ""
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 { return 1 }
+        if section == 0 { return 2 }
         if section == 1 { return 1 }
         return 0
     }
