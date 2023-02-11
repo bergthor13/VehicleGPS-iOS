@@ -16,12 +16,17 @@ class VGTabBarController: UITabBarController {
         UINavigationController(rootViewController: VGVehiclesTableViewController(style: .grouped)),
         UINavigationController(rootViewController: VGSettingsTableViewController(style: .grouped))
     ]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        if #available(iOS 15, *) {
+            UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
+            UITabBar.appearance().scrollEdgeAppearance = UITabBarAppearance()
+        }
         for controller in controllers {
             self.addChild(controller)
-            
         }
+
         self.selectedIndex = 0
         addObserver(selector: #selector(deviceConnected(_:)), name: .deviceConnected)
         addObserver(selector: #selector(deviceDisconnected(_:)), name: .deviceDisconnected)
